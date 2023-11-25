@@ -1,0 +1,66 @@
+---
+layout: "post"
+title: "Web Audio In Firefox"
+date: "2012-09-16 22:50:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/09/web-audio-in-firefox.html"
+---
+<p>Let me clear up any confusion about what our plans are for audio APIs in Firefox.
+<p>Some MediaStream support has landed in Firefox 17. We have the ability to create MediaStreams containing the output of media elements and use them as a source for other media elements. I need to make some changes to those APIs based on feedback we start evangelizing them for real. We can also create MediaStreams via getUserMedia (when that feature is preffed on in about:config).
+<p>The work on MediaStreams Processing that I did as an alternative to the Web Audio API is on the back-burner. Our priority is to implement Web Audio. Our plan is to implement AudioNodes using the same infrastructure as MediaStreams under the hood --- to reduce code duplication and to ensure that Web Audio/MediaStreams integration is perfect. Some core infrastructure for MediaStreams that are produced by processing inputs to outputs --- ProcessedMediaStreams --- already landed, to support the features above. Currently Ehsan is working on the IDL/DOM API side and I have some more work to do on the MediaStreams infrastructure side. We don't have a specific date set for Web Audio support, but it is a high priority.
+<p>At some point we will revisit MediaStreams Processing to get the features that Web Audio is missing, e.g., seamless stitching together of an audio and video playlist from a series of clips. That is lower priority.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>my major issue with ff webaudio is just like the h264 one. many websites stream patent-encumbered audio ONLY, and I gotta load chrome for that.
+
+example: http://html5.grooveshark.com</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The Web Audio spec has nothing to do with codecs.</div>
+</div>
+<div class='comment'>
+<div class='author'>Manoj Mehta</div>
+<div class='content'>Rob, 
+
+Please don&#39;t allow FF to take the idealistic stance on Web audio only to backtrack as you had to with Web video. Firefox is a mainstream browser, and people use their browsers more and more to consume media - view video and listen to audio. Please create a browser that supports as many codecs and formats as possible. This becomes particularly important in the B2G context; if B2G users are to listen to grooveshark on their mobile, their browser has to support whatever format the audio is encoded in. Users will *not* stop using the websites; they will stop using Firefox and switch to Chrome or Safari.
+
+Everyone I know would much rather their browser stream a patent-encumbered file than have to use Flash to load that *exact*, same file. The Flash workaround defeats the philosophical position on patents.
+
+Manoj
+
+P.S. I cannot post comments to your blog with the latest x64 Nightly on Windows.</div>
+</div>
+<div class='comment'>
+<div class='author'>minus54</div>
+<div class='content'>Thank you for all your support provided at the Mozilla&#39;s Bugzilla site. I appreciate all your efforts to improve Firefox!</div>
+</div>
+<div class='comment'>
+<div class='author'>polskasosh</div>
+<div class='content'>Could you give us a rough estimate of when we might expect basic web audio support in FF?</div>
+</div>
+<div class='comment'>
+<div class='author'>rauschma</div>
+<div class='content'>That means that Web Audio is becoming *the* HTML5 audio API, right? How does all of this relate to the Audio Data API?</div>
+<div class='comment'>
+<div class='author'>rauschma</div>
+<div class='content'>Ah, great to see a single standard emerge!</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The Audio Data API is obsolete and should not be used.
+
+Some of its features, in particular the ability to play sample buffers on the main thread, might be retained as an extension to the Web Audio API.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Manoj Mehta</div>
+<div class='content'>Let me ask the question that matters most to me as a Firefox user. Will grooveshark&#39;s HTML5 page work in Firefox on Android, on my Mac, and my Windows PC? It does not today.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Ask Grooveshark why they don’t support Firefox or Opera.</div>
+</div>
+</div>
+
+</div>

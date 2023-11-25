@@ -1,0 +1,131 @@
+---
+layout: "post"
+title: "Latency Of HTML5 &lt;audio&gt; Sounds"
+date: "2011-11-15 11:07:00 +0000"
+categories: "Mozilla"
+permalink: "/2011/11/latency-of-html5-sounds.html"
+---
+<p>One of the common complaints about APIs for Web gaming is that there's no standard API to just play sounds in response to game events with low latency.
+<p>However, the &lt;audio&gt; element API is perfectly adequate for this. Use <code>&lt;audio src="shot.wav" id="shot" preload&gt;</code> and every time you want to play the sound, use <code>document.getElementById("shot").cloneNode(true).play()</code>. The HTML5 spec says that the browser can use the same resource data for the clone as for the original element (no HTML request should ever be needed). The cloned node is not in the document and has no event handlers so most of the overhead of media elements can be optimized away. If there are latency issues, then they are simply browser implementation issues that we should fix. New API is not needed here, and it hardly ever makes sense to respond to browsers poorly implementing one API by asking them to implement another one.
+<p>I believe people who say these &lt;audio&gt; implementation issues exist. Unfortunately, in our limited testing the latency of cloning and playing an &lt;audio&gt; element is pretty good in Firefox and Chrome on Window. So from people encountering problems in this area, we really need actionable bugs with testcases to be filed against the offending browsers. Please!!!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Say, for instance, if you keep playing the same sound over and over again (with cut), like the sound of a gunshot or a laser. If its really fast, firefox and chrome are going to start stalling in no time if you use cloneNode().
+
+It should be easy to test it, just bind a key to a function that plays an Audio() with cloneNode, and see how many key presses can i get in 5sec. until the sound stops playing.</div>
+</div>
+<div class='comment'>
+<div class='author'>fantasai</div>
+<div class='content'>So, if I load a page that&#39;s preloading sound effects like this, and I ask my browser to render it as speech, what happens? Do I hear a random slew of sound-effects because someone was trying to preload things?</div>
+</div>
+<div class='comment'>
+<div class='author'>Don</div>
+<div class='content'>However, not all browsers have the same plugins. HTML5 specifies a standard way to include audio, with the audio element. The audio element can play sound but HTML5 is going to change the way developers can play sounds online.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That would be reasonable for elements with &quot;controls&quot; set. I don&#39;t think that would be reasonable for elements without &quot;controls&quot; set.</div>
+</div>
+<div class='comment'>
+<div class='author'>MKzero</div>
+<div class='content'>If it&#39;s smaller pieces of audio you could also put them as data-uri into the source thus forcing the browser to have it loaded. Not sure if it works that well but I assume it should.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Cloning the node lets you play multiple instances of the same sound independently.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I wrote a test like that:
+http://people.mozilla.org/~roc/audio-latency-repeating.html
+In Firefox, playing 50 sounds at 30ms intervals is nearly perfect on my machine. The duration is 0.322ms so about 10 sounds play simultaneously at any given time.
+
+Chrome&#39;s audio breaks up. That&#39;s their bug.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>cloneNode() doesn&#39;t need to consume much memory. If it does, that can be fixed in browsers.</div>
+</div>
+<div class='comment'>
+<div class='author'>David Bruant</div>
+<div class='content'>&quot;The HTML5 spec says that the browser can use the same resource data for the clone as for the original element (no HTML request should ever be needed).&quot;
+=&gt; What is the part of the spec saying so? I can&#39;t find it.
+
+I don&#39;t see any mention of this on MDN either. I&#39;ll update the page accordingly. This is very valuable information for web developers.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Why do you need to clone the node?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I suspect ATs should not render paused  elements by playing their contents. That would be bad in many cases.</div>
+</div>
+<div class='comment'>
+<div class='author'>Steve Fink</div>
+<div class='content'>Yes, sorry, &quot;prioritized note dropping for overload situations&quot; exactly describes what I meant.
+
+Though sometimes I didn&#39;t want to drop clips entirely; I wanted to drop their volume when mixing them.
+
+tl;dr: SDL_mixer has a pretty nice API to borrow.
+
+What I set up in the past is that I had one music track at all times. I could smoothly adjust the volume while it was playing. Then I had a set of (usually short) audio clips that I could only trigger. Each clip had a priority associated with it, and instances of a clip would all inherit that clip&#39;s priority. The base clips also had a max number of concurrent instances allowed, a boolean flag saying whether in overload situations whether to cancel currently-playing clips to start new ones or to allow the currently playing clips to proceed by suppressing new instances. There was a global maximum number of concurrently playing clips as well.
+
+The main goal was to avoid clipping when too many concurrent sounds were playing. I got a callback when a clip ended, so my (scripted) mixer could keep track of everything playing at once. It had a simplistic rule engine that dropped lower-priority clips when the total number got too high.
+
+A secondary goal was to make sure that important clips could be heard about the racket, so you could fire off a clip in a mode that cut the volume of everything else spawned off while the important one was playing. (There are all kinds of problems with this -- for example, I couldn&#39;t modify the volume of currently-playing clips so I had to either let them finish or chop them off abruptly -- but it worked out all right.)
+
+Anyway, from the API level what I used was: one music track over which I had total control at all times (it had high latency to change what was being played, but low latency for controlling its volume). Sounds could be spawned from preloaded clips, with each one being given a volume scaling percentage at the time it was fired off. The volume could not be adjusted afterwards, but I could cancel the sound completely at any time with fairly low latency. I received notifications when clips completed.
+
+This was all sitting on top of the SDL_mixer API circa 2007 or so, mostly a direct exposure of its interface in a straightforward way but I recall I needed to use its effects plugin interface a little to get everything I wanted. (And it was slightly racy; I wouldn&#39;t get a completion notification if I canceled a sound, which meant a race with the sound&#39;s natural end, which made it hard to accurately track things.) The latency wasn&#39;t too bad if I kept the max concurrent sounds to a small value (16 or so). It quickly got awful when I raised it. (The max sounds is an SDL_mixer setup parameter.)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>http://www.whatwg.org/specs/web-apps/current-work/#fetch
+Step 5, second paragraph.
+
+However, some browsers don&#39;t implement this yet. Firefox doesn&#39;t, although our HTTP cache does an OK job of caching these things anyway. We need to fix that. Filed bug 703379.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>sfink, I don&#39;t quite understand your situation. If you&#39;re playing short clips, you don&#39;t need to track them manually; element.clone().play() will automatically garbage-collect the clone once it has finished playing. If you want to stop them early before the underlying resource finishes, you&#39;ll need to track them to do that.
+
+If you want to have prioritized note dropping for overload situations, we&#39;ll need new API for that.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>So if I&#39;m writing a game that triggers a sound for every bubble that pops, I guess I need to manually count the number of simultaneous clips playing at once so I can start dropping them?
+
+Is there a notification when a clip completes so I can do that without guessing?
+
+If I have a flood of short clips playing simultaneously, are they going to interfere with a music track? (I want the music track to have priority in terms of getting its next buffer to the speakers, even if it means delaying or dropping a short clip.)
+
+I&#39;m not actually planning on doing anything with this, but I&#39;ve done some limited audio work in the past and I remember running into some of those issues.
+
+$article =~ s/HTML request/HTTP request/</div>
+</div>
+<div class='comment'>
+<div class='author'>Yves</div>
+<div class='content'>And if you do write tests for this, consider doing so on http://areweplayingyet.org =)</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>cloneNode is bad as it fills your memory very fast, even if you try to delete it (which can be a problem if you have several sounds playing at the same time).
+
+A better approach might be to call load() before calling play(), as it is much faster than seeking, and does not fill you memory as cloneNode does.
+
+Also, a good idea to reduce latency might be to load and play all the sounds at start up with volume = 0.</div>
+</div>
+<div class='comment'>
+<div class='author'>fantasai</div>
+<div class='content'>Robert: Perhaps they might not autoplay paused  elements, but I imagine it would be reasonable for them to prompt the reader &quot;There is an audio clip, would you like to play it?&quot;. No?</div>
+</div>
+<div class='comment'>
+<div class='author'>David Humphrey (humphd)</div>
+<div class='content'>This is exactly how I dealt with it in Paladin&#39;s sound engine
+
+https://github.com/alankligman/gladius/blob/develop/src/sound/default.js</div>
+</div>
+
+</div>

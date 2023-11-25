@@ -1,0 +1,58 @@
+---
+layout: "post"
+title: "Shifts In Promoting The Open Web"
+date: "2011-09-30 00:11:00 +0000"
+permalink: "/2011/09/shifts-in-promoting-open-web.html"
+---
+<p>Historically Mozilla spent quite a bit of energy promoting use of the "open Web" over proprietary platforms and non-standard browser extensions (IE6). This is still needed, but the landscape has shifted and I think our emphasis needs to change with it.
+<p>The platforms we need to worry about have changed a lot. Instead of WPF, Silverlight and Flash, the proprietary stacks competing for developers are now iOS and Android. Accordingly, the features the Web needs to catch up on are mobile focused. We need to be knocking down the barriers that make mobile app developers write native apps instead of Web apps (and we are!) and we need to be promoting the development and use of Web apps instead of native mobile apps. Demos that only work on desktop browsers are less important.
+<p>The open Web also has some interesting new platform competitors: platforms that build on (embrace and extend?) Web standards but take control of application delivery to create a vendor-controlled platform. The Chrome app store and the upcoming Windows 8 Metro app store are examples of this. I was very disappointed to see offline GMail and Google Calendar restricted to being Chrome apps. Even though <a href="http://chrome.angrybirds.com">Angry Birds</a> works great in Firefox, its Chrome branding alone probably makes people think it only works in Chrome. To counter this we have to make sure that browser competition stays strong and offer developers browser-neutral Web app stores. Mozilla is working on these, of course :-). We also need to send a clear message that browser-specific app stores run counter to the open Web.
+<p>A less obvious form of platform competition is application developers targeting a single browser or browser engine. Google is <a href="http://www.reddit.com/r/programming/comments/kawp5/the_goal_of_the_dash_effort_is_ultimately_to/c2ivucx">explicitly</a> telling its developers to target Chrome-only at first and support other browsers as an afterthought. That's understandable, but still disturbing. Also disturbing is that many mobile sites only target Webkit (sometimes implicitly by relying on Webkit bugs, more often explicitly by relying on -webkit-prefixed features). Many mobile developers, even developers at good places like Google, are reluctant to change this behavior. This is a huge problem for the open Web. We need an open-Web-standards campaign targeted at mobile Web developers. We need to be clear that apps working only a single browser engine, whichever engine that is, run counter to the open Web.
+<p>It's unfortunate that only Mozilla (and maybe Opera) of the major browser vendors has no vested interest in the success of a non-open-Web platform. I'm glad I work here.
+<p>One of the great things about the Web right now is the explosion of new features and standards for Web developers. However, we need to carefully distinguish good open standards from "open-washed" single-vendor initiatives. Not every proposed standard is good for the Web, even if it comes with an open-source implementation. Maciej Stachowiak <a href="http://www.reddit.com/r/programming/comments/kc9ai/internal_googledocument_we_will_strongly/c2j67v2">points out</a> a few Google projects --- VP8, SPDY, Pepper, and Native Client --- that, while they may be good ideas, fall short of true open standards to varying degrees. (The lack of a good spec for VP8 is an issue that we at Mozilla can and probably should address ourselves.) There are also cases where even though a good multi-vendor spec exists and some Web developers want it, the feature is not good for the Web and <a href="http://robert.ocallahan.org/2010/06/not-implementing-features-is-hard_03.html">should be resisted</a>. So I think when we promote the open Web we need to be very discerning about which specs we promote. Just because someone pushed out a draft spec with "CSS" (or "HTML" or "Web") in the name, and shipped a prefixed implementation, doesn't mean that that spec is, or should be, part of the open Web. People need to ask: is this feature good for the Web? is there a thorough draft spec that doesn't require reverse-engineering of an existing implementation? are there multiple implementations? is the spec actively edited with feedback from multiple vendors, and Web authors, being taken into account?
+<p>It's a challenging time. It's an exciting time. Despite the threats I mentioned, it's great to see massive investment in improvements in open Web technology. It's great to see Microsoft moving away from Silverlight towards a standards-based platform. We've won some battles, but the war for open Web standards is not over and we need to keep fighting it, on the right fronts.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The ffmpeg implementation had to do quite a bit of reverse-engineering, I understand. Of course their independent implementation does put VP8 in a better position than some other wannabe-open standards (thanks guys!).</div>
+</div>
+<div class='comment'>
+<div class='author'>Mark Steve</div>
+<div class='content'>Open web deliver best platforms. Now iOS and Android app developers have more features which are useful for their job. <a href="http://www.ieventapp.com/ios-event-app/" rel="nofollow">Event app for iphone</a> </div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Shaver</div>
+<div class='content'>The VP8 spec is actually in decent shape now, in the git repo, but it hasn&#39;t been well-advertised.  There&#39;s an IETF Informational draft as well, since January, which I think was sufficient for the ffmpeg folks to interop.  I believe we did help with it (and by &quot;we&quot; I mean Tim of course!), but mostly it was Google&#39;s people.
+
+Google&#39;s a big place, I&#39;m not sure their position on openness and neutrality and suchlike is coherent.  Certainly Paul Irish has been as disappointed in the needless-Chrome-specialization stuff on the big demos as I have been, and has helped fix them.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I totally agree, ROC. But I think the main threat is that currently Mozilla&#39;s reputation is going down the drain by this unfortunate versioning / fast release cycle debate. And once you&#39;ve lost your users, it&#39;s hard to get them back. Currently every month counts!</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>IMHO, just as large competitors to the open Web as Android and iOS, which all can run open Web code reasonably, are Facebook, Twitter and similar systems that don&#39;t go with the decentralized nature of the open Web. And then there are Windows 8 and any other platform that advertizes web technologies but means a stack that is tied to native interfaces (WebOS if it survives somehow and possibly even Tizen might come into play there as well). And I see those as a way larger or at least equally large problem in terms of destroying the open Web than iOS or Android right now...</div>
+</div>
+<div class='comment'>
+<div class='author'>Cody Russell</div>
+<div class='content'>I don&#39;t agree with Henri&#39;s assessment.  Vendor prefixes are a great way to expose new features and promote competition between browsers.  And the perceived problem that people may choose to use -webkit prefixed CSS rules is one which already has solutions for application developers: Sass and LessCSS.  Sure, not everyone is using those.. but they should be. :)
+
+However, I have thought before that it is a little silly to copy someone else&#39;s CSS rule exactly but then to change the name (e.g., copy -webkit-foobar and call it -moz-foobar).  These prefixed rules remind me of OpenGL extensions, where before features became part of the OpenGL standard they would begin life in the form of an extension prefixed by NV_ or ATI_ or INTEL_ or something.  But if you look at the list of OpenGL extensions supported by your video card, you&#39;ll likely find extensions created by companies other than the maker of your GPU.
+
+It would make more sense to me that if WebKit adopted a CSS extension that first appeared in Firefox, it should be prefixed with -moz if the functionality and syntax is the same.  If they change something then they would prefix it with -webkit instead.
+
+Alas, that doesn&#39;t seem to be how it works, and we move on in our lives. :)</div>
+</div>
+<div class='comment'>
+<div class='author'>Henri Sivonen</div>
+<div class='content'>What we are seeing with -webkit-CSS makes me wonder if the practice of vendor prefixing is inherently anti-competitive and something we should discourage. Even if Web authors were providing -webkit-, -moz-, -o- and -ms- prefixes, what should a new entrant to the market do except implement someone else&#39;s prefix? Vendor prefixing is working great for WebKit, because the current market situation makes Web authors consider at least WebKit compatibility. Vendor prefixing has worked for Mozilla on desktop, because Firefox has had strong enough a position on desktop that authors have considered Firefox-compat. However, as you mention, vendor prefixing is a problem for us when it comes to &quot;mobile&quot; sites designed for a WebKit monoculture. Vendor prefixing is a problem for Opera everywhere, because some portion of Web authors is ignorant (sometimes willfully) of Opera. For Microsoft, vendor prefixing is a problem, because they are late to reboot IE and there&#39;s now a lot of legacy that ignored IE. (Even Mozilla&#39;s demos: https://bugzilla.mozilla.org/show_bug.cgi?id=642265 )
+
+Maybe the old &quot;first to ship gets to define the feature&quot; model was better after all. Especially when the time scales of the CSS WG (with proper test suites, I know) are so much longer than the time scales for browser releases and deployment on sites.</div>
+</div>
+<div class='comment'>
+<div class='author'>blizzard</div>
+<div class='content'>(this is a test post.)</div>
+</div>
+
+</div>

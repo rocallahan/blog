@@ -1,0 +1,50 @@
+---
+layout: "post"
+title: "Some Dynamic Measurements Of Firefox On x86-64"
+date: "2016-06-10 11:46:00 +0000"
+categories: "Mozilla"
+permalink: "/2016/06/some-dynamic-measurements-of-firefox-on.html"
+---
+<p>This follows up on my <a href="/2016/05/data-on-x86-64-register-usage.html">previous</a> <a href="/2016/05/x86-64-sseavx-register-usage.html">measurements</a> of static properties of Firefox code on x86-64 with some measurements of dynamic properties obtained by instrumenting code. These are mostly for my own amusement but intuitions about how programs behave at the machine level, grounded in data, have sometimes been unexpectedly useful.
+<p>Dynamic properties are highly workload-dependent. Media codecs are more SSE/AVX intensive than regular code so if you do nothing but watch videos you'd expect qualitatively different results than if you just load Web pages. I used a mixed workload that starts Firefox (multi-process enabled, optimized build), loads the <a href="http://nzherald.co.nz">NZ Herald</a>, scrolls to the bottom, loads an article with a video, plays the video for several seconds, then quits. It ran for about 30 seconds under rr and executes about 60 billion instructions.
+<p>I repeated my register usage result analysis, this time weighted by dynamic execution count and taking into account implicit register usage such as <tt>push</tt> using <tt>rsp</tt>. The results differ significantly on whether you count the consecutive iterations of a repeated string instruction (e.g. <tt>rep movsb</tt>) as a single instruction execution or one instruction execution per iteration, so I show both. Unlike the static graphs, these results for all instructions executed anywhere in the process(es), including JITted code, not just libxul.
+<p><img src="/assets/images/DynamicGPRegisters.png" width="1209" height="680" title="x86-64 dynamic general-purpose register usage; fraction of instructions executed for each register">
+<ul>
+<li>As expected, registers involved in string instructions get a big boost when you count string instruction repetitions individually. About 7 billion of the 64 billion instruction executions "with string repetitions" are iterations of string instructions. (In practice Intel CPUs can optimize these to execute 64 iterations at a time, under favourable conditions.)
+<li>As expected, <tt>sp</tt> is very frequently used once you consider its implicit uses.
+<li>String instructions aside, the dynamic results don't look very different from the static results. Registers R8 to R11 look a bit more used in this graph, which may be because they tend to be allocated in highly optimized leaf functions, which are more likely to be hot code.
+</ul>
+<p><img src="/assets/images/DynamicMMRegisters.png" width="1209" height="680" title="x86-64 dynamic SSE/AVX register usage; fraction of instructions executed for each register">
+<ul>
+<li>The surprising thing about the results for SSE/AVX registers is that they still don't look very different to the static results. Even the bottom 8 registers still aren't frequently used compared to most general-purpose registers, even though I deliberately tried to exercise codec code.
+<li>I wonder why R5 is the least used bottom-8 register by a significant margin. Maybe these results are dominated by a few hot loops that by chance don't use that register much.
+</ul>
+<p>I was also interested in exploring the distribution of instruction execution frequencies:
+<p><img src="/assets/images/ExecutionFrequencies.png" width="1209" height="680" title="cumulative fraction of static instructions executed which executed no more times than a given frequency">
+<p>A dot at position <em>x, y</em> on this graph means that fraction <em>y</em> of all instructions executed at least once is executed at most <em>x</em> times. So, we can see that about 19% of all instructions executed are executed only once. About 42% of instructions are executed at most 10 times. About 85% of instructions are executed at most 1000 times. These results treat consecutive iterations of a string instruction as a single execution. (It's hard to precisely define what it means for an instruction to "be the same" in the presence of dynamic loading and JITted code. I'm assuming that every execution of an instruction at a particular address in a particular address space is an execution of "the same instruction".)
+<p>Interestingly, the five most frequently executed instructions are executed about 160M times. Those instructions are for <a href="https://dxr.mozilla.org/mozilla-central/rev/b6f7d0eb61b1878d3d906bd231edf225463ece3f/gfx/layers/BufferTexture.cpp#420">this line</a>, which is simply filling a large buffer with 0xff000000. gcc is generating quite slow code:
+<pre>132e7b2: cmp    %rax,%rdx
+132e7b5: je     132e7d1 <mozilla::layers::InitBuffer+0x43>
+132e7b7: movl   $0xff000000,(%r9,%rax,4)
+132e7bf: inc    %rax
+132e7c2: jmp    132e7b2 <mozilla::layers::InitBuffer+0x24></pre>
+That's five instructions executed for every four bytes written. This could be done a lot faster in a variety of different ways --- <tt>rep stosd</tt> or <tt>rep stosq</tt> would probably get the fast-string optimization, but SSE/AVX might be faster.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>mayankleoboy1</div>
+<div class='content'>For the last paragraph, you should file a bug. :)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I emailed a couple of people :-)</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>For the low point of R5 in the SSE list, I expect it&#39;s because of algorithms that do most of the work at the top of the list (0,1,2,etc), and then use the bottom of the list (7,6,5) as temp/intermediate storage. (I vaguely remember that being needed for certain video codec work I looked at long ago.)  From the starting point, frequency of need for an additional register drops off in a predictable pattern (eg: -20%, -30%, -40%, etc, for each additional register), with a natural minimum between the two sides at R5, since R7 is much lower starting off than R1.
+
+R1 is probably used as a temp for R0 for small operations, which would be why it ends up being the peak at the top of the list.
+
+</div>
+</div>
+
+</div>

@@ -1,0 +1,26 @@
+---
+layout: "post"
+title: "Diagnosing A Weak Memory Ordering Bug"
+date: "2018-08-14 03:18:00 +0000"
+categories: "Mozilla"
+permalink: "/2018/08/for-first-time-in-my-life-i-tracked.html"
+---
+<p>For the first time in my life I tracked a real bug's root cause to incorrect usage of weak memory orderings. Until now weak memory bugs were something I knew about but had subconciously felt were only relevant to wizards coding on big iron, partly because until recently I've spent most of my career using desktop x86 machines.
+<p>Under heavy load a Pernosco service would assert in Rust's <tt>std::thread::Thread::unpark()</tt> with the error <tt>"inconsistent state in unpark"</tt>. Inspecting <a href="https://doc.rust-lang.org/src/std/thread/mod.rs.html#1049-1067">the code</a> led to the disturbing conclusion that the only way to trigger this assertion was memory corruption; the value of <tt>self.inner.state</tt> should always be between 0 and 2 inclusive, and if so then we shouldn't be able to reach the panic. The problem was nondeterministic but I was able to extract a test workload that reproduced the bug every few minutes. I tried recording it in rr chaos mode but was unable to reproduce it there (which is not surprising in hindsight since rr imposes sequential consistency).
+<p>With a custom panic handler I was able to suspend the process in the panic handler and attach gdb to inspect the state. Everything looked fine; in particular the value of <tt>self.inner.state</tt> was <tt>PARKED</tt> so we should not have reached the panic. I disassembled <tt>unpark()</tt> and decided I'd like to see the values of registers in <tt>unpark()</tt> to try to determine why we took the panic path, in particular the value of <tt>self.inner</tt> (a pointer) loaded into RCX and the value of <tt>self.inner.state</tt> loaded into RAX. Calling into the panic handler wiped those registers, so I manually edited the binary to replace the first instruction of the panic handler with <a href="https://mudongliang.github.io/x86/html/file_module_x86_id_318.html">UD2</a> to trigger an immediate core-dump before registers were modified.
+<p>The core-dump showed that RCX pointed to some random memory and was not equal to <tt>self.inner</tt>, even though we had clearly just loaded it from there! The value of <tt>state</tt> in RAX was loaded correctly via RCX, but was garbage because we were loading from the wrong address. At this point I formed the theory the issue was a low-level data race, possibly involving relaxed memory orderings &mdash; particularly because the call to <tt>unpark()</tt> came from the <a href="https://github.com/crossbeam-rs/crossbeam">Crossbeam</a> implementation of Michael-Scott lock-free queues. I inspected the code and didn't see an obvious memory ordering bug, but I also looked at the commit log for Crossbeam and found that a couple of memory ordering bugs had been fixed a long time ago; we were stuck on version 0.2 while the released version is 0.4. Upgrading Crossbeam indeed fixed our bug.
+<p>Observation #1: stick to sequential consistency unless you really need the performance edge of weaker orderings.
+<p>Observation #2: stick to sequential consistency unless you are really, really smart and have really really smart people <a href="https://github.com/crossbeam-rs/crossbeam/issues/97">checking</a> your <a href="https://github.com/crossbeam-rs/crossbeam/issues/100">work</a>.
+<p>Observation #3: it would be really great to have user-friendly tools to verify the correctness of unsafe, weak-memory-dependent code like Crossbeam's.
+<p>Observation #4: we need a better way of detecting when dependent crates have known subtle correctness bugs like this (security bugs too). It would be cool if the crates.io registry knew about deprecated crate versions and <tt>cargo build</tt> warned about them.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>Have you checked whether helgrind catches it?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>No.</div>
+</div>
+</div>
+
+</div>

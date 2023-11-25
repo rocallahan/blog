@@ -1,0 +1,35 @@
+---
+layout: "post"
+title: "Graphics Thoughts"
+date: "2005-06-09 02:32:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/06/graphics-thoughts_08.html"
+---
+<div class="columns">At GUADEC last week I gave a demo of my now-sorta-famous rotating HTML implementation. Since it's a GNOME conference I thought I should get GTK+ themes working in cairo. Here are the results.</div><br/><br/><div class="image"><img alt="Google IFRAME rotated by minus 30 degrees" src="/assets/images/images/minus30degrees.png" width="951" height="772"/></div><br/><br/><div class="columns">You can see that bilinear scaling makes the Google logo look good even when we've zoomed in, and in general things look really good now that the GTK+ theme is being rendered. Pay particular attention to the rotated, scaled GTK-themed scrollbar and buttons ... and keep in mind that they still work!<br/><br/>Now the bad news: this required a grotesque and very slow hack. We can't paint a GTK widget theme directly into a cairo context because GTK themes can only paint into GDK rendering contexts (fair enough). My approach is to paint the GTK theme into an offscreen pixmap and then copy that pixmap to the cairo context. That's kinda slow but the real problem is that many GTK widget themes are partially or completely transparent. For example the button theme in this example paints only the slightly darker shadow along the bottom edge of the button. So just rendering into a pixmap and copying that doesn't work because we don't know the alpha values of the pixels, and there is currently no way to reliably create X pixmaps that will capture alpha values. So we resort to our old trick of rendering into two pixmaps: one with a white background and one with a black background. Then with some algebra we can recover the alpha values of the pixels, create a new cairo image surface with the correct pixel colors and alphas, and draw that into the cairo rendering context. Naturally this is really slow, partly because we have to draw the theme of each widget twice, and partly because we have to then ship the pixel data for both pixmaps back from the X server to the client, do significant per-pixel computation, and then ship the results back to the X server. Ugh!<br/><br/>I hope that things change in GTK or Xgl so that we can avoid all this, but I suspect that similar issues will bite us on other platforms. In the meantime, I'm going to look at caching the RGBA rendering of widgets so that we we render the same widget type in the same state with the same size as one we previously rendered, we can just pull the RGBA data out of the cache and blast it to the screen.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>DaveB</div>
+<div class='content'>This idea will probably demonstrate my ignorance of GDK/GTK, but just in case it slipped by...<br>Might it be possible to write out one pixmap with no alpha, and a second with just the alpha? - making it more simple to combine them within Cairo.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robin</div>
+<div class='content'>&#39;counter clockwise&#39; is afaik an Americanism. Certainly it&#39;s anticlockwise in British English.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Caleb</div>
+<div class='content'>Nice work so far ;)<br>P.S. Shouldn&#39;t it be &quot;Counter-Clockwise&quot; ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bill</div>
+<div class='content'>According to their roadmap, GTK 2.8, due out this August, uses Cairo to render everything by default.  So there you go.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Bill: as far as I know that won&#39;t help because we sitll won&#39;t be able to get the theme to draw into *our* cairo rendering context, due to the way the theme interfaces are set up.<br>DaveB: you can&#39;t get the GDK theme engines to emit out any kind of alpha information.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ariel Burone</div>
+<div class='content'>You made a plugin of that?<br>There is a windows version so whe can play around?<br></div>
+</div>
+
+</div>

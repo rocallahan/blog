@@ -1,0 +1,59 @@
+---
+layout: "post"
+title: "Trouble Ahead For SVG Stacks (Maybe)"
+date: "2012-10-28 23:03:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/10/impending-doom-for-svg-stacks-sort-of.html"
+---
+<p>We have a large impending problem for CSS and SVG, and the solution may require breaking content using the "<a href="http://simurai.com/post/20251013889/svg-stacks">SVG Stack</a>" image-bundling technique that's starting to become popular.
+<p>The problem arises because we want to unify support for images and SVG paint servers in CSS syntax. For example, we'd like CSS 'background', 'mask' and 'fill' properties to accept both SVG paint server values (e.g. SVG gradients and patterns), and CSS image values (such as CSS gradients and images). This seems like a significant improvement in both simplicity and power for Web authors.
+<p>The problem is that if we do this, then syntax such as 'background:url(foo.svg#abc)' becomes ambiguous. It could refer to either an SVG paint server element (such as a &lt;pattern&gt;) with ID "abc" in the external resource document "foo.svg", or an SVG image "foo.svg" in which we should make visible the element with ID "abc".
+<p>The obvious way to resolve this ambiguity would be to load the document foo.svg and check if the element with ID "abc" is an SVG paint server element. Unfortunately that is very difficult to do because we load external resource documents differently to SVG images and subject them to different constraints. For example, for security reasons external resource documents for paint servers are required to be same-origin with the main document --- in Gecko, at least, and we think the security reasons are good enough to require the same behavior in every browser. (Webkit hasn't addressed this yet because they don't support references to SVG paint servers in other documents.) On the other hand, we definitely can't disallow cross-origin SVG image loads. We really want to be able to determine the kind of load to perform before we start loading the document!
+<p>Relying on checking the kind of element a reference points to is also problematic if that can change dynamically. I don't actually know of a way that an SVG image or external resource document can cause the element referenced by a fragment identifier to change, but there are a lot of "near misses" --- for example, it would be possible if script was allowed to run in an SVG image or an external resource document, or if declarative animations could animate the 'id' attribute, or if we had a declarative Web feature for transclusions, or if &lt;meta refresh&gt; was supported in SVG images or external resource documents. If it turns out that the element referenced by a fragment identifier can change, then it doesn't really make sense to try to reload the document in a different way when such a change happens. (It might also be possible for the element referenced by a fragment identifier to depend on whether the document was loaded as an SVG image or an external resource document!)
+<p>Therefore <a href="http://lists.w3.org/Archives/Public/www-style/2012Oct/0766.html">I have proposed</a> on www-svg and www-style that we inspect the URIs in a 'url()' value to determine whether to perform an external resource document load or an image load. A URI without a fragment identifier would be loaded as an image, but a URI with a fragment identifier that isn't obviously supposed to be part of an image (e.g. a Media Fragment URI) would have to be interpreted as a reference to an external resource document. This would work fine with almost all content out there, but would break SVG Stacks :-(. That is not good, but no-one has proposed a better solution yet.
+<p>If we do take this approach, we would probably have a workaround for SVG Stacks such as requiring them to use the "=" character in their fragment identifiers to make it clear the URI should be treated as an image load, not an external resource document reference.
+<p>I hope that this can be resolved at the upcoming W3C TPAC, since any solution needs concerted effort from browser vendors, and soon.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Ned Baldessin</div>
+<div class='content'>Very interesting.
+
+From a web author&#39;s perspective, SVG stacks are a neat shortcut in theory, but in practice we will still need to support IE7/8 and non-HiDPI displays for a few more years, which means having double sets of sprites: one in PNG, the other in SVG. That requires a tool to generate automatically, and since we&#39;re using a tool, the benefit of having SVGs referencenced by ID disapears. We&#39;ll just use a CSS class to change the backgroud position of the sprite, as we&#39;ve been doing for years.
+
+So… if we must sacrifice that neat little shortcut, so be it. It&#39;s not like we can rely on it anyways.
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Dirk Schulze</div>
+<div class='content'>Remember that we have content that is actively using SVG stacks.
+
+There is even a tool creating SVG stacks which was already very popular on Twitter: https://github.com/preciousforever/SVG-Stacker
+
+And WebKit got a lot of feedback and questions when we finally support this feature. The idea of having reliable media fragments is nice. Not sure if we can do that easily at this point (well definitely not later). It would be an courageous step. Too courageous?</div>
+</div>
+<div class='comment'>
+<div class='author'>njn</div>
+<div class='content'>Who do you mean by &quot;we&quot;?  E.g. &quot;We have a large impending problem for CSS and SVG...&quot; -- is this a problem in the standards that all browsers face, or is it a Mozilla/Firefox-specific problem?
+
+Having read all the way through, I think it&#39;s the former, though the &quot;Webkit hasn&#39;t addressed this yet...&quot; part muddied the waters.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The former.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Tom</div>
+<div class='content'>It would be a real shame if we lost SVG stacks as a potential solution. They solve many problems associated with traditional  sprite maps (lack of ability to position sprites within bg canvas, unwanted visibility of &#39;neighbour&#39; sprites, etc).</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>The proposal in http://lists.w3.org/Archives/Public/www-style/2012Oct/0766.html sounds ok to me. Only Firefox supports SVG stacks in CSS backgrounds at this stage, so breaking is less dramatic than it may sound like. SVG stacks are already cross-browser compatible in img, embed, object and iframe elements. I welcome a solution such that it becomes possible to use the same technique in CSS too.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>We did lose it, Chrome doesn&#39;t display myicons.svg#skull anymore.
+
+So, what do we do now?</div>
+</div>
+
+</div>

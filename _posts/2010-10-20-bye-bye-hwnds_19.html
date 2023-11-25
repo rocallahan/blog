@@ -1,0 +1,47 @@
+---
+layout: "post"
+title: "Bye Bye HWNDs"
+date: "2010-10-19 16:54:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/10/bye-bye-hwnds_19.html"
+---
+<div class="image"><img alt="Spy++ showing that Firefox only has one HWND" src="/assets/images/Capture.PNG" width="622" height="265"/></div><br/><div class="columns"><p>As Firefox 4 races towards completion, we are discovering that quite a few extensions, pointing-device drivers and accessibility tools have been broken by the fact that Firefox no longer creates child HWNDs for its internal use.<br/><p>These child HWNDs were been removed as a necessary step towards providing the best possible graphics acceleration performance in Firefox 4. Supporting child HWNDs was also architecturally painful; removing them has let us simplify or remove a lot of code, and we'll be able to remove a lot more later. It also fixed many bugs, and helped us to smoothly support new UI features such as Firefox UI element layered over Web page content. These HWNDs are not coming back.<br/><p>It's unfortunate that various third party software components were messing with our internal HWNDs, since they were never supported API and we've been gradually removing them over a long period of time. But I suppose being molested is the price of popularity...<br/><p>We're doing a few different things to deal with the fallout. We have some hacks in place to keep ATs working (fortunately ATs mostly use interfaces that do not depend on HWNDs), plus we've worked with AT vendors directly to fix issues. We have some more hacks in place to deal with pointing-device drivers, and we'll likely have to add even more hacks for them :-(. For extensions, we probably won't do anything, since the things they've been doing --- e.g. inserting a native child window under the HWND for our sidebar, or even Web content --- are mostly not things we want to support directly.<br/><p>If you maintain a Firefox extension that is broken on Firefox 4 because it has native components relying on HWNDs that no longer exist, your best solution depends on what your extension actually does. But there are two main approaches you can take:<br/><ol><br/><li><strong>Give up using native HWNDs and use Web platform features instead.</strong> This is the most future-proof, most portable and often the most performant route. Firefox 4 has many new features to handle use-cases the browser couldn't support before: audio synthesis, GPU-accelerated 2D and 3D graphics, touch input, etc.<br/><li><strong>Wrap your HWND-using code in an NPAPI plugin.</strong> If you have large amounts of legacy HWND-dependent code that you can't rewrite, or there's platform functionality that you still can't get without an HWND, you may be able to wrap an HWND up as an NPAPI plugin, then you can insert a plugin instance into Web content or browser UI. NPAPI plugins are a bit of a pain to work with, but this might be a practical approach for some situations.<br/></ol><br/><p>Good luck!<br/><p>Hopefully now that we're down to a single HWND (most of the time), we'll see less breakage in future releases simply because there's little left to abuse or change...</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Jim B</div>
+<div class='content'>HWND = handle to a window.  It is like a pointer, but opaque.  You can&#39;t operate on it, only pass it around as a token representing that window resource.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rafal</div>
+<div class='content'>Welcome to the party. Now let&#39;s make Adobe fix windowless - https://bugs.adobe.com/jira/browse/FP-4867.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Masayuki Nakano</div>
+<div class='content'>On the other hand, there are still a lot of native windows for popups such as menus, tooltips and their shadow. Cannot we reduce the number of their instances especially when they are hidden for a long time?<br>Maybe, there is a performance issue at opening them if we generate native window then. However, probably, current design has a footprint issue.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Leo</div>
+<div class='content'>HWND = handle to a window<br>It should be mentioned that a window in this context is not exactly the same thing as an operating system window.<br>Every native button, menu, and widget is its own &quot;window&quot; object under Windows and possibly other OSes. This runs into various obscure limitations, so web browsers are generally migrating away from using native controls and are instead implementing things like buttons using their own, platform-independent rendering engines.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Masayuki: I think we could probably just have a small number of widgets that we use for all menus and popups. Only a few menus/popups can be visible at the same time.<br>pd: HWND is not an acronym.<br>Mook: they address many uses of HWNDs. It would be good to hear about other use-cases that they don&#39;t address.<br>I believe you can get the URL of the page the plugin is on and check that it&#39;s chrome.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kyle Huey</div>
+<div class='content'>Dealing with all of the broken mouse drivers over the last year or so has made we wish we could go back in time and stop Bug 241993 from ever getting checked in :-P<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yeah, that was a big mistake. My bad.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>DE-ACRONYMIFY!<br>Any chance you could abide by the common basic grammar rule of spelling out what a HWND is? Some sort of weapon of mass destruction?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mook</div>
+<div class='content'>Unfortunately, neither solution actually addresses the use of HWNDs.<br>Giving up HWNDs is... not likely to happen for people who needed them in the first place (i.e. had needed the use of native platform features); and those web features, with XPCOM 2.0, are pretty much JS-only anyway, since any semblance of API guarantees have been thrown out the window.  Not that things were _really_ better before, but at least we all pretended the world was a happy place...<br>Doesn&#39;t using NPAPI plugins mean exposing the existence of the extension to the whole world (i.e. fingerprinting)?  There&#39;s no way to control what sites are allowed to use the plugin (in this case, none - it should be chrome only), and you&#39;ve just exposed a giant attack service.  Oh, and there&#39;s no Mozilla-provided template for anything like this either, just plugins-for-the-web.<br></div>
+</div>
+
+</div>

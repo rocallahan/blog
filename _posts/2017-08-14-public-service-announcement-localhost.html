@@ -1,0 +1,45 @@
+---
+layout: "post"
+title: "Public Service Announcement: \"localhost\" Is Not Necessarily Local"
+date: "2017-08-13 20:56:00 +0000"
+permalink: "/2017/08/public-service-announcement-localhost.html"
+---
+<p>Today I learned that there exist systems (presumably misconfigured, but I'm not sure in what way) where the hostname "localhost" does not resolve locally but is sent to some remote DNS server, and then in some cases the DNS server returns a remote address (e.g. a server providing landing pages stuffed with ads).
+<p>This was breaking rr, since rr tells gdb to use (e.g.) the command "target extended-remote :1234", and apparently gdb resolves "localhost" to get the address to connect to. I've fixed rr to pass "127.0.0.1" as an explicit local address, but who knows what other software is broken in such a configuration &mdash; possibly in insecure ways?
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Brain</div>
+<div class='content'>There&#39;s nothing special about localhost, it is just a name like everything else, so the name needs resolving. Fortunately all OSes including windows has a hosts file (manual DNS registry), where 127.0.0.1 and ::1 has the name localhost. If the name was not resolved by the hosts file, then DNS server(s) is contacted in order to resolve the name. So if some malicious software has updates the hosts file to make localhost resolve to some remote ip then it will - no magic, just a name like everything else. In the same manner the hosts file can be updated so license.microsoft.com points to 127.0.0.1 and make the Genuine Validation process believe that it talks to a remote server, and but instead talks to your local machine that could have a process that &quot;answers&quot; everything is genuine no matter what license key was in the request.</div>
+</div>
+<div class='comment'>
+<div class='author'>Xidorn Quan</div>
+<div class='content'>FWIW there is a recent IETF RFC proposing making localhost localhost: https://tools.ietf.org/html/draft-west-let-localhost-be-localhost-04</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That&#39;s good to know, but I wonder when we&#39;ll be able to rely on that.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Hm... where&#39;s the bug here? In gdb, for not recognizing &#39;localhost&#39; as something it should just automatically resolve to the current host? Or elsewhere?
+
+T try to avoid 127.0.0.1 just to avoid being pegged to IPv4. Is there no IP-agnostic way of referring to the current host not susceptible to this?</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I&#39;ve run into issues before where 127.0.0.1 didn&#39;t work on systems that shifted to IPv6. This was in a fairly controlled environment, so maybe it&#39;s less likely to break in other contexts?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>If that is ever a problem for us I guess I&#39;ll have to write the code to enumerate interfaces and figure out which address to use :-(</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I hope it&#39;s harmless in practice to configure an IPv4 loopback address even if IPv4 is otherwise disabled. And I suspect not doing so would break a lot of stuff. So maybe we should just rely on that, especially if there&#39;s no other way to reliably get a loopback address.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t know how to (reliably, in practice) obtain a string that will resolve to a loopback address when we don&#39;t know which of IPv4/IPv6 is running.</div>
+</div>
+</div>
+
+</div>

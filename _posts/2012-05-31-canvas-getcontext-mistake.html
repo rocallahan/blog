@@ -1,0 +1,40 @@
+---
+layout: "post"
+title: "The Canvas getContext() Mistake"
+date: "2012-05-30 13:14:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/05/canvas-getcontext-mistake.html"
+---
+<p>The HTML &lt;canvas&gt; element has a <code>getContext(type)</code> method that takes a string parameter identify a context type (e.g. "2d" or "webgl") and returns a context object of that type. The string parameter was introduced as an extension point to make it easier to add new context types.
+<p>This was a mistake. It would have been simpler, and just as extensible, to define a new attribute on the &lt;canvas&gt; element for each new kind of context. E.g. <code>canvasElement.context2d</code>, <code>canvasElement.contextWebGL</code>, and even experimental vendor-specific contexts such as <code>canvasElement.mozContext3d</code>. Less code to write, slightly more efficient, and easier feature detection. (If some contexts need parameters, or we consider getting a context to have more side-effects than is seemly for an attribute getter, we could have used independent methods instead, e.g. <code>canvasElement.getContext2d()</code>.)
+<p>Of course we're stuck with <code>getContext</code> now for Web compatibility. The reason I mention this is because from time to time I see people trying to use <code>getContext()</code> as a model for extensibility in other Web APIs. Don't do that.
+<p>Actually, most of the time when I see someone trying to use <code>getContext()</code> as a model, they're using it because they think it gives them an escape hatch from the world of Web standards. They seem to think that it would be OK to pass in vendor-specific strings, get back vendor-specific objects, and never specify or even document the behavior of those objects. This is incorrect. It's no more acceptable to have permanently non-standard Web APIs accessed through vendor-specific strings than it would be to have them accessible through vendor-specific attributes.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>jlebar</div>
+<div class='content'>This.
+
+As an added bonus, the approach here works better with code-completing editors.  Often you want to poke around without looking up docs.
+
+In particular, I&#39;d be very happy if our crypto APIs took the approach suggested here, instead of using getHash(&quot;MD5&quot;), etc.</div>
+</div>
+<div class='comment'>
+<div class='author'>TJ Holowaychuk</div>
+<div class='content'>getContext() performs allocs so you wouldn&#39;t just want them sitting there as props, maybe getContext2d() etc. I agree that the string arg doesn&#39;t really make much sense, but there are web  related APIs that are much worse</div>
+<div class='comment'>
+<div class='author'>Tobie Langel</div>
+<div class='content'>That&#39;s a red herring. ES5 has getters and Host Objects have been relying on them forever. Think the innerHTML property of every DOM element is set when the object is created?</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Rodrigo Kumpera</div>
+<div class='content'>Isn&#39;t that trivially fixable by having a method that either returns the available kinds of contexts or test if a given one is. A canvas.hasContext() method would very much solve this.
+
+Properties whose getters have meaningful side-effects are usually a very bad practice and bad interface design.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes, a hasContext() method would help a little bit, but it&#39;s simpler to just create a new attribute *or method* per context type. I explained in my post that if getting an attribute would have too many side effects, use a zero-parameter method instead.</div>
+</div>
+</div>
+
+</div>

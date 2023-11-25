@@ -1,0 +1,51 @@
+---
+layout: "post"
+title: "Text Status"
+date: "2007-07-02 14:41:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/07/text-status_02.html"
+---
+<div class="columns"><p>Time for a quick update on textframe status... The new textframe was turned a couple of weeks ago. There have been some regressions, but I've fixed the big ones, I think. There was a small but significant Tp win (around 5% depending on platform).<br/><p>Today I checked in a followup patch that fixes a few issues with soft hyphens (&amp;shy;). They should basically work now. That's good news for us and for the Web.<br/><p>Other than just fixing regressions and other bugs, there are a few followup issues I want to address before beta 1, or possibly after it:<br/><ul><br/><li>CVS remove nsTextFrame<br/><li>Remove nsTextTransformer, which is almost entirely unused now<br/><li>Remove other unused support code from nsLineLayout and elsewhere<br/><li>Reland changes to nsILineBreaker implementation that have it use Pango on Linux<br/><li>Work on my patch to get and cache accurate glyph bounds<br/><li>Figure out what our story is going to be on quality vs speed<br/></ul><br/><p>The last item's a tricky one. Currently on Windows and Linux we have a "fast path" for Latin-1 text rendering that avoids Uniscribe/Pango, disabling ligatures (and kerning too, on Linux). It would be nice to have ligatures and kerning on, but going through Uniscribe and Pango for everything would be a significant slowdown. (On Mac we're currently going through ATSUI for everything; we could add a Latin-1 fast path if we want to, in which case these considerations would apply to Mac too...) Here's my current thinking:<br/><ul><br/><li>Text in chrome documents should default to optimizing for quality. We hardly ever need to layout massive quantities of text in chrome. Also some system fonts on Vista really want ligaturization.<br/><li>Text in content documents should default to optimizing for speed, for benchmarks and users with slow machines.<br/><li>But users, especially users with fast machines, should be able to opt for quality.<br/><li>Perhaps if we dectect the user has a fast machine, we could set them up for quality by default.<br/><li>We could also give authors control over quality, perhaps by using the SVG <a href="http://www.w3.org/TR/SVG11/painting.html#TextRenderingProperty">text-rendering</a> CSS property.<br/></ul><br/><p>This needs thought and wider discussion.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Ernst: We don&#39;t know.<br>Philippe: Text is still a major component of performance on many pages.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philippe</div>
+<div class='content'>Hmmm. Now that we finally, after all those years, have darn nice text display on the Mac, I&#39;d vote for quality :-)<br>I understand the need or concern for speed, though. Currently Gecko Mac is a bit slow... But I don&#39;t think text is the main performance issue. And Vlad&#39;s latest Cairo update improves things a lot.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>Philippe, profiles say that text measurement is in fact one of the top layout performance bottlenecks.  Always has been.  On a typical web page, something like 25% of the layout time is spent there.  On a text-heavy page, that number can be higher.  That&#39;s with the current (fast) text measurement.  When it was slow, in the past, it was a lot worse.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurens Holst</div>
+<div class='content'>I�d prefer quality.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jhermans</div>
+<div class='content'>Me too. And if there will be a setting in the future, I hope that quality will be the default.<br>And it&#39;s not just text that needs it. Images also needs the same treatment with ColorSync support, better upscaling (downscaling is already better in FF 3.0), ...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James</div>
+<div class='content'>Have you seen http://antigrain.com/research/font_rasterization/ ? The summary is you get great looking text by using high-resolution (1/256 pixel) advance and kerning values. Is this something to be solved at the application (Mozilla) layer, or is it a cairo, pango or freetype problem?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yes, but I&#39;ve never been able to attend a TextLayout summit.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Interesting page.<br>To get that to work on Windows and Mac we&#39;d have to ship Freetype I think.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ernst</div>
+<div class='content'>How much slower is it with a really new Pango and Cairo, say on Ubuntu Gutsy?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>yosch</div>
+<div class='content'>Ever thought of bouncing off these ideas at the  TextLayout summits?<br></div>
+</div>
+
+</div>

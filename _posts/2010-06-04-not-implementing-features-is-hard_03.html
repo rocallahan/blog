@@ -1,0 +1,491 @@
+---
+layout: "post"
+title: "Not Implementing Features Is Hard"
+date: "2010-06-03 17:06:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/06/not-implementing-features-is-hard_03.html"
+---
+<div class="columns"><p>Sometimes we take heat for deliberately not implementing certain Web platform features. Three significant examples are SVG Fonts, WebSQLDatabase and H.264 in &lt;video&gt;.<br/><p>SVG Fonts --- at least the subset implemented in Opera and Webkit --- don't offer anything significant over downloadable Opentype (or WOFF) fonts ... except the last three points of the Acid3 test :-(. And people keep asking for it "because it's in SVG 1.1". But I don't think those are good enough reasons on their own to make SVG Fonts an essential part of the Web platform.<br/><p>WebSQLDatabase has a completely different problem. It's the only way of doing structured, queryable client-side storage in any browser right now, and a lot of mobile apps targeting Webkit-based browsers use it. The problem with WebSQLDatabase is that it isn't good for the Web, because it depends completely to the semantics and query planning of SQL as implemented by SQLite --- which is a somewhat quirky SQL implementation.<br/><p>The pros and cons of H.264 have been well documented in this blog and elsewhere...<br/><p>SVG Fonts and WebSQLDatabase would actually be very easy for us to implement. SQLite is already embedded in Firefox and even exposed to non-Web Javascript. The SVG Fonts subset implemented by Opera and Webkit is very simple. We could even support H.264 by hooking into specific codecs that may be present on various platforms (I think; the licensing for platform codecs is rather vague). It's certainly tempting to just cave in, implement these features, and move on. The people who complain that we're lazy, stubborn, or just wrong would move on or find something else to complain about. If we were only interested in market share, that's definitely what we'd do. But I honestly think we're doing the Web a service by resisting these things.<br/><p>I think <em>not</em> implementing certain features is one of the hardest and most altruistic things we do.<br/><p><strong>Update</strong> I should also point out that we're not just exerting "stop energy" here; for each of these features that we're not adding, we are promoting superior alternatives --- namely WOFF, IndexedDB, and WebM.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Chris Hubick</div>
+<div class='content'>I think the browser should integrate well with each platform it&#39;s on.  That goes for everything from file locations, to Look and Feel, notification API&#39;s, graphics API&#39;s abstracting hardware/software rendering, and yes, to support for platform codec API&#39;s too.<br>I&#39;m a huge FLOSS fan, and think building an enhanced WebM experience into the browser which isn&#39;t possible with the platform API is awesome, but I also think the platform API&#39;s should still be supported.  If every other media player on the system can support a codec (ie, Dirac) through the platform API, Firefox should too.<br>I would like to see Firefox not just support WebM internally, but install the codec onto the system, so that it becomes available to any media playing app on the platform (including IE, Totem, etc).<br>I would just rather see the WebM push be made through enabling, not disabling, user choice.  I&#39;m sorry if that makes me one of the &quot;complainers&quot; you wish would move on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>FM</div>
+<div class='content'>Although I understand Mozilla&#39;s contention that &quot;do what SQLite does&quot; is a poor standard, I must agree with all the existing criticisms of IndexedDB. Doing a join with IndexedDB is beyond ugly, and I contend that it&#39;s possible to create an efficient local storage mechanism that can be indexed and correlated without all the extra code that IndexedDB would require.<br>I just don&#39;t understand how the w3c could create a standard like IndexedDB and do such a poor job covering the use case of joining one &quot;object store&quot; to another based on correlating indexes. I like that IndexedDB works in plain javascript objects and allows me to store whatever properties I want into the object and retrieve them later; however, I absolutely need sane join support.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Microsoft has already said they&#39;re not doing SVG Fonts or SVG Animation in IE9, so it&#39;s impossible for them to pass us.<br>A blanket claim that we don&#39;t support Web standards is laughable.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John P</div>
+<div class='content'>It&#39;s rather sad to see this. I was very happy to see mozilla&#39;s actions on H.264, and I don&#39;t know a lot about indexedDB but I&#39;m glad to see differing approaches being tried and thought through before standardization.<br>However SVG Fonts are a different story, they have been part of the published standard for ages; implementing them is not just about collecting ACID3 points.<br>SVG is the only thing out there as an open vector format. Just as it is beneficial to have PNG and JPEG supported for embedding in a web-page, so full support for SVG is of value. Imagine if mozilla only worked with some JPEG content and you had to load a JPEG into a processing application to check it used the bits of JPEG that mozilla liked before uploading it to an open web. Remember what MS&#39;s poor support for PNG&#39;s transparency did for web developers.  Why does it have to be this way for vector art?<br>I don&#39;t believe that WOFF is a replacement for SVG Font in SVG files (as in stand alone graphics). WOFF (even in data: URLs) is not part of the SVG standard and not supported by graphics apps, even if supported by browsers. SVG Font may be a limited format, but in many applications it is competing with reducing the text to svg:path, not with WOFF.<br>It is of benefit for the open web if text in header-type images (the sort that have traditionally been PNG), labels in graphs, or diagrams for embedding in a page, don&#39;t go to SVG paths, but to characters that can be selected by the user, or accessed by a screen-reader.<br>It would be great for content in open formats, for web developers, and for end-users who appreciate semantic, accessible content, if any complying SVG graphics could be viewed on the web. For that we need the whole standard supported.<br>I was under the clear impression from previous statements and bugzilla traffic, that it was mozilla&#39;s goal to support the whole of SVG -- it my have been taking a while, and not necessarily top priority (fair enough), but would be liked.<br>Please reconsider declaring any parts of SVG as &quot;bad for the web&quot;, unless there is a really good evidence that it is harmful, and that outweighs the benefits of supporting an open vector format, so that end users (not professional web devs) can use SVG images with confidence.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>GVS</div>
+<div class='content'>It&#39;s part of SVG and it&#39;s part of Acid3, just implement it. Or you prefer IE9 to implement it first and embarass Mozilla in standards support?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Té: I agree, and we do support all those CSS features with SVG.<br>Mary: SVG  is a good solution to that sort of problem. We support it.<br>Many other people: I carefully explained in comments above why *no browser* plans to implement every &quot;open standard&quot;, not even every W3C Recommendation --- nor should they. Some standards were junk from the start, others are obsolete and are being replaced by better alternatives, others are simply not good for the Web. I notice that no-one tried to respond to the points in those comments directly. Please do.<br>Inboulder: it&#39;s very hard to block a junk standard. If a subset of the paying members of the W3C decide they want a standard, they&#39;ll get it no matter who opposes. Even if the W3C worked differently, there are other standards groups --- e.g. ECMA and IETF.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>What use-case do SMIL/transitions solve that JS doesn&#39;t ?<br>I&#39;ve written a JS lib that simulate SMIL. So I know there&#39;s none.<br>SMIL is just the syntaxic sugar that developers want to ease their lives.<br>And so are SVG Fonts. We don&#39;t want TTX or any kind of other conversion libraries.<br>I usually much appreciate your analysis. It&#39;s a pain to read such lame responses to so numerous arguments in favor of SVG Fonts.<br>Implementing SVG Fonts will not kill WOFF ! Don&#39;t fear.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Pseudonymous Coward</div>
+<div class='content'>Agreed, those are wise words. I wish Mozilla would stop trying so hard to copy Google Chrome, but it is difficult to resist an arms race in winning the minds and affections of a fickle populace.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dirk</div>
+<div class='content'>Roc, how do you count the Web authors? You may not see much examples on the web for SVG Fonts, but why should Web developers make their SVG Fonts usage public, if the browsers with the most market share (mainly IE and Firefox) don&#39;t support it. But does it mean most Web authors are not interested in it?<br>Give them the freedom of choice and we will see if they will only use WOFF or if they also use SVG Fonts for special needs.<br>I also don&#39;t understand your comment, that standards don&#39;t need to get implemented just because they are standards.<br>Standards are the most important constant in the web out there. And Mozilla was one of the biggest advocate of web standards. Imagine a world wide web, without web standards, or in your case, where every browser supports other standards or doesn&#39;t support parts of it. The web wouldn&#39;t be what it is today.<br>SVG Fonts are part of SVG and are required in the SVG 1.1 specification. And I ask you and Gecko to support SVG Fonts as part of a web standard, like you and many other posters on Planet Mozilla requested Microsoft to support web standards (partly with success). I tried to explain this with my harsh comment &#39;Firefox gets next ie6?&#39; above.<br>Your argument that Mozilla supports many new features and works on a lot of new standards doesn&#39;t realy count. Microsoft also implemented new features like graphics filters for CSS, or SMIL support for HTML. They are no standards today, but the same may count to the new &#39;CSS features&#39; of today.<br>Why do you think users won&#39;t be interessted in SVG Fonts, what makes you think that they care about WOFF? I guess most useres are not interested in different font systems at all, but I don&#39;t know it. I think they are interessted in the result of using fonts and other techniques and of this is of course the task of the web authors. So tking care of the needs and wishes of users, is also taking care of the needs and wishes of web authors.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mark</div>
+<div class='content'>Please, SVG fonts should be added for firefox.<br>I don&#39;t care about the other two issues, but SVG rocks!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>In the light of the above comments, it seems you don&#39;t convince much people about SVG Fonts.<br>Maybe the ones who agrees with you don&#39;t feel the need to express.<br>Would you be ready to run a poll about that ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>corcodell</div>
+<div class='content'>you got me laughing with that market share thing. oh, if you&#39;d implement those things the market share would skyrocket! WTF was that nonsense? oh, I see, playing the don&#39;t-do-evil card. ok! but why with such a hypocritical crap?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>bo</div>
+<div class='content'>Just adding my agreement, SVG font should probably be supported. The reason is not strong enough not to support it this time (h264 and the database have much stronger reasons)<br>on top of that you wouldn&#39;t get complains about acid3.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pheldespat</div>
+<div class='content'>SVG is a web standard. You even said that implementing SVG fonts would be easy. Do it. You guys spend much time defending your position on the SVG fonts issue. That time could be spend writing a patch for it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Walden</div>
+<div class='content'>Havvy, fixating on &quot;altruistic&quot; probably isn&#39;t going to be helpful in generating dialogue, or in provoking responses accommodating your criticisms.<br>Would I be correct in guessing you&#39;re an Ayn Rand fan?  If you aren&#39;t, pick up Atlas Shrugged sometime, you&#39;ll like it.  If you are (I strongly suspect this to be the case), fine, suppose that nobody is ever altruistic and simply reinterpret the word as &quot;selfishly placing a high value on having a wide, indeterminate audience of others derive utility from one&#39;s actions&quot;.  (There might be a better rephrasing in explicitly selfish terms, but that&#39;s at least a plausible flavor.)  Put another way: I&#39;m happy because, through my actions, many many more people of all varieties are happy.  If you don&#39;t like the overtones of &quot;faux-compassion&quot; in a traditional definition, redefine and don&#39;t think about them.<br>For the decisions at issue here, I think Mozilla is certainly altruistic under that redefinition: most of all regarding putting one arbitrary variety of SQL dialect in the browser; next most regarding promoting video/audio formats presenting political headaches; and last for encouraging simple custom-font use with standalone font files (either TTF or easily-generated, easily-manipulated WOFF) rather than complicated, complex, ultimately unnecessary SVG fonts.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sid</div>
+<div class='content'>God oh god why not SVG?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Not supporting these features and just providing alternatives means web developers will have to do things twice.  Once for their Firefox viewers, and once for their non-Firefox users.  Do you really want them to have to go through the same type of thing with your browser that they go through with Internet Explorer?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Dirk, Microsoft never wrote a spec for their filters stuff, never submitted it for standardization, and never got (or looked for) support from other browser vendors. WOFF, IndexedDB and WebM all have support from multiple browser vendors and we&#39;re working towards standardization for all of them. So our behaviour is completely different from Microsoft&#39;s.<br>(AFAIK HTML+Time was actually a W3C standard, at least a draft. So I don&#39;t have a problem with that particular IE feature.)<br>&gt; I also don&#39;t understand your comment, that<br>&gt; standards don&#39;t need to get implemented just<br>&gt; because they are standards.<br>I don&#39;t understand why you don&#39;t understand. Maybe if I rephrase it again? How about this:<br>Some features in W3C Recommendations are not suitable for the Web and should not be supported in browsers.<br>I&#39;m 100% sure that core Webkit developers agree with that statement. For example, if you read public-html, you can see Maciej agrees that XSL-FO (a W3C Recommendation) is not suitable for the Web or Web browsers (we have CSS instead). We had the same agreement over XHTML2 before it was killed in the W3C.<br>WSDL, SOAP, WebCGM, XForms, XInclude, XQuery, and XSL-FO are just some of the W3C Recommendations that are not supported in browsers and should not be. Ask other Webkit developers, I&#39;m sure they&#39;ll agree.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>smably</div>
+<div class='content'>This seems like a dangerously slippery slope. Mozilla has decided that they don&#39;t like part of a standard, so they&#39;re not going to support it. Is this Mozilla&#39;s policy, that they will support only the parts of web standards that they like? They&#39;re just going to arbitrarily pick and choose the parts of standards their browser will support? Is that really a wise path to follow?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Your reasons seem contradictory.  First, you argue against part of SVG 1.1 on the grounds that it&#39;s not a great feature (maybe so), even though it&#39;s in a specification which Mozilla otherwise implements.  That means that rather than writing to a specification, users have to write to the specific feature sets that are in the intersection of the feature sets of the browsers they care about.
+
+Then you argue against WebSQL on the grounds that users would have to write to a specific feature set (a particular version of SQLite).  Whaaat?</div>
+</div>
+<div class='comment'>
+<div class='author'>Mary Branscombe</div>
+<div class='content'>I&#39;m a big WOFF fan but I think SVG fonts is both more and a lot less than fonts. Talking to the IE team, one main reason they have for not implementing SVG fonts is that it bypasses all the goodness they have in the Windows platform for displaying fonts but talking to the SVG guys there specifically, they brought up the idea that there&#39;s a much wider use case of defining a shape and re-using it that could be done at a higher level of abstraction in SVG 2, in a similar way to the thoughts around how filters could be dealt with at a higher level of abstraction. Is that an area you&#39;re looking at as a way of offering the things Web devs want to do with SVG fonts that aren&#39;t really fonts (logos, custom characters and the like)?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anton</div>
+<div class='content'>Unbelievable. Just unbelievable...<br>People keep telling you that they want SVG fonts because of many, many reasons. You even say it&#39;s easy to implement. And then you say: &quot;No, you don&#39;t want them.&quot;<br>And don&#39;t point to ttx every time, it&#39;s completely unrelated to the context.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Neither Webkit nor Opera support colored or animated glyphs in SVG Fonts.<br>That&#39;s the point; they&#39;ve implemented the small subset of SVG Fonts that doesn&#39;t give you anything over TTF or WOFF.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Grady, thanks for that detailed message.
+
+WOFF does include the path data for each glyph of a font --- in Opentype format.
+
+SVG Fonts can also be rendered differently on different clients, because SVG path rasterization is not standardized. I appreciate that in practice you&#39;d see less variation in SVG font rasterization than in Opentype rasterization.
+
+We are working on an alternative approach to supporting SVG glyphs --- embedding SVG glyphs in Opentype Fonts, as suggested by Adam Twardoch and others --- that doesn&#39;t suffer from the deficiencies of SVG 1.1/1.2 Fonts and would hopefully have met your needs.
+
+&gt; If you don&#39;t intend to support SVG 1.1 completely, then
+&gt; remove SVG support entirely. Either support the entire
+&gt; spec, or none of it. Half-Supporting a standard is
+&gt; actually worse than not supporting it at all.
+
+No browser supports full SVG 1.1 Fonts (e.g., no browser supports colored or animated glyphs), so do you conclude that all browsers should drop SVG support?</div>
+</div>
+<div class='comment'>
+<div class='author'>Stijn</div>
+<div class='content'>I just want to ask Robert and the other Mozilla folks why you don&#39;t react to the question asked a lot of times now above: Why is it ok for Mozilla to only partially support a standard?<br>I get the reason for ignoring some web standards. Lord knows some have come out of W3C that deserve to be ignored. But what about implementing a standard, just not completely? Can you respond to that specific question?<br>I think you should drop all SVG support or work at supporting it 100%, don&#39;t build some firefox-SVG-subset of it. Preferably the last option! :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Inboulder</div>
+<div class='content'>The time to complain about a standard is before it becomes one. Implement the standards, end of story.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>JimB, I don&#39;t know what Inkscape is generating in your case. Inkscape could, if it wanted to, generate a subsetted TTF or WOFF font embedded as a data: URL and it should just work without SVG Fonts. You&#39;d get better text rasterization too.<br>Havvy, I&#39;m not sure why you think Mozilla&#39;s goals are &quot;selfish&quot;. Our goals are about making the Web better. What&#39;s selfish about that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Disgrace</div>
+<div class='content'>http://blogs.msdn.com/b/ie/archive/2010/06/23/html5-native-third-ie9-platform-preview-available-for-developers.aspx<br>IE9 is now at 83/100 in Acid3 and should get 100/100 soon, might even be the next platform preview passing Firefox easily.<br>Mozilla is a disgrace for not supporting SVG Fonts and web standards.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gyrobo</div>
+<div class='content'>As everyone else is saying, I don&#39;t understand your position on SVG fonts. WOFF and SVG *can&#39;t* be used interchangeably -- WOFF isn&#39;t vector-based, it doesn&#39;t have a DOM, it serves a different purpose. You said in the post (several times, in fact) that there are good reasons for opposing SVG fonts, but you didn&#39;t really explain those reasons. Could you?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mawrya</div>
+<div class='content'>You must be learning what it&#39;s like to be a politician. We elect people to government so they can make decisions that require careful study so that the rest of us can work on other things. The trouble with being a politician is that you have to communicate the reasoning behind any controversial decisions to the satisfaction of the people. This is by definition difficult as the reason you were hired to make the decisions in the first place is because they weren&#39;t simple decisions and so are not simple to explain. If you aren&#39;t able to communicate effectively on particularly controversial decisions, well, we know what happens to those politicians/parties.<br>Good on you for communicating. I use SVG a lot, and although I wouldn&#39;t mind hearing an explanation of how WOFF can completely replace SVG fonts, I tend to trust your judgment. Keep up the good work and keep communicating.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Cristian Ciupitu</div>
+<div class='content'>While I understand why you&#39;re not supporting H.264 videos natively, I don&#39;t see a reason for not supporting 3rd-party codecs. WebM isn&#39;t the only open video codec. What happens if I want to use Dirac for example or if a new version of WebM appears? I have to wait until Firefox implements them :-(</div>
+</div>
+<div class='comment'>
+<div class='author'>IOOI SqAR</div>
+<div class='content'>Mister O&#39;Callahan wrote:
+
+&gt; SVG Fonts --- at least the subset implemented in Opera and Webkit
+&gt; --- don&#39;t offer anything significant over downloadable Opentype 
+&gt; (or WOFF) fonts ... except the last three points of the Acid3 test :-(.
+&gt; And people keep asking for it &quot;because it&#39;s in SVG 1.1&quot;. But I don&#39;t think
+&gt; those are good enough reasons on their own to make SVG Fonts 
+&gt; an essential part of the Web platform.
+
+Dear Mister O&#39;Callahan,
+
+did you ever think about the fact that SVG might not only be used on web pages but also as a self contained interchange format for vector graphics? For such a format is supporting embedded fonts essentially so a single file can contain all of the graphics and doesn&#39;t need to be exchanged in company with a bunch of supporting files (the fonts).
+
+The Mozilla Corporation is actively sabotaging this purpose of SVG by not implementing SVG-Fonts in its viewer applications (might it be the web browser or the Mailing client).
+
+Please think about this issue one more time!
+
+regards,
+
+    Lars</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>smably and others: Adding every single &quot;standard&quot; to the browser is definitely not a wise path to follow. There are a number of standards that are pretty bad in various ways. And even non-objectionable standards add complexity to the Web platform and bloat to browsers, so have a cost for everyone. Thus the decision to implement a standard requires some cost-benefit analysis beyond just &quot;it&#39;s a standard!&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Peter, sorry, I didn&#39;t mean to demonize you. I don&#39;t think there&#39;s anything necessarily demonic about focusing on market share. I do think that as a for-profit corporation you have to be more focused on --- well --- profit! But I think we had that discussion before.<br>Are there Web platform features that people requested that the Chromium team has rejected implementing because they&#39;re not good for the Web?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Grady</div>
+<div class='content'>Robert your decision has hurt me as a developer. This is the first time that Firefox has ever let me down, and I hope it&#39;s not a sign of things to come. You seem pretty convinced there&#39;s no good need for SVG Fonts, so let me show you a valid real life example playing out right now.
+
+I&#39;ll make this as brief as possible and break it down into points, since I&#39;m struggling to get under the character limit for this post.
+
+-I&#39;m working on a commercial web application project, for a printing company with lots of different products.
+-We decided to use SVG instead of Flash early on (big regret now).
+-The application lets users create designs in the web application in browser, and send them for printing.
+-Our outsourced printers accept vector artwork only.
+-SVG seemed useful, because we could edit it with Javascript, and easily convert it to print ready PDF&#39;s.
+-Naturally, SVG support is crap in IE9, and there&#39;s no support in IE8, and IE7.
+-Our solution was to use SVG-Web for IE, and native SVG for other browsers.
+-SVG-Web is it&#39;s own hell, that in many ways is different to native SVG.
+-To develop one version of the application that uses SVG native and one version that uses SVG-Web, would cost development time (and hence money).
+-Development time was justified by user statistics, 50% of visitors used something other than IE. There was to be two versions, SVG-Web (for IE), and native SVG for modern browsers.
+-We discovered Firefox doesn&#39;t support SVG Fonts. Hence we would have to use SVG-Web for Firefox too.
+-Firefox accounts for 25% of users here.
+-75% of users would see the shim&#39;d version, and only 25% would see the native version.
+-There&#39;s no justification for spending so much extra development time, on an alternative version for 25% of users, when the shim&#39;d version will work on their browsers as well.
+-Hence, it was decided, no native version would be developed at all.
+-No native version is being tested or developed. That means we must block users without flash support, since SVG-Web must run in Flash mode only.
+-We must block users because we have no time to test or develop a native SVG version, or even see if our SVG-Web code runs properly in native SVG for some browsers.
+-We must block users because we can&#39;t have something being printed that looks different to what they saw on screen. We need the print result to be reliably perfectly the same as the on screen design.
+
+By now you may be wondering, &quot;What reason could you possibly have for needing SVG Fonts that badly, why couldn&#39;t WOFF font solve your issues?!&quot;.
+
+-One of our major requirements which is not optional in the slightest, is that there can be no different between what the user sees on screen when designing, and what is printed.
+-Standard method for ensuring print results are exactly the same as what&#39;s designed in a program like Illustrator, or in a webpage in our case, is to outline the text before it&#39;s sent.
+-Text must also be outlined and turned into vector form for our printers.
+-SVG Fonts include all the required information for us to outline text in the browser client side, ensuring what&#39;s sent is exactly what&#39;s on screen, with no difference.
+-WOFF is useless to us because it can be rendered differently depending on the system it&#39;s on.
+-WOFF also doesn&#39;t include the path data for each glyph of a font.
+
+So there you have it. Hence we can&#39;t use WOFF, hence we need SVG Fonts, hence because Firefox doesn&#39;t support them, we are using SVG-Web for Firefox. Hence because we are using it for Firefox and IE, we&#39;re now using it for all browsers.
+
+Here&#39;s my advice: If you don&#39;t intend to support SVG 1.1 completely, then remove SVG support entirely. Either support the entire spec, or none of it. Half-Supporting a standard is actually worse than not supporting it at all.</div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>&gt; if Mozilla went totally pragmatic, focused on scrambling for market share, we&#39;d lose our reason to exist.<br>First, market share has always been an official top priority for Mozilla. You&#39;ve always admitted it&#39;s a better balanced ecosystem that leads to better interoperability.<br>Second, what makes the web a better place is standard interoperability. Thus, not implementing SVG Fonts hurts interoperability (and accessibility).<br>Third, Mozilla&#39;s reason to exist is to follow the standards.<br>So please, tell us again. Why would implementing SVG Fonts be bad for the web, again ?<br>If you really believe it hurts the web to implement a worse alternative for a feature, then remove CSS transforms from Gecko. Because they &quot;don&#39;t offer anything significant over&quot; SVG effects for HTML elements. So &quot;they&#39;re just unnecessary for the Web platform&quot;.<br>Frankly, you&#39;re luring us with such an argument.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Scott S. McCoy</div>
+<div class='content'>I&#39;m not quite sure why IndexedDB is better than WebSQLDatabase.  I do agree that WebSQLDatabase is less than *ideal*, namely because as you mentioned it wholly abdicates specification of a SQL dialect to &quot;SQLite&quot;.  This abdication neither makes a good standard nor is good, SQLite is a quirky implementation of SQL which doesn&#39;t provide even a notable subset of any of the SQL standards.  But my qualm with IndexedDB as a &quot;superior alternative&quot; to WebSQLDatabase is that I don&#39;t believe anyone who is serious can honestly consider a hierarchical database a superior alternative to a relational database in such broad terms and keep a straight face.  Hierarchical are properly applied solutions to one subset of data-storage problems, and relational databases are properly applied solutions to a separate and mildly overlapping subset of data-storage problems.  If this were not the case, it&#39;s worth noting that we probably wouldn&#39;t have the substantial investment in relational databases that exists today — after all, hierarchical database models pre-date relational databases models by about a decade.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dirk</div>
+<div class='content'>I was not talking about implementing all standards that the W3C provides, but I was talking about web standards. There are a lot of standards on the W3C that doesn&#39;t make any sense in the browser world and the intentions of them are to work on servers, SOAP is one of this examples. And partly XSLT as well, even if many browsers have support for it.<br>Mozilla decided to implement SVG, an undisputed web standard, but not a (currently requested) part of it. That&#39;s not the best decision in my eyes. Many comments above also gave some examples, why SVG Fonts still have it&#39;s relevance.<br>But I also have concern on feature proposals for SVG like 3D-transformations. It&#39;s not the task of SVG to support 3D effects. The first sentence of the SVG specification says: &#39;This specification defines the features and syntax for Scalable Vector Graphics (SVG) Version 1.1, a modularized language for describing two-dimensional vector and mixed vector/raster graphics in XML.&#39;<br>2D, not 3D! But if 3D transformations will get a part of SVG, we&#39;ll add support for it as well.<br>That said, we continue to implement SVG Fonts 1.1 on WebKit, like we do for every other part of SVG.<br>I doubt that I will convince you of my beliefs here. I was very happy that Firefox get SVG animation support and I would be happy about SVG Fonts support too. I still hope, that Mozilla will reconsider the statement about SVG Fonts someday. :-)<br>PS: Thanks for the discussion and taking the time to declare your postion roc. It&#39;s not bad to have different positions on a topic, as long as it gets discussed, even if it just ends in an minimal consense like adding support for WOFF.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Zingus</div>
+<div class='content'>I&#39;m with you on local DBs and H264 as I have no sympathy for SQL (it&#39;s out of his time frame) and patent pools.<br>But IMHO WOFF is a lost cause.<br>1) the name sucks (and it actually matters if you have to explain a delay to an executive which doesn&#39;t get what you are talking about)<br>2) graph people hate being framed by technical issues they don&#39;t get. And they are already rolling out square tons of svg with their inkscapes.<br>Unless mozilla convinces the inkscape team to roll out dummie proof svg+woff... that svg content will reach a critical mass.<br>These may not be &quot;good&quot; reasons, I know.<br>But if there&#39;s a need for good reasons to achieve success, there&#39;s no such requirement for failure.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>I have to admit, I don&#39;t quite understand the decision on SVG fonts. Is it possible to create a TTF or WOFF file with just a text editor?<br>Isn&#39;t that a *significant* part of what it means for a technology to be open --- that we can tinker with it? How do we tinker with WOFF&#39;s?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Havvy</div>
+<div class='content'>The goal of the Mozilla Foundation is not altruistic.  It is one of selfishness.  Market share might not be your goal, but you have a goal nonetheless.<br>Still, if you end up resisting something that causes people to abandon the project in large numbers, make sure to re-evaluate the definition of &#39;best&#39; that is being used.<br>-- Havvy [who dislikes the term altruistic]<br></div>
+</div>
+<div class='comment'>
+<div class='author'>yagraph</div>
+<div class='content'>Hi Robert, and thanks for your work at Mozilla.<br>It&#39;s my first comment her, but as I already reported on the corresponding bug (https://bugzilla.mozilla.org/show_bug.cgi?id=119490), I think you&#39;re wrong with SVG Fonts :<br>Let me explain why I<br>think SVG fonts are IMPORTANT for Firefox and for the web, and why it kill<br>kittens to postpone implementation.<br>If I had enough skill to do it, I suppose I already submitted a patch, but I&#39;m<br>not, so here I am, arguing.<br>I&#39;m a graphic and web designer, working with FOSS softwares, including<br>Inkscape. I learned more on how to use SVG with the &quot;Introduction to SVG&quot; W3C<br>Tech Course recently (I&#39;ve started to play with SMIL, and so on).<br>I come from a proprietary world were Flash is the easy and direct solution to<br>produce funny interactive medias in a few hours. Trying to produce half of the<br>same visual result with open standards is a pain for peoples who never learned<br>to code (yes, I try to, as much as I can, and I do not use Flash anymore).<br>Canvas, SVG, CSS, HTML5, WebGL are good steps for more interactivity and fun on<br>the web. But if actors as decisive as Mozilla do not implement them fully,<br>there is no hope on the horizon. Not to mention any authoring tool.<br>It&#39;s not about Acid3, even if it may be good for marketing purposes.<br>It&#39;s not about Opera, Chrome and Safari who have a minimal implementation of<br>SVG Fonts. It&#39;s not because they have one, it&#39;s because they have a poor one.<br>It&#39;s not about Opentype or @fontface which is better in some ways, and poorer<br>in others. It&#39;s another technology, for different purposes, in different<br>contexts. Yes it do part of the same thing, but you can&#39;t know in advance how<br>peoples will use it.<br>By not implementing SVG Fonts in a mainstream project like Firefox, tons of<br>smaller projects suffers : An example ?  Sozi : http://sozi.baierouge.fr/ and<br>Inkscape : http://inkscape.org/<br>Another ? The own Mozilla &quot;Game On&quot; : https://gaming.mozillalabs.com/<br>Yes, we can vectorize fonts, but you know it means killing semantic.<br>It&#39;s about hack-ability, openness, standards, and fun on the web. It&#39;s more<br>than really important.<br>A syllogism to make it definitely clear :<br>1) Typography is to design what the ball is to Tenis game.<br>2) The only serious candidate we have for interactive, animatable, colorful,<br>warpable, paterned, put-on-a-line, morphed open typography on the web is SVG<br>fonts.<br>Conclusion) There is no interactive, animatable, colorful, warpable, ... open<br>web-designs without SVG Fonts.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joe</div>
+<div class='content'>The alternatives you suggest may be superior but since Mozilla doesn&#39;t have the kind of mobile presence that Webkit has I just don&#39;t see those alternatives winning. In the meantime it just creates extra work for web devs trying to support different implementations of features. Firefox is a wonderful and amazing browser and I appreciate what Mozilla has done for the web by saving us from a web dominated by Microsoft but I fear that your principles are going to turn Firefox into the IE of the 2010&#39;s. What I mean is that implementing a feature for all of the other browsers will be easy but you will have to use a workaround for Firefox.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>http://lists.w3.org/Archives/Public/www-svg/2010May/0046.html<br>&gt; Opentype is much better than SVG Fonts in<br>&gt; almost every respect: hinting, subpixel<br>&gt; antialiasing, i18n support, availability of<br>&gt; fonts, familiarity to authors, support in font<br>&gt; design tools, advanced formatting features (see<br>&gt; CSS3 Fonts spec), and so on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>The time to complain about a standard is before it becomes one. Implement the standards, end of story.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alex Leduc</div>
+<div class='content'>I understand the rationale behind not supporting SVG fonts and frankly, with all the other new stuff you are implementing, I think people should cut you some slack.<br>That said, it would be nice to get it at some point in the future. I&#39;d really like to try to build complete web sites one day with only SVG as the main document type (no HTML). So far I have only seen it being used for stand alone image but I have yet to see a site with a layout entirely done in SVG :(<br>Link would be appreciated if you know of any!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>BTW in these comments a lot of people talk about &quot;focusing on users&quot;. Let&#39;s be clear, SVG Fonts has almost nothing to do with actual browser users. The interest in SVG fonts comes from a relatively very small number of Web authors.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Helmut von Lichtenstein</div>
+<div class='content'>If Mozilla ever wants proper market share in the business, it will need AD support so I can have a snapin that forces homepage, block extensions, force proxy, and a variety of other settings.<br>And an msi file so I can be pushed out by group policy.  I know it is on the roadmap, but it somehow keeps being put off until next revision.<br>It is ridiculous already that IE8 is being used here only because corporate won&#39;t allow us to use FF due to those reasons above.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>DigDug</div>
+<div class='content'>I don&#39;t really get the problem with SVG Fonts either. They&#39;re probably not the best solution in the world, but they definitely seem more &quot;open&quot; to me than WOFF did.<br>IndexedDB just looks kinda silly in the incarnation I saw the other day though. A bunch of examples attempting to show its simplicity that could basically be done with JS array operations. Followed up by a complex joined query (the case where having a real DB rather than just arrays is useful), and suddenly it turned into a jumbled mess. I mean, how could someone even write that code and not laugh at themselves the whole time.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Timothy Warren</div>
+<div class='content'>I understand why you guys won&#39;t implement web storage and H.264, but I&#39;m really failing to see the reason for not supporting SVG fonts.<br>Generally, the best solution for a web designer is the simplest one. For example, border-radius in CSS3 makes more sense to use than hacking boxes of divs. You can do it both ways, but which is better?<br>The same applies to webfonts. WOFF is a great standard, I&#39;m sure. But if SVG fonts have specific advantages that aren&#39;t easily addressed using WOFF, and it&#39;s a set standard, what reason do you really have to give? Duplicating functionality is okay in such cases.<br>I don&#39;t care about browser market share. I care about common functionality. You have no excuse.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mardeg</div>
+<div class='content'>From http://slidedrive.wordpress.com/2012/05/11/svg-and-web-safe-fonts/
+&quot;Things initially looked good: Marco Cecchetti programmed LibreOffice’s SVG exporting feature to embed copies of all necessary font/characters combinations in the exported document. It seemed like users would be able to use any fonts they wanted without needing to worry. Unfortunately, I soon realized that Firefox does not support embedded fonts in SVGs
+...
+So, here’s the approach I’m going with: include a list of alternatives for many common fonts. The top priority are fonts with identical metrics, as mentioned above, but at a lower priority we’ll include approximately-similar fonts, and finally fall back to a generic font category (serif, sans-serif or monospace). For each font in the document, try the following options in order:
+
+    Check if the font is installed on the system.
+    Check if the font is embedded in the SVG, if supported.
+    Check if any of the fallback fonts are installed.
+    Check if any of the fallback fonts are available through Google web fonts.
+    Give up.
+
+When the user is creating a presentation, they’ll be warned if they use a font that we don’t expect to be “safe”, and warned more strongly if they use a font we don’t recognize at all (i.e. have no fallbacks for, of any quality).&quot;</div>
+</div>
+<div class='comment'>
+<div class='author'>Dirk</div>
+<div class='content'>This comparison with IE was maybe a bit to harsh.<br>But you were explicit talking about &#39;not implementing certain Web platform features&#39; and just took SVG Fonts, WebSQLDatabase and H.264 as an example. While the last two examples are no web standards yet, it means you did not limit your statement to the three examples.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>SqAR: that can be done using any font format; just encode the font in the document as a data: URI.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>If a standard has some good parts and some bad parts, doesn&#39;t it make sense to just implement the good parts?<br>In some cases it might be hard to separate the good parts from the bad parts, or authors might not understand the boundary. But SVG fonts is not one of those cases.<br>The problem becomes especially severe when standards evolve. A standard might start off with only good stuff, so you implement that, then it evolves and some strange or bad features are added. Should we then remove the existing support that we already shipped in a Firefox release? (This is not really the case for SVG Fonts, but it means that in general we have to live with not supporting all of a standard.)<br>Note also that *no browser* supports SVG 1.1 &quot;full&quot; Fonts, and none of them are working on such support. Should all browsers drop SVG support?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Stephen Turnbull</div>
+<div class='content'>@ROC: &quot;If a standard has some good parts and some bad parts, doesn&#39;t it make sense to just implement the good parts?&quot;  Indeed, it does -- for the optional parts.  SVG Fonts are a required part of the standard, though.  &quot;Note also that *no browser* supports SVG 1.1 &#39;full&#39; Fonts, and none of them are working on such support.  Should all browsers drop SVG support?&quot;  Of course not, none of them support SVG in the first place! ;-)<br>IOW, feel free to support any SVG features you like, and leave out any you don&#39;t like.  Just don&#39;t claim support for the standard if you don&#39;t conform fully to the mandatory requirements.  If you advertise partial support, that&#39;s fine by me, and I probably won&#39;t even switch to a different browser to get support for SVG Fonts.  (By that I mean a statement like &quot;we support almost all features of the SVG 1.1 standard, but do not support SVG Fonts&quot;.)<br>I do think you&#39;re missing a bet here.  [X]Emacs supports creating &quot;private&quot; fonts (most simply via bitmaps), and this feature has been used in a number of useful applications.  In most cases they have since been replaced for almost all users by better technologies -- but I don&#39;t know of any cases where that took less than &quot;years&quot;, and in at least one case it took more than a decade.<br>I have to agree with those commenters who have said that defining fonts for SVG using SVG makes it easy to do, and easy to introspect when somebody defines a font that way.  I agree with you that authors are hardly representative of all users, but they are users, and they&#39;re pretty important ones.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Firefox is the new IE6. I can&#39;t wait to code around Firefox for basic stuff that the rest of the world supports.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jim B</div>
+<div class='content'>Robert, I&#39;m no SVG expert so maybe I&#39;m missing the point.  I created a nice diagram using InkScape with the intention of using it on one of my websites.  However, the text part of the diagram shows up as blank rectangles of the wrong orientation when the .svg is viewed in firefox.<br>It seems I must place an svg object for the purely graphical part of the diagram and then use woff / css / transforms to place the text manually.  While it is possible in my case, it is hardly convenient.  For other cases it seems like it wouldn&#39;t be possible at all (eg, where the text is layered with graphical objects within the svg).<br>(hmm, I just tried viewing the same svg file in opera and the text didn&#39;t show up at all ... maybe it is an svg thing)<br>Nonetheless, I appreciate the stand you are taking in doing the right long-term thing, even if it causes some pain now.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tim</div>
+<div class='content'>SVG Fonts have one advantage over Opentype fonts: their hackability. SVG is writable for every interested web author whereas Opentype font generation is more of a specialized science with its own tools. I&#39;m frustrated, because I envisioned SVG Fonts as a great possibility to do image replacement (think logos and such) and glyph replacements (think ampersand, quotemarks). Firefox support is not a necessity but it&#39;s sad that Firefox users won&#39;t get the grade a experience.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mark</div>
+<div class='content'>For future readers:<br>If implementing SVG fonts is easy, why don&#39;t you do it?<br>Because implementing all of it isn&#39;t easy. Implementing the small subset required to pass Acid3 (like what Opera and Webkit have done) is easy, but ultimately useless.<br>Source: http://limi.net/articles/firefox-acid3/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matthew Holloway</div>
+<div class='content'>Just adding that Mozilla should encourage a profile of SVG+WOFF in coordination with Inkscape.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kwerboom</div>
+<div class='content'>1) I&#39;m not interested in databases for browsers at this moment as this seems like its in the pre-alpha stage as far as standards go.  That being said, I have used MySQL and PHP on some projects and ASP.NET and MSSQL Server on other projects.  Based on the fact that most anyone doing anything with databases server side has used some form of SQL, my guess is that WebSQLDatabase will win based on familiarity.  Then again, the 50% solution that can be built out to 80% usually wins out over the &quot;right way&quot; in the tech field anyway.<br>2) H.264 vs WebM vs Theora will sort itself out with Apple (who has hitched its horse to the H.264 wagon) using H.264 exclusively, everyone else going with WebM as the second implementation, and Theora being used solely by Firefox, Chrome, and Opera. Yes, IE will still be the biggest, controlling share of the market and the market will accept IE&#39;s H.264/WebM set up as the de facto standard.  Also, I keep hoping that the TheorARM project helps Theora&#39;s chances.<br>3) ALL THAT BEING SAID...I still say Mozilla is being idiotic for not implementing SVG Fonts.  There is no excuse for this, as SVG Fonts are an OPEN standard and a SET-IN-STONE standard. As it was stated at Google I/O about Flash being implemented in Android 2.2 and roughly paraphrased here, &#39;an open web means an inclusive web&#39;.  In this case, you are excluding based on your personal tastes and wrapping yourself in the cloaks of benevolence and righteousness as you tell web designers like me that you know better what tools I want to use or need to use than I do.  Give me the tools and let me take them where I will.  And before you say that if I want a feature then I should submit a patch for it, I will state that I don&#39;t currently have the programming skills in this area to do something like implement SVG Fonts.  I rely on people with those skills at Microsoft, Opera, Mozilla, and in the Webkit/Google/Apple community to implement them for me so that I can use them.<br>That&#39;s my two bits on your post.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>AnnoyedAnonymousUser</div>
+<div class='content'>You lost me many months ago when you started taking a &quot;stand&quot; against philosophical &quot;Ideals&quot;.<br>Just do it and get it over with.<br>Google Chrome now does everything I need.  They&#39;re up with the times.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Dirk, we&#39;re working hard on truly free, properly standardized, superior alternatives to all these things:<br>-- SVG Fonts -&gt; WOFF<br>-- WebSQLDatabase -&gt; WebIndexedDB<br>-- H.264 -&gt; WebM<br>Not to mention our leadership on other emerging standards such as HTML5 parsing, WebGL, sample-level audio, CSS3 typography, File API, FormData, CSS calc(), ... Does that really sound like IE6?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>I know how to generate dynamic SVG Fonts (say with PHP).<br>But can I generate WOFF that simply ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>The TTX thing is pretty cool, but it&#39;s akin to using Latex 2 HTML rather than authoring natively in HTML.<br>Everything Mozilla does seems to be aimed at supporting openness and hackability: so we have the stand Moz took on video codecs, David Humphrey&#39;s work on exposing audio data to JS, supporting hackability with HTML and the DOM (over untamperable binaries), the crucial &#39;View Source&#39; command (which Moz supported when it was under threat years ago), supporting SVG as an image format with an object model, supporting canvas and the ability to manipulate pixel data, etc. WOFF just can&#39;t be as hackable as SVG fonts could be. WOFF doesn&#39;t have a DOM. I can&#39;t just inspect a WOFF font in Firebug, change a parameter, and see the effect. I can&#39;t view source a WOFF file on a whim and say &#39;Oh, that&#39;s an interesting approach; I might use that myself&#39;. This is not the overbloated MNG or SVG image format with the kitchen sink and network sockets. This is fonts --- glyphs --- scalable vector graphics (!) --- in a standardised scalable vector graphic format called SVG. It seems to me that not supporting SVG fonts goes against the very core philosophy of what Mozilla evangelises: openness, hackability and helping people beat that drum.<br>Now, if you&#39;re not implementing it because there&#39;s performance issues or because noone has time right now, I completely understand. Or maybe the SVG fonts spec isn&#39;t mature enough yet --- I&#39;d understand that too. But to take a stand *against* SVG fonts specifically from ever being implemented because they are Wrong . . . I don&#39;t know, I&#39;m just baffled.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Scott</div>
+<div class='content'>I don&#39;t personally care about the SVG font issue either way.  I&#39;ve never had a use for it (or WOFF for that matter) and probably never will in the foreseeable future.<br>That said, arguing with your readers and people that promote your product to their friends and family seems like a pretty unprofessional, and frankly, stupid, thing to do.  Of course you&#39;re interested in market share -- you wouldn&#39;t build and promote a product if you didn&#39;t want people to choose it.  Don&#39;t risk becoming irrelevant.<br>You don&#39;t want to implement it?  Fine.  Right or wrong, Mozilla can make that decision on a product they create.  But being dismissive of the opinions of other smart people trying to give feedback is not the way to convince people you have made the right decision.  Be careful when describing your (personal or corporate) opinion as fact.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jens-Petter Salvesen</div>
+<div class='content'>Partially implementing open standards is the sort of evil we&#39;ve attacked Microsoft for doing.<br>I agree that H.264 and WebSQLDatabase are technologies/evils worth fighting, but fighting a subset of an open standard is laughable.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>&quot;Opera [...] implemented [...] a small subset of SVG 1.1 Fonts; basically just enough to pass Acid3&quot;.<br>Their implemented SVG years before Acid3 was even imagined.<br>Now, how do you solve this use case with WOFF : colored animated unicode emoticons ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>MarkC</div>
+<div class='content'>Whilst I agree with your stand over H.264 and WebSQLDatabase, I can&#39;t agree that WOFF is a suitable replacement for SVG Fonts.<br>For the simple situation of wanting to use an existing font for HTML content, WOFF is great. But SVG Fonts offer more than that: each glyph can be made up of arbitrary SVG content, making SVG Fonts an easy way to create &quot;libraries&quot; of content. Think circuit symbols or flowchart boxes.<br>The fact that such glyphs can be created using a developer&#39;s existing SVG knowledge (or current SVG authoring tools) puts SVG Fonts at an advantage for dynamic creation and manipulation within the browser. SVG Fonts can be created and manipulated using Javascript and the DOM, making them readily amenable to client-side creation and manipulation. That&#39;s not the case for WOFF, as far as I know.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jim</div>
+<div class='content'>Fine.  Don&#39;t implement those features.  If a better browser comes along, I&#39;ll use that one.  If something only works in Chrome, I&#39;ll use Chrome.  I&#39;m not going to give up web experiences just so that I can use Firefox.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Fritz</div>
+<div class='content'>ROC, I don&#39;t think anyone wants to Mozilla to be totally pragmatic.  I think most of us who at least follow development understand and agree with the decision on H264.  And reading the posts on IndexedDB it seems that decision is understandable if not over my head a bit.<br>But with SVG fonts you&#39;re refusing to implement a standard that would be &quot;very easy for us to implement&quot; and isn&#39;t harmful.  It might not be as good but it won&#39;t kill off WOFF and--for the effort it will take--it seems completely reasonable to implement it.  I&#39;d really like a better explanation in a post down the road for the decision.  I understand you don&#39;t think the standard is as good and I understand you don&#39;t want to just go with the crowd.  Is the reason because you think with SVG fonts, WOFF won&#39;t do as well?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Té</div>
+<div class='content'>Supporting CSS in SVG would be a better solution than trying to re-invent everything in SVG.<br>http://www.w3.org/TR/SVG/styling.html#StylingWithCSS<br>In an SVG user agent that supports CSS style sheets, the following facilities from CSS2 must be supported:<br>@font-face, @media, @import and @charset rules within style sheets ([CSS2], sections 15.3.1, 7.2.1, 6.3 and 4.4).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Lino</div>
+<div class='content'>Robert, I just wanted to let you know that there are some Firefox users, like me, that really get it and appreciate a lot the Mozilla stance on this.<br>Especially on H.264, a few months ago when lots of people asked to &quot;just use the native frameworks and codecs installed by users&quot;, I think video on the web was very close to become forever proprietary.<br>Only Mozilla saved the web on this and I&#39;m very grateful for it. I understand that you chose to withstand shitloads of FUD and unfair criticism to protect the web developers and the end users.<br>Thanks to Google now we have WebM and the danger of a proprietary technology like H.264 becoming essential for the web is even smaller (but the war is far from over).<br>Anyway, thanks.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>That&#39;s not a good enough reason not to implement SVG Fonts. And that&#39;s the only one.<br>Since when does Firefox contain no duplicate features ?<br>There already are plenty of ways to achieve one given result. (i.e animations ? JS, SMIL, CSS-transitions, CSS-animations, Flash, GIF, APNG, video tag,... and it&#39;s not a problem for Mozilla to implement all of them)<br>So if it&#39;s easy for you, just implement SVG Fonts and move on, instead of spending time to write about it.<br>All this looks like an excuse to be late on Acid3 : &quot;Oh we could have done this for years! We just don&#39;t want to&quot;.<br>You either are wrong or don&#39;t want to tell what are the other reason.<br>A spec is a spec. And I don&#39;t want to switch from one spec to another while I&#39;m developing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>NETSCRAPNAVIGATION</div>
+<div class='content'>Firefox is the new IE.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>All those examples I mentioned are &quot;Web&quot; standards that could be implemented in browsers. Even today you can find people who want them in browsers.<br>We even had SOAP, WSDL and XForms support in Gecko some time ago. (We removed them.)<br>So, even if something is a W3C Recommendation, and you can implement it in a browser, and some people want it, that is not enough reason to make it part of the Web platform. I&#39;m sure my Webkit friends will back me on this.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Well try turning off cleartype in Windows 7 and then using Firefox on a site with icon fonts (github)
+
+the fonts look like SHIT
+
+come on just support svg, PLEASE.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>voracity: sure: http://www.letterror.com/code/ttx/index.html<br>David: JS, SMIL, CSS Transitions, APNG and  all focus on different use cases so they&#39;re all worth having. I&#39;m not sure about CSS Animations yet. We have to support GIF and Flash because there&#39;s lots of content that uses them already.<br>&gt; And I don&#39;t want to switch from one spec to<br>&gt; another while I&#39;m developing.<br>Ultimately that means all the features of each spec get copied into all the other specs. That&#39;s not good for anyone.<br>MarkC: We have  for reusing symbols. Assigning symbols to characters and then rendering them using SVG Fonts would be an abuse of SVG Fonts IMHO --- it would muck up search and accessibility for example.<br>Dynamically creating WOFF fonts isn&#39;t easy, but all you need is a JS library that takes glyph data --- in some format like SVG fonts --- and produces a data: URL representing a WOFF font. A bunch of code, but probably not difficult to write and it only has to be written once. I don&#39;t expect client-side font creation to be really common.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>TechZilla</div>
+<div class='content'>As a long time SVG supporter, Not upholding the Spec was very disappointing.  As great as WOFF is, for web content, SVG is not exclusive to web-browsers. Due to this decision, the denial of any possible SVG Font patches, I&#39;ve now switched to Chrome.  I refuse to support a project, which purposely refuses adherence to such an incredibly important standard.  SVG is not an ill-conceived draft standard, recently cooked up by Google or Microsoft.  Your reasons are simply irrelevant,  and most importantly, not a reflection of this community.  Never would I have expected Firefox, to ever let me down to such a degree, as I previously held them in high regard.</div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>I usually appreciate your insight. But frankly all your arguments in this issue disappoint me.<br>Their may be nice libraries around, but I have to review the code (in a language I may not know), review the license compatibility, and add the overhead to my application,...<br>Where do you see the simplicity, compared to common DOM manipulations ? Do I really have to clarify that.<br>Their are &quot;altruistic&quot; reason for not implementing H.264. But for svg fonts it&#39;s disdain towards existing svg implementations (and not only browsers), and authors.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Havvy</div>
+<div class='content'>@Dirk (yes, it&#39;s been a long time):  Because somebody has to define what better is, and that ultimately is a personal choice made by each &#39;self&#39;.  I&#39;m not saying that being selfish is bad...merely that it is.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philippe</div>
+<div class='content'>Obviously the use of a WOFF font can not be compared with that of a SVG font for the simple reason that the WOFF font can not be part of the XML structure of the SVG.
+Thus, the statements of Mr Robert O&#39;Callahan could be simply regarded as very stupid but I do not think this is the case. I rather think that Mr Robert O&#39;Callahan defends the interests of the company Adobe (Flash) against those of open source (SVG) in all understanding and dishonesty.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anton</div>
+<div class='content'>While I was thinking why do we disagree on fonts an analogy came to my mind - perhaps you are thinking that SVG fonts should be replaced by better technology of WOFF, similar to how GIF got replaced by PNG. But in my eyes, SVG fonts vs. WOFF are more akin to the situation of PNG vs. JPG - while JPG is used for majority of images there are cases where PNG is more useful.<br>SVG fonts fill different purpose as WOFF so it would make sense to support both.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Steve Antal</div>
+<div class='content'>If SQLite has a problem, fork it and fix it, giving us a technology from the past century will not help us. If I follow your logic, you should give us fwrite(), fclose() and flock() instead of IndexedDB.<br>Take the time and consider the pros and cons which were debated here: http://hacks.mozilla.org/2010/06/beyond-html5-database-apis-and-the-road-to-indexeddb/#comments<br>Why should a web developer who probably knows SQL need to learn anything else just to work on Firefox? Is Firefox going to be the new IE?<br>Another question that blows my mind: Why not do WebSQLDatabase AND IndexedDB? If you are right IndexedDB will win anyway....<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dirk</div>
+<div class='content'>I hope Firefox won&#39;t get the new IE 6. SVG Fonts will get an optional feature in SVG 2.0, so it is not a hard indication. And also H.264 is no  &#39;web standard&#39;. But a public announcement may not to support several web standards has a sneaky feeling.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>There&#39;s plenty of code around for generating TTF. Note that if you&#39;re just generating a font you can generate TTF instead of WOFF. See for example http://sourceforge.net/projects/fonttools/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>Robert that&#39;s just your interpretation, all be it the dominant one amongst Mozilla circles it seems.<br>What cannot Mozilla be motivated purely by user satisfaction?<br>I think you&#39;ve hit the nail on the head. Mozilla thinks what you have said, that it is some sort of digital moral guardian of all that is good. However the world may be going virtual but superheroes are still fantasy.<br>It&#39;s a fallacy that without this moral purity Mozilla would have no reason to exist. That is merely the spin perpetuated by the people in charge. Here&#39;s a whole list of reasons for Mozilla to exist:<br>- Providing user choice (lest we suffer a Google/Microsoft duopoly or worse, Opera)<br>- Protect users (privacy, security)<br>- Innovate on behalf of users (AwesomeBar, labs)<br>- Empower users (extensions)<br>and yes ...<br>- influence standards<br>Notice the emphasis on users, not technocrats?<br>Broadly speaking Mozilla has done a great job for users but the idealism of the moral technocrats in charge needs to be constantly challenged by pragmatism. Not with an insatiable desire for market share but with an irrepressible focus on users because if there&#39;s one lesson to be learned from various battles in the browser &#39;wars&#39; to date, it&#39;s that - in the end - satisfying users is all that matters. Look at IE6. The bastard Microsloth child refuses to die at twice the age of Firefox 1 and still holds a similar share to Firefox overall. Why? Antitrust distribution was clearly not the only reason. IE6 provided developers of internal applications with the power to integrate the web into business systems with relative ease (and little security of course). Firefox essentially took back 25% of IE&#39;s ground because Microsloth fell asleep in the trenches and Mozilla produced a superior user experience.<br>As yet, Firefox has not won a battle in the browser war and needs to decide if it is going to fight one with Google or stay happy with - at best - one third of the market because the &#39;sloth has awoken and re-armed itself and there&#39;s a big new threat forging their attack well and truly above the horizon and over that big hill over there.<br>Is Mozilla happy to see a browser landscape where three players share around 30% of the market? If so it has very little to worry about I expect. If not, start focusing harder on satisfying users and less on puritanical technocratic morals.<br>Lastly here is a classic example of how puritanical techno ideology is actually a very poor tactic in the video codec scenario. Why?<br>### Mozilla already distributes H.264 in Firefox! ###<br>It is simply bundled inside a plugin: Flash.<br>By refusing to bundle H.264 for &lt;video&gt; you are in effect damaging web standards because users (content providers) will simply stick with Flash to present H.264 video ... and Mozilla will be encouraging this by bundling Flash.<br>Yes, that&#39;s right, unless VP8 kicks off (big question marks on the chances of that right now) Mozilla is effectively supporting proprietary code, not it&#39;s well-spun openweb.<br>You have to give developers a reason to use standards beyond that they are morally more pure. Even with VP8 developers are more likely to stick with H.264 because of it&#39;s superior toolchain and because it is supported across most browsers through Flash. Pragmatic developers will just keep using swfobject and &lt;video&gt; will become just another redundant tag.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Blair Mitchelmore</div>
+<div class='content'>IndexedDB is not a &#39;superior alternative.&#39; It&#39;s horrible for doing anything but the simplest queries. Maybe it&#39;s not a good idea to expose Sqlite in the browser, but don&#39;t pretend that IndexedDB is any better.<br>If SVG Fonts are easy to do, and they&#39;re required for Acid3 compliance, why not just do them? Other browsers are doing it and it&#39;s not slowing them down (they&#39;re all beating you in benchmarks) so the &#39;bloat&#39; will be invisible to the user if done right. The only reason users care about software bloat is because it complicates the software and it slows it down. This should do neither of those.<br>I&#39;m fine with you not supporting h264.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Chris: that approach would have seen us supporting ActiveX on Windows, which would have been disastrous for the Web and for FLOSS. See http://weblogs.mozillazine.org/roc/archives/2010/01/activex_all_ove.html for more.<br>pd and others: if Mozilla went totally pragmatic, focused on scrambling for market share, we&#39;d lose our reason to exist. We&#39;d just be another Opera or Google, except non-profit. The world doesn&#39;t need that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Kasting</div>
+<div class='content'>Woah, hey there!  I take issue with that last comment implying that we Chromium folks are &quot;scrambling for market share&quot; over all else.  From where I sit what we, the team, care about is serving users and making the Web better -- the same sort of goals Mozilla has.  We simply come to different conclusions on some issues.  Reasonable people can disagree on some things.  Please don&#39;t demonize us, even obliquely.<br>FWIW, were we not burdened with having already released non-experimental SQL database support and thus being forced to support it, I suspect we&#39;d be happy to kill it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philippe</div>
+<div class='content'>yeah, using base64, easy!</div>
+</div>
+<div class='comment'>
+<div class='author'>Tiago Sá</div>
+<div class='content'>Robert.<br>How about implementing super easy to implement features like this one?<br>https://bugzilla.mozilla.org/show_bug.cgi?id=569816<br>I&#39;d create a patch for it myself, only I don&#39;t know where to learn how to do a patch :(<br></div>
+</div>
+<div class='comment'>
+<div class='author'>MarkC</div>
+<div class='content'>If search and accessibility is a big concern, I would have thought that would be an argument in favour of supporting SVG Fonts.<br>I have an SVG-based webcomic, created entirely in Inkscape. In a yet-to-be-published strip, I had need of a specific font (it&#39;s a parody of a film poster) which I couldn&#39;t find. So I implemented the glyphs I needed as SVG paths, and constructed the text letter-by-letter, using Inkscape&#39;s &quot;clones&quot; (&lt;g&gt; and &lt;use&gt; in the XML I would guess) to ensure all instances of a glyph looked the same.<br>Although the result looks right, it&#39;s lost all sense of the text being text. It&#39;s not searchable or accessible at all (short of manually adding &lt;title&gt; or &lt;desc&gt; elements).<br>SVG authoring applications support SVG Fonts right now. I&#39;m not aware of any that support saving glyphs as WOFF data urls, or of any plans for such support in the near future. Data urls make the resultant SVG file opaque and harder to edit - the antithesis of the open web.<br>By all means advocate WOFF support. If it&#39;s genuinely better then it shouldn&#39;t be too hard to convince authoring applications to support it. But as SVG Fonts are supported by other browsers, have reasonably widespread authoring support, are a published part of the SVG1.1 spec, don&#39;t have the sort of philosophical/legal restrictions that accompany H.264 and would be easy to implement, then why not enable them _while_ trying to convert the world to WOFF?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joshua Cogliati</div>
+<div class='content'>Can you explain or point to somewhere that explains why WOFF is superior to SVG fonts?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>RyanVM: That&#39;s right.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>Robert, thank you for this post - I don&#39;t think anybody could explain the issue clearer than you did. It&#39;s a problem most programmers have to deal with even though they rarely are as consequent about it as Mozilla. Unfortunately, people who don&#39;t want to understand the reasoning and simply beg for their pony will always object - see comments above. Hope those won&#39;t manage to discourage you.<br>Oh, and yes - SVG got out of hand trying to encompass everything. Agreeing on a sufficient minimal level of SVG support on the web is an important goal and will prevent future browsers from carrying around useless code only to provide a suboptimal solution for the problem.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>mark: SVG rocks, but SVG Fonts don&#39;t.<br>Scott: I don&#39;t think IndexedDB is really a hierarchical database. It&#39;s based on tables, keys and indices, much like SQL. The tables happen to be tables of objects instead of plain tuples, but the objects can&#39;t directly reference each other.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RyanVM</div>
+<div class='content'>Robert, am I correct in my understanding that other browser support for SVG Fonts is for the most part limited to what is needed for passing the Acid3 test? My interpretation of your post was that the *subset* of SVG Fonts that is actually implemented in browsers to date isn&#39;t functionally better than WOFF, not SVG Fonts as a whole.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ryan</div>
+<div class='content'>You&#39;re not doing the web a service so much as doing your users a disservice.<br>Many web developers will choose to use these features whether you implement them or not.  They&#39;ll just add a little note next to the video that says that you have to use a webkit based browser.<br>In order to watch these videos, since your browser does not support them, they will have to use another browser. Slowly they will fall into the habit of using a browser that supports all of the content they&#39;re trying to view, instead of just some of the content.<br>The idea that you think you can control the content on the internet, and are trying to do so, scares me.<br>tl;dr Mozilla&#39;s job isn&#39;t to control the content on the internet, it is to let their users view the content.<br></div>
+</div>
+
+</div>

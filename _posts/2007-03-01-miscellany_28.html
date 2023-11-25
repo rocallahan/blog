@@ -1,0 +1,59 @@
+---
+layout: "post"
+title: "Miscellany"
+date: "2007-02-28 16:07:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/02/miscellany_28.html"
+---
+<div class="columns"><p>Novell has generously granted permission to release <a href="/2006/12/more_about_ambe.html">Amber</a> as open source. I need to choose a license and a place to host it. Currently I'm thinking GPL and Google Code. The GPL isn't too restrictive because applications talk to the query agent using a pipe, so a debugger frontend or whatever would not be required to be GPL.<br/><p>I've been doing more wrestling with ATSUI to try to handle some tricky Hindi text. Hindi is basically left-to-right but sometimes a vowel that comes logically after a consonant is actually rendered to the left of the consonant. In this case ATSUI reorders the vowel visually which confuses our textrun infrastructure, because it depends on characters proceeding in a uniform direction. I'm dealing with this by fusing the reordered characters into a single atomic cluster. This is suboptimal, because you can't select part of the cluster or place the caret within the cluster, but it's probably good enough.<br/><p>Beyond that, I've made considerable progress on the new textframe. It can now display many Web pages without crashing. I've also got textruns refactored so that all platform-specific code is isolated to gfxFont and gfxFontGroup implementations; most of the platform-specific code is code to use platform APIs to extract positioned glyph data, which is then stored in gfxTextRun (which is now the same code on all platforms). I've got Mac and Windows textrun setup implementations now too.<br/><p>I'm going to be off work for a few days. Back at work on Monday, hopefully.<br/><p>All four of us current and soon-to-be Gecko developers in Auckland met for lunch today. It was exciting!</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Michael</div>
+<div class='content'>I can&#39;t wait to take a look at Amber when you release it!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Manu</div>
+<div class='content'>Great news about Amber becoming open source!  I look forward to downloading it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Benjamin Smedberg</div>
+<div class='content'>Boo on GPL! GPL is a blight on open-source software.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>tr</div>
+<div class='content'>Wonderful. A big thank you to Novell and naturally to you too, Robert.<br>At first I was mightily confused why it would be so important to get Hindi correctly rendered for Amber. A programmer certainly will be flexible enough to cope with a few UI inconsistencies. Until I&#39;ve read the title of your blog post... :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>asrail</div>
+<div class='content'>That&#39;s a wonderful new.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>ROC: I would argue that people will benefit from Amber in many ways, and that restricting the class of people who can use it via a GPL license will limit those benefits. Maybe code will be happier under the GPL, but those excluded people (both direct users, i.e. developers, and indirect users, i.e. all their customers) will not. I tend to value benefits to people over benefits to collections of characters.<br>Matt: I wouldn&#39;t presume to tell someone what license they should use on their own work, unless, of course, they ask. And maybe I misunderstood ROC&#39;s post, but I read it as asking for feedback, which I offered.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>GPL: You can use this code, but only if you give something back.<br>BSD: You can use this code, even if you don&#39;t want to give anything back.<br>I don&#39;t see anything wrong with either license - let him pick whichever one he prefers.  He is the one who wrote it, after all.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Because otherwise we enable people to use, modify, and not contribute back.<br>Given that Novell&#39;s being generous, I think it&#39;s fair to require some quid pro quo.<br>I&#39;d think otherwise if this was code I expected people to want to use in a library, but I don&#39;t think that&#39;s going to happen.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kate Dransfield</div>
+<div class='content'>Hi Robert,<br>I read this article and have been searching for some way to contact you.  I know that posting on your blog is a terrible way but it is my last resort!<br>Can you please email me: reception@orionhealth.com?  I have someone who wants to meet with you.<br>Thanks,<br>Kate<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Miguel de Icaza</div>
+<div class='content'>I would personally pick something even laxer, the MIT X11 license.   As you guys know, I have been warming up to it over the last few years.<br>It has the advantage that it maximizes cut-and-pastability of code, and although there is a risk someone can do something proprietary with it they still do it with the GPL, and unless you are willing to go to court there is no real difference.<br>Miguel<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian</div>
+<div class='content'>Please ensure that it&#39;s GPL2+ not GPL2 only. Or put it under the standard Mozilla Trilicence.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>Umm, how about BSD? I hear they release entire operating systems under that license, and no-one&#39;s died yet...<br>Seriously, why use a license that stops a whole class of people using and contributing back?<br></div>
+</div>
+
+</div>

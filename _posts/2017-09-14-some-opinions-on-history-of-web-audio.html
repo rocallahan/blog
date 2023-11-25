@@ -1,0 +1,45 @@
+---
+layout: "post"
+title: "Some Opinions On The History Of Web Audio"
+date: "2017-09-14 04:01:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/09/some-opinions-on-history-of-web-audio.html"
+---
+<p><a href="http://blog.mecheye.net/2017/09/i-dont-know-who-the-web-audio-api-is-designed-for/">People complain</a> that Web Audio provides implementations of numerous canned processing features, but they very often don't do exactly what you want, and working around those limitations by writing your own audio processing code in JS is difficult or impossible.
+<p>This was an obvious pitfall from the moment the Web Audio API was proposed by Chris Rogers (at Google, at that time). I personally fought pretty hard in the Audio WG for an API that would be based on JS audio processing (with allowance for popular effects to be replaced with browser-implemented modules). I invested enough to write a <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/streams/StreamProcessing.html">draft spec</a> for my alternative and <a href="http://robert.ocallahan.org/2012/01/mediastreams-processing-demos.html">implement a lot of that spec</a> in Firefox, including Worker-based JS sample processing.
+<p>My efforts went nowhere for several reasons. My views on making JS sample manipulation a priority were not shared by the Audio WG. Here's <a href="https://lists.w3.org/Archives/Public/public-xg-audio/2010Jun/0012.html">my very first response</a> to Chris Rogers' reveal of the Web Audio draft; you can read the resulting discussion there. The main arguments against prioritizing JS sample processing were that JS sample manipulation would be too slow, and JS GC (or other non-realtime behaviour) would make audio too glitchy. Furthermore, audio professionals like Chris Rogers assured me they had identified a set of primitives that would suffice for most use cases. Since most of the Audio WG were audio professionals and I wasn't, I didn't have much defense against "audio professionals say..." arguments.
+<p>The Web Audio API proceeded mostly unchanged because there wasn't anyone other than me trying to make significant changes. After an initial burst of interest Apple's WG participation declined dramatically, perhaps because they were getting Chris Rogers' Webkit implementation "for free" and had nothing to gain from further discussion. I begged Microsoft people to get involved but they never did; in this and other areas they were (are?) apparently content for Mozilla and Google to spend energy to thrash out a decent spec that they later implement.
+<p>However, the main reason that Web Audio was eventually standardized without major changes is because Google and Apple shipped it long before the spec was done. They shipped it with a "webkit" prefix, but they evangelized it to developers who of course started using it, and so pretty soon Mozilla had to cave.
+<p>Ironically, soon after Web Audio won, the <a href="https://github.com/extensibleweb/manifesto">"extensible Web"</a> become a hot buzzword. Web Audio had a <a href="https://www.w3.org/2001/tag/">TAG</a> review at which it was clear Web Audio was pretty much the antithesis of "extensible Web", but by then it was too late to do anything about it.
+<p>What could I have done better? I probably should have reduced the scope of my spec proposal to exclude MediaStream/HTMLMediaElement integration. But I don't think that, or anything else I can think of, would have changed the outcome.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Jasper St. Pierre</div>
+<div class='content'>A valid question which I feel would have been illuminating is the one I asked in my post&#39;s title: &quot;Who is this spec designed for? Who are we targeting?&quot; I asked in more in a... cynical, desperate manner, but it&#39;s a question I legitimately think should be asked of every spec that floats by W3C.
+
+As I mention, game developers usually have solutions like FMOD and Wwise which already have different specifications of such effects and won&#39;t benefit from nodes, and the professional audio market probably won&#39;t like the cheap-o built-in things either: the market there relies on a large set of complex effects and plugins.
+
+I&#39;d love to hear Chris Rogers&#39; thoughts on who Web Audio was designed for.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t know what Chris had in mind but I guess he had in mind the same audience that used the Core Audio builtin effects (&quot;Audio Unit Services and Audio Processing Graph Services&quot; I guess?).</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>But yes, you&#39;re quite right.
+
+One thing to keep in mind is that in 2009 when Chris started his work the idea of compiling C/C++ code (like FMOD) to some format (JS/asm.js/WebAssembly) where you would use Web APIs was not in the picture. So there was no thought of developers using FMOD directly, and CHris probably thought &quot;people who use FMOD&quot; would be an audience for Web Audio because they were going to have to rewrite their apps anyway so changes in the behavior of the nodes would be palatable.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>MiracleBlue</div>
+<div class='content'>Gosh, don&#39;t I remember this.  I remember building a POC web audio DAW for AudioData, and then later updating it for Webkit&#39;s Web Audio API.  My POC was nasty but at the same time incredible.  Had I known that WAAPI needed more help I would have loved to get involved, but I doubt I was up to the task at that point anyway.
+
+the thing that always stuck with me about WAAPI was the fact that, in order to do anything meaningful with it, I *needed* to find wrapper libs that did things in a way I both liked and understood (i.e, something with a simplified - but unopinionated - wrapper API, and didn&#39;t limit my need to over-use the crap out of it... attempting to run 400 simultaneous independent &quot;voices&quot; sequenced by a pure JS scheduler is the most enjoyable way of crashing a browser that I know!)
+
+The various times I attempted to read the actual spec, I never got more than a few lines into reading whichever part I wanted to learn about at the time, before realising it was all just too much.  It was absolutely enormous and daunting.
+
+Might have been just me, however.  I know a lot of amazing things were made possible with that API, but the makings of which to this day seem beyond my own comprehension.</div>
+</div>
+
+</div>

@@ -1,0 +1,30 @@
+---
+layout: "post"
+title: "rr Trace Portability: x87 \"Data Pointer\" Broken On Skylake"
+date: "2018-04-30 12:43:00 +0000"
+permalink: "/2018/05/rr-trace-portability-x87-data-pointer.html"
+---
+<p>x87 math instructions have an odd feature where the address of the last memory operand of an x87 instruction is saved in an "FPU Data Pointer" register. This value is stored into memory by an FXSAVE, XSAVE or similar instruction. (For some instructions only the low 32 bits are stored.) On a Broadwell machine this works as expected, but on my Skylake laptop the value is zero even immediately after executing a simple FLD instruction. This program shows the bug:
+<pre>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+static char buf[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static char fxsave_buf[512];
+int main() {
+  int ebx;
+  asm("cpuid" : "=b"(ebx) : "a"(7), "c"(0));
+  printf("cpuid(7,0) ebx=0x%x; FDP_EXCPTN_ONLY=%s\n",
+         ebx, (ebx & (1 &lt;&lt; 6)) ? "true" : "false");
+  asm("fld (%%rbx)\n"
+      "fxsave (%%rcx)\n"
+      : : "b"(buf), "c"(fxsave_buf));
+  uint32_t fdp = *(uint32_t*)(fxsave_buf + 16);
+  printf("fdp = 0x%x, buf addr = %p; %s\n",
+         fdp, buf,
+         fdp == (uint32_t)(uintptr_t)buf ? "OK" : "ERR");
+  return 0;
+}</pre>
+<p>A mysterious barely-documented CPUID feature is related. EAX=7, ECX=0:
+<blockquote>EBX Bit 06: FDP_EXCPTN_ONLY. x87 FPU Data Pointer updated only on x87 exceptions if 1.</blockquote>
+That bit is 0 on my Skylake machines, but <a href="https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/desktop-6th-gen-core-family-spec-update.pdf">Intel erratum SKL087</a> explains that Skylake behaves as if this bit was 1. I haven't got newer CPUs to test on but I suspect the FDP_EXCPTN_ONLY bit is 1 on newer CPUs, i.e. Intel just codified the Skylake bug as expected behaviour.
+<p>This is a problem for rr trace portability, since when FXSAVE or some XSAVE variant are used (and on x86-64 the glibc dynamic loader always uses one of them), if the FDP is different between recording and replay this difference can leak into stack memory and then into uninitialized stack locations loaded into registers, after which rr may detect a divergence.
+<p>I'm not sure what, if anything, can be done about this. x86-64 applications seldom use x87 instructions, but they do get used. For example my Fedora 27 <tt>libstdc++</tt> <tt>std::__detail::_Prime_rehash_policy::_M_next_bkt(unsigned long)</tt> has been compiled to a mix of x87 and SSE instructions.

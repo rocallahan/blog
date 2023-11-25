@@ -1,0 +1,123 @@
+---
+layout: "post"
+title: "Graphics API Design"
+date: "2011-09-28 00:10:00 +0000"
+categories: "Mozilla"
+permalink: "/2011/09/graphics-api-design.html"
+---
+<p>For several years Gecko used a C++ wrapper around <a href="http://cairographics.org">cairo</a> as its cross-platform rendering API. We eventually found that the cairo API led to some inevitable performance problems and designed a new API, <a href="http://hg.mozilla.org/mozilla-central/file/tip/gfx/2d/2D.h">Azure</a>, to address these problems. <a href="http://blog.mozilla.com/joe/2011/04/26/introducing-the-azure-project/">Joe Drew</a> and <a href="http://www.basschouten.com/blog1.php/comparing-performance-azure-vs-cairo">Bas Schouten</a> have already discussed Azure a bit. I want to mention some of the specific lessons we learned about graphics API design.
+<h2>Stateful Contexts</h2>
+<p>Cairo uses a "stateful context" model much like Postscript or <a href="http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_overview/dq_overview.html#//apple_ref/doc/uid/TP30001066-CH202-TPXREF101">Quartz 2D</a>. To draw content, you make individual API calls to set up various bits of state in a context object, followed by another API call to actually perform drawing. For example, to stroke a shape with a dashed line, you would typically set the color, set the line width, set the dashing style, start a new path, emit path segments, and finally draw the stroke --- all as separate API calls. In cairo, even drawing an image requires the caller to set the source surface, emit a rectangle path, and fill --- at least 6 API calls.
+<p>This design has some advantages. In typical applications you can set up some state (current color etc) and reuse it across many drawing operations. The API can consist of many logically independent operations with small numbers of parameters, instead of a few giant operations taking dozens of parameters. If your application never needs to use non-default values of certain drawing parameters, you can completely ignore them.
+<h2>Downsides</h2>
+<p>Unfortunately we found that with GPU-accelerated rendering on intensive HTML &lt;canvas&gt; benchmarks, we were doing so many drawing operations per second that the overhead of making many cairo API calls was becoming a significant drag on performance. (In some configurations we can do over 100,000 image draws per second; a single malloc per draw call becomes significant in the profile.) We could have improved that situation by adding new cairo APIs matching the &lt;canvas&gt; 2D APIs, e.g. a cairo_draw_image API. However, other problems with stateful contexts and cairo's implementation led us down a different path.
+<p>Cairo collects state in its <tt>cairo_t</tt> context objects --- in its "gstate" layer --- and each drawing call passes all relevant state down to a "surface backend" object to do the drawing. Essentially it maps its "stateful context" API to a "stateless" backend API. This mapping adds intrinsic overhead --- floating point to fixed-point coordinate conversion, sometimes memory allocation to store path data, and generally the overhead of storing and retrieving state. This is an especially big deal when the underlying platform API we're wrapping with cairo is itself a stateful API, such as Quartz 2D; in that case each stateless backend drawing call performs several platform API calls to reset all the state every time we draw. Cairo forces us to go from stateful to stateless and back to stateful as we move down the rendering stack.
+<p>HTML 2D &lt;canvas&gt; is a "stateful context" API much like cairo's, so cairo was actually a pretty good fit for &lt;canvas&gt;. In the rest of the browser we use graphics APIs somewhat differently. When rendering CSS, we typically have to reset all the context state every time we draw. For example, every time we draw a border we have to set the current color to the CSS border color, set the current line width to the CSS border width, set the line dashing style to the CSS border style, etc. Effectively we treat our graphics API as stateless. Cairo's accumulation of state in its context before calling into the stateless backend to draw is just unnecessary overhead.
+<p>Another consideration is that the state of a 2D &lt;canvas&gt; can't be represented directly in cairo; for example, cairo has no concept of global alpha or shadows. Therefore our &lt;canvas&gt; implementation has to maintain its own state tracking in parallel with cairo's internal state tracking. Given that, tracking all state in our &lt;canvas&gt; code (above the graphics API) is not much extra work.
+<p>Given all this, it made sense to make our cross-platform drawing API stateless, so we created Azure.
+<h2>Azure</h2>
+<p>Almost all the operations on an Azure DrawTarget (the nearest equivalent to a drawing context) do actual drawing and take most relevant state as parameters. The only state carried by a DrawTarget is the destination surface itself (of course) plus a current transform and a current clip stack. We let the transform and clip state remain in the DrawTarget because those are the only pieces of state not constantly reset by CSS rendering. Our CSS rendering needs to always render under some given transform and clip, and we don't want all our rendering code to have to pass those around everywhere.
+<p>So far we're only using Azure to for 2D &lt;canvas&gt; drawing. For optimal canvas performance we ensure that every canvas operation, including global alpha and shadows, is directly supported in Azure. The only Azure backend shipping right now is the Direct2D backend. Direct2D is mostly stateless so it's a good fit for Azure, although we've designed Azure carefully so that stateful backends like cairo or Quartz 2D will work pretty well too. (Mapping from stateless down to stateful is pretty easy and can be optimized to avoid resetting state that's constant from draw to draw.) &lt;canvas&gt; performance with Azure/Direct2D is much improved.
+<p>We have given up some of the advantages of stateful context APIs mentioned above --- Azure's probably a little less convenient to use than cairo. To some extent that just doesn't matter; writing more verbose API calls to get a significant performance improvement is completely worthwhile for us. But we can mitigate the worst aspects of a parameter-heavy API anyway. We group parameters together into structs like "StrokeOptions" and "FillOptions", and use C++ to assign sensible default values to the fields; this means that callers can continue to ignore features where they only want the defaults, and callers can reuse state values across drawing calls.
+<h2>Insights</h2>
+<p>One of the key insights here is that Gecko is a framework, not an application, and APIs suitable for applications to use directly may be less suitable for frameworks. When you're writing drawing code for an application you know the content you're going to draw and you can write code that takes advantage of "state locality" --- e.g. setting the current color and then drawing several shapes with that color. For most of what Gecko draws, we can't do that because we don't statically know what a Web page will draw. Also, because we're a framework, we have fewer calls to graphics APIs in our code than an application might. For example, we have only one piece of code that draws all CSS gradients; we might have less than half a dozen places in our entire codebase that actually create gradient patterns. Therefore making the API calls shorter or more convenient offers us very little value.
+<p><strong>Aside</strong> People rightly ask why we didn't just modify cairo to fit our needs better. Of course we considered it, since we've done a lot of work to improve cairo for our needs over the years. We'd need to make massive architectural and API changes to cairo, which would probably be at least as much work as writing Azure from scratch --- quite likely more work given that cairo promises a stable API, so we'd have to maintain our stateless API alongside cairo's stateful one. Cairo's API stability guarantee often gets in the way of us making improvements, and it has little use to us since we ship our own copy of cairo on most platforms; getting away from the cairo API will be helpful in that respect.
+<p>I don't think this should be considered a failure of cairo's design. Cairo was originally designed to be used directly by applications, over a very low-level backend (XRender), with much lower performance targets on very different workloads. Using it in a framework, wrapping very capable and high-level platform APIs, and expecting 100K image draws per second is far beyond those design parameters.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>ar</div>
+<div class='content'>Sorry for the naive questions, but what are the possible reasons to want to use a cairo backend in the new Azure world? (In the steady state, not as a transitional measure)
+
+Is it solely for the cases where the platform&#39;s drawing API is not rich enough to cover the features required by Azure?
+
+Would providing a stateless re-implementation of these extra features present in cairo be too large of an undertaking for the value?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>No, it doesn&#39;t mean that.
+
+Azure has already landed, by the way, it&#39;s present in Firefox 7 (but only used for canvas with D2D).</div>
+</div>
+<div class='comment'>
+<div class='author'>Paul Rouget</div>
+<div class='content'>So let me try to summarize: in the future, we will have different backends for Azure:
+- D2D and D3D for Windows (what about Windows XP? Will D2D sill relevant if we have D3D?)
+- Quartz 2D and OpenGL for Mac (Is GL relevant if we have Quartz?)
+- OpenGL for Linux (Are the Linux drivers ready for that?)
+- Cairo as a fallback (no GL) and print
+
+And what about Android? Skia?</div>
+</div>
+<div class='comment'>
+<div class='author'>Azhrarn</div>
+<div class='content'>Hi, thanks for this article. I have a general question, not really matching this article, but I think you can give me an answer.
+I want to write an application: a source code editor.
+My requirements are speed, cross platform and beauty of the text rendering.
+So I have to choose a graphics lib. I don&#39;t want to reinvent the wheel, but I still want great quality.
+
+I made some searches on google and I found AGG ( antigrain geometry ) and FOG-Framework, both implementing subpixel rendering, but these projects seems to be not very complete.
+
+Regarding Cairo, I found that it could not works well on Windows.
+
+Then there are Skia and Azure.
+
+Any advice or guideline to choose one of these libs?
+
+thank you very much
+
+Pich</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Cairo can work reasonably well under Windows. We use it there.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Does this mean that there will not be any noteworthy improvements to rendering (normal webpages) until Azure lands?</div>
+</div>
+<div class='comment'>
+<div class='author'>Joe Drew</div>
+<div class='content'>Note: Azure is the name of the *project*. The API has no name; or, to be specific, it is named mozilla::gfx.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Any plans on adding a GL or D3D backend to Azure any time soon, or is that pretty far off?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s not clear yet.
+
+We definitely need a GL-based Azure backend, for mobile and also Linux, at least. This could possibly use Skia&#39;s GL backend, at least initially. That could also be used on Windows XP (via ANGLE) and Mac.
+
+We definitely need the cairo backend.
+
+We definitely need a generic CPU-only backend, probably using Skia.
+
+We also want to keep shipping either a D3D10 version of that backend and/or a D2D backend for newer Windows; the details are unclear so far.
+
+We will probably want a direct Quartz 2D backend for Mac.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>We have such plans.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>In the long term, the cairo backend for Azure will be useful for rendering to X11+XRender and also for printing (PDF/PS output).
+
+&gt; Is it solely for the cases where the platform&#39;s
+&gt; drawing API is not rich enough to cover the
+&gt; features required by Azure?
+
+Yes, although for platforms without rich drawing APIs where rendering will be CPU-based (Windows XP, some mobile platforms) we&#39;re experimenting with using Skia as the Azure backend, and will probably go with that.
+
+&gt; Would providing a stateless re-implementation
+&gt; of these extra features present in cairo be
+&gt; too large of an undertaking for the value?
+
+Yes, I can&#39;t see it being worthwhile to implement an Azure-specific X11/XRender backend, or an Azure-specific PDF backend.
+
+One idea we&#39;ve chucked around is to expose the stateless surface APIs used by cairo&#39;s gstate layer to Gecko and let Azure call them directly. This would probably result in significant performance improvements, but it wouldn&#39;t work with distro builds of Firefox that want to use &quot;system cairo&quot;, so it&#39;s probably not worth doing long-term.</div>
+</div>
+
+</div>

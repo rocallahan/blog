@@ -1,0 +1,132 @@
+---
+layout: "post"
+title: "&quot;Full Hardware Acceleration&quot;"
+date: "2010-09-12 03:58:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/09/hardware-acceleration_11.html"
+---
+<div class="columns"><p>Microsoft marketing is making noises about IE9 having a monopoly on <a href="http://blogs.msdn.com/b/ie/archive/2010/09/10/the-architecture-of-full-hardware-acceleration-of-all-web-page-content.aspx">"full hardware acceleration"</a>. They're wrong; Firefox 4 has all the three levels of acceleration they describe. It's surprising they got this wrong, since Paul Rouget published a <a href="http://hacks.mozilla.org/2010/09/hardware-acceleration/">great overview</a> on <a href="http://hacks.mozilla.org/">hacks.mozilla.org</a> a few days ago (and our plans, source code, and nightly builds have been public since we started working on this stuff many months ago).<br/><p>One of the messages of their post (and other IE9 marketing materials) is that a browser that only works with D3D and D2D will be superior to one that works on more platforms (e.g. having the option to use GL or D3D for compositing), because they need less of an abstraction layer. They're probably thinking of Chrome, which is basing everything on GL and using ANGLE to map GL to D3D for Windows. We also have an abstraction layer --- which we call "Layers" --- with D3D9, GL and "non-accelerated" implementations, but it's a lot higher-level than GL/ANGLE. (And of course we already have cairo for the content-rendering phase.) It's certainly true that only having to target Vista and Windows 7 would mean less development effort, but an extra abstraction layer need not hurt performance --- if you do it right. I personally like our approach so far; we have to write similar code for GL and D3D often, but having a D3D-specific layers backend makes it easier to integrate D3D-specific features --- like D2D!<br/><p>I'm pretty confident that our architecture will not cause us any performance disadvantages vs IE9. On the other hand, our architecture does let us deliver D3D acceleration for Windows XP users --- which is still a very large market. I'm surprised Microsoft has been prepared to just hand XP users over to Firefox and Chrome (all those not captive to IE6, at least). Our architecture also lets us deliver GL acceleration for Mac, X, and mobile devices, which is very important.<br/><p>When we started pushing on Layers at the beginning of the year, I had no idea we'd end up going toe to toe with Microsoft like this. It's exciting!<br/><p>BTW "full hardware acceleration" is a bogus phrase. All browser pick and choose how to use the GPU, and more use of the GPU isn't necessarily better. There are certainly things no browser is ever going to "hardware accelerate" ... e.g. CSS margin collapsing :-).<br/><p>In Microsoft's favour, I want to point out that although GPU acceleration for Web graphics isn't going to be a coup for IE9, it is going to be a coup for Windows. As far as I know there simply isn't anything comparable to D2D for GL at this time. (If there was, we'd use it!) cairo-gl is the closest thing I know of that we'd want to use, and but it doesn't seem ready yet. Apple has Quartz 2D Extreme, but they don't enable it for their own apps so one has to assume it's not a clear win. So, kudos to Microsoft for creating D2D, backporting it to Vista, and making it awesome. The free software world really needs to get behind cairo-gl (or something comparable) in a big way. I'd love to have some Mozilla people on it, but we're pretty busy... I'm sure we'd consider funding someone else to work on that stuff, though!</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>travel cot mattress</div>
+<div class='content'>Considering the huge market share of non-DirectX mobile phones, I&#39;d say that an abstraction to support different acceleration backends is not just nice, but neccesary.</div>
+</div>
+<div class='comment'>
+<div class='author'>chris</div>
+<div class='content'>Lets fix the current blurring font issue, its gonna hurt people&#39;s eyes, and it has to be solved. Before that, We can&#39;t really claim anything.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James</div>
+<div class='content'>I find Google&#39;s approach to hardware acceleration pretty interesting, mostly because it&#39;s quite different from what you &amp; MS are doing. They&#39;ve done the easy stuff with compositing and canvas, and now are (to my unschooled eye) building their own D2D inside Webkit. (not all landed yet, but what has been is in platform/graphics/gpu if you&#39;re curious). It looks like they are taking code from O3D and Skia and so far have got paths working - which maps pretty well to some SVG. That way they can keep using all-OpenGL and get the benefits on all platforms. A lot of work, but they&#39;ve certainly got the engineers to throw at it and it&#39;s a way around the Windows-only problem you talk about. It&#39;ll be interesting to see how it works out for them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>D3V1L</div>
+<div class='content'>really great content you have shared here loved it, Also check our online store <a href="http://replicapoint.com/" rel="nofollow">replicapoint</a> if you are looking for decent 1st copy sunglasses or watches.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The speed drop was turning D3D on, I think. We use D3D9 (so it&#39;ll work in XP) and that forces us to do some extra synchronization. I believe Bas has a plan to reduce that overhead.<br>I&#39;m not sure what the story is for canvas buffers resiliency. I&#39;m not sure what you mean about &quot;wasting power&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That might be a good idea.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Diego</div>
+<div class='content'>Considering the huge market share of non-DirectX mobile phones, I&#39;d say that an abstraction to support different acceleration backends is not just nice, but neccesary.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Spudd86</div>
+<div class='content'>I think someone might have started working on a cairo state tracker for gallium at some point too... so it might end up that on Intel GPU&#39;s you get cairo-drm and for everyone else you get cairo-gallium<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Emanuel</div>
+<div class='content'>I think chris is talking about the thin, bad looking fonts with D2D/DW, which IE9 also suffers from as it&#39;s inherent to D2D/DW. IIRC D2D/DW always uses grayscale anti-aliasing, instead of per color? From what I read on bugzilla, it may be possible to work around in certain situations, but the underlying problem is something Microsoft will have to patch themselves.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>antistress</div>
+<div class='content'>Tank you Mozilla for your work on Cairo<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&quot;As far as I know there simply isn&#39;t anything comparable to D2D for GL at this time.&quot;<br>Uhh.. OpenVG?<br>No, I know support isn&#39;t great yet but people are just as well &quot;getting behind&quot; it than cairo-gl.<br>robert.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>soniboni</div>
+<div class='content'>good you if you need to signal into your itunes accounts, <a href="http://cinemaboxapphd.com" rel="nofollow">visit cinemaboxapphd</a> CinemaBox can be the ideal software to download for iOS products therefore, Cinema Box iPhone nice.</div>
+</div>
+<div class='comment'>
+<div class='author'>andy</div>
+<div class='content'>As fas as I know MS has announced it acceleration only for i series of processors. Any news about FF?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Stebs</div>
+<div class='content'>&quot;cairo-gl would fit right into our architecture, but it&#39;s just not fast enough to use last time I saw numbers. If it just got faster, we could use it&quot;<br>It seems that cairo-drm is already faster -even though probably currently only available on Intel i915-i965 GPUs (so including Atom Netbooks/Tablets etc.!)<br>Older benchmarks:<br>http://ickle.wordpress.com/2009/08/19/more-performance-wip/<br>If could be worth it to implement experimental cairo-drm and/or cairo-gl Backends if it fits nice, naturally after work on 4.0 is done.<br>That way people can play with it and it may even accelerate the development of cairo-drm/gl<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Học Tiếng Hàn Tại Đà Nẵng</div>
+<div class='content'>Thanks for your website:
+- <a href="https://suabinhnonglanhtaihanoi.vn/" rel="nofollow">https://suabinhnonglanhtaihanoi.vn/</a>
+- <a href="http://baohanhsuachuaelectrolux.vn/" rel="nofollow">http://baohanhsuachuaelectrolux.vn/</a>
+-  <a href="http://suamaygiatelectrolux.vn/" rel="nofollow">http://suamaygiatelectrolux.vn/</a>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yes, that&#39;s what they&#39;re doing. It&#39;s a fine approach but it&#39;s going to get a bit ugly around the edges, for example if they want to match DirectWrite font rasterization, or use any D3D features that don&#39;t map well to OpenGL.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>chris</div>
+<div class='content'>here is the blur font bug I was talking about:<br>https://bugzilla.mozilla.org/show_bug.cgi?id=594325<br>I know its a bug of Microfost, but I can&#39;t imagine mozilla shipping firefox 4 with this bug while still being responsible for users&#39; eyesight. Its not goona work.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Thank for your post, hope have many people can share for each other.
+In my web about card game, can you take care &quot; <a href="http://gamebai68.com/" rel="nofollow">game danh bai</a> &quot;</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Root Checker gives you an easy and quick way to check whether your phone is Rooted. For more details about root checker pc click here.
+<a href="https://www.rootchecker.co/root-checker-pc/" rel="nofollow">root checker pc</a>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Jonathan O' Connor</div>
+<div class='content'>Thanks for your informative post. One thing I&#39;m still unclear on is the state of 2D acceleration on Linux. My understanding is that for 4.0, you&#39;re working on the infrastructure that&#39;s needed for it to happen in the future, but I&#39;m unclear as to how cairo-gl, your Layers work and other technologies fit together. Is there a definitive resource on the state of things, and if not, could you further clarify what needs to be done for us to catch up with the proprietary platforms in this area?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>cathrynzbrown</div>
+<div class='content'>Great the lowest classification smart devices also <a href="http://www.wifikillpro.com/wifikill-apk-download-for-android-free-app" rel="nofollow">wifikill apk free download</a> about this app is that it will only service those Fine.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Shaver</div>
+<div class='content'>You&#39;re correct, Robert: we would definitely consider funding someone to do such work.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rec</div>
+<div class='content'>Sorry for being unclear.<br>Why is D3D turned on when Direct2D is available? It is my understanding retained layers already worked in Direct2D. Maybe it&#39;s for WebGL?<br>The &quot;wasting power&quot; meant that the browser has to honor draw requests to canvas even when they&#39;re not visible.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Thịt Trâu Gác Bếp - Đặc Sản Dân Tộc Thái</div>
+<div class='content'>Thanks for your website. That might be a good idea.
+- <a href="https://phukhoaxumuong.com/" rel="nofollow">https://phukhoaxumuong.com/</a>
+- <a href="https://phukhoaxumuong.com/thuoc-gia-truyen-xu-muong/" rel="nofollow">https://phukhoaxumuong.com/thuoc-gia-truyen-xu-muong/</a></div>
+</div>
+<div class='comment'>
+<div class='author'>Rec</div>
+<div class='content'>Speaking of which, the current builds are still about 20% slower at Direct2D than the nightly from 20100902. The next day speed plummeted and over time it improved a lot, but it&#39;s still not as good (just tested FishIE - 11 vs 13 fps with 1000 fish, 20 vs 24 with 500, 36 vs 42 with 250).<br>Since I see bugs 593361 and 593268 marked as fixed, I wonder is this is known. I also wonder what prompted the change that caused this speed loss, as I see no difference in rendering quality, and no speed increase anywhere.<br>One last thing. This whole &quot;hardware-accelerated canvas&quot;. Canvas is immediate, so I&#39;m assuming on hardware failure (or just driver updates, or maybe hibernation, fast user switching, or even sleep), canvas surfaces could get corrupted and then there wouldn&#39;t be a way to restore them (except reloading the page). Is this correct? It also sucks they waste power continuously regardless of visibility.<br>Keep up the good work!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Blah</div>
+<div class='content'>So from what I&#39;m reading, the canvas spec etc have no support for callbacks etc to cause drawing only when necessary.<br>For 25 years or more, this concept has existed and worked well in gui toolkits etc but now we have to throw it out with nothing better?<br>Congratulations. Why oh why does the current generation of retards insist on the devolution of technology? I see it everywhere these days. 98% of laptops sold these days have only 1360x768 screens.  iPhones/iPads threw away multitasking.<br>firefox 4 is to have even less configuration options.<br>all you people do is remove features and add a glossy look and then applaud yourselves. it&#39;s just pathetic. If HTML5 was also designed so badly, no wonder no-one will support it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Rec: browsers have to honor draw requests to canvases that aren&#39;t visible. There&#39;s no way around that, since you never know if script might make a canvas visible, and you need to record what the script drew just in case it becomes visible.<br>Jonathan: cairo-gl would fit right into our architecture, but it&#39;s just not fast enough to use last time I saw numbers. If it just got faster, we could use it.<br>Robert: what GPUs+platforms have OpenVG drivers at the moment? Pretty much every non-Microsoft device with a GPU supports GL. I&#39;d heard that OpenVG support was a lot less widespread, but I&#39;d gladly welcome a correction on that.<br>chris: not sure exactly what you&#39;re talking about.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Luke Skywalker</div>
+<div class='content'>As an experienced game developer with 10 years experience writing code for the GPU, I can with complete certainty that Microsoft is going to school you here. Stop whining about poor decisions and either accept that fact that redirection layers are never going to be as fast or start playing the same game as Microsoft. They&#39;re going to kick your but. This is coming from a long time Firefox user who happens to know something about what you&#39;re doing.<br></div>
+</div>
+
+</div>

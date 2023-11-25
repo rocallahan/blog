@@ -1,0 +1,9 @@
+---
+layout: "post"
+title: "Relearning Debugging With rr"
+date: "2016-06-28 22:50:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/06/relearning-debugging-with-rr.html"
+---
+<p>As I've mentioned before, once you have a practical reverse-execution debugger like <a href="http://rr-project.org/">rr</a>, you need to learn new debugging strategies to exploit its power, and that takes time. (Almost all of your old debugging strategies still work --- they're just wasting your time!) A good example presented itself this morning. A new rr user wanted to stop at a location in JIT-generated code, and modified the JIT compiler to emit an int3 breakpoint instruction at the desired location --- because that's what you'd do with a regular debugger. But with rr there's no need: you can just run past the generation of the code, determine the address of your generated instruction after the fact (by inserting a logging statement at the point where you would have triggered generation of int3, if you must), set a hardware execution breakpoint at that address, and reverse-execute until that location is reached.
+<p>One of the best reasons I've heard for <em>not</em> using rr was given by Jeff: "I don't want to forget how to debug on other platforms".

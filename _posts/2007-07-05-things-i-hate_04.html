@@ -1,0 +1,70 @@
+---
+layout: "post"
+title: "Things I Hate"
+date: "2007-07-04 23:43:00 +0000"
+permalink: "/2007/07/things-i-hate_04.html"
+---
+<div class="columns"><p><strong>Web 2.0 Startups ...</strong> Seriously, how many startups per week are sending out press releases like<br/><blockquote>Wallyport is a new social networking convergence service, currently in invitation-only alpha testing. This product aggregates Web 2.0 functionality, tools, creativity and a portal for converging business with user generated content. The premise is to offer diverse services where individuals, groups and businesses can take advantage of proximity and community.</blockquote><br/><p>Can anyone take this seriously? How many MySpace, Beebo, Facebook, Twitter clones does the world really need? How many <a href="http://www.readwriteweb.com/archives/online_video_index.php">Youtube clones</a>? How many <a href="http://www.readwriteweb.com/archives/top_100_alternative_search_engines.php">search engines</a>? Why do thousands of "me too" startups get funded?* And who wants to work in one? "We're Youtube ... with voice chat!" Spare me.<br/><p>There are so many interesting and challenging problems out there. For example, a hundred startups trying different approaches to parallel programming could actually be a useful contribution to the field. Or a few dozen Second Life clones. Personal life recorders. Omniscient debuggers. Web browsers. If I ever get involved in a startup, it had better not ever appear in a "Top 100" list of anything (unless it launched the bandwagon).<br/><p>* <small>Yes, I know the answer is that by and large VCs are sheep.</small><br/><p><strong>XML ...</strong> To quote Phil Wadler, "The problem XML solves is not very hard ... and XML doesn't solve it very well."<br/><p>OK, so a simple generic extensible structured format is useful. Fortunately there's JSON.<br/><p><strong>Enterprise Software ...</strong> The "enterprise" breeds complex, bloated, and boring software. Hello DCE, <a href="http://www.acmqueue.com/modules.php?name=Content&pa=showpage&pid=396">CORBA</a>, J2EE, <a href="http://www.tbray.org/ongoing/When/200x/2007/02/27/Udell-Vinowski">WS-*</a> and many more. It seems that if you create a niche for extremely expensive software that doesn't really work, someone will fill it.<br/><p>(Interestingly, for a long time Microsoft was smart enough to stay out of these tar pits, but they've bought deeply into WS-*. Times change.)<br/><p><strong>IT ...</strong> Computing educators wonder why they have trouble attracting bright students to the field. Maybe it's because smart people aren't inspired by the software bureaucracy that is the domain of most corporate "IT departments". Every time I read about New Zealand's "IT industry" my stomach churns. We need to draw a clear line between IT and the cool stuff, and make sure that attention is focused on the cool side of the line.<br/><p><small>Phew. That rant was building up for a while.</small></div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>mawrya</div>
+<div class='content'>Interesting to read that you hate XML.  I haven&#39;t much looked into JSON as I have found XML to solve my problems very well.  Maybe I have different problems?  I&#39;m working mostly from a document-centric position, if that makes any sense.<br>I have searched but not come across a balanced, impartial analysis of the two.  They obviously overlap to a great degree but it seems everyone has different problems they want solved and so end up rooting for one or the other.  Do you know of any articles that provide a broad and balanced look at the two, possibly including requirements for transformation abilities like XSLT?<br>Thanks.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Justin Dolske</div>
+<div class='content'>Fortunately, my Web 3.0 startup is focusing on JSONHTML.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>Matthew - everyone with a clue these days using AJAX has given up on the XML part, and instead uses JSON, including HTML delivery. It&#39;s actually harder doing it any other way, including for HTML/XHTML DOM injection/modification.<br>Aristotle - You say using JSON as the base grammar for CSS would be good? Check out http://en.wikipedia.org/wiki/JavaScript_Style_Sheets - choice quote: &quot;It now remains little more than a historical footnote, with many Web developers not even being aware of its existence&quot;. Pity.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matthew Cruickshank</div>
+<div class='content'>Re: Edouard,<br>Well, I&#39;ll take your &quot;anyone with a clue&quot; gibe as meaning that you don&#39;t yet have a cogent argument against the scenario I mentioned. That when you&#39;re replacing text nodes or small parts of the page then JSON is a good choice, but X(HT)ML is better than putting too much display logic in JavaScript.<br>Now I&#39;m not bashing either format, and obviously JSON would be a good replacement for INI files -- it&#39;s just that all data isn&#39;t INI, some is HTML or word processor files, and JSON would be a poor fit for that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matthew Cruickshank</div>
+<div class='content'>Re: mawrya,<br>JSON and XML are similar but really they suit different purposes -- it&#39;s not like anyone would write an office format in JSON, for example. So yes, as you&#39;re working on document-centric data then XML is probably a better fit than JSON.<br>But if you&#39;re just storing key:value pairs then XML would be overkill, and JSON would be better. And there is now an equivalent to XSLT... JSON-T for reformatting JSON.<br>I recently came across a webapp that sent JSON to the browser, which - in javascript - was reformatted into HTML. The logic was rather complex, and they&#39;d basically rewritten their C# server-side display logic in javascript to reformat JSON into HTML. Their company policy was sync up their C# display logic in JS. Now there&#39;s a place they should have just used XML rather than JSON.<br>I&#39;m going to disagree with Robert here, despite being a fellow Kiwi (in Wellington), and say that XSLT is a pretty great language, but mostly so when used with XProc or some XML pipeline language.. hopefully one that allows stages of regular code where necessary.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>Rock on! Robert tells it like it is.<br>Now if only we could get rid of the rest of the web programming morass. HTML, CSS, XML, XSLT, and all the rest. Pity that will never happen.<br>Javascript can stay, obviously. Otherwise JSON wouldn&#39;t work.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Lurker</div>
+<div class='content'>There&#39;s a reason why we gave &quot;OIT&quot; names like &quot;The Office of Incompetent Technicians&quot; and even less complementary: They were officious, useless and totally sold to their private &quot;xerox-machine&quot; mentality.<br>None of us who had a run in with them or the results of same wanted to have anything to do with that part of the field afterwards.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>monk.e.boy</div>
+<div class='content'>YouTube, MySpace Beebo etc were clones of earlier products.<br>So if you are a VC you take a look at the clones of an existing product, look at the user take up rate, then buy in.<br>It worked for YouTube, why not for more &#39;web 2.0&#39; products.<br>Take myspace, remember geocities? Back in the old days before it was owned by Yahoo? Clone that = MySpace.<br>XML = turd. Lets go back to ini files.<br>Nice post though :-)<br>monk.e.boy<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>XSLT is an unbelievably bad programming language that makes simple things tricky and complex things mind-bendingly near-impossible. Just admit that transformation means programming, pick a real language --- make it a scripting language if you want to keep pretending you&#39;re not doing &quot;real&quot; programming --- and break free.<br>Another thing that I forgot to rant about was how people advocate XML because it&#39;s &quot;transformable&quot;. Like &quot;CSS should be in XML syntax because then we could transform it with XSLT!&quot; As if anyone has ever wanted to do that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Aristotle Pagaltzis</div>
+<div class='content'>Errm. First of all, there are many people who say XML solves easy problems badly; and they uniformly seem to come from a programming background and be looking for a data structure serialisation format. Yeah, XML doesn’t do that very well. It was never designed for that purpose. If you come at XML from an SGML-ish document-centric perspective, you’ll find that the problems it attacks range from complex to very difficult, and that it actually solves them roughly as well as they allow. It is also pretty good at loose coupling; if you process XML correctly (ie. you avoid trying to directly map it onto data types and -structures, and rather treat it as markup), then you can avoid the fragility that’s typical of RPC-ish systems where any change in the data structure affects everyone who generates or consumes it.<br>Secondly, I don’t know what you’re talking about as far as XSLT is concerned. Granted, most people really don’t understand XSLT, and it took me a long time until I got it myself, because every. Single. Tutorial about them. Ever written. Is utter crap. XSLT is more misunderstood than Javascript! But if you use it well, you can express transformations in it in a 10th of the code that the same thing would take in imperative languages. My weblog lives in a single Atom feed which gets processed by XSLT, and I stay amazed that years after writing all that code, it has remained incredibly easy to add small but tricky features to it. If it were written in an imperative language, it would be much harder to maintain.<br>FWIW, XSLT does not have a magical monopoly on this stuff; it’s its functional match-driven tree-walk programming paradigm that yields this sort of extremely powerful and concise transforms, and in theory this paradigm could be implemented in more or less any language (and for any data structure, not just XML DOMs). It’s just that no one has actually done that, although some of the more obscure functional languages come close.<br>The one thing that really sucks about XSLT is the verbose syntax. Even without abandoning XML as the base grammar, it could be a lot more concise. And using XML as the base grammar is simultaneously a stroke of genius (ever heard of Lisp macros?) and at the same time utterly retarded (my hovercraft is full of angle brackets!).<br>XML and XSLT serve particular purposes, and they do so very, very well, as far as they go. But they are no panacea or a silver bullet to solve every single problem. If you try to use them for purposes they weren’t designed for, don’t be surprised if they break down.<br>And yeah, using XML as the base grammar for CSS would be retarded. Using JSON as the base grammar for CSS? Now that’s an idea I could get behind.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous Coward</div>
+<div class='content'>Dude, rock on man, damn straight. If only more people thought like that...at least you do. I would also argue that most unfortunate souls who go for &quot;IT&quot; do it to enter corporations anyway. Money is what builds respect.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matthew Cruickshank</div>
+<div class='content'>XML wouldn&#39;t be a good grammar for CSS, but at least we&#39;d be able to ditch CSS Selectors for XPath.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mawrya</div>
+<div class='content'>@ Matthew - Thanks for your comments, you are confirming my muddy suspicions on where XML and JSON fit into the data puzzle.  I can now think of  one place in an AJAX app where I am using XML and should be using JSON, but am also beginning to understand that JSON would not cut the mustard when it comes to document data.<br>@ Aristotle - I have experienced the frustratingly mind-bending nature of XSLT but also have been in awe of its power on more than one occasion - the latest spec seems to be moving in the right direction, but is sure is a different world.  If you ever write an XSLT tutorial, let me know! (mawrya_at_furtherNorth_net)  Its always a joy to read an author who &quot;gets it&quot;.<br>@ROC - Thanks for your blog, I enjoy it! And I have to agree, CSS in XML would be silly.  CSS is not a &quot;document&quot; like an expense report or an invoice or a web page, its just a &quot;computer file&quot;, a list key:value pairs.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I will admit that XML is useful when you&#39;re interfacing with other XML-based systems, or XML-ish formats such as HTML.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Hearn</div>
+<div class='content'>Minor nitpick: Microsoft didn&#39;t avoid DCE, they actively embraced it and created an even more collosal form of corporate bloatware in the form of DCOM using DCE as a base.<br></div>
+</div>
+
+</div>

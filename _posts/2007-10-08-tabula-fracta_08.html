@@ -1,0 +1,67 @@
+---
+layout: "post"
+title: "Tabula Fracta"
+date: "2007-10-08 10:03:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/10/tabula-fracta_08.html"
+---
+<div class="columns"><p>When considering <a href="/2007/10/changing_horses.html">massive</a> <a href="/2007/10/if_i_did_it.html">changes</a> to existing code, to cope with <a href="/2007/09/parallel_browsi.html">fundamental new requirements</a>, it's appropriate to think about whether there is an opportunity to do something completely new. <a href="http://www.joelonsoftware.com/articles/fog0000000069.html">Joel Spolsky</a> isn't always right.<br/><p>As I <a href="/2007/09/parallel_browsi.html">mentioned before</a> I think there is an opportunity for someone to create a new browser engine and possibly win. Here's what they could do:<br/><ul><br/><li>Target 8 cores or more --- i.e., pay no attention to performance on fewer cores. Existing engines can't afford to do this, so there's a market niche that they can't enter that will eventually grow to become the entire market --- a classic disruptive play.<br/><li>Leverage the incredible work of the WHATWG on documenting HTML parsing, DOM APIs, etc, to really design code based on specifications that are close to Web-compatible, instead of designing something and having to hack it a hundred different ways to get Web compatibility. Where the WHATWG hasn't covered a topic yet, help them out. Existing engines couldn't do this because they predate the WHATWG work.<br/><li>Use a new programming language with the following features:<br/><ul><br/><li>Memory safety<br/><li>Non-sucky exceptions<br/><li>Real modules<br/><li>UTF8 strings with an iterator API<br/><li>Real global optimization with profile-driven, whole-program, ahead-of-time compilation<br/><li>Immutable types<br/><li>Generators and other syntactic sugar du jour<br/><li>Garbage collection, of course<br/><li>Safe manual memory management using ownership types (I'll write more about this later)<br/><li>Copy-on-write cloning<br/><li>Transactional memory and/or other modern parallel programming primitives<br/><li>Typed message passing (messages should be typed for the same reasons as functions; see Microsoft's Singularity)<br/><li>No crappy, hard-to-optimize, but inexplicably popular features such as identity and synchronization primitives on every object<br/><li>Pluggable runtime, so at compile time you can choose what ABI, GC, etc you want to use ... so you can build components that will play nice in a variety of environments<br/></ul><br/>This is worth doing because if you're going to make a clean break, you should take the opportunity to make things so much better than C++. Memory safety alone would be a giant step forward for security (and many of the other items are ways to claw back the performance hit of memory safety).<br/></ul><br/><p>While I think this approach <em>might</em> be a winner, it's still an extremely hard and risky road. Beyond the <a href="http://www.joelonsoftware.com/articles/fog0000000069.html">Joel risks</a>, the biggest problem is the Web compatibility catch-22: you won't really be Web-compatible until you have enough market share that Web developers test against your engine, but you can't get that market share without being Web-compatible. (I suspect this is almost the entire reason why Opera hasn't been a runaway success.) To break out, you either have to work incredibly hard and be astonishingly compelling, or you have to be backed by some organization with great market power. Having said that, WHATWG and Mozilla are working to erode this catch-22, with some success, so things might be easier now than they used to be.<br/><p>Clearly this approach would be much too risky for an established player to bother with. I would love to see a startup working in this area, though.<br/><p><strong>Update</strong> I should add to the above language requirements list:<br/><ul><ul><br/><li>Natural and efficient mapping to commodity hardware (sorry Haskell fans)<br/></ul></ul></div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Chris Double</div>
+<div class='content'>Jeremy, the comment I think you are referring to is not by me. This weblog puts the comment author at the bottom of their comment, not the top.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>If you&#39;re interested in ownership types you should check out this experimental language developed by a former Google engineer:<br>http://code.google.com/p/gel2/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That language looks interesting but its notion of ownership is rather different from what I want. I&#39;ll explain more later.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>she</div>
+<div class='content'>This analysis is hugely problematic because it tangles on so many different issues at the same time ... I don&#39;t even know where to start at, but let&#39;s look at opera briefly since you mentioned it:<br>For a long time, opera was a browser that funded itself via advertisement. This was a HUGE problem, and Firefox appeared, quickly gaining foothold over the weak Internet explorer (back then). It had tabs, it was fast enough to render even big pages (when i compare current opera and current firefox, the rendering speed of firefox for large pages is still a LOT better than opera&#39;s, although for the smaller pages, opera seems to more aggressively render, and thus displays the result faster) it was OPEN SOURCE which was also a big contributing factor, it had proper marketing and and and - and it was needed and liked by people. :)<br>Opera didnt have any remote chance against that, and it is unlikely that it would have gained a bigger market share at ALL (because it simply didnt cater to its user base... i dont think advertisement is user friendly. ANd I really wonder why Firefox doesnt include the adblock functionality out of the box, can it be due to profit? It is just one FUNCTIONALITY, and that is to selectively block ads, nothing more... oh well)<br>Aside from this, let&#39;s look at languages ... I dont think any language will be the clear winner in any way whatsoever EXCEPT if it has HUGE advantages, and to me the languages ultimately will all give you big trade-offs instead of the needed &quot;features&quot;.<br>And I hope it isn&#39;t inviting Microsoft to do what Gecko developers failed to do, because we ALL know what will happen once Microsoft secures their monopoly lock AGAIN.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mal</div>
+<div class='content'>You&#39;ve a typo in the http://www.joelonsoftware.com/articles/fog0000000069.html  link<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Pichi</div>
+<div class='content'>Mal: Erlang have unicode handling good enough. String isn&#39;t just not binary array but list of arbitrary precise integers and can handle any coding what you want. You must only proper parse input and proper code output and you can handle unicode. Modules exists. Just choose internal string coding and use it, one char is just one list member. And what advantages? Memory safety, Non-sucky exceptions, Real modules, UTF8 strings with an iterator API, Immutable types, (Real time and very fast) garbage collection, Copy-on-write cloning, Transactional memory and/or other modern parallel programming primitives, Typed message passing, No crappy, hard-to-optimize, but inexplicably popular features such as identity and synchronization primitives on every object, Pluggable runtime, so at compile time you can choose what ABI, GC, etc you want to use ... so you can build components that will play nice in a variety of environments.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That&#39;s Microsoft&#39;s approach, kinda, and there are major problems with it, like how do you handle a page containing an IFRAME with a page in a different compatibility mode. It would also be a big footprint hit.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The language doesn&#39;t exist yet. That&#39;s one of the risks :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colin Coghill</div>
+<div class='content'>Yeah, I didn&#39;t think it through very well :)<br>Incidentally, do you want to stick your neck out and suggest a good language to use for a fresh browser rewrite?<br>I can think of half a dozen languages that all have bits that are really good, but I don&#39;t yet know of a language that does all these things well.<br>Nightmares of trying to get Java code nicely parallel, or of doing unicode handling in Erlang, or of coordinating a huge Python code base...<br>- Colin<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Da Scritch</div>
+<div class='content'>When you&#39;re talking about actual engine whose �designing something and having to hack it a hundred different ways to get Web compatibility�, is it the reason why Firefox is the ONLY browser to have unrelevant �show page source� behaviour ?<br>It didn&#39;t display real source, but a modified one, that isn&#39;t xml-model compliant !<br>Useful perhaps for gecko-debugging purposes, but completely useless for webdev and public.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Double</div>
+<div class='content'>There&#39;s a discussion going on in programming.reddit.com about this post and languages:<br>http://programming.reddit.com/info/2xlwd/comments<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colin Coghill</div>
+<div class='content'>I guess a modern browser is a big enough job that it could be worth developing a language in parallel, to suit it.<br>Definitely a job for a &quot;small group of geniuses&quot; startup though.<br>- Colin<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeremy Morton</div>
+<div class='content'>Chris Double:<br>May I draw your attention to my Handy Xtra Stuff extension (http://xtrastuff.game-point.net/) which does indeed allow you to view page source in an editor of your choice.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colin Coghill</div>
+<div class='content'>The compatibility problem could be dealt with by lugging along a copy of gecko for &quot;quirks mode&quot;.<br>So compatible sites would be fast and responsive, incompatible sites would be no worse than in the competition browsers.<br>- Colin<br></div>
+</div>
+
+</div>

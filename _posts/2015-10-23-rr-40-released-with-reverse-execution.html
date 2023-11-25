@@ -1,0 +1,124 @@
+---
+layout: "post"
+title: "rr 4.0 Released With Reverse Execution"
+date: "2015-10-22 13:05:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2015/10/rr-40-released-with-reverse-execution.html"
+---
+<p>I finally got around to releasing <a href="https://github.com/mozilla/rr/releases">rr 4.0</a>!
+<p>rr is Mozilla's <a href="http://robert.ocallahan.org/2015/05/rr-performance-update.html">low overhead</a> record-and-replay debugging tool for large C++ applications like Firefox. For more information see the <a href="http://rr-project.org">rr project page</a>, or watch my Technion talk:
+<p><iframe width="560" height="315" src="https://www.youtube.com/embed/H4iNuufAe_8" frameborder="0" allowfullscreen></iframe>
+<p>rr 4.0 is the first stable release with reverse-execution enabled. This means gdb's <tt>reverse-continue</tt>,
+<tt>reverse-step</tt>, <tt>reverse-next</tt> and <tt>reverse-finish</tt> commands work under rr. Not only do they work, but under rr they're quite efficient and have unlimited scope. It's completely reasonable to reverse-continue from the end of a Firefox run all the way back to the beginning. Furthermore, breakpoints and hardware data watchpoints work with reverse execution. Suppose we're debugging Firefox layout:
+<pre>Breakpoint 1, nsCanvasFrame::BuildDisplayList (this=0x2aaadd7dbeb0, aBuilder=0x7fffffffaaa0, aDirtyRect=..., aLists=...)
+    at /home/roc/mozilla-inbound/layout/generic/nsCanvasFrame.cpp:460
+460   if (GetPrevInFlow()) {
+(gdp) p mRect.width
+12000</pre>
+We happen to know that that value is wrong. We want to find out where it was set. rr makes that quick and easy.
+<pre>(gdb) watch -l mRect.width
+(gdb) reverse-cont
+Continuing.
+Hardware watchpoint 2: -location mRect.width
+Old value = 12000
+New value = 11220
+0x00002aaab100c0fd in nsIFrame::SetRect (this=0x2aaadd7dbeb0, aRect=...)
+    at /home/roc/mozilla-inbound/layout/base/../generic/nsIFrame.h:718
+718       mRect = aRect;</pre>
+This is extremely powerful. rr's regular users inside (and outside) Mozilla have been enjoying this for a while on rr master, so we're glad to be able to get it into a stable release.
+<p>This release is about as stable as rr has ever been --- meaning it seems to be generally working for people and very few new issues have been coming in. However, rr depends on gnarly details of the kernel, system libraries and CPU so I expect as the number of rr users grows we'll need to keep fixing bugs and updating rr regularly.
+<p>By the way, Mozilla is interested in hiring people to work on rr-related technology, more closely integrated with the browser. I'd like to hear from people who're interested!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Rob Irving</div>
+<div class='content'>Hi Robert. I&#39;m the host of CppCast, a podcast focused on C++ development. We recently discussed RR as a news item on our show (http://cppcast.com/2015/10/andrei-alexandrescu/) and were wondering if you&#39;d be interested in coming on the show to discuss the project in more depth. Please let me know if you&#39;d be interested: feedback [at] cppcast [dot] com</div>
+</div>
+<div class='comment'>
+<div class='author'>coder</div>
+<div class='content'>Hi Robert, you may be interested in the SHIM profiler. https://github.com/ShimProfiler/SHIM/blob/master/papers/ISCA-SHIM.pdf</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>This looks interesting... How does it compare to Intel&#39;s PIN tool?
+
+-Andrew</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>This looks interesting... How does it compare to Intel&#39;s PIN tool?
+
+-Andrew</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;d be interested to see the numbers! Though I expect we&#39;re mostly bounded by the memory system.</div>
+</div>
+<div class='comment'>
+<div class='author'>coder</div>
+<div class='content'>How to send you? Would you like to drop me an email? Main is xi.yang@anu.edu.au. By the way, I work with Steve Blackburn, I think you know him.
+
+It is interesting that similar with Chrome, it is pretty much front-end bounded, for example, bad instruction cache, poor instruction decoding throughput, etc.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>SHIM sounds pretty cool, though it&#39;s not directly related to rr.</div>
+</div>
+<div class='comment'>
+<div class='author'>coder</div>
+<div class='content'>PIN instruments the code intensively. It is good at logging information of the instrumented code, but very bad in term of observing the behavior of the original code because the observer effects. For example, PIN can log the address of executed functions, but doing that would change the icache miss rate significantly. So, if users want to understand the icache behavior, they have to build another model and feed the logged data in.
+
+SHIM could observer the icache misses signal and other software signals at high frequency. So, you can get a timeline view about the number of icache misses every hundreds cycles and corresponding software information, such as which functions are executed in this short period.
+
+It is very useful in term of observing software&#39;s hardware utilization. For example, if you use SHIM to observe firefox on Intel new CPU, you would found that periods in which firefox has very high L0 cache miss (L0 is a small decoded icache, L1i is the icache).</div>
+</div>
+<div class='comment'>
+<div class='author'>coder</div>
+<div class='content'>Thanks. Right, SHIM is not directly related to rr. It focus on performance debugging. By the way, are you or any other firefox developers are interested in improving the CPU utilization of firefox on intel CPU? I am very happy to share some numbers how firefox underutilizes the micro-architecture resources. </div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>Hi, looks nice!
+
+Out of curiosity, how does it compare with QIRA (QEMU Interactive Runtime Analyser)?
+https://github.com/BinaryAnalysisPlatform/qira
+http://qira.me/
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I haven&#39;t tried it, but AFAICT QIRA has a similar architecture to Chronomancer:
+http://robert.ocallahan.org/2007/08/announcing-chronomancer_21.html
+That implies that the recording overhead will be much higher than with rr.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Isn&#39;t QIRA essentially what he talked about in &quot;Omniscient debugging&quot;? And for that reason, QIRA doesn&#39;t really compare with rr in terms of performance.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>this tool is awesome!
+
+I just used it today to debug a SIGSEGV in the JVM. The ability to watch a memory location and do reverse-continue feels like having super powers when debugging.
+
+The only drawback is that it runs the program on a single core and the JVM makes heavy use of multiple threads, so a large part of our trickiest bugs consists of data races :/
+
+still, if a bug manifests itself while being recorded with rr, then one can almost consider the bug solved :)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Thanks! Feel free to add to https://github.com/mozilla/rr/wiki/Testimonials :-).
+
+It is possible to catch races in rr if context switches occur at the right times, but it is hard. Figuring out better strategies for context switching to find races is on my TODO list.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>&gt; rr 4.0 is the first stable release with reverse-execution enabled.
+
+Mmmm the Debian package for 3.2 has working reverse-execution.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It wasn&#39;t stable in 3.2.0.</div>
+</div>
+</div>
+
+</div>

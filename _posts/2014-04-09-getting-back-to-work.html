@@ -1,0 +1,36 @@
+---
+layout: "post"
+title: "Getting Back To Work"
+date: "2014-04-09 11:54:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/04/getting-back-to-work.html"
+---
+<p>... is what we need now. So let me give a brief summary of what's happening with me work-wise.
+<p>Last year I fully divested my direct reports. No more management work to do, yay! I think they probably all ended up with a better manager than they had. 
+<p>I've been involved in a lot of different projects and a lot of helping other people get their work done. In between I managed to carve out a few things of my own:
+<ul>
+<li>I built reftests for async panning to try to stem the tide of regressions we were encountering there. Unfortunately that's not quite done because most of those tests aren't running on TBPL yet.
+<li>I worked on CSS scroll snapping with an intern. Unfortunately the spec situation got bogged down; there's an impasse between us and Microsoft over the design of the CSS feature, and Google has decided not to do a CSS feature at all for now and try to do it with JS instead. I'm skeptical that will work will, and looking forward to their proposal, but it's taking a while.
+<li>I landed an implementation of the CSS OM <a href="http://dev.w3.org/csswg/cssom-view/#the-geometryutils-interface">GeometryUtils</a> interface, described in hacks.mozilla.org blog posts <a href="https://hacks.mozilla.org/2014/03/introducing-the-getboxquads-api/">here</a> and <a href="https://hacks.mozilla.org/2014/04/coordinate-conversion-made-easy/">here</a>. This fixes a functionality gap in the Web platform and was needed by our devtools team. Almost everything you would need to know about the CSS box geometry of your page is now easy to get.
+<li>Lately I've been doing work on <a href="http://robert.ocallahan.org/2014/03/introducing-rr.html">rr</a>. People are trying to use it, and they've been uncovering bugs and inconveniences that Chris Jones and I have been fixing as fast as we can. Terrence Cole used it successfully to help fix a JS engine bug! I'm using it a lot myself for general-purpose debugging, and enjoying it. I want to spend a few more days getting some of the obvious rough edges we've found filed off and then make a new release.
+</ul>
+<p>Looking forward, I expect to be working on making our async scrolling fully generic (right now there are some edge cases where we can't do it), and working on some improvements to our MediaStreamGraph code for lower latency video and audio.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>ralpht</div>
+<div class='content'>GeometryUtils looks great! Are there plans to extend it to return a CSS matrix? I&#39;ve written an animation system that needs the absolute transform of various &quot;elements of interest&quot; -- currently I do this in JavaScript with the computed style and the offset properties, which works OK but isn&#39;t very fast.
+
+I could reconstruct a matrix from the quad and bounds of an element, but I&#39;d lose perspective and Z translation (so if both were children of the same &quot;perspective&quot; contributing element they&#39;d no longer z-sort properly...).</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Or file a bug, start at the bugzilla.mozilla.org end and work towards standards bodies from there.
+
+/be</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>No such plans yet. We&#39;d need to know more about your use-case. Maybe you could describe it on www-style.</div>
+</div>
+</div>
+
+</div>

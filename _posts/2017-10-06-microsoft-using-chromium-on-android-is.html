@@ -1,0 +1,96 @@
+---
+layout: "post"
+title: "Microsoft Using Chromium On Android Is Bad For The Web"
+date: "2017-10-05 21:53:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/10/microsoft-using-chromium-on-android-is.html"
+---
+<p>Microsoft is releasing "Edge for Android" and <a href="https://blogs.windows.com/msedgedev/2017/10/05/microsoft-edge-ios-android-developer/">it uses Chromium</a>. That is bad for the Web.
+<p>It's bad because engine diversity is really essential for the open Web. Having some users, even a relatively small number, using the Edge engine on Android would have been a good step. Going with Chromium increases Web developer expectations that all browsers on Android are &mdash; or even <em>should be</em> &mdash; Chromium. The less thoughtful sort of developer (i.e., pretty much everyone) will say "Microsoft takes this path, so why doesn't Mozilla too, so we can have the instant gratification of compatibility thanks to a single engine?" The slow accumulation of unfixable bugs due to de facto standardization will not register until the platform has thoroughly rotted; the only escape being alternative single-vendor platforms where developers are even more beholden to the vendor.
+<p>Sure, it would have been quite a lot of work to port Edge to Android, but Microsoft has the resources, and porting a browser engine isn't a research problem. If Microsoft would rather save resources than promote their own browser engine, perhaps they'll be switching to Chromium on Windows next. Of course that would be even worse for the Web, but it's not hard to believe Microsoft has stopped caring about that, to the extent they ever did.
+<p>(Of course Edge uses Webkit on iOS, and that's also bad, but it's Apple's ongoing decision to force browsers to use <a href="https://betanews.com/2017/09/22/safari-more-vulnerable-than-chrome-firefox-edge/">the least secure engine</a>, so nothing new there.)
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>ClassicHasClass</div>
+<div class='content'>I was really disappointed by Microsoft&#39;s decision. I get that it&#39;s the path of least resistance, but I was looking forward to a third choice of layout engines on my Pixel (of course I use Android Firefox normally).</div>
+</div>
+<div class='comment'>
+<div class='author'>Fabrice Desré</div>
+<div class='content'>Note that Mozilla is also using Chromium in their new Focus browser, which gets more PR push than Gecko based Fennec.</div>
+</div>
+<div class='comment'>
+<div class='author'>A Man</div>
+<div class='content'>I am honestly wondering, why is competition better than collaboration?
+
+What if there was ONE main browser engine (WebKit or Blink, say) that was being maintained by an OPEN organization dedicated to improving the Web, and which allowed anyone to build extensions... and once those extensions got popular enough, that functionality would be implemented natively into the core?
+
+This way, innovations could come from anywhere AND the most used features would be standardized. It seems like a better situation than Web developers have had to deal with -- probably BILLIONS of man hours wasted on browser differences and hacking. And for what?
+
+Plus stuff like Personas would have come about through organic growth of extensions -- as form filling and password managers did. Instead of Mozilla looking for adoption.
+
+Of course there may be SOME extensions that could not fit with the browser easily (I dunno what ... NaCl? Rust?) because they change its entire paradigm. But then one could argue that it&#39;s not the Web but another platform and a new organization should do that.
+
+IE was different because it was by a for-profit company whose tactics were to Embrace, Extend, Extinguish.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>One problem with a single implementation of the platform is &quot;the slow accumulation of unfixable bugs due to de facto standardization&quot;.
+
+Another problem is that when underlying technology evolves and you want to make dramatic changes --- perhaps what you&#39;re referring to as &quot;extensions that could not fit with the browser easily&quot; --- you&#39;re likely to split the implementation, just like Blink forked from Webkit. But it will be very difficult to evolve the implementation dramatically because of the need to be bug-compatible with the &quot;standard&quot; implementation.
+
+Servo and Quantum are good examples here. Web standards let Mozilla make radical changes to the implementation and still run existing Web content. That&#39;s huge.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Rewriting the style system in Rust, aka Stylo/Quantum CSS. Google doesn&#39;t want to depend on Rust so doing this in Chromium would have meant maintaining an out-of-tree fork of the style system indefinitely, which would be untenable.
+
+With a single platform implementation, a bug in that implementation is likely to be relied on by some downstream user, since it works consistently in all implementations. So, fixing that bug means breaking downstream users.
+
+In contrast, you see Chromium engineers considering whether it&#39;s safe to fix a bug and using the logic &quot;Firefox doesn&#39;t have this bug, therefore major sites probably don&#39;t rely on it&quot; to justify that the fix is safe.</div>
+</div>
+<div class='comment'>
+<div class='author'>A Man</div>
+<div class='content'>What are examples of such changes that could not have started as custom extensions?
+
+The vast majority of things doesn&#39;t fall into that category.
+
+And why would the bugs become unfixable?</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Murdej Ukrutný</div>
+<div class='content'>blink is not the only rendering engine on android https://www.youtube.com/watch?v=ZPW1BFNpG5Q</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Haha. But seriously, Gecko is on Android too.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Oops. Fixed. Thanks!</div>
+</div>
+<div class='comment'>
+<div class='author'>Jamie R</div>
+<div class='content'>While I do agree with Edge using Chromium/Webkit is bad for the web, the article you linked to about Safari being the least secure is a total clickbait article if you read the last paragraph:
+
+&quot;The security researcher goes on to stress the fact that this test focuses on a single component of the browsers, namely their DOM engine, and, as such, does not reflect how secure they are as a whole. Still, it is an interesting test, as, according to Fratric, &quot;DOM engines have been one of the largest sources of web browser bugs.&quot;&quot;
+
+So is the least secure or the least secure on one section the DOM or just buggy and not necessarily less secure</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s not a slam-dunk case, but it&#39;s not total clickbait either. It&#39;s evidence.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>wooosh-o-mat</div>
+<div class='content'>Is it only me or did you link a GDB tutorial page as a source?</div>
+</div>
+<div class='comment'>
+<div class='author'>khc</div>
+<div class='content'>So when&#39;s the Google Play version of Firefox Focus switching to gecko? Also, I couldn&#39;t post a comment from Firefox 57 beta on Android when using the mobile version of your site. </div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t agree with everything Mozilla does, but at least Firefox on Android uses Gecko.</div>
+</div>
+</div>
+
+</div>

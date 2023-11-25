@@ -1,0 +1,127 @@
+---
+layout: "post"
+title: "Glimpse Of The Future"
+date: "2005-04-22 12:53:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/04/glimpse-of-future_22.html"
+---
+<div class="columns">One of the big initiatives in 1.9 will be an overhaul of our graphics infrastructure. We're planning to rip out a lot of our existing graphics code and base everything on <a href="http://cairographics.org/introduction">cairo</a>. This will give us modern 2D graphics capabilities (such as filling, stroking and clipping to paths, general affine transforms, and ubiquitious support for alpha transparency) and also, via Glitz, acceleration using 3D graphics hardware. It will also mean we can use a single rendering pipeline for HTML/CSS, canvas and SVG, so that SVG effects can be applied to HTML content.<br/><br/>Building on work by Vladimir Vuki&#263;evi&#263; and Stuart Parmenter, I've managed to get basic functionality working on cairo, to the point where the browser is semi-usable:</div><br/><br/><div class="image"><img alt="cairo-seamonkey.png" src="/assets/images/images/cairo-seamonkey.png" width="933" height="669" /></div><br/><br/><div class="columns">Obviously there are still some glitches, and right now the speed is best described as somewhere between "glacial" and "proton decay", but at least things are working well enough that we can start identifying particular bugs and fixing them.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We should be able to get around some of those problems by using pbuffers rather than rendering directly to the window.<br>We already restrict rendering to the main thread.<br>We certainly will have to have some kind of whitelist of drivers we trust (possibly with a list of features that we trust those drivers to implement correctly).<br>It certainly won&#39;t be trivial but it&#39;s the only path into the hardware and we&#39;re not doing it alone.<br>Finally, the only way to get drivers fixed for this sort of application is to release a popular app that can use them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>will</div>
+<div class='content'>When can we test this on Windows?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Will: not for a while.<br>asdf: That&#39;s part of the antialiasing that we need to turn off.<br>On Windows, we will try to use OpenGL, but if that doesn&#39;t work well we could implement a Cairo backend using D3D. The non-accelerated Cairo renderer will be based on GDI. Owen Taylor and others are already working on that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Accettura</div>
+<div class='content'>when you say &quot;modern&quot;... in which way are you talking?<br>In some cases &quot;modern&quot; refers to a 64MB Graphics Card MInimum....  or in some cases it just means an old ATI Rage PRO 128 (16 MB) will be good.<br>One thing that would be cool is to harness that png output functionality.  At least in an API so that extension developers can make plugins to utalize that feature.<br>I&#39;d love the new reporter tool to have an option to take and send a screenshot of the rendering bug.  Then we could see what the user sees.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Well, there is another way to get drivers fixed ... &quot;Be Microsoft and hold a gun to the vendors&#39; heads&quot;, but we don&#39;t have that luxury.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>asdf</div>
+<div class='content'>That text highlight is distracting due to the anti-aliased borders, is it off by half a pixel?<br>And I want to know how exactly you expect this to work in Windows. Will the Cairo backend render an image to a surface and then just blit it with GDI or will you actually do something more exotic like require GDI+ or load Direct3D? And are bitmaped fonts going to be supported still?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>R�mi</div>
+<div class='content'>Cairo is probably the one thing I&#39;ve been eagerly anticipating in mozilla ... however isn&#39;t ditching native toolokits for the menus and regular xul (ie not the browser element) a bit over the top?<br>What are the pros and cons? I can&#39;t really make up my mind on this since I&#39;m no mozilla hacker.<br>Thank you again for your hard work :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Millennium</div>
+<div class='content'>Brian: As I understand it, the Quartzifying effort was to be handled by writing it as a Cairo backend. In that way, the Mac still uses the cross-platform graphics, but in a way that it passes through Quartz.<br>Am I mistaken?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Accettura</div>
+<div class='content'>When done... will there be any performance _improvment_, stay the same, or slight reduction?  Is there any estimate on performance impact?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>aku</div>
+<div class='content'>Are the possible speed improvements (using 3D hardware) of any significance for browsing?<br>Or are they currently just a nice side-effect and will only get important in the future, when Gecko might be used for more graphics-intense applications?<br>I thought the vast majority of the time needed to bring a web page on the screen is the time Gecko needs to parse the HTML and to find out what rectangles, text etc. it has to draw (as opposed to actually drawing the rectangles etc. on the screen)...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Reading PDFs is a very different problem from writing them and I don&#39;t know of anyone planning to work on reading them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>frustum</div>
+<div class='content'>Robert --<br>This is really &quot;cool,&quot; but is it rational?  Cairo is very much a work in progress.  Will it itself be in a robust form by the time that mozilla 1.9 comes around?  Or are you implying that 1.9 is a long way away? :-)<br>Although using 3D hardware to accelerate SVG will help the speed a lot, the current browser presumbly uses uses the 2D parts of the graphics chip to do a lot of the rendering using the current boring rendering pipeline.  That particular path is considerably less complicated that whatever SVG needs to do, and it has existed in its current form for years and is well understood and has been tuned extensively.<br>My take on things is that Cairo is still in the demonstration state, and getting functionality right is a higher priority than performance.  It will take quite a while to get a grip on exactly what it takes to get the performance tradeoffs worked out.<br>Now I have no idea of how gecko operates.  Perhaps it does all of its drawing in software to an in-memory bitmap and just uses the hardware to blast the final bitmap to the display memory.  If so, a hardware accelerated SVG could very well be faster.  At the same time, one could argue that the existing 2D functionality, with a smaller investment of effort, could have been restructured to take better advantage of using hardware to composite to a video ram offscreen surface to achieve performance gains.<br>This is purely uninformed chit chat.  All the best in your efforts -- like I started out, it would be really cool if it all works well.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rafael</div>
+<div class='content'>You guys seriously rock!<br>The work you&#39;re doing there is really ahead of the game, compared to other F/OSS projects.<br>Keep up with the good work. You are the future :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Foxtrot</div>
+<div class='content'>Will this make the installer smaller? Since a 5MB installer is targeted for Firefox2 (and I seem to recall mention of Gecko2 being in Firefox2), I don&#39;t think that the installer has that much room for expansion.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>rja: any Geforce or Radeon card should be good enough. Intel&#39;s onboard 3D used to be absolute crap, I don&#39;t know if that&#39;s still true.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>b0nyb0y</div>
+<div class='content'>Will we be able to get something like page zooming similar to Opera (but with nicer look)?<br>If so, that will be really cool! :D<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We&#39;ll still be able to use native themes with Cairo, via some trickery.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Will</div>
+<div class='content'>When can we test this on Windows?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonnie</div>
+<div class='content'>Cairo also has a pretty good number of backends for spitting out it&#39;s output.  Like PDF, or PNG, or print output. (pppp)<br>So, once this is in and working fine, the code for printing web pages will be much simpler.  And it would be trivial to add commands like &quot;Save this page as a PNG snapshot&quot; or &quot;Save this page as a PDF&quot;.<br>However, I&#39;m not a Mozilla hacker, or Cairo for that matter, so I could be dead wrong with this.<br>Are there also plans to use Cairo to render XUL and other such things?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>antinomy: this uses Xrender (which is supposed to be accelerated on my Nvidia setup). I haven&#39;t got Glitz working yet.<br>brian: I&#39;m not using the new units code. It should land in 1.9 I hope.<br>timo: we&#39;ll need that MacOSX Cairo port, yes. Hopefully it can use Quartz and/or AGL to get hardware acceleration. Rendering Cocoa widgets in this setup is going to be tricky but hopefully we can solve it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ElixonCMS/XUL</div>
+<div class='content'>I&#39;m very pleased that according to my website statistics IE dropped to 64% and FF is about 31%... So maybe we will have &quot;the Microsoft&#39;s gun luxury&quot; in the near future ;-)))<br>(I hope because what I saw in the IE7b1&#39;s CSS... it was not encouraging for the CSS Designers...)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>antinomy</div>
+<div class='content'>When you say the current implementation is glacially slow, is that with cairo running against libpixman or with cairo/glitz?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>DanaKil</div>
+<div class='content'>hi,<br>&quot;Cairo also has a pretty good number of backends for spitting out it&#39;s output. Like PDF, or PNG, or print output. (pppp)&quot;<br>Will mozilla/firefox be able to open PDF files as a native format ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joshua Hudson</div>
+<div class='content'>Very sweet. Keep up the great work.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>You&#39;re right. This will eventually give us PDF output for nearly free.<br>Cairo is rendering XUL. In the screenshot, everything is rendered by Cairo (except for the window manager&#39;s window borders), including the browser UI.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>timo</div>
+<div class='content'>Just curious: How do plans to cairoize 1.9 interact plans to quartzize the mac os x port?  I hesitate to even ask, since I&#39;m admittedly in over my head in this discussion ... I know there&#39;s a Mac OS X cairo port, and I know there&#39;s work to render more of the XUL with Quartz under OS X, is there synergy between these two efforts?<br>Great looking development in any even.  Thanks for your time.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>asdf</div>
+<div class='content'>Oh lordy, I hope you provide a pref that doesn&#39;t even load the gl/d3d dlls and just uses the gdi fallback backend because I will definitely jump shark on this one. Here is how craptacular d3d/gl support is under windows: expect multi-mon support to be iffy at best, expect to completely tear down and restart gl/d3d almost completely for something as trivial as a window resize (this can be worked around in d3d by allocating a surface the size of a screen and rendering to a subrect of it but you still can&#39;t avoid the teardown/restart for other things like messing with the display settings), expect every top-level window created to allocate a non-lightweight d3d/gl object (you can work around this in d3d by just using 1 surface chopped up with the same trick, but it requires a bit more work and still doesn&#39;t work that well for multiple monitors), expect windows to hook your wndproc and have some messages mysteriously handled by them, expect to do all your rendering in only the main thread that contains the main window and message loop, expect to use structured exception handling to work around a fatal crash due to a bug in the windows 2000 kernel that returns a pointer to bad memory when you lock a buffer under certain conditions. And some questionable vendors implement opengl using D3D so you still can&#39;t get away from this just by coding against opengl instead of d3d. Don&#39;t forget that users still have outdated broken drivers either through ignorance, being lazy, or stability so you will also receive a lot of mysterious bug reports and talkbacks due to driver bugs.<br>Using those apis certainly works well for fullscreen games (and carefully programmed single window games for the most part) but it is very terrible for something like mozilla IMHO.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brian P.</div>
+<div class='content'>Robert are you using the new units code in that build?  (bug  -&gt; pixels) And is that expected to land in 1.9 also??<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>b0nyb0y: This will make proper zooming possible, yes.<br>Foxtrot: it will increase the size of the download. We don&#39;t know by how much.<br>aku: there are already many Web pages, especially pages with animation, where graphics rendering is actually the bottleneck. But our plans go beyond just rendering today&#39;s Web pages the way they look today as fast as possible; that&#39;s a recipe for stagnation. We want to render today&#39;s Web better than it looks today (e.g., by using smarter image scaling algorithms), and we want to render a new generation of graphically rich Web pages at high speed too.<br></div>
+</div>
+
+</div>

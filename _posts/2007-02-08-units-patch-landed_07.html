@@ -1,0 +1,83 @@
+---
+layout: "post"
+title: "Units Patch Landed"
+date: "2007-02-07 21:11:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/02/units-patch-landed_07.html"
+---
+<div class="columns"><p>Eli Friedman has landed his "units patch" (bug 177805).<br/><p>This was a monumental effort spanning two years from posting the first patch to finally landing. The original design was proposed (by me, as it happens) back in 2002. Congratulations to Eli for pushing this through to resolution.<br/><p>This patch is a major cleanup of the way we work with length units in Gecko. The <a href="http://wiki.mozilla.org/Mozilla2:Units">new design</a> is very clean and gives us some important new capabilities. The design revolves around CSS pixels. Think of a CSS pixel as 1/96 of an inch, rounded to the nearest device pixel, assuming the user is looking at a typical desktop screen. It's an abstract measurement that we use to make sure Web sites using measurements in "px" look reasonable. In particular, if the user has a (say) 200dpi screen, we don't want to set one CSS pixel to be one device pixel (as we currently do), because Web pages will simply look too small.<br/><p>The new design focuses on three clearly defined quantities:<br/><ul><br/><li>The number of "application units" per CSS pixel. We make the "application units" we use for internal layout smaller than CSS pixels because we want to support subpixel positioning of elements. This value is device-independent and currently set to 60.<br/><li>The number of device pixels per CSS pixel. This is device dependent and depends on the device DPI. For devices up to 144 DPI, the value is 1. For 144 up to 240 DPI, the value is 2, and so on, increasing by 1 every 96 DPI. This means that effectively on a 144-240 DPI device, everything is specified by CSS pixels is scaled up by a factor of 2.<br/><li>The number of device pixels per inch. This is just the device DPI. This value is used to convert CSS length-based measurements (e.g., CSS "in" units) to device pixels and then to application units.<br/></ul><br/><p>The net results are that if you have a high DPI screen, trunk builds will be scaling everything up by a factor of two or more, including Firefox UI. This is basically a good thing except that for now, there are some bugs that make it hard to use. If you can't bear it, you can use about:config to set the preference "layout.css.dpi" to something like 100 to turn the scaling off. (For a good time, you can use this preference to test the scaling feature if you have only a regular screen.)<br/><p>Also, whatever your DPI, we now support much better matching of CSS physical length values to your actual device. If you draw a 1in x 1in box on the screen, it should really be a square inch if your system DPI is set correctly or you set the preference in Firefox. Up until now it has been a rather poor approximation.<br/><p>Another benefit of this patch, by the way, is that scaling in printing and print preview has been reimplemented so that you can use any scale factor you like. Up until now only we've only been able to scale at certain mysterious predefined ratios.<br/><p>This is not the end of the story about scaling, however. User-controlled zooming into Web pages is a separate feature that we will implement for Firefox 3.<br/><p>For people working with Gecko layout code, this means that the old pixels-to-twips (and back again) conversions have been replaced with new conversion functions in nsPresContext, that convert between application units, CSS pixels and device pixels. Whenever you work with pixels you need to know which sort of pixels you're dealing with. In lower level code without access to an nsPresContext, you can get similar information from an nsIDeviceContext. Note that because the application units to CSS pixels ratio is device independent, you can access it via static methods of nsPresContext and nsIDeviceContext.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Matt Smith</div>
+<div class='content'>Very interesting.  Did this get into Alpha 2 or was it just after like the reflow branch in Alpha 1?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daham</div>
+<div class='content'>I had exact same problem as Robert O&#39;Callahan. While I couldn&#39;t find a solution to it, I found a workaround by setting the tools/options/content/Fonts and colors/advanced/font sizes to a higher number like 16 or 18. The text become readable, but the problem with graphics rendering stays on.<br>Btw, my screen is a 15.4&quot;  UXGA(1920x1200)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>This landed after we branched for Alpha 2.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Axel Hecht</div>
+<div class='content'>To forward a report from #firefox.de, we had a user with a DPI setting of 106 complaining about images jumping a few pixels left and right when moving over them with the mouse. Resetting the DPIs to something less odd fixed that. Tomcat and I made him test a post-Eli trunk build, too, which fixes that issue. YAY.<br>Thanks to Araeon for putting a minefield on his machine.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Niels Leenheer</div>
+<div class='content'>Webkit uses a combination of CSS3 features:<br>- the new background-size css property<br>- the ::marker pseudo element<br>- media queries for requesting a high res stylesheet<br>More info:<br>http://webkit.org/blog/?p=55<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rolf Bode-Meyer</div>
+<div class='content'>How does Gecko know the resolution of the disply device? Once upon a time there was some line to measure and an edit field to enter the result. But I can&#39;t find it in the current Seamonkey trunk nightly (Linux).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We use OS-specific APIs to get that information.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philippe</div>
+<div class='content'>media queries would be a good way to go. Relying on UA strings is open to abuse and misinterpretation, as for http headers, most people often don&#39;t have enough control over their servers.<br>BTW David Baron was working on media queries in bug 156716. Would be nice to have that in Gecko 1.9 (parity with Opera and Webkit)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>monk.e.boy</div>
+<div class='content'>That sounds great. Does that mean firefox is moving to SVG icons?<br>And when are we getting the ability to set the angle of a DIV? I want my text to be like on Tony Hawks, all at slightly different angles between -5&#39; and 5&#39;<br>Cheers,<br>monk.e.boy<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Justin Dolske</div>
+<div class='content'>I&#39;m curious how this might affect mobile devices?<br>On a high-dpi desktop display, it makes sense to draw things bigger (pixel-wise) so that they don&#39;t look abnormally small.<br>But on a mobile device, part of the advantage of a high-dpi display is that you can squeeze more into a smaller space. For example, my Nokia N800 has 800x480 screen with a ~4&quot; diagonal, which works out to 225dpi.<br>I suppose it would be easy to just lie to Firefox about the real dpi of the display, although I wonder if that&#39;s always what a user would want.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Van der Beken</div>
+<div class='content'>Roc: Safari uses media queries, see the &quot;Conditional Inclusion&quot; section in http://webkit.org/blog/?p=55<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eugene Lazutkin</div>
+<div class='content'>Oh, I missed the last paragraph, which talks about twips. Please disregard my previous question.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eugene Lazutkin</div>
+<div class='content'>1/96 in. works perfectly for 96 DPI displays. Not so well for anything else (120 DPI, 150, and so on). Just out of curiosity: why don&#39;t you use smaller units? For example typographers use twips (1/20 pt. =&gt; 1/1440 in) for ages. It is a well-known real-world unit. 96 DPI pixel is exactly 14 twips, 120 DPI is exactly 12 twips, and so on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ant</div>
+<div class='content'>@ Jesse: You mean bring back the old &quot;lowsrc&quot; attribute? :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t know about the icons. It would be easy to include higher-res icons.<br>What syntax does Webkit use? In bug 177805 I suggested including the device-to-CSS-pixel ratio in the useragent string so that servers can send higher-res images. Another alternative would be a new HTTP header for image loads.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>Will Gecko 1.9 give web pages a way to point to high-resolution versions of images, without forcing users with normal screens to download and scale?  Preferably with the same syntax as Webkit?<br>Will Firefox 3 include higher-resolution icon toolbar button icons?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t think we&#39;re moving to SVG icons anytime soon. They still take up more resources than bitmapped icons.<br>You can rotate DIVs today (in trunk builds) using SVG and foreignobject.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jason Bourke</div>
+<div class='content'>Hmm.<br>I have had terrible trouble with DPI in firefox after switching from Windows to Linux.  IE seems to respect the DPI setting and Firefox not.  Most sites in Firefox are displayed too small on my laptop, using only half the screen.<br>So I&#39;ve downloaded both the 2.0.0.4 latest and the 3.0 alpha nightly after reading about this update, and I was disappointed.  the 2.0.0.4 doesn&#39;t seem to do anything different.  The 3 alpha displays at  one resolution for DPI numbers up to 143 and then flips to another resolution for DPI numbers 144 and above.  The first is too small and the second is too big.<br>Am I missing something?<br></div>
+</div>
+
+</div>

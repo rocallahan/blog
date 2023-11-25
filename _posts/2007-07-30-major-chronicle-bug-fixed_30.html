@@ -1,0 +1,8 @@
+---
+layout: "post"
+title: "Major Chronicle Bug Fixed"
+date: "2007-07-30 10:22:00 +0000"
+categories: "Chronicle"
+permalink: "/2007/07/major-chronicle-bug-fixed_30.html"
+---
+<div class="columns"><p>Over the weekend I fixed a major bug in Chronicle's register reconstruction code. The bug was that if an instruction block had an early exit (e.g. a conditional branch that went a different way from what Valgrind expected), register effects associated with the not-executed instructions in the block were still applied as we replayed the register log! This could lead to subtle (or not so subtle) errors in register values returned by the query engine. I pushed the fix to the Subversion repository so if you're using Chronicle you really want to update.</div><br/><br/>

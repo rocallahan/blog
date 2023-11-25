@@ -1,0 +1,10 @@
+---
+layout: "post"
+title: "Using rr To Debug Go Programs"
+date: "2017-03-16 01:00:00 +0000"
+permalink: "/2017/03/using-rr-to-debug-go-programs.html"
+---
+<p>rr seems to work well with Go programs, modulo some limitations of using gdb with Go.
+<p>The DWARF debuginfo produced by the standard Go compiler is unsatisfactory, because it does not include <a href="https://github.com/golang/go/issues/18247">local variables held in registers</a>. Instead, build with <a href="https://golang.org/doc/install/gccgo">gccgo</a>.
+<p>Some Go configurations generate statically linked executables. These work under rr, but they're slow to record and replay because our syscall-interception library is not loaded. When using rr with Go, be sure to generate dynamically linked executables.
+<p>Running Go tests using <tt>go test</tt> by default builds your project and then runs the tests. Recording the build step is wasteful, especially when the compiler is statically linked (see above). So build the test executable using <tt>go test -compiler gccgo -c</tt> and then run the test executable directly under rr.

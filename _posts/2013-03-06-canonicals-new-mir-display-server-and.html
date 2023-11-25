@@ -1,0 +1,67 @@
+---
+layout: "post"
+title: "Technical Advantages Of A Web-Only Platform"
+date: "2013-03-05 11:12:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/03/canonicals-new-mir-display-server-and.html"
+---
+<p>Canonical's new <a href="https://wiki.ubuntu.com/MirSpec">Mir display server</a>, and the discussion/controversy around it, illustrate some of the technical advantages of FirefoxOS.
+<p>By supporting nothing but Web applications, we've raised the level of abstraction for our platform APIs so applications are completely oblivious to how cross-process rendering and event delivery are implemented. We can evolve our implementation and our IPC protocols at will without breaking applications. (In fact we're in the middle of doing just that.)
+<p>Because Web applications expose a scene graph, we are able to gather scene graphs across processes, and combine and composite them together in the compositor process. Exchanging scene graphs instead of just surfaces lets us do sophisticated effects such as animation and scrolling of application content directly in the compositor. That has some complexity, but it's less complex and more efficient than having apps independently do their own compositing and coordinate with the system compositor.
+<p>Then it's interesting to consider what happens when you run Web apps on a non-Web mobile platform. You have to load up a browser stack that's going to look quite similar to FirefoxOS, and run it on top of the native stack and system compositor, much of whose functionality it duplicates. There's significant overhead there compared to FirefoxOS.
+<p>Avoiding that duplication also means there's less work to do for us developers. Most of the cross-process compositing work we've done for FirefoxOS is generic work that pays off for Firefox all platforms. In fact, that's true for most of the Gecko work we've done (and will do) for FFOS. For a small organization like Mozilla that needs to punch above its weight, that's critical.
+<p>Having said that, in the rush to get FFOS ready for market we've gone out on a limb a bit and created a number of features that only work in FFOS currently. A big theme for our development in 2013 is to get those features working on all the other platforms. This will benefit the Firefox product on those platforms and also make our developers' lives easier.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>VanillaMozilla</div>
+<div class='content'>I did a little checking, and it&#39;s possible that I am wrong.  Mir is an alternative to Wayland, which is supposed to replace X.org.  It turns out that the Wayland API is less than 1/10 the size of the X.org API.  I don&#39;t know where the dust will settle, but it&#39;s possible that this is a good thing.  I just hope they keep it all simple and don&#39;t break user space.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The not being disturbed by changes like a Display Server is something that can be said of Java, QT or GTK applications too, this is not exclusive to HTML/CSS/JavaScript</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The web abstraction is a benefit and a curse. Not that I am against the web, but with the &quot;browser&quot; as a gateway to the hardware, innovation outside the browser vendors becomes limited on what they can do.
+
+In order to do many things you need that the gateway gives you access to it. I know that the Mozilla team is working hard to add APIs, but a web platform as Firefox OS will not be the center of the innovation on the application side because developers will be able to access features that leak from the platform and do things the browser is not able yet.
+
+I wish Firefox OS a lot of success primarily because there are many applications that really do not need something native and could be pure web applications, but I hope the Mozilla team is realistic that innovation can not wait for the gateway to open you a door. We are changing the locked store model, for the locked API model, It is an improvement, but I don&#39;t see how to break the lock that browser vendors will have on the access to the APIs if developer can not access then directly</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Because developers access native features directly when the toolkit API doesn&#39;t provides an abstraction for it, much like the way different browsers have &quot;native&quot; features (CSS prefixes, moz and webkit API prefixes), Again the same but at another level</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>So many Roberts on this thread looks like a monologue haha, and I am sure the disruption that Mir could generates is more related to making it more difficult to hardware manufacturers to provide support for display drivers, two architectures and web know they will not like to have to do more drivers. For a reason Mozilla choose to use Android as a base, a different display architecture would have hindered the hopeful success of Firefox OS if OEMs were forced to implement new drivers </div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Exactly the same thing is true of iOS or Android: their APIs are a gateway to the functionality of the device and &quot;innovation outside of  is hard to do&quot;. FirefoxOS is no different. (iOS is actually a lot worse since Apple is the sole gatekeeper there; at least Android can be extended by others than Google.)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Actually there&#39;s several reasons why toolkits don&#39;t provide the benefits of the Web platform abstraction:
+-- As said above, it&#39;s a leaky abstraction; developers are able to punch through the toolkit and access features directly, so they do (for good or bad reasons) and create unwanted dependencies. Web apps can&#39;t do this. Vendor-specific Web platform extensions are a bit like that, but unlike with C/C++ toolkits we are able to control which vendor-specific Web features are accessible, and we consciously minimize them.
+-- There are multiple toolkits and they evolve on a schedule that&#39;s not the same as the the display server&#39;s, so you have to maintain compatibility at the display server interface.
+-- Because there are multiple toolkits (sometimes with multiple supported versions, e.g. GTK2 and GTK3), there&#39;s repeated work to support a new display server, and different bugs in different toolkits to deal with.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>In theory yes, but in practice, it is an issue, which is why people are complaining that the split between Wayland and Mir will create difficulties for developers.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>VanillaMozilla</div>
+<div class='content'>Mir is supposed to be a &quot;replacement for the X window server system....  The purpose of Mir is to enable the development of the next generation Unity.&quot;
+
+Oh, great.  They almost got the old system working, and now they want to throw it away.  I hope I&#39;m wrong, but this sounds like more fragmentation, more complexity, and a faster treadmill for users.  These things usually just get bigger and bigger to perform the same functions.  The question is, do we jump ship now or later?</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>there is opportunity created by unnecessary complexity, limitation and time-drag. Be thankful for for it. Frustrating as it may be at first sight, many a good business has grown out of the often associated inefficiency and complacency. If it were not for that, giants would not fall and opportunity would not flourish in its place. However opportunity is sparse for the average person, with the current balance of corporate and government powers. The world could do a better job. A little disappointing.
+
+</div>
+</div>
+</div>
+
+</div>

@@ -1,0 +1,59 @@
+---
+layout: "post"
+title: "Introducing rr Chaos Mode"
+date: "2016-02-10 06:45:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/02/introducing-rr-chaos-mode.html"
+---
+<p>Most of my rr talks start with a slide showing some nondeterministic failures in test automation while I explain how hard it is to debug such failures and how record-and-replay can help. But the truth is that until now we haven't really used rr for that, because it has often been difficult to get nondeterministic failures in test automation to show up under rr. So rr's value has mainly been speeding up debugging of failures that were relatively easy to reproduce. I guessed that enhancing rr recording to better reproduce intermittent bugs is one area where a small investment could quickly pay off for Mozilla, so I spent some time working on that over the last couple of months.
+<p>Based on my experience fixing nondeterministic Gecko test failures, I hypothesized that our nondeterministic test failures are mainly caused by changes in scheduling. I studied <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1213938">a particular intermittent test failure</a> that I introduced and fixed, where I completely understood the bug but the test had only failed a few times on Android and nowhere else, and thousands of runs under rr could not reproduce the bug. Knowing what the bug was, I was able to show that sleeping for a second at a certain point in the code when called on the right thread (the ImageBridge thread) at the right moment would reproduce the bug reliably on desktop Linux. The tricky part was to come up with a randomized scheduling policy for rr that would produce similar results without prior knowledge of the bug.
+<p>I first tried the obvious: allow the lengths of timeslices to vary randomly; give threads random priorities and observe them strictly; reset the random priorities periodically; schedule threads with the same priority in random order. This didn't work, for an interesting reason. To trigger my bug, we have to avoid scheduling the ImageBridge thread while the main thread waits for a 500ms timeout to expire. During that time the ImageBridge thread is the only runnable thread, so any approach that can only influence which runnable thread to run next (e.g. <a href="http://research.microsoft.com/en-us/projects/chess/">CHESS</a>) will not be able to reproduce this bug.
+<p>To cut a long story short, here's an approach that works. Use just two thread priorities, "high" and "low". Make most threads high-priority; I give each thread a 0.1 probability of being low priority. Periodically re-randomize thread priorities. Randomize timeslice lengths. Here's the good part: periodically choose a short random interval, up to a few seconds long, and during that interval do not allow low-priority threads to run at all, even if they're the only runnable threads. Since these intervals can prevent all forward progress (no control of priority inversion), limit their length to no more than 20% of total run time. The intuition is that many of our intermittent test failures depend on CPU starvation (e.g. a machine temporarily hanging), so we're emulating intense starvation of a few "victim" threads, and allowing high-priority threads to wait for timeouts or input from the environment without interruption.
+<p>With this approach, rr can reproduce <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1213938">my bug</a> in several runs out of a thousand. I've also been able to reproduce <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1237176">a top intermittent</a> (now being fixed), <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1203417">an intermittent test failure</a> that was assigned to me, and <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1150737#c197">an intermittent shutdown hang in IndexedDB</a> we've been chasing for a while. A couple of other people have found this enabled reproducing their bugs. I'm sure there are still bugs this approach can't reproduce, but it's good progress.
+<p>I just landed all this work on rr master. The normal scheduler doesn't do this randomization, because it reduces throughput, i.e. slows down recording for easy-to-reproduce bugs. Run <tt>rr record -h</tt> to enable chaos mode for hard-to-reproduce bugs.
+<p>I'm very interested in studying more cases where we figure out a bug that rr chaos mode was not able to reproduce, so I can extend chaos mode to find such bugs.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Akihiro Suda</div>
+<div class='content'>FYI, we have been working on very similar debugging tool :-) https://github.com/osrg/namazu
+
+Our tool calls `sched_setattr(2)` with randomized parameters 
+so as to reproduce flaky tests.
+It also supports randomized scheduling for Ethernet packets, filesystem events, and so on.
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Cool! You could use rr with that.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Steve Fink</div>
+<div class='content'>I&#39;m still not sure I fully understand how this was happening on Android. Was it the case that the main thread did (the equivalent of) setTimeout(500) and then did some other stuff that took longer than 500ms on the failing runs, then without rescheduling anything the timer expired and the handler ran, all still on the main thread? Or was it a setTimeout(500) on the main thread followed by scheduling in some other thread that took a while to finish (on the failing Android runs, but was much faster on desktop runs), and then the timeout expired at a time when both the main and ImageBridge threads were runnable?
+
+You said that only the ImageBridge thread was runnable, which to me says it was the only thread runnable *during passing runs*, but that on failing runs both the main and ImageBridge threads *were* runnable and either the scheduler picked the main thread or there was no scheduling opportunity. Is at least that much correct?
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t know for sure what was happening on Android, but I think what was happening was &quot;main thread setTimeout(500)&quot;, &quot;no Gecko threads are scheduled for &gt; 500ms because Android&quot;, &quot;main thread runs timeout callback&quot; and ImageBridge was runnable the entire time.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Hi-Angel</div>
+<div class='content'>Besides the `-h` option, how does one use the Chaos Mode I.e. do I have to rerun the app in a bash cycle with `rr record -h` until I hit a bug? Do I need to determine manually that app failed,  or does `rr` do this automatically somehow and stops? Does `rr` clean up older uninteresting traces?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>You have to determine manually whether the test failed --- rr can&#39;t know that. You have to clean up old traces yourself. A shell script is a good way to do this.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Another approach to this particular issue might be to add an idle loop Gecko thread that can always be scheduled.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>A couple of problems with that:
+a) doesn&#39;t extend to non-Gecko projects
+b) that idle thread would starve out low-priority threads permanently, causing deadlock. It&#39;s really important to limit the &quot;complete starvation&quot; intervals to a bounded fraction of run time.</div>
+</div>
+</div>
+
+</div>

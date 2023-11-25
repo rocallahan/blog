@@ -1,0 +1,28 @@
+---
+layout: "post"
+title: "Deterministic Hardware Performance Counters And Information Leaks"
+date: "2017-03-21 08:37:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2017/03/deterministic-hardware-performance.html"
+---
+<p>Summary: <a href="http://web.eece.maine.edu/~vweaver/projects/deterministic">Deterministic</a> hardware performance counters <b>cannot</b> leak information between tasks, and more importantly, virtualized guests.
+<p>rr relies on hardware performance counters to help measure application progress, to determine when to inject asynchronous events such as signal delivery and context switches. rr can only use counters that are <em>deterministic</em>, i.e., executing a particular sequence of application instructions always increases the counter value by the same amount. For example rr uses the "retired conditional branches" (RCB) counter, which always returns exactly the number of conditional branches actually retired.
+<p>rr currently doesn't work in environments such as Amazon's cloud, where hardware performance counters are not available to virtualized guests. Virtualizing hardware counters is technically possible (e.g. rr works well in Digital Ocean's KVM guests), but for some counters there is a risk of leaking information about other guests, and that's probably one reason other providers haven't enabled them.
+<p>However, if a counter's value can be influenced by the behavior of other guests, then by definition it is not deterministic in the sense above, and therefore it is useless to rr! In particular, because the RCB counter is deterministic ("proven" by a lot of testing), we know it does not leak information between guests.
+<p>I wish Intel would identify a set of counters that are deterministic, or at least free of cross-guest information leaks, and Amazon and other cloud providers would enable virtualization of them.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Gerald</div>
+<div class='content'>A thought:
+Would it be possible to replay inside a complete simulation of the CPU? Presumably, replaying doesn&#39;t need any actual hardware apart from the CPU, since you&#39;re simulating all hardware-accessing calls, right?
+
+This way it would be possible to record on any rr-friendly hardware, but then let developers replay it on their own machine.
+
+(Not directly related to this post, as I guess it wouldn&#39;t help with recording programs from the cloud.)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>We can actually do that already --- not in the open-source rr but a private branch I have. We instrument the code *during replay* to count branches. But it&#39;s slower, and as you note, it doesn&#39;t help recording programs running in (non-Digital-Ocean) clouds.</div>
+</div>
+</div>
+
+</div>

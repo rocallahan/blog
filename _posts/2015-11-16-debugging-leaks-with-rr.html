@@ -1,0 +1,22 @@
+---
+layout: "post"
+title: "Debugging Leaks With rr"
+date: "2015-11-15 23:11:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2015/11/debugging-leaks-with-rr.html"
+---
+<p>Last week I looked into a couple of Gecko leaks using rr. One fun aspect of using rr is discovering new debugging techniques. "What's the best way to use a record-and-replay debugger to track down memory leaks?" is a very interesting question. Maybe no-one has tried to do this before.
+<p><tt>XPCOM_MEM_LEAK_LOG</tt> uses instrumentation to count object constructors and destructors and report any mismatches. That tells us immediately which classes of objects leaked. My next step was to identify the address of a leaked object, preferably one that is the root of an ownership tree of leaked objects. In my particular case I chose to investigate a leaked <tt>nsWindow</tt>, because only one was leaked and I guessed (correctly, as it turns out) that it was most likely to be the root of the leaked object tree.
+<p>Finding the address of the leaked nsWindow was easy: run the program with breakpoints on the nsWindow constructor and destructor, set to log the object address and continue. The constructor with no matching destructor has the address of the leaked object. At process exit I could inspect the window object and see that indeed it still existed with refcount 1.
+<p>My next move was to use a similar technique to log addref/release operations on that window. This is similar to what you'd get with Gecko's built-in trace-refcount instrumentation, but produced a lot of data that was hard to analyze. I realized the leaked reference to the window probably corresponds to a pointer to the window in memory when the process exits. So I added a <tt>real-tid</tt> command to rr to print the real thread-id of a replaying process, and wrote a small program to walk /proc/.../maps and /proc/.../mem to search all process memory for the pointer value. This worked very well and showed just two addresses where the pointer occurred.
+<p>The next problem was to figure out what those addresses belong to. I futzed around a bit before finding the correct approach: set hardware write watchpoints on those addresses and reverse-execute from the end of the process to find the writes that stored those addresses. This told me immediately where and why each reference was being stored, and if it was a strong reference. This made the bug obvious.
+<p>A lot of this could be more automated. It would be particularly interesting to grab the XPCOM_MEM_LEAK_LOG output and process it to automatically output the "leak roots" --- leaking references that are not contained in objects that themselves leaked. If there are no leak roots then instead there must be at least one cycle of strong references, which we can output.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>If you set XPCOM_MEM_LOG_CLASSES=nsWindow, then it will also print out the address of any leaked objects.
+
+You can also use the heap scan mode of DMD to record the entire contents of memory to a file. This will also record the allocation stack for each live block of memory. I have a script that tells you which blocks point to a particular other block. Ideally there would be some way to automatically use debug information to correlate the block offset of the address to the type of the field but I haven&#39;t gotten around to figuring that out.</div>
+</div>
+
+</div>

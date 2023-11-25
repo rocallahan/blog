@@ -1,0 +1,35 @@
+---
+layout: "post"
+title: "Gecko 1.8 For Web Developers: Collapsing Margins And The &#39;Clear&#39; Property"
+date: "2005-03-27 23:24:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/03/gecko-18-for-web-developers-collapsing_27.html"
+---
+<div class="columns">Every Gecko release we spend lots of time and energy fixing bugs to make us more standards compliant and, where necessary, more Web-compliant. One area where I did some significant work last year was fixing how we handle content that combines floats, collapsing margins, and the 'clear' property.<br/><br/>This was particularly important because apparently IE has a bug where a block that contains a float automatically has its height extended to include the bottom of the float. In fact, the float children of a block should not normally have any direct effect on the height of the block. But what if you do want a block to extend at least as far as the bottom of its floats, either to match this IE bug, or for your own reasons? CSS 2.1 provides a way. You simply write something like this:<br/><pre><br/>&lt;div&gt;<br/>&lt;div style="float:left"&gt;...&lt;/div&gt;<br/>&lt;div style="clear:both"&gt;&lt;/div&gt;<br/>&lt;/div&gt;<br/></pre><br/>The element with 'clear' is forced below the float, and because that element is in the normal flow, it forces its container to be at least that high. The only problem is that this usually doesn't work in Gecko 1.7/FF 1.0. Basically we were treating the space induced by 'clear' as margin space and then collapsing it away. Fixing this required a major overhaul of how clearance and margin collapsing were handled, so that right now I believe we're more standards-compliant in this area than any other browser.<br/><br/>I could go into lots of gory details --- this is an egregiously complex area of the CSS spec --- but I won't. Suffice it to say that the above trick for vertically sizing blocks does work in Gecko 1.8.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Eli Simpson</div>
+<div class='content'>I&#39;m confused.  I (and most of the CSS developer world) have been using this idea for a long time, and it&#39;s always worked fine in Gecko.  It&#39;s usually done with some content in the clearing div, such as a non-breaking space, but that&#39;s the only difference I see.  What&#39;s changed that makes this different from earlier Gecko engines?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Arjen Schol</div>
+<div class='content'>Super simple clearing floats: http://annevankesteren.nl/archives/2005/03/clearing-floats<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anne</div>
+<div class='content'>Well, they are avoiced because they don&#39;t really add any semantic meaning to the page and are purely there for presentational reasons.<br>Using http://www.positioniseverything.net/easyclearing.html works too for example. Since Mozilla 1.5. Would that work without the &#39;.&#39; now?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>nobody</div>
+<div class='content'>clearing divs are old and busted.<br>overflow: auto on the container div is teh new hotness.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>busted how?<br>overflow:auto has side effects you might not want (e.g. if the element has overflow). But whatever works for you :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; It&#39;s usually done with some content in the<br>&gt; clearing div, such as a non-breaking space<br>Yeah, that was the bug --- it only worked if the clearing DIV was non-empty. And that content takes up space that you don&#39;t necessarily want.<br></div>
+</div>
+
+</div>

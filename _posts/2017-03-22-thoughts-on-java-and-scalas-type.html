@@ -1,0 +1,11 @@
+---
+layout: "post"
+title: "Thoughts On \"Java and Scala’s Type Systems are Unsound\" And Fuzz Testing"
+date: "2017-03-21 21:08:00 +0000"
+permalink: "/2017/03/thoughts-on-java-and-scalas-type.html"
+---
+<p>I just belatedly discovered <a href="https://raw.githubusercontent.com/namin/unsound/master/doc/unsound-oopsla16.pdf">Java and Scala’s Type Systems are Unsound</a> from OOPSLA last year. It's a lovely paper. I would summarize it as "some type system soundness arguments depend on 'nonsense types' (e.g. generic types with contradictory bounds on type parameters) having no instances; if 'null' values can inhabit those types, those arguments are invalid". Note that the unsoundness does <strong>not</strong> lead to memory safety issues in the JVM.
+<p>The paper is a good illustration of how unexpected feature interactions can create problems for type systems even when a feature doesn't seem all that important at the type level.
+<p>The paper also suggests (implicitly) that Java's type system has fallen into a deep hole. Even without null, the interactions of subtyping, generics and wildcards are immensely complicated. Rust's rejection of subtyping (other than for lifetimes, which are tightly restricted) causes friction for developers coming from languages where subtyping is ubiquitous, but seems very wise for the long run.
+<p>I think the general issue shown in this paper could arise in other contexts which don't have 'null'. For example in a lazy language you can create a value of any type by calling a function that diverges. In a language with an explicit Option type, if T is a nonsense type then Option<T> is also presumably a nonsense type but the value None inhabits it.
+<p>The paper discusses some methodological improvements that might detect this sort of mistake earlier. One approach it doesn't mention is fuzz testing. It seems to me that the examples in the paper are small enough to be found by fuzz testing techniques searching for programs which typecheck but contain obviously unsound constructs (e.g. a terminating function which can cast its parameter value to any type). Checking soundness via fuzz testing has been done to small extent with Rust (see <a href="https://www.cs.ucsb.edu/~benh/research/papers/dewey15fuzzing.pdf">paper</a>) but I think more work in that direction would be fruitful.

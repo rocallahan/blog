@@ -1,0 +1,67 @@
+---
+layout: "post"
+title: "Filters, Libraries And The Web"
+date: "2009-02-20 11:27:00 +0000"
+categories: "Mozilla"
+permalink: "/2009/02/filters-libraries-and-web_20.html"
+---
+<div class="columns"><p>Daniel Glazman <a href="http://www.glazman.org/weblog/dotclear/index.php?post/2009/02/19/Give-back-to-Caesar">writes</a>, somewhat in passing:<br/><blockquote>We can now apply SVG filters to all content, including HTML 4, in Firefox but I have mixed feelings about the fact you have to know HTML, CSS and SVG to apply such a filter. Seems to me overkill, and too far away from the original spirit of the Web.</blockquote><br/>He didn't enable comments on that post, so I'll reply here: you don't need to know SVG to use filters. You can just paste filter code from a cookbook into an XML file --- or use an XML file from a library --- and refer to that file from your CSS and HTML. This is not only easy and reasonable; SVG filters provide a rich vocabulary of composable operators, so they're much more flexible and powerful than providing ten canned filter keywords to handle all the author needs that the CSS WG can think of.<br/><p>You could perhaps reinvent SVG filters with CSS syntax, but I don't see that as a real win for author understanding.<br/><p>Generally in computer science we prefer to create a set of composable primitives with clean semantics, on top of which libraries are built to make frequent tasks easy, over trying to anticipate every possible need and encoding a feature for each one. Unfortunately CSS has often taken the latter course ... partly because the Web's mechanisms for code reuse are weak. But external document references give us a reuse mechanism that makes using a library of SVG effects quite convenient, IMHO.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Brad Neuberg</div>
+<div class='content'>I heard noises about a year ago that Safari/webkit was implementing XBL 2. Did this ever land and become a reality? Is it in Safari 3 or Safari 4 beta? Has Firefox itself updated its XBL 1.0 implemention to 2.0, and if so, what version?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Aryeh Gregor</div>
+<div class='content'>I&#39;ve thought for a while now that CSS mostly seemed to be growing more baroque instead of more flexible, and that this would turn out to be suboptimal in the long run.  It&#39;s nice to see someone who actually knows what he&#39;s talking about express similar sentiments.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mardeg</div>
+<div class='content'>Instead of using an external reference, would using a data: uri of an xml file work?<br>Oh the irony if it does, since svg filters don&#39;t work in a data: uri of an svg directly.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>You&#39;re asking the wrong person about Webkit ... but AFAIK no XBL support has landed on Webkit trunk. We haven&#39;t implemented XBL2 yet but Jonas has it as his next #1 priority I believe.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>Daniel is forgetting that you also have to know Javascript / HTTP / Atom/rss / ... in order to make a web page work nice.<br>His thought is very common among developers but it&#39;s something that I really don&#39;t understand.<br>Why do they think it would be simpler to learn a brand new syntax in CSS instead of learning SVG ?<br>People always argue CSS is designed to be simple. I really think CSS is NOT simple anymore. Since CSS2, I always have to do lots of trials/errors to achieve what I want (especially for layouts).<br>Is it the xml syntax that scares people ?<br>I have mixed feelings about bloating the CSS spec. It&#39;s becoming monstruous. Developers will have to know new transforms and transitions syntaxes in addition of the already existing and powerful ones (svg filters and smil). Do we really want to reinvent the wheel all the time ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>data: URIs don&#39;t work, because they don&#39;t support a fragment identifier....  At least in Gecko.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brad Neuberg</div>
+<div class='content'>@voracity: Flex 3 allows you to do some nice things around this, defining a custom tag in a namespace and then back it up with some code; Silverlight has a similar notion. Of course XUL + XBL has had this for awhile, and Microsoft Behaviors kicked off some of this thinking in the late 90s. It&#39;s never taken off on the mainstream web though for some reason, probably because theres no clear common mechanism.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t think that works, but I&#39;m not sure.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>XBL2 is currently our best shot at reusable DOM-level modules.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>&quot;partly because the Web&#39;s mechanisms for code reuse are weak&quot;<br>Could I tie this together with Thunderhead?<br>It would be ideal if browsers allowed us to create custom markup+CSS that would be interpreted/executed by javascript+canvas (or whatever) and that we could redistribute as standard libraries.<br>There are various impediments to doing this right now. (For example, Firefox drops unknown CSS declarations.)<br>Do you think it will ever be possible to have a graph.js library that would let you do something like this?:<br>&lt;style&gt;lineplot { line: dotted; }&lt;/style&gt;<br>&lt;script src=&quot;graph1.1.js&quot;&gt;&lt;/script&gt;<br>&lt;graph&gt;&lt;lineplot data=&quot;0 0; 1 3; 2 2&quot;/&gt;&lt;/graph&gt;<br></div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>Thanks all. I will have to start playing around with XBL. I guess I&#39;d avoided it because I was under the impression it was still in flux.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Currently there is no access to the external document. If you want to change the filter, you have to put it in your own document.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurentj</div>
+<div class='content'>@voracity<br>&gt;it would be ideal if browsers allowed us to create custom markup+CSS that would be interpreted/executed by javascript+canvas (or whatever) and that we could redistribute as standard libraries.<br>This is exactly you can do with XBL. With XBL, you can create your own markup which have their own content, their own styles (CSS) their own behaviors (js) etc..<br>http://www.w3.org/TR/xbl/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>DigDug</div>
+<div class='content'>openclipart.org already has a section for people to place filters too, so there is some semblance of &quot;libraries&quot; for these things already available.<br>I was playing with this the other day. Do external references allow any access to the external document. Can you apply a filter and then modify it to animate the filter (say to fade from black and white to color), or does that require that the filter be included in your document?<br></div>
+</div>
+
+</div>

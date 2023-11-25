@@ -1,0 +1,27 @@
+---
+layout: "post"
+title: "Superlaser Targeting Cupertino"
+date: "2007-02-14 14:11:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/02/superlaser-targeting-cupertino_14.html"
+---
+<div class="columns"><p>I think I found a nasty bug in ATSUI.<br/><p>It seems to have a problem with bidi overrides and trailing whitespace. If I give it the string <em>RLO space space PDF</em> (namely, two spaces inside a "right to left override" Unicode control), ATSUI produces glyphs with the first space to the left of the second space. This is wrong.<br/><p>The general problem seems to be that bidi overrides are ignored for any trailing whitespace in the layout. You can even see the problem with a left-to-right override, for example when the whitespace follows a Hebrew character.<br/><p>So far I haven't found any instances of this bug affecting non-whitespace characters, but it's possible I just can't see such effects, not being able to read any RTL langauges.<br/><p>I'm able to work around this problem, by detecting when glyphs aren't in the order I expect and processing them in the correct order, but it seems like a pretty major bug. Unfortunately there doesn't seem to be much information on the Web about using ATSUI with bidi overrides. Most of the hits for my searches are actually Webkit checkins. (Webkit seems to use the same trick I'm using with ATSUI and Pango to force all characters to follow a certain direction: insert a RLO/LRO header character and a trailing PDF character into the text before handing it to the text engine.)</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>ATSUI seems correct --- it&#39;s the Unicode bidi algorithm that&#39;s making trouble for me! I&#39;ve just submitted a fix in bug 375662 that works around the issue in a cleaner way.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ludovic Hirlimann</div>
+<div class='content'>Did you log that issue at Apple ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ned</div>
+<div class='content'>I&#39;m not convinced this is a bug, since rule X9 of the Bidi Algorithm will remove the RLO and PDF characters from the stream and rule L1 will set the level of any trailing whitespace to the paragraph level. This would explain why trailing whitespace on a line of Hebrew characters ends up RTL, anyway.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Simon</div>
+<div class='content'>I think Ned is right about trailing whitespace. Rule L1... so that the whitespace isn&#39;t trailing.<br></div>
+</div>
+
+</div>

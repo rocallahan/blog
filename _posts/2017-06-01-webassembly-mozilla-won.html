@@ -1,0 +1,54 @@
+---
+layout: "post"
+title: "WebAssembly: Mozilla Won"
+date: "2017-06-01 07:06:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/06/webassembly-mozilla-won.html"
+---
+<p>Mozilla staff are being very diplomatic and restrained by allowing WebAssembly to be portrayed as a compromise between the approaches of asm.js and PNaCl. They have good reasons for being so, but I can be a bit less restrained. asm.js and PNaCl represented quite different visions for how C/C++ code should be supported on the Web, and I think <a href="https://blog.chromium.org/2017/05/goodbye-pnacl-hello-webassembly.html">WebAssembly is a big victory for asm.js and Mozilla's vision</a>.
+<p>Considered as a Web platform feature, PNaCl had three major problems from the beginning, two of which it inherited from NaCl. By design, in NaCl and PNaCl, application code was highly isolated from the world of Javascript and HTML, running in its own process and behaving much like an opaque plugin with very limited interactions with its host page (since any interactions would have to happen over IPC). This led to a much bigger problem, which is that to interact with the outside world (P)NaCl code needed some kind of platform API, and Google decided to create an entirely brand-new platform API &mdash; "Pepper" &mdash; which necessarily duplicated a lot of the functionality of standard Web platform APIs. To make things even worse, neither Pepper nor PNaCl's LLVM-based bytecode had a proper specification, let alone one with multi-vendor buy-in.
+<p>Therefore any non-Chrome-based browser wishing to implement PNaCl would have had to reverse-engineer a Chromium-bug-compatible Pepper spec and reimplement it, or more likely import a large amount of Chromium code to implement Pepper/NaCl. Likewise they'd have had to import a large amount of LLVM code for the PNaCl compiler. Both imports would have to stay in sync with whatever Google did. This would mean lots more code bloat, maintenance and spec work, and more work for Web developers too, not to mention being a severe blow to Web standards. Mozilla people (including me) explained the unacceptability of all this to relevant Google people early on, but to no avail.
+<p>Mozilla responded with the asm.js project to show that one could achieve similar goals with minimal extensions to the standard-based Web platform. asm.js sets up a Javascript array to represent memory and compiles C/C++ to Javascript code operating on the array. It avoids those big PNaCl issues: asm.js code can interact with JS and the DOM easily since it shares the JS virtual machine; it specifies no new platform APIs, instead relying on the (already standardized and interoperably implemented) Web platform APIs; and very little new specification work had to be done, since it mostly relies on already-specified JS semantics.
+<p>In these key areas WebAssembly follows asm.js, not PNaCl. WebAssembly applications or components interact freely with JS and AFAIK in all browsers WebAssembly is implemented as part of the JS VM. WebAssembly defines no new platform APIs other than some APIs for loading and linking WebAssembly code, relying on standards-based Web APIs for everything else. WebAssembly differs from asm.js by defining a bytecode format with some new operations JS doesn't have, so some spec work was required (and has been done!). Like asm.js, WebAssembly application call-stacks are maintained by the JS VM, outside the memory addressable by the application, which reduces the exploitability of application bugs. (Though, again like asm.js and unlike PNaCl, the compiler is trusted.)
+<p>I'm not belittling the contributions of Google and others to WebAssembly. They have done a lot of good work, and ditching PNaCl was an admirable decision for the good of the Web &mdash; thank you! Often in these contests proclaiming a "winner" is unimportant or even counterproductive, and it's true that in a sense Web developers are the real winners. I'm calling it out here because I think the good and essential work that Mozilla continues to do to improve the standards-based Web platform is too often overlooked. I also want credit to go to Mozilla's amazing asm.js/WebAssembly team, who went up against Google with far fewer resources but a better approach, and won.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>MAGA</div>
+</div>
+<div class='comment'>
+<div class='author'>JeroMiya</div>
+<div class='content'>Thanks for posting this. If you want to be more diplomatic, what I try to do in these situations is focus on the ideas and not the people behind them. So for instance, instead of saying &quot;Mozilla won&quot;, say &quot;WebAssembly won&quot;. And then separately describe how Mozilla worked towards that goal.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I can be more diplomatic if I need to be :-).
+
+But in this case &quot;more diplomatic&quot; means &quot;downplay Mozilla&#39;s importance&quot; which I don&#39;t want to do.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Buck</div>
+<div class='content'>Mozilla: Keep fighting the good fight, buddy! I still remember that time you killed ie6 for all of us.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I&#39;m thrilled about the future that web assembly will bring, and thankful for all the organizations contributing to it.
+
+Having said that, your article is headlined by &quot;WebAssembly: Mozilla Won&quot;, and then you conclude by saying &quot;Often in these contests proclaiming a &quot;winner&quot; is unimportant or even counterproductive&quot;. 
+
+I&#39;m confused....</div>
+<div class='comment'>
+<div class='author'>David Fauber</div>
+<div class='content'>In your enthusiasm to post this Gotcha!, did you skip the rest o that paragraph where he directly addresses that?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Often != always.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Miguel "Skatox" Useche</div>
+<div class='content'>Agree! I&#39;m happy that everybody is supporting WASM</div>
+</div>
+
+</div>

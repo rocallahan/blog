@@ -1,0 +1,51 @@
+---
+layout: "post"
+title: "Script Safety Annotations"
+date: "2007-12-06 11:43:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/12/script-safety-annotations_06.html"
+---
+<div class="columns"><p>I've been encountering a trunk bug where we make a call to an XPCOM method that happens to be implemented in Javascript. Unfortunately we make this call while we're tearing down a DOM element, during garbage collection. Running JS code during garbage collection is a very bad idea, so we crash.<br/><p>This is a specific case of a general problem: some code is not safe to call at certain times. I would like to be able to add checkable annotations to functions and methods that indicate the following:<br/><ul><br/><li>The function may spin the event loop or execute any script (these are equivalent).<br/><li>The function may execute trusted script but will not spin the event loop or execute untrusted script.<br/><li>The function will not execute script or spin the event loop (default, so dangerous methods have to be annotated).<br/></ul><br/><p>We would need a way to specify these attributes on XPCOM IDL interface methods. (It would also be useful to have syntax for setting a default annotation for all methods of an interface.) Most of the scriptable Gecko API methods implemented in C++ could use these annotations. This might help <a href="http://blog.mozilla.com/tglek/2007/12/05/exceptional-circumstances/">Taras' refactoring work</a>. It could help code analysis tools quite a lot by constraining what can run. I think it would help us catch a lot of bugs where we make unsafe calls.<br/><p>We would want an escape hatch to "cast away" annotation checks, where some dynamic test guarantees that it's OK to call nominally less-safe code.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Taras</div>
+<div class='content'>This all looks good except for<br>&quot;We would want an escape hatch to &quot;cast away&quot; annotation checks, where some dynamic test guarantees that it&#39;s OK to call nominally less-safe code.&quot; Could you clarify that?<br>To me that reads that not-scriptable will actually mean not-scriptable-except-sometimes.<br>I added annotation support to dehydra recently so if xpidlgen produced annotations in the generated files, that&#39;d be even better!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>shaver</div>
+<div class='content'>Brendan: the interface annotation would be saying that _any_ implementation of the interface _might_ be finalizer-like (or the inverse as I think roc is describing -- not safe to be called in a finalization context).<br>roc: then why not just use [scriptable] to mean what you&#39;re asking for, since any scriptable interface method (incl accessors) can obviously be implemented in script?  Make it a static and/or runtime error to call XPConnect&#39;s thunking when there&#39;s GC on the stack.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Benjamin Smedberg</div>
+<div class='content'>I&#39;ve already specced up a static checking pass for finalizer safety and other things in XPCOMGC: http://wiki.mozilla.org/XPCOMGC/Static_Checker<br>But I&#39;m not convinced that we want to start dividing up IDL methods into multiple categories. We can solve last-release-causes-immediate-finalization issues much more simply than creating massive annotation graphs.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&quot;any scriptable interface method (incl accessors) can obviously be implemented in script&quot; --- I don&#39;t see why.<br>Why is [scriptable] the right thing? I can easily imagine that we have GC-safe APIs which could be usefully exposed to script and are therefore [scriptable]. Just because an API *can* be called during GC doesn&#39;t mean it *has* to be called during GC :-).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>shaver</div>
+<div class='content'>I don&#39;t see why we&#39;d want to mark an interface as being unsafe to call in certain ways due to a (possibly-transient) choice in one implementation of that interface. It&#39;s not a characteristic of the interface here, as I see it, that you can never poke an nsIWhatever when you have GC on the stack above you. If this nsIWhatever instance had been implemented in C++ (or in Python, which is safe to call from under the JS GC, but not from under the Python one, I imagine), would you still flag it? Will we need to add these annotations every time we shift implementation language (which I hope to be quite common once we&#39;re running atop MMGC and Tamarin)?  Would we remove them if we switched things back?<br>The safety issue is transitive as well, so I need to know if any of the interfaces on which my implementation operates can be implemented by anything that might fly an alert or be access a JS property. Would that not degenerate quickly into pretty much anything being unsafe?<br>I think that when running under GC, we should be posting non-trivial operations to a work-queue, which can be processed once GC is complete. IIRC we do something similar with certain kinds of mutation under reflow. Static analysis could possibly help us find cases where we operate under GC on interfaces for which we know of an implementation rendering that operation unsafe, as a programming aid.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>shaver:<br>&gt; It&#39;s not a characteristic of the interface<br>&gt; here, as I see it, that you can never poke an<br>&gt; nsIWhatever when you have GC on the stack above<br>&gt; you.<br>On the contrary, I think &quot;this method must not be called during GC&quot; is a very legitimate precondition for a method and deserves to be part of its public interface.<br>If we choose to make it a precondition for most of our methods, then so be it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Justin Harrell</div>
+<div class='content'>&gt;&gt;&gt; Running JS code during garbage collection is a very bad idea, so we crash.<br>Does SpiderMonkey use an incremental garbage collector? If that&#39;s the case, perhaps that is the real problem here and you should consider switching to a concurrent garbage collector.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Benjamin Smedberg</div>
+<div class='content'>The annotation system we&#39;re trying to implement for XPCOMGC is at http://wiki.mozilla.org/XPCOMGC/Static_Checker<br>Note that in the case of XPCOMGC, you can&#39;t call any method on other GC-allocated objects, so the discussion about whether some IDL methods should be &quot;GC-safe&quot; is moot.<br>In the 1.9 timeframe, it sounds more effective to delay object destruction from last-release to a safe point, which is fairly easy to do.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t have any specific examples in mind but I&#39;m sure we&#39;ll find cases where we know we can call an &quot;unsafe&quot; method and it won&#39;t do anything unsafe.<br>OK, here&#39;s an example: callbacks. Our choices are:<br>-- duplicate every function that takes a callback parameter when some callers pass a safe callback and other callers pass an unsafe callback<br>-- add safety polymorphism to the annotations and checker<br>-- cast away unsafeness somewhere<br>If there&#39;s not too much of this, the last option is the most sensible.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>James: concurrency is not the issue, and there&#39;s more here than whether a finalizer may allocate. Neither SpiderMonkey (non-incremental) nor MMgc (incremental) allows allocation from a finalizer. As roc&#39;s post mentions, there are other kinds of execution restrictions we would like to impose, for e.g. controlling effects to uphold security properties, or (my favorite) to do better JITting across native calls.<br>shaver: there&#39;s a problem today that finalization and prior mandatory protocols are conflated in destructors called from last-Release. We want to separate things, but along the way and forever after, we want finalizers&#39; execution to be constrained. You&#39;re right that finalizers are concrete things, not abstract interfaces or methods, in general -- but sometimes the interface makes it clear that all impls are finalizer-like.<br>/be<br></div>
+</div>
+
+</div>

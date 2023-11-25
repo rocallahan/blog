@@ -1,0 +1,11 @@
+---
+layout: "post"
+title: "SIGKILL And PTRACE_EXIT_EVENT"
+date: "2016-03-15 03:09:00 +0000"
+permalink: "/2016/03/sigkill-and-ptraceexitevent.html"
+---
+<p>The <a href="http://man7.org/linux/man-pages/man2/ptrace.2.html">ptrace man page</a> is not for the faint-hearted. It's a well-written, generally accurate guide to a maze of hideous complexity, a maze that I've thoroughly explored while working on rr. One area where it could be more clear is its description of the interaction between SIGKILL and PTRACE_EVENT_EXIT.
+<p>The man page says:
+<blockquote>If the PTRACE_O_TRACEEXIT option is on, PTRACE_EVENT_EXIT will happen before actual death. This applies to exits via exit(2), exit_group(2), and signal deaths (except SIGKILL), and when threads are torn down on execve(2) in a multithreaded process.</blockquote>
+<p>This isn't quite correct. In modern kernels, at least, the SIGKILL exit path always does generate a PTRACE_EVENT_EXIT ptrace-stop. It even waits for the ptracer to resume executing the tracee before killing it, so you can protect processes from exiting due to SIGKILL this way (but only if you're being pernicious, since the process can't run or do anything else useful).
+<p>However, there is one very nasty problem that crops up when you're ptracing a process that receives SIGKILL. The SIGKILL can wake it up from a ptrace-stop and continue executing it until you reach the PTRACE_EVENT_EXIT stop. So, imagine you have a stopped tracee and you decide to send a PTRACE_CONT to execute it further, but just as you send the PTRACE_CONT, some other task SIGKILLs your tracee. The SIGKILL processing races with your PTRACE_CONT and if you're unlucky, your PTRACE_CONT takes effect just after the tracee has reached the PTRACE_EVENT_EXIT ptrace-stop ... causing it to resume running and exit completely. You'll still get the PTRACE_EVENT_EXIT event, but when you do, your tracee will be dead and gone, which is a problem if you want to do something in its final state, e.g. walk memory to capture the effects of robust-futex handling...

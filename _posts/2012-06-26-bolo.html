@@ -1,0 +1,77 @@
+---
+layout: "post"
+title: "Bolo"
+date: "2012-06-25 22:07:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/06/bolo.html"
+---
+<p>Bolo was a popular Mac multiplayer tank battle game back in the early 90s (predating the Web!). I played it a good deal in the computer science grad lab at Auckland University. It's probably the most fun multiplayer game I've ever played. The core gameplay was quite simple (it had to be, on that era's hardware), but team strategy and tactics got very deep and games would often get very intense. It didn't have the problem that has turned me off RTSes --- an initial "rush phase" that usually decides the game in the first five minutes. Skilled players could turn around an inferior position, but it mostly avoided endless see-sawing too.
+<p>I've been looking for classic games to play with my kids and yesterday I decided to see what had happened to Bolo. The original Mac version is long gone but a clone, <a href="http://www.winbolo.com/downloads.php">Winbolo</a>, was written for Windows and ported to Linux. It was shareware for a while but now it's been <a href="http://winbolo.googlecode.com">released</a> under the GPL. There is actually no downloadable Linux client --- the port was not maintained --- but in a few hours of hacking last night I was able to bring it back to life. The gameplay feels great, closely matching what I remember.
+<p>Winbolo would be a great game to port to the Web. It's tons of fun, multiplayer, open source, and not very demanding on the client. The only difficult part (but it's a biggie) would be networking. Winbolo is client-server using UDP. You could use Websockets but that wouldn't be ideal. What we really need is WebRTC datagram support. Fortunately, that's coming!
+<p><img src="/assets/images/Winbolo.PNG" width="519" height="367" title="Winbolo screenshot (Everard Island map)">
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Cappy</div>
+<div class='content'>You know what I liked about Bolo, was the screen was very reminiscent of Exodus Ultima graphics on the C64. But you&#39;re a little tank with AI helpers, running around munching up trees, setting up mines, blasting other tanks. They put Spaceward Ho! on Android, this should be next.
+Lastly - Castles of Dr. Creep. Practically begging to be put on Android.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I am not sure I understand something: how would WebRTC be superior to websockets in this instance? Thanks :)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>WebRTC adds support for an unreliable datagram protocol (including NAT traversal).</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>As I understand it, WebSockets are connections initiated by the client towards the server, thus bypassing any NAT traversal problem. If the client can connect to the Web server to get the JS code, it should also have no trouble initiating the Web Socket with the server. Or do I have an erroneous understanding of Websockets?
+Maybe you are implying that WebRTC would allow direct player-to-player communication without any server interaction? Thus reducing delay in communication by avoiding transit at the server? Then are you suggesting the server is only used to serve the code and insure the initial player &quot;meetup&quot;, and then players play directly with each other, totally bypassing the server?
+Thanks for your answers !</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>What you say is correct, but Websockets use a TCP transport which means dropped packets require buffering and retransmission. This is undesirable for a game like Bolo.
+
+Suppose the server sends out a series of game state update messages G1, G2, G3 etc. For a game like Bolo you can fit the important game state into one packet. If packet G2 is dropped in the network, TCP will not deliver G3 etc to the application until the drop is detected and G2 has been successfully retransmitted. That&#39;s much worse than just ignoring the loss of G2 and delivering G3 etc, which obsolete G2 anyway.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I get it now! Thanks for the explanation :)</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>tmzt</div>
+<div class='content'>Well, not to discourage any new work, but there is an extant port using node.js and coffeescript with websockets. Adding support for WebRTC to node.js and porting it to use WebRTC could also be an interesting challenge. It also supports the original maps and documents the format.
+
+ https://github.com/stephank/orona</div>
+</div>
+<div class='comment'>
+<div class='author'>plam</div>
+<div class='content'>Reminds me of xblast, which we used to play in undergrad. Kind of like Bomberman. It needed a network protocol, because the network protocol it supported was &quot;export your DISPLAY to another terminal&quot;. I think that eventually it got one...</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>That screenshot is begging for community made reskins.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>We were playing Bolo in 1983!</div>
+</div>
+<div class='comment'>
+<div class='author'>db48x</div>
+<div class='content'>Wow, that brings back the memories; I used to play that every day after classes in middle school. 30-odd kids in a lab full of mac whatsits... I can&#39;t even remember the teacher&#39;s name now, but he really showed us what was possible.
+
+I also played winbolo a bit back when it first came out.
+
+Porting it to the web is a great idea.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Did you happen to go to school in the Chicago land area? </div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Oh, that rocks!!! That looks like a great start to build on!</div>
+</div>
+
+</div>

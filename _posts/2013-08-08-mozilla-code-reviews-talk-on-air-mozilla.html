@@ -1,0 +1,35 @@
+---
+layout: "post"
+title: "Mozilla Code Reviews Talk On Air Mozilla"
+date: "2013-08-08 05:39:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/08/mozilla-code-reviews-talk-on-air-mozilla.html"
+---
+<p>In Taipei in May, as a followup to the <a href="/2013/08/mozilla-engineering-culture-talk-now.html">engineering culture</a> discussion, we had a session about code reviews, covering the topic from both the point of view of the code reviewer as well as the code author. This session is <a href="https://air.mozilla.org/taipei-code-review-discussion/">now online</a> at Air Mozilla. Similar to the engineering culture talk, this wasn't originally intended for public consumption, so is rather unpolished, but you get an honest look at what Mozilla developers talk about amongst themselves :-).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Chris Jones</div>
+<div class='content'>On the subject of reviews, here are two techniques that have worked for me in the past but weren&#39;t mentioned in the video:
+
+&quot;Starter patch&quot;: the reviewer / module owner writes an initial patch with the interface / headers / impl skeleton / etc. they want to see.  Then the author bases the 90% &quot;real work&quot; on that.  That 10% design work for a nontrivial patch disproportionately consumes the majority of review time (for me anyway), and design can be pretty open ended.  So what better way to get a fast r+ than to let your reviewer stamp their own code ;).  And if the initial idea doesn&#39;t work out, the delta for the revised patch can be communicated efficiently to the reviewer, because they already have the initial model in their head.
+
+&quot;Divine intervention&quot;: if prose review comments get considerably more complex or ambiguous than changing the code would be, download and edit the patch and use the edited patch as the review comment.</div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Jones</div>
+<div class='content'>Thanks for posting!  I was referred to a few times in passing, so I feel somewhat obliged to comment (defend myself?) :).
+
+I couldn&#39;t agree more with all the comments about &quot;design review&quot;, &quot;have to understand what the patch is trying to do&quot; etc.  To that I&#39;d add that I&#39;ve seen a kind of review paradox: simple, well-documented patches sometimes result in more work for the author than obscurantist, poorly-documented patches.  Not because the simple and well-documented patches are more work (though maybe they are a bit initially).  Rather because, like understandable vs. obscure presentations, people are more likely to comment on things they understand.  That translates to more review requests and more iterations for the author.  With obscure patches, I&#39;ve seen reviewers just stamp things (with style nits) instead of take the time to figure out what&#39;s going on.  (That might stem from reviewers not wanting to admit they don&#39;t understand the patch; I dunno.)  And no, I&#39;m not going to cite examples ;).
+
+I don&#39;t think conscientious engineers would actually try to exploit that paradox, but it&#39;s a disincentive against simple and well-documented code.  The solution has to be reviewers automatically r-&#39;ing code they don&#39;t understand.  Codifying that into the &quot;review process&quot; seems like a good idea, so that reviewers can point to a rule instead of having to &quot;admit&quot; they don&#39;t understand the patch.
+
+As for having to redo patches because the initial approach didn&#39;t make the reviewer happy: nothing makes me sicker than having to tell someone to start over with a different approach.  In fact, that makes me sympathetic to the author and more likely to r+ code I would otherwise not.  That&#39;s a loss to everyone.  So for folks working on the code full-time, at least, there&#39;s just no excuse for going down a wrong path when asking questions could have avoided that!
+
+Another complaint floated was large amounts of code being adding to module X by someone not on the &quot;X team&quot;.  Members of a hypothetical &quot;X team&quot; should ask themselves why an &quot;outsider&quot; would need, or indeed whether they would even want, to write that code in the first place.  And also whether it&#39;s better to learn outsider code ex post facto, after it&#39;s been field tested and debugged for a long time but maybe not 100% to the X team&#39;s taste, or delay the feature/product until the X team has time to write and debug it themselves.  There&#39;s definitely a point where one or the other becomes preferable, but I can&#39;t really say where that point is.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I totally agree with all those comments!</div>
+</div>
+</div>
+
+</div>

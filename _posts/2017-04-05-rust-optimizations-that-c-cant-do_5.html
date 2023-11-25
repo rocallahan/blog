@@ -1,0 +1,72 @@
+---
+layout: "post"
+title: "Rust Optimizations That C++ Can't Do (Version 2)"
+date: "2017-04-05 05:12:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/04/rust-optimizations-that-c-cant-do_5.html"
+---
+<p><a href="http://robert.ocallahan.org/2017/04/rust-optimizations-that-c-cant-do.html">My last post</a> was wrong in the details, so let me show a better example. <a href="https://godbolt.org/g/gXc1Br">Rust code</a>:
+<pre>pub extern fn foo(v: &u64, callback: fn()) -> u64 {
+  let mut sum = 0;
+  for _ in 0..100 {
+    sum += *v;
+    callback();
+  }
+  sum
+}</pre>
+C++ version <a href="https://godbolt.org/g/VHQK2H">here</a>.
+<p>The inner loop of the Rust version turns into:
+<pre>.LBB0_1:
+        inc     ebx
+        call    r14
+        add     r12, r15
+        cmp     ebx, 100
+        jl      .LBB0_1</pre>
+<tt>sum</tt> is in <tt>r12</tt> and the evaluation of <tt>*v</tt> has been hoisted out of the loop with the result in <tt>r15</tt>. In the compiled C++ code the value has not been hoisted:
+<pre>.LBB0_1:                                # =>This Inner Loop Header: Depth=1
+        add     rbx, qword ptr [r15]
+        call    r14
+        dec     ebp
+        jne     .LBB0_1</pre>
+<p>Of course the performance difference in this case would be negligible, but if <tt>*v</tt> was replaced with a more complicated expression, the difference would increase. (No, I don't know why the Rust code counts up instead of counting down like C++ to get slightly better code; someone should fix that.)
+<p>Here it's really clear that the semantics of Rust are making this optimization possible. In C++ <tt>v</tt> could be a reference to a global variable which is modified by the <tt>callback</tt> function, in which case hoisting the load would be incorrect.
+<p>Several people pointed out that with LTO/WPO a C++ compiler might be able to determine that such cases don't happen, in this case that no function passed into <tt>callback</tt> directly or indirectly modifies <tt>v</tt>. That's what I meant in my previous post by "a C++ compiler could do some analysis to show that can't happen" ... but as I continued, "those analyses don't scale". The larger and more complicated your code gets, the more likely it is that static analysis will fail to prove the invariants you care about. Sometimes, due to dynamic linking or run-time code generation, relevant code just isn't available to be analyzed. In other cases the analysis algorithms aren't sophisticated enough to prove what you care about (often because no such algorithm is known), or adequate algorithms exist but they were too expensive to deploy. Perhaps the worst cases for sophisticated global analysis are when the property you care about isn't even true, because you accidentally violated it in some part of the program, but you'll never know, because the only effect of that accident is that performance got a little bit worse somewhere else. (E.g. with this example if you accidentally change one of the callback functions to indirectly modify <tt>v</tt>, your hypothetical WPO compiler does a slightly worse job and you won't know why.)
+<p>What we need are language-level invariants that apply globally and support aggressive optimization using only local analysis. C++ has some, but Rust's are stronger. We also need those invariants to be checked and enforced, not just "it's undefined behavior if you do this"; (safe) Rust wins again on that.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Sorry to say, but your articles (last two) are entirely pointless.
+
+The C++ version of the Rust code is:
+const long&amp; __restrict v
+
+and the result is better than Rust.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&quot;restrict&quot; (technically, the vendor &quot;__restrict__&quot; extensions to C++) makes the optimization work for C++ in this case, but as I said at the end, &#39;we also need those invariants to be checked and enforced, not just &quot;it&#39;s undefined behavior if you do this&quot;&#39;. &quot;restrict&quot; fails in that regard.
+
+Looking at it another way, to make &quot;restrict&quot; give you what Rust has, you&#39;d have to use it everywhere and on struct/class members too --- but that&#39;s not idiomatic C++ at all. Not only is &quot;restrict&quot; not in the C++ standard, but also such broad usage would make it very difficult to avoid triggering undefined behavior.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse</div>
+<div class='content'>Have a peek at what happens if you take &quot;v&quot; by value instead.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>For reference : https://godbolt.org/g/5ZhIHX
+
+There is no point passign this long by reference. The whoel premises of this post is shaky.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Will rustc carry out the hoisting optimization for more complex types? For such simple types C++ you&#39;d pass by value rather than reference-to-const, and this generates much faster code: https://godbolt.org/g/1cQXDW</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&gt; Will rustc carry out the hoisting optimization for more complex types?
+
+Yes: https://godbolt.org/g/fEfTbd (C++: https://godbolt.org/g/1cQXDW)</div>
+</div>
+</div>
+
+</div>

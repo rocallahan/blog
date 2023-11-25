@@ -1,0 +1,13 @@
+---
+layout: "post"
+title: "Omniscient JS Debugging In Pernosco"
+date: "2020-05-08 00:15:00 +0000"
+permalink: "/2020/05/omniscient-js-debugging-in-pernosco.html"
+---
+<p>Until recently <a href="https://pernos.co">Pernosco</a> was limited to debugging statically-compiled languages with DWARF debuginfo. Many of our potential customers would like to debug other languages as well, so we're doing that, starting with support for debugging Javascript running in <a href="https://v8.dev/">V8</a>. Here's a demo:
+<p><iframe width="627" height="423" src="https://www.youtube.com/embed/Tdf6S9grPo0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p>You also can open <a href="https://pernos.co/debug/x7NOZnfTFoc91Iht_kAt3Q/index.html">the Pernosco session</a> in the demo yourself and follow along!
+<p>This is an rr recording of Chrome, processed by Pernosco. We haven't modified Chrome/V8 source code. Instead Pernosco observes the operation of V8 &mdash; using our omnisicient infrastructure &mdash; and infers what the JS code is doing. We get an omniscient debugging experience for Javascript &mdash; the first tool in this space, as far as I know. Not only that, you get C++ and Javascript debugging tightly integrated together, which is invaluable in some scenarios.
+<p>Currently we only understand the V8 interpreter, so we disable the JIT (<tt>--js-flags=--jitless</tt>). Handling the V8 baseline compiler would be more work, but probably straightforward. What we already have should be enough to debug many Node applications, Electron apps, and even Web apps.
+<p>Pernosco is quite a different sort of experience to the "browser devtools" debugging most Web developers are used to. We can certainly implement more devtools features, but for some applications a tool like <a href="https://webreplay.io/">WebReplay</a> will be more appropriate.
+<p>As usual we're only scratching the surface of what can be done here. We've built infrastructure to make it easier to support more languages, and we're eager to add whatever our customers might need. If you're interested in using Pernosco for your debugging needs, <a href="mailto:inquiries@pernos.co">get in touch</a> with your requirements and we may be able to set up you with a free demo.

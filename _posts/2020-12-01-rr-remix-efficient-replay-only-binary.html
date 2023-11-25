@@ -1,0 +1,36 @@
+---
+layout: "post"
+title: "rr remix: Efficient Replay-Only Binary Instrumentation"
+date: "2020-11-30 23:43:00 +0000"
+permalink: "/2020/12/rr-remix-efficient-replay-only-binary.html"
+---
+<p>The <a href="https://pernos.co/about/overview">Pernosco omniscient debugger</a> analyzes user-submitted <a href="https://rr-project.org">rr recordings</a> to extract all program states into a database, so that during debugging sessions it can efficiently recreate the program state at any point in time. This analysis requires intensive binary instrumentation of rr replays (e.g. to observe all memory writes performed by the application). To integrate binary instrumentation with rr replay we had to create a new binary instrumentation framework, which we call "rr remix". (Record, replay, remix, ...)
+<p>Our main goals for remix were:
+<ul>
+<li>Instrument the replay of any rr recording (including applications with self-modifying code)
+<li>Support executing arbitrary instrumentation code
+<li>Minimise space and time overhead, especially on huge applications (e.g. Web browsers)
+<li>Be efficient on code <em>without</em> compiler optimizations, as well as optimized code (the former being common when debugging)
+<li>Be simple so we could build and maintain it with minimal effort
+</ul>
+It turned out we hit an extra goal we didn't start with:
+<ul>
+<li>Support replaying rr recordings in hardware/VMs without access to hardware performance counters or CPUID faulting, and with incompatible XSAVE layouts
+</ul>
+<p>Traditionally, tool performance has been mostly evaluated on small, compiler-optimized benchmark applications. Therefore our goals led us to make rather different design decisions compared to other well-known binary instrumentation tools such as <a href="https://software.intel.com/content/www/us/en/develop/articles/pin-a-dynamic-binary-instrumentation-tool.html">Pin</a>, <a href="https://www.valgrind.org">Valgrind</a>, and <a href="https://dynamorio.org/">DynamoRIO</a>. Also, doing binary instrumentation during rr replay imposes some extra requirements on the instrumentation engine, but also gives us very valuable <em>knowledge of the future</em> that we can exploit to simplify the design of the instrumentation engine and improve its performance.
+<p>To illustrate the performance of remix we will show the performance of <a href="https://github.com/llvm-project/llvm-project-20170507/commit/359af477e0508129fac4c80d12e2be02499d1463">clang++</a> compiling a <a href="https://gist.github.com/rocallahan/73efdd04aa762733fdd35fdccca1e65e">simple C++ program</a>. This resembles running a single test of a large application, typical behaviour for Pernosco users.
+<p><img src="/assets/images/clang-opt.png" width="800" height="448" title="clang++ with -O2">
+We compare up-to-date <a href="https://github.com/DynamoRIO/dynamorio/commit/9f7111bdd36fe5e00dcf5ba2e97a7b2b51d98c6f">DynamoRio</a>, <a href="https://sourceware.org/pub/valgrind/valgrind-3.16.1.tar.bz2">Valgrind</a> and remix all using "null tool" instrumentation, i.e. rewriting the code but not actually adding any unnecessary instrumentation. These are geometric means of five runs, real time. On optimized clang++, remix of an rr replay beats both DynamoRio and Valgrind instrumenting a normal run.
+<p><img src="/assets/images/clang-noopt.png" width="800" height="448" title="clang++ with -O0">
+On non-optimized code, remix beats both DynamoRio and Valgrind again, but the overhead ratios of all the instrumentation systems (especially DR/Valgrind) are lower. This is a pretty good result for remix because it is much simpler than DR and Valgrind; in particular it doesn't perform any inlining, while the others do. This hurts more on non-optimized code, which has a lot more function calls that compilers would normally inline. (Valgrind deliberately optimizes for ease of tool writing and portability over performance; I'm including it for completeness and because people are familiar with it.)
+<p>Unfortunately we aren't in a position to open-source remix at this time.
+<p>We plan to follow up with some more posts documenting interesting design decisions in remix and how they contribute to these results. Probable topics:
+<ul>
+<li>The basic remix architecture and how it integrates into rr
+<li>Fixing regular rr's limitations on trace portability and target hardware
+<li>Leveraging knowledge of the future to improve the efficiency of binary rewriting
+<li>The mystery of efficient branch-and-link instructions on x86-64
+<li>Optimizing non-optimized code: leveraging hardware return address prediction in binary instrumentation
+<li>Optimizing non-optimized code: dataflow analysis
+</ul>
+<p>PS, remember this is all in service of the <a href="https://pernos.co">Pernosco omniscient debugger</a> &mdash; <a href="https://pernos.co/debug/e9UFXkGq__8KQB-N6n59lA/index.html">try</a> <a href="https://pernos.co/debug/QiXfwZBKSWbVqPS0VgcyWw/index.html">it</a> <a href="https://pernos.co/debug/x7NOZnfTFoc91Iht_kAt3Q/index.html#f{m[pbU,CFo_,t[QQ,g4g_,f{e[pbU,CFo_,v[pbE,AUgD,AA___">out</a>!

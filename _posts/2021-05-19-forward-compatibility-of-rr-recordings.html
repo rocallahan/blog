@@ -1,0 +1,22 @@
+---
+layout: "post"
+title: "Forward Compatibility Of rr Recordings"
+date: "2021-05-19 01:00:00 +0000"
+categories: "rr"
+permalink: "/2021/05/forward-compatibility-of-rr-recordings.html"
+---
+<p>Since <a href="/2017/09/rr-50-released.html">2017</a> rr has maintained backward compatibility for recordings, i.e. new rr versions can replay any recording made by any earlier rr version back to 5.0. When we set that goal, it wasn't clear for how long we'd be able to sustain it, but so far so good!
+<p>However, we have said nothing about forward compabitility &mdash; whether old rr versions are able to replay recordings produced by new rr versions &mdash; and in practice we have broken that many times. In practice that's generally OK. However, when we do break forward compatibility, when an old rr tries to replay an incompatible recording, it often just crashes mysteriously. This is suboptimal.
+<p>So, I have <a href="https://github.com/rr-debugger/rr/commit/ebbbc730dfe341b258417348abfb8f6b170fb294">added</a> "forward compatibility version checking" to rr. rr builds have a <a href="https://github.com/rr-debugger/rr/commit/ebbbc730dfe341b258417348abfb8f6b170fb294#diff-fc988e3a46621c14a922d6d649c1079cbb578e7c2ce29df3353bbc99fe02cd64R28">forward compability version</a>; each recording is stamped with the forward compatibility version it was created with; and rr will refuse to replay a recording with a later forward compatibility version than the rr build supports. When we make an rr change that means old rrs can no longer replay new rr recordings, we'll bump the forward compatibility version in the source.
+<p>Note that rrs built before this change don't have the check, will continue to merrily try to replay recordings they can't replay, and die in exciting ways.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Nimrod P.</div>
+<div class='content'>Cool. I&#39;m curious as to how do you know you&#39;ve made a change that requires a forward compatibility bump? Is it the programmers best guess or is it testing oriented? Cheers</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Programmer&#39;s best guess!</div>
+</div>
+</div>
+
+</div>

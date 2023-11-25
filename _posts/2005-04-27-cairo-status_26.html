@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "Cairo Status"
+date: "2005-04-26 19:52:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/04/cairo-status_26.html"
+---
+<div class="columns">All my supporting patches have been checked into the trunk. It should be possible to build with cairo on Linux by running configure --enable-default-toolkit=cairo-gtk2 and get results similar to what I posted last week (better, actually, since I've fixed some image rendering bugs).</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Martijn Kint</div>
+<div class='content'>Hi Robert,<br>Can I ask what is causing these cairo builds to be so extremely slow compared to &quot;normal&quot; builds?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn Kint</div>
+<div class='content'>Oh ok, just wondering. thank you for your wonderful work on Gecko though, i&#39;m an avid follower of your blog!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t know yet because I haven&#39;t run any profiles and I don&#39;t know the Cairo code.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michel</div>
+<div class='content'>Is it possible to build with Cairo on Windows ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ludovic</div>
+<div class='content'>Roc will you also enable cairo builds on non linux os ? what are the plans for non linux users ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Michel: not yet.<br>Ernst: Yes you can, but I don&#39;t recommend it because our Cairo has some patches that haven&#39;t made it to trunk Cairo yet, and it&#39;s not tested with any system Cairo. I&#39;m going to hack my build to use a hand-built Glitz to see how that goes. In the medium term we might have to pull Glitz into our tree.<br>Ludovic: We will set up non-GTK2 Cairo builds at some point in the future, but right now that is not a priority. If someone wants to hack on Cairo-Win32 then they can look at what we&#39;ve done for GTK2 and contribute a Windows configuration.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ernst Persson</div>
+<div class='content'>Can you build it with --with-system-cairo or something similar?<br>Otherwise it&#39;s going to be hard to use a glitz enabled Cairo. :-)<br></div>
+</div>
+
+</div>

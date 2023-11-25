@@ -1,0 +1,163 @@
+---
+layout: "post"
+title: "Rendering Web Page To Images"
+date: "2005-05-13 18:01:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/05/rendering-web-page-to-images_13.html"
+---
+<div class="columns"><p>For a long time now, people have been asking for ways to use Gecko to render a Web page to an image. Creating thumbnails of a Web page is one common desire, but there are lots of potential uses, especially if the feature is available to scripts. I have implemented a new DOM API in 1.8/FF 1.1 that makes this possible. It builds on the <a href="http://www.mozillazine.org/talkback.html?article=6461">canvas</a> element that has recently been implemented in Gecko 1.8 and will be enabled by default soon. (My patch hasn't been checked in yet either, so you can't try this at home just yet.)<br/><br/><p>To demo this API I've implemented a very simple extension that displays a "thumbnail view" of the currently loaded page in your sidebar. Here's a screenshot. Below is the core source code for the extension. The extension itself is no big deal, and I'm hoping the wonderfully imaginative extension developer community will take this and run with it.</div><br/><br/><div class="image"><img alt="thumbshot.png" src="/assets/images/images/thumbshot.png" width="775" height="587" /></div><br/><br/><h2>thumbviewSidebar.xul</h2><br/><pre>&lt;?xml version="1.0"?&gt;<br/><br/>&lt;?xml-stylesheet href="chrome://global/skin" type="text/css"?&gt;<br/><br/>&lt;window<br/>windowtype="global:thumbviewSidebar"<br/>onclick="update()"<br/>id="win"<br/>xmlns:html="http://www.w3.org/1999/xhtml"<br/>xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"&gt;<br/>&lt;script type="application/x-javascript" src="chrome://thumbview/content/thumbview.js"/&gt;<br/>&lt;vbox flex="1" id="before"/&gt;<br/>&lt;html:canvas id="canvas"/&gt;<br/>&lt;vbox flex="1" id="after"/&gt;<br/>&lt;/window&gt;</pre><br/><br/><h2>thumbview.js</h2><br/><pre>function update() {<br/>var w = content.innerWidth + content.scrollMaxX;<br/>var h = content.innerHeight + content.scrollMaxY;<br/>if (w > 10000) w = 10000;<br/>if (h > 10000) h = 10000;<br/><br/>var container = document.getElementById("win");<br/>var canvasW = container.boxObject.width;<br/>var scale = canvasW/w;<br/>var canvasH = Math.round(h*scale);<br/><br/>var canvas = document.getElementById("canvas");<br/>canvas.style.width = canvasW+"px";<br/>canvas.style.height = canvasH+"px";<br/>canvas.width = canvasW;<br/>canvas.height = canvasH;<br/>var ctx = canvas.getContext("2d");<br/>ctx.clearRect(0, 0, canvasW, canvasH);<br/>ctx.save();<br/>ctx.scale(canvasW/w, canvasH/h);<br/>ctx.drawWindow(content, 0, 0, w, h, "rgb(0,0,0)");<br/>ctx.restore();<br/>}<br/><br/>var NavLoadObserver = {<br/>observe: function(aWindow)<br/>{<br/>update();<br/>}<br/>};<br/><br/>function start() {<br/>var obs = Components.classes["@mozilla.org/observer-service;1"].<br/>getService(Components.interfaces["nsIObserverService"]);<br/>obs.addObserver(NavLoadObserver, "EndDocumentLoad", false);<br/>}<br/><br/>window.addEventListener("load", start, false);</pre><br/><br/><div class="columns"><p>Currently the drawWindow function can only be used by "chrome privileged" content, because untrusted Web content could abuse it in various ways. So extension authors and XUL application developers can use it, but normal Web pages cannot.</div><br/><br/><p><B>Update!</B> I overhauled this entry significantly since we may not be adding a method to 'window' after all. The drawWindow method will be there though.<br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Doug Turner</div>
+<div class='content'>A feature that has been missing for over 4+ years.  Great work Roc!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Drawing a DOM element is a bit hard because DOM elements are not necessarily rectangular. Suppose you have a window in a paginated context or with a column, and an inline element that breaks across a page or column boundary, then the different pieces of the element could be anywhere. What do you draw in that case? Yes, it would be useful but it&#39;s hard to specify and hard to implement.<br>In many cases you could just clone the content into its own hidden IFRAME and render that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris McElligott</div>
+<div class='content'>Wow very nice indeed, if only we could have Omniweb like Tabs for FireFox, that would be really awesome.<br>Somebody needs to get onto this and fast!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rory Parle</div>
+<div class='content'>Wouldn&#39;t it be cool to have the whole page in miniature in the sidebar with a rectangular border marking the visible portion of the page (the part that&#39;s in the main window). Then you could scroll around the page by moving that rectangular border around the thumbnail.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jon Hicks</div>
+<div class='content'>I&#39;m with Chris - I&#39;d love to see a Firefox sidebar extension that allowed Omniweb style tabs<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ted Mielczarek</div>
+<div class='content'>FYI, this was broken in Deer Park Alpha 1. It should be fixed in the next nightly build. (Thanks biesi!)<br>the relevant bug<br></div>
+</div>
+<div class='comment'>
+<div class='author'>christian biesinger</div>
+<div class='content'>&gt;(BTW the GECKO_FORCE_PAINT_ONLOAD environment<br>&gt;variable forces onload to be blocked by CSS<br>&gt;background image loads.)<br>last I checked, that environment variable did two things: not only did it it make images block onload, it also dumped each page to a file when done loading... (http://lxr.mozilla.org/seamonkey/source/layout/base/nsDocumentViewer.cpp#1024)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>no. interactive zooming requires different technology. That&#39;s where our cairo work comes in.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Yoeri</div>
+<div class='content'>Great, now I would like to see a thumbnail in the history, instead of the pagetitle only.<br>That would be a great feature ... it is easier to remember a visited page by seeing the thumbnail than only the title ... extension idea (I would make it myself if i could) ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>You can use a  tag in your page to specify a per-page icon.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>christian biesinger</div>
+<div class='content'>will you add a way to let extension authors know when a page is completely done loading, i.e. when the background images are there as well?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>ChrisH: if you can call drawWindow, then you could just crawl the window&#39;s DOM and get the email addresses directly without OCR. There is no new issue here. (Especially because currently Web content can&#39;t use this API.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>luping</div>
+<div class='content'>I&#39;m new to this so forgive me if my question sounds  incredibly dumb. Where can I find the drawWindow API/plugins and how do I install it? Can anyone point me to some general guide to do this sort of things?<br>I have a project that can really use this feature. Thank you in advance!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Erik Arvidsson</div>
+<div class='content'>I see that you&#39;ve added a drawWindow. I think it would be pretty useful to be able to draw a DOM Element as well. That would make the canvas a lot more flexible.<br>Is there a reason why this only works from chrome? Wouldn&#39;t a same origin check be sufficient?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel Glazman</div>
+<div class='content'>This is a _superb_ work, roc. In a former professional life, I was the CTO of a web agency and I can tell you web agencies are going to _love_ you if they can generate and save (can you save the bitmap right now?) such a thumbview from within the browser, w/o external tool.<br>Once the core is checked in, I strongly recommend making your extension an official extension to Firefox released by the Mozilla Foundation. This is awesome.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Da Scritch</div>
+<div class='content'>But ? That means that future versions of Minimo could have ... full zoomable pages as Opera ?<br>Aooouuuuuuuuhhhhhh !<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael Newton</div>
+<div class='content'>What I want, on a related note, is some way I can use Gecko to replace html2ps!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jens.b</div>
+<div class='content'>Great to see this implemented! I&#39;m sure we&#39;ll see loads of interesting extension ideas around this...<br>On a remotely related issue: Any chance you can fix https://bugzilla.mozilla.org/show_bug.cgi?id=204278 (XUL elements cannot be stacked on top of browser element) for Gecko 1.9, too? IMO, that&#39;s another bug that, when fixed, might have great impact on extensions... For example, Mouse Gestures might be able to stack a transparent canvas element on top of the browser, and display actual drawn mouse trails instead of inserting hundreds of tiny HTML elements into the web page (which is the only way to do it right now).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jed</div>
+<div class='content'>Roc, do you know if this is in DeerPark Alpha 1?<br>I was thinking about taking your code and do something interesting with it...<br>Thanks<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nelson</div>
+<div class='content'>Will this work on a Linux box without an X server? Or do you need an X server to do the pixel rendering? Sorry if this is a naive question, but it&#39;s a huge problem when trying to create thumbnails with khtml.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;ve made data: URLs that were hundreds of kilobytes long and they worked.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ChrisH</div>
+<div class='content'>How long until spammers combine this technology with OCR, to extract email addresses that are shown as image(s) or generated by javascript? :-(<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kingsley</div>
+<div class='content'>I would like to see this used to improve search. A rendered page gives a lot of context and information than reading plain html. I can see a program which identifies large blocks of color and high contrast areas, and then OCR-ing them to get a better understanding of a website&#39;s contents, as well as relative importances.<br>Or how about audio browsers for the visually impaired using the generated image and knowledge of the underlying HTML to let users navigate the page &quot;visually&quot;? That should work even on websites that were not designed for accessibility.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Cirius: it runs on the client only.<br>luping: You just need one of the newest &quot;Deer Park&quot; Firefox builds.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Axord</div>
+<div class='content'>The most immediate thought for an extension that comes to mind: replacing the tab bar with a tab-thumbnail side bar.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jed</div>
+<div class='content'>Any idea when this will be present in Nightlies?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mvir</div>
+<div class='content'>Awsome.<br>* Showing thumbnails of pages on the back &amp; forward dropdown list<br>* Generating thumbnails of prefetched pages on google and showing them inline (greasmonkey style extension)<br>* A bugzilla helper extension, that would let you take a &quot;screenshot&quot; of the place in the page you feel is being mis-rendered.<br>* Bookmark gallery. When hitting ctrl+b the sidebar would not only show the bookmarks, but images of the pages too.<br>Another thing that I&#39;d like to see is a binary application or an easy to use library that would generate images for you.<br>This could be a nice addition to gaim for example, which could show a thumbnail of a persons site in the &quot;more information&quot; dialog. Also any website could generate screenshots for their sites (see: http://dev.upian.com/hotlinks/)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>jens.b: that should get fixed in 1.9, but not 1.8.<br>mvir, glazman: we should be able to do what you want once we have the ability to save the contents of a canvas. The plan is to have a .toDataURL() method that returns a data: URL containing a base64 encoded PNG. We should be able to get that into 1.8.<br>One thing that&#39;s not obvious here is that windows can be transparent, and drawWindow respects/captures the transparency. (Use &quot;rgba(0,0,0,0)&quot; as the background color.)<br>Another use of drawWindow is that it extends the power of the canvas element by giving you a way to conveniently draw certain kinds of content into a canvas --- e.g., text, or even SVG!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I know, I&#39;m just saying that that shows how to get CSS background image loads to block onload.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Yoeri</div>
+<div class='content'>This is what I meant:<br>http://apple.slashdot.org/apple/04/03/31/0513245.shtml?tid=126&amp;tid=185&amp;tid=95<br>http://www.acm.uiuc.edu/macwarriors/projects/trailblazer/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Crirus</div>
+<div class='content'>Is there any way to implement this as a php feature in a script?<br>Thanks<br></div>
+</div>
+<div class='comment'>
+<div class='author'>joel</div>
+<div class='content'>since FireFox 1.1 shows a thumbnail of an image in the tab is it possible for me to specify an image to be used in the tab on my page? i&#39;m not talking about the favicon image, i mean making firefox use an image that displays in the page as the tab icon. so each page will have its own icon.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>jed: within a few days, perhaps<br>michael: someone could write a remote-controllable XUL app for this<br>biesi: me? no. But I&#39;m sure you could do this yourself :-). (BTW the GECKO_FORCE_PAINT_ONLOAD environment variable forces onload to be blocked by CSS background image loads.)<br>Nelson: It needs X. At some point we&#39;ll land a version of tetron&#39;s null-widget code so that you can run apps without X.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Ted: thanks for that! I don&#39;t know why it worked in my build. I think it also worked in ben&#39;s build...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colin Coghill</div>
+<div class='content'>Excellent! This paves the way to automatic site-map generators (to make posters to stick on one&#39;s wall).<br>Stick a spider and thumbnailer onto one of the graph layout packages and much fun can be had<br>I had a rough one going with KHTML and graphviz once, but gave up because at the time KHTML didn&#39;t render well enough. But Gecko doing it would rock!<br>- Colin<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Accettura</div>
+<div class='content'>I think i want to use this for reporter in the future.<br>This looks like it has so much potential for tracking layout regressions.<br>Awesome work roc!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>It is in Deer Park Alpha 1.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeremy Dunck</div>
+<div class='content'>ROC:<br>&quot;<br>The plan is to have a .toDataURL() method that returns a data: URL containing a base64 encoded PNG.<br>&quot;<br>In Moz/FF, is there a practical limit to the length of data: URL?  I know spec says something like 2KB, but I&#39;ve seen larger, and it&#39;s pertinent for Greasemonkey.<br>Thanks!<br></div>
+</div>
+
+</div>

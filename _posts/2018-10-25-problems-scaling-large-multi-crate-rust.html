@@ -1,0 +1,45 @@
+---
+layout: "post"
+title: "Problems Scaling A Large Multi-Crate Rust Project"
+date: "2018-10-25 04:31:00 +0000"
+permalink: "/2018/10/problems-scaling-large-multi-crate-rust.html"
+---
+<p>We have 85K lines of Rust code implementing the backend of our Pernosco debugger. To impose some modularity constraints and to reduce build times, from the beginning we organized our code as a large set of crates in a single Cargo workspace in a single Gitlab repository. Currently we have 48 crates. This has mostly worked pretty well but as the number of our crates keeps increasing, we have hit some serious scalability problems.
+<p>The most fundamental issue is that many crates build one or more executables &mdash; e.g. command-line tools to work with data managed by the crate &mdash; and most crates also build an executable containing tests (per standard Rust conventions). Each of these executables is statically linked, and since each crate on average depends on many other crates (both our own and third-party), the total size of the executables is growing at roughly the square of the number of crates. The problem is especially acute for debug builds with full debuginfo, which are about five times larger than release builds built with <tt>debug=1</tt> (optimized builds with just enough debuginfo for stack traces to include inlined functions). To be concrete, our 85K line project builds 4.2G of executables in a debug build, and 750M of executables in release. There are 20 command-line tools and 81 test executables, of which 50 actually run no tests (the latter are small, only about 5.7M each).
+<p>The large size of these executables slows down builds and creates problems for our Gitlab CI as they have to be copied over the network between build and test phases. But I don't know what to do about the problem.
+<p>We could limit the number of test executables by moving all our integration tests into a single executable in some super-crate ... though that would slow down incremental builds because that super-crate would need to be rebuilt a lot, and it would be large.
+<p>We could limit the number of command-line tools in a similar way &mdash; combine all the tool executables a super-tool crate that uses the "Swiss Army knife" approach, deciding what its behavior should be by examining <tt>argv[0]</tt>. Again, this would penalize incremental builds.
+<p>Cargo supports a kind of dynamic linking with its <tt>dylib</tt> option, but I'm not sure how to get that to work. Maybe we could create a super-crate that reexports every single crate in our workspace, attach all tests and binary tools to that crate, and ask Cargo to link that crate as a dynamic library, so that all the tests and tools are linking to that library. This would also hurt incremental builds, but maybe not as much as the above approaches. Then again, I don't know if it would actually work.
+<p>Another option would be to break up the project into separate independently built subprojects, but that creates a lot of friction.
+<p>Another possibility is that we should simply use fewer, bigger crates. This is probably more viable than it was a couple of years ago, when we didn't have incremental rustc compilation.
+<p>I wonder if anyone has hit this problem before, and tried the above solutions or come up with any other solutions.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I have been tinkering with similar issues in a C++ context, mostly thought experiments at the moment.  
+
+One practical step I can offer is that debug information is separated from the test executable before sending.  This boils down to these commands:
+
+    objcopy --only-keep-debug f1 f2
+    objcopy -S f1 f3
+    objcopy --add-gnu-debuglink f2 f3
+
+Used in embedded systems for many years.
+
+This is not without tradeoffs or consequences e.g.
+do you lose &#39;rich&#39; backtraces when debuginfo is missing.
+In that case perhaps some other objcopy options could
+be more appropriate.
+
+Andrew Paxie</div>
+</div>
+<div class='comment'>
+<div class='author'>desert-falcon</div>
+<div class='content'>https://github.com/rust-lang/rust/issues/34651 may help you (if ever implemented) </div>
+</div>
+<div class='comment'>
+<div class='author'>Dawid Ciężarkiewicz</div>
+<div class='content'>I would try first with rsync or compression: https://www.reddit.com/r/rust/comments/9rb4fq/problems_scaling_a_large_multicrate_rust_project/e8fngcd/</div>
+</div>
+
+</div>

@@ -1,0 +1,22 @@
+---
+layout: "post"
+title: "Record-And-Replay In Virtual Machines"
+date: "2007-05-25 22:51:00 +0000"
+permalink: "/2007/05/record-and-replay-in-virtual-machines_25.html"
+---
+<div class="columns"><p>VMWare has announced very interesting <a href="http://blogs.vmware.com/sherrod/2007/04/the_amazing_vm_.html">record and replay</a> functionality in VMWare Workstation 6. This is not completely new --- in the research world, <a href="http://www.eecs.umich.edu/virtual/papers/king05_1.pdf">TTVM</a> did this, and probably they weren't the first --- but it's excellent to see this functionality arriving so quickly in commercial VMs. It's also neat that they've got debugging integrated into it already. Too bad the debugger is gdb...<br/><p>They report slowdown of around 5%, which is very good and not surprising, and a logging rate of 2MB/minute for some unspecified workload, which is also very good. These numbers aren't surprising because the inputs to a virtual machine from the outside world are usually very small. Disk I/O stays inside the VM. Only very heavy users of the network, the VMWare shared file system, or some other high-bandwidth input device (e.g., USB video camera) are going to see a significant penalty.<br/><p>This is definitely the way to go for low-overhead record and replay. A great way to debug would be to use a VM to record a test failure, then replay it under Chronicle-style instrumentation, then debug the failure from the Chronicle database using Chronicle-style debugging. This way, the recording overhead is minimal and could even be used on a live system with negligible perturbation. This suggests to me that approaches like Nirvana that trade off queryability in search of reduced recording overhead probably aren't worth it.<br/><p>Replaying a VM with massive binary instrumentation is a significant engineering problem; it would require major changes to Valgrind+Chronicle, for example. But conceptually it's fairly straightforward.<br/><p>This is a really exciting development. There are lots of potential uses for VM record-and-replay. I think this will be a big win for VMWare. Hopefully people will see beyond the obvious forward-and-back time travel approaches to debugging.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>There was a paper from a group at TU Vienna this year that instrumented QEMU to collect taint flow and symbolic constraints from a Win2K guest. That might be an interesting start point for someone who wanted to follow up your suggestion.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>found the pdf here:<br>http://www.xhfamily.com/x/files/MoBS07_replay_itrace.pdf<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>http://www.arctic.umn.edu/~jjyi/MoBS/2007/MoBS_2007_Advance_Program.html<br>A paper is here.<br></div>
+</div>
+
+</div>

@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "NetworkManager, dbus and Offline Status"
+date: "2006-12-05 11:51:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/12/networkmanager-dbus-and-offline-status_05.html"
+---
+<div class="columns">I've <em>finally</em> checked in support for offline status detection on Linux. We hook into dbus to listen for signals from NetworkManager saying that it has gone offline or gone online. I originally did this work about a year ago but it's taken ... a while ... to get reviewed. After I wrote the infrastructure the Windows support actually got written and landed while I was waiting for review on the Linux bits, so Windows has had this on trunk for a while and it even landed in FF2.<br/><p>Anyway, now if your network link goes down, FF will automatically switch to offline mode and if the link comes back, FF will switch to online mode. If you manually change the "Work Offline" state then FF will stop switching automatically for the duration of your FF session.<br/><p>Other Xulrunner apps can take advantage of this too. By default the IOService will watch for network link status changes and automatically toggle its online/offline state. But if an application wants to do things differently, it can tell the IOService to stop the automatic tracking. Then the application can listen for network link status changes via nsIObserver and modify IOService's online/offline status as desired.<br/><p>We still want <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=336285">Mac support</a>. Also, if you happen to be using a Linux distribution without dbus or without NetworkManager, the build will still work, you just won't get the automation.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Eduardo</div>
+<div class='content'>Is it possible to disable the automatic switch to offline mode on Linux for FF2?<br>It&#39;s very annoying when I&#39;m not connected to any networks but I&#39;m trying to access a web page on a web server running locally.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Miguel</div>
+<div class='content'>I second Eduardo&#39;s comments... Network Manager is very unstable and will connect me to undesired networks and disconnect me all the time.<br>Sometime I am unable to get NM up and running again so I have to manually connect to the internet and then annoyingly, firefox remains in &quot;offline&quot; mode.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Juan</div>
+<div class='content'>To be fair, the Windows code wasn&#39;t written after you wrote the infrastructure code - I&#39;d written the Windows code several years before, and was waiting for a review.  If you hadn&#39;t landed the infrastructure code, I don&#39;t think I&#39;d ever have gotten one.  So, thanks for landing it.<br></div>
+</div>
+
+</div>

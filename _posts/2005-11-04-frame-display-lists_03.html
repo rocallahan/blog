@@ -1,0 +1,67 @@
+---
+layout: "post"
+title: "Frame Display Lists"
+date: "2005-11-04 07:50:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/11/frame-display-lists_03.html"
+---
+<div class="columns">I'm reworking how frame painting works in Gecko.<br/><br/>Currently painting is a two-phase process. The view manager creates a display list of "views" (roughly corresponding to positioned elements and other elements that need complex rendering) that intersect the dirty region. This display list is sorted by z-order according to the CSS rules. Then we optimize the display list, removing views that are covered by other opaque views. Then we step through the display list from bottom to top and paint the frames associated with each view. Frame painting handles some more z-ordering issues using "paint layers". E.g. a background layer contains block backgrounds, a float layer contains floats, and a foreground layer contains text. We traverse each frame subtree three times, once for each layer.<br/><br/>This approach has some problems. We don't implement CSS z-order perfectly because of the way z-order handling is split between views and frames. It's unnecessarily complex. We paint some unnecessary areas because we only handle opaque covering at the view level; if a frame without a view is opaque and covers content underneath it, we don't take advantage of that. It's not as fast as it could be because of the three traversals of each relevant frame subtree. Painting outlines properly with this scheme would require an additional paint layer, requiring four traversals. We also need to fix a bug by making elements with negative z-index paint in front of the background of their parent stacking context ... this would require a fifth paint layer or some other hack. And it's not very extensible to handle new quirks the CSS WG might throw at us.<br/><br/>So I'm working on a patch to replace all this with a display list of frames --- actually, parts of frames, since different rendered parts of a frame can have different z-positions. I call these parts "display items". Because a frame subtree may distribute display items to different z-levels in the parent, we actually pass in a list of display lists, each corresponding roughly to a paint layer. Once we've built a complete display list we can optimize it and finally paint the visible items.<br/><br/>One nice thing about this approach is that we can use it for mouse event handling too. To figure out which frame the cursor is over we just build a display list for a single point and analyze it from the top down. We can get rid of all the GetFrameForPoint(Using) code and we get a guarantee that event handling stays consistent with painting.<br/><br/>This approach also lets us organize our painting --- er, display list construction --- more flexibly, because we don't have to specify what gets painted in the exact order it will be painted. For example currently we have a function PaintTextDecorationsAndChildren that paints overlines and underlines, then paints child inlines, then paints the strikeout, because that's what CSS requires. But it simplifies the code if the text-decoration code can be separated from the painting of children. I replace this with a function DisplayTextDecorations which creates overline, underline and strikeout display list items (as needed) and lets the caller put them in the right z-position, so this is separated from painting the children.<br/><br/>Of course this approach also lets us fix the bugs I mentioned above with outlines and negative z-index children. I also hope the performance will be better than what we have today, because we only need one traversal of the visible parts of the frame tree. We do a bit more work at each frame, but that should have decent memory locality.<br/><br/>One potential problem with this approach is the storage required by the display list. It's very short-lived --- it only exists while we do a single paint --- but potentially each frame could create a few display list items, and each item is about 24 bytes (more for 64bit). Think 10,000 visible frames in a very complex page and we're talking about 500K memory. That actually sounds OK to me --- except for Minimo, but Minimo devices probably won't be able to get so many frames on their small screens :-). Another way to think of it is that at worst, the display list might momentarily approximately double the space used for a document. In any case --- and here I invoke my last blog entry about optimization --- I think I can see how to compress the display list as we build it, to reduce the memory overhead substantially, though I won't be doing that until we really need to.<br/><br/>BTW over the years many people have asked for a Gecko API so that embedders can deconstruct exactly what's visible on the page in terms of content elements and the geometry and z-ordering of their boxes . This frame display list would be a good basis for that.<br/><br/>Oh, this also will make it easy and clean to implement SVG foreignobject the way I did for my XTech demo. I'm looking forward to having that in trunk cairo builds.<br/><br/>One complexity of CSS painting is that compositing ('opacity'), z-ordering and most clipping are done according to the content hierarchy, not the CSS box containment hierarchy. (E.g., an absolutely positioned box clips a fixed-position child, even though it's not the containing block for the fixed-position child.) This has been a source of many difficult bugs and some fragile, hairy code to figure out exactly what clip rect applies to a frame, when we were painting by traversing the view and frame hierarchies (and it's still wrong in tricky edge cases today). Now I'm able turn this around and take a reasonably simple approach: paint (er, build display lists) recursion always follows the content tree. This means we paint out of flow frames (absolute/fixed position elements and floats) when we encounter their placeholder frames. This helps eliminate a lot of existing code complexity.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Andrew Smith</div>
+<div class='content'>How does this relate to dbaron&#39;s reflow branch?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian</div>
+<div class='content'>Thanks for the detailed explanation of this - I think I understood at least a good half of it :)<br>Are you aiming for Gecko 1.9 with this?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>neil</div>
+<div class='content'>&quot;Anything to help stop clients saying &#39;but we&#39;ve been using Opera and its sooo faasst!&#39;&quot;<br>You&#39;re very lucky...most of our clients still don&#39;t know of anything except IE and windows...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Oskar Malm</div>
+<div class='content'>While content overlapping iframes and plugins (i e everything with its own widget) display correctly today, how will that be possible in the future when view and widget hierachies have been removed?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>zbiggy</div>
+<div class='content'>I hope this fix grey background of transparent flash plugins and menu hidden under flash animation. Asus website is an example of such mozilla browser and flash plugin problem.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Oskar Malm</div>
+<div class='content'>Your comment &quot;regardless of which widget we&#39;re painting&quot; suggests that there will still be multiple widgets (one for each DOM window?). I thought the point was to paint everything in the same native widget. Have I missed something here?<br>You&#39;re right that plugins are harder, still at least on (some) Linux/X11 systems you could use the DAMAGE and COMPOSITE extensions to get a pixmap for the plugin. This will hurt performance though and is not cross-platform.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The change to remove child widgets will take place separately from this.<br>I&#39;m aware of DAMAGE and COMPOSITE, and it&#39;s certainly on the radar. I guess I should have said &quot;there&#39;s no good, general way to fix it&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>CSS can be very difficult for web developers to get right when we start using &#39;tricks&#39; such as css drop down menus and ajax popup/autocomplete stuff. I can only imagine how complicated it is to actually try and render all this stuff reliably.<br>I think you mean &#39;frame&#39; in a different sense but one of the problems I keep encountering is cross Frame display of content (and by that I mean actual Frames/Iframe) - trying to draw a div that partially overlaps an Iframe or sibling in a frameset is way too hard(I know, other readers might say who uses framesets nowadays!? answer: complex intranets/biz apps). So perhaps that can be throw into the pot when considering your patch? And yes, it would be nice if the z-index of the div in question was honoured across Frames!<br>Sounds like excellent work, and this kind of effort is much appreciated. Anything to help stop clients saying &#39;but we&#39;ve been using Opera and its sooo faasst!&#39;<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bora</div>
+<div class='content'>Robert, is this going to solve the plugin clipping problems by iframes? As you know iframes cant correctly handle clipping of plugins when on a variable z-order tree.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Andrew: it&#39;s almost entirely orthogonal.<br>Nameless User: We do support arbitrary elements overlapping sibling IFRAMEs. Is there a particular bug that concerns you? (There are some problems with event handling, mostly fixed in FF1.5, and some problems with the text editing caret, to be fixed in Gecko 1.9.) I don&#39;t understand the issue with framesets; there&#39;s just no way for content in one frame to escape to overlap its siblings, that&#39;s the way the standards are written. As for Opera, it&#39;s a very fine browser and I&#39;m not embarrassed that we have to catch up to it in some areas.<br>Ian: yes<br></div>
+</div>
+<div class='comment'>
+<div class='author'>asdf</div>
+<div class='content'>I don&#39;t know how complicated CSS is (but it sounds absolutely retarded with negative z-indexes and floating elements) but I was wondering if you can just store 1 element of the display list when calculating GetFrameForPoint or do you have to build the whole thing (and if so, I&#39;d hope you&#39;d take advantage of any pruning optimizations)?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael</div>
+<div class='content'>Great article! Especially for someone like me who&#39;s just getting into the way Gecko works. Sounds like a complex, but important change, so thank you for your hard work, and good luck. :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>A display list will be built from the full frame trees of all visible documents, regardless of which widget we&#39;re painting.<br>(Actually today, content overlapping plugins does not display correctly. My changes will not fix this, there&#39;s no way to fix it.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Napolitano</div>
+<div class='content'>Sounds exciting.  Thanks for the explanation.<br></div>
+</div>
+
+</div>

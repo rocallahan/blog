@@ -1,0 +1,27 @@
+---
+layout: "post"
+title: "Brrrrrr"
+date: "2007-07-27 01:26:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/07/brrrrrr_26.html"
+---
+<div class="columns"><p>Today was the last scheduled day for major Web-facing features to be landed for Gecko 1.9. As always this "freeze day" was very exciting as many people raced to get large last-minute patches completed, reviewed and safely landed. There was tree breakage, as always, but in general I felt today was less frantic than freeze days in the past. I'm not sure why, because a lot of cool stuff did land!<br/><p>I landed my CSS 'text-rendering' patch that I <a href="/2007/07/status_3.html">discussed</a> earlier. This means, among other things, that on trunk you can now set browser.display.auto_quality_min_font_size to 0 to get maximum quality text on all sites that don't override text-rendering (i.e., all sites!). So on Linux it's now easy to use Pango for everything --- something I know some people have wanted to be supported properly for a long time.<br/><p>Eli Friedman landed a patch that exposes "full zoom" functionality from Gecko to chrome; there's no UI yet but it is now fairly trivial to create Firefox UI (or an extension!) to scale all the contents of a Web page. This will be great. This will interact nicely with my text-rendering patch because as you zoom in, the font size in device pixels increases so we'll engage high quality mode automatically. It would be really helpful if there was an extension we could use right now for testing ... hint hint ...<br/><p>Support for 'oncopy', 'onpaste' and 'oncut' events landed --- that's something I know Web authors have been asking for for a while; thanks to Mathieu Fenniak.<br/><p>Dave Camp's support for client-side access to the conents of local files via &lt;input type="file"&gt; landed (actually a couple of days ago). This is a really neat feature; instead of script having to upload files to a server to work with them, script can now just read the files locally. This could be cool for Webmail previews of attachments being uploaded, for example, or script could just open local text files and interpret their contents. It is also of course very useful for offline apps. He worked with Hixie on this so I think a spec should show up at WHATWG soon.<br/><p>We also landed fantasai's patch for "overflow containers". This is a mighty piece of work that significantly extends our frame model. It is designed to handle situations where an element B overflows its parent element A vertically and B does not fit in a constrained-height container (e.g. a page) although A does. We need to place a box for B on the next page but its parent A has no box on the page, so what should the box tree look like? There's no easy answer but we decided the least of evils would be to create an "overflow container" box for A: a sort of ghost box that doesn't map any of A's actual content, but only serves as a container for A's overflowing children. This is a difficult part of our code and I'm very pleased that we have a solution. The best part is that it means we have a fighting chance of fixing in 1.9 the infamous "cannot split absolutely positioned elements" bug --- the bug that means printing a document that's mostly inside an absolutely positioned element only ever prints the first page.<br/><p>Lots of other stuff landed that I have no time to mention here. Hopefully someone more diligent than I will get around to writing it all down.<br/><p>It's been a long day --- up at 6am for the Gecko 1.9 phone call, and now it's nearly 1am. But it's a fun day, one of the more exciting days in Gecko development. Someone should make CODE RUSH 2 on corresponding day in the next release cycle!</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Brian P.</div>
+<div class='content'>There&#39;s already a simple extension:<br>http://ted.mielczarek.org/code/mozilla/fullpagezoom.xpi<br>extensions.fullpagezoom.zoomfactor changes the amount of change to the scaling.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kurt</div>
+<div class='content'>Ted Mielczarek created one: http://ted.mielczarek.org/code/mozilla/fullpagezoom.xpi<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Naylor</div>
+<div class='content'>Great to read about the improvements made! Can&#39;t wait for my Firefox 3... (These changes will be in Ff3 right?)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nils</div>
+<div class='content'>Did a quick-n-dirty hack to include this in optimoz Mouse Gestures.<br>See: http://tn123.ath.cx/moz/<br></div>
+</div>
+
+</div>

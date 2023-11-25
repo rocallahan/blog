@@ -1,0 +1,59 @@
+---
+layout: "post"
+title: "H.264 Licensing And Free Software"
+date: "2010-01-29 21:00:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/01/h264-licensing-and-free-software_29.html"
+---
+<div class="columns"><p>I've read comments on the Web suggesting that since the MPEG-LA's patent licensing documentation only mentions playback products that are "sold", the MPEG-LA doesn't expect software that is given away at zero cost to need a license. Intrepid <a href="http://lwn.net">LWN</a> reader Trelane actually bothered to ask them, and got a response. <a href="http://lwn.net/Articles/371751/">Here it is.</a><br/><p>The most important part of the response:<br/><blockquote>In response to your specific question, under the Licenses royalties are<br/>paid on all MPEG-4 Visual/AVC products of like functionality, and the<br/>Licenses do not make any distinction for products offered for free<br/>(whether open source or otherwise).</blockquote><br/><p>Also<br/><blockquote><br/><p>I would also like to mention that while our Licenses are not concluded<br/>by End Users, anyone in the product chain has liability if an end<br/>product is unlicensed. Therefore, a royalty paid for an end product by<br/>the end product supplier would render the product licensed in the hands<br/>of the End User, but where a royalty has not been paid, such a product<br/>remains unlicensed and any downstream users/distributors would have<br/>liability.<br/>Therefore, we suggest that all End Users deal with products only from<br/>licensed suppliers. In that regard, we maintain lists of Licensees in<br/>Good Standing to each of our Licenses at http://www.mpegla.com.<br/></blockquote><br/><p>In other words, if you're an end user in a country where software patents (<a href="http://weblogs.mozillazine.org/bz/archives/020400.html">or method patents</a>) are enforceable, and you're using software that encodes or decodes H.264 and the vendor is not on the <a href="http://www.mpegla.com/main/programs/AVC/Pages/Licensees.aspx">list of licensees</a>, the MPEG-LA reserves the right to sue you, the end user, as well as the software vendor or distributor.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Catalin</div>
+<div class='content'>Agree with Robert, that is a smart move to keep the license free until 2016 then when everybody is in the boat start charging. Have a look at this strategy: http://www.thehdstandard.com/video-broadcasting-news/h-264-free-streaming-for-5-more-years/<br>Catalin<br>Professional Streaming Consultant<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Paul: Yes, I am keenly awaiting the announcement of the 2011 terms. What&#39;s going on?<br>Fabrice: yeah, I suppose it&#39;s possible a free software project could get an MPEG-LA license on the assumption that they&#39;ll ship few enough units to qualify for a zero-cost license. However, that means if more users download your software than you expected, you&#39;re completely screwed! And of course that won&#39;t work for projects like Mozilla.<br>Dave: those are good questions. The complex and discriminatory nature of MPEG-LA licensing --- the ability of companies to cut their own secret deals with the MPEG-LA --- just adds to the problems here.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul Clark</div>
+<div class='content'>That doesn&#39;t surprise me at all - the idea that there was some get-out-of-jail-free card for free software was just wishful thinking.  It&#39;s the functionality that the patents protect, not the business model.<br>I think it&#39;s also worth mentioning that MPEG-LA H.264 licensing also applies to the &quot;broadcaster&quot;, or in Internet terms, the video hosting provider or service operator.  This has been free up to 2011 (only 11 months away), and I thought MPEG-LA were supposed to have announced the new terms by the end of January 2010.   Which means, effectively, today!<br>There&#39;s a very interesting collision of factors here - the whole iPad/Flash issue is going to be pushing people towards H.264, so this is all going to be become very important over the next few months...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joshua Cogliati</div>
+<div class='content'>I have wondered what would happen if an end user requests a H.264 license for their own use.  Has anyone ever tried this?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Fabrice</div>
+<div class='content'>The answers states that : &quot;But, I do note that the Licenses<br>addresses this issue by including annual minimum thresholds below which<br>no royalties are payable in order to encourage adoption and minimize the<br>impact on lower volume users. In addition, the Licenses also include<br>maximum annual royalty caps to provide more cost predictability for<br>larger volume users.&quot;<br>Does the minimum thresholds apply for open source projects ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>Facts :<br>- Mozilla is NOT going to implement H.264<br>- Apple is NOT going to implement Theora.<br>- Websites are NOT going to provide multiple formats.<br>So there is only one solution: third-party codecs.<br>And if DirectX is not good, well invent your own open secure API.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>It seems you actually still need a license agreement with the MPEG-LA. But yeah, they did a smart thing here, forgoing revenue for a few more years in exchange for a greater chance of having the Web fully locked in. Then in 2016 they can start putting the squeeze on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul Clark</div>
+<div class='content'>Robert,<br>I had a very interesting (and positive) conversation with someone from MPEG-LA on Monday, and they have just announced that &quot;Internet Video AVC Broadcast&quot; - that is to say free-of-charge streaming (not PPV or subscription) - is to remain royalty-free for the next period (to end 2016)<br>http://www.mpegla.com/main/Pages/Media.aspx<br>I think that removes one barrier to general adoption; the issue then is what Free Software projects like Mozilla do about it. I think realistically the only option is to allow access to platform codecs on the assumption that the OS or video card manufacturer has already sorted it out. I know that&#39;s not the purest solution, but it may be effectively forced on them due to the momentum behind H.264 now.<br>Cheers<br>Paul<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave</div>
+<div class='content'>Does this mean if you&#39;re using your browser for anything that doesn&#39;t qualify as &quot;your own non-commercial&quot; use then the Adobe Flash licence no longer covers you and you&#39;re liable as the end user?<br>Did Chrome and Apple pay for a better licence  (assuming one is even offered) or are they in the same boat of supporting a consume-only web?<br>Link to Adobe Flash&#39;s licence terms FAQ:<br>http://labs.adobe.com/wiki/index.php/Flash_Player:9:Update:H.264#Q:_When_does_MPEG_LA_require_payment_of_a_use_fee_or_royalty.2C_and_do_I_need_my_own_license_for_H.264_.3F<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tony Mechelynck</div>
+<div class='content'>In my country there is a blanket tax levied on all photocopiers (and maybe on their toner cartridges) to the benefit of all holders of book copyrights (and regardless of whether that particular photocopier is ever used on copyrighted material), and similarly on tape copiers for music and video. I suppose that in the same vein, someday my grandnephews will have to pay a tax to MPEG whenever they buy computer equipment, even if they never use H264 encoding/decoding.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesper Staun Hansen</div>
+<div class='content'>Well hello x.264?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joseph</div>
+<div class='content'>The FAQ makes it pretty clear that home users (search for &quot;remuneration&quot;) won&#39;t have to pony up for some uses from the broadcast/per-download side, but non-home users: watch out for those new terms!<br>Of course, Theora is inferior but good enough for my uses.<br></div>
+</div>
+
+</div>

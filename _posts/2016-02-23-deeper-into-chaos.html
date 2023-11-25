@@ -1,0 +1,27 @@
+---
+layout: "post"
+title: "Deeper Into Chaos"
+date: "2016-02-23 10:20:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/02/deeper-into-chaos.html"
+---
+<p>A couple of weeks ago we introduced <a href="/2016/02/introducing-rr-chaos-mode.html">rr chaos mode</a>. Since then quite a few people have tried it out, with a lot of success and some failures. Studying <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1246056">one bug</a> that chaos mode could not reproduce led to some insights that have helped me make some improvements that are now on <a href="https://github.com/mozilla/rr/commits/master">rr master</a>. The main insight is that while some bugs need a thread to be starved for a long time, other bugs only need a thread to be starved for a short time, but the starvation must happen in a very narrow window of vulnerability. So for these latter bugs, we should introduce very short delays, but we should introduce them very frequently.
+<p>Taking a step back, let's assume that for some test we can reproduce a failure if we completely avoid scheduling a certain thread for a period of D seconds, where the start of that period must fall between S and S+T seconds since the start of the test. All these constants are unknown to rr, but we'll assume 1ms <= D <= 2s. Our goal is to come up with a randomized strategy for introducing delays that will reproduce the failure within a reasonable number of runs. Since we only need to reproduce any particular bug once, it would be best to have roughly similar probabilities for reproducing each bug given its unknown parameters (rather than have some bugs very easy to reproduce and other bugs be nearly impossible). I have no idea of the optimal approach here, but here's one that seems reasonable...
+<p>First we have to pick the right thread to treat as low priority --- without making many other threads low priority, since they might need to run while our victim thread is being starved. So we give each thread a 0.1 probability of being low priority, except for the main thread which we make 0.3, since starving the main thread is often very interesting.
+<p>Then we guess a value D' for D. We uniformly choose between 1ms, 2ms, 4ms, 8ms, ..., 1s, 2s. Out of these 12 possibilities, one is between D and 2xD.
+<p>We adopt the goal of high-priority-only intervals consuming at most 20% of running time. (If chaos mode slows down a test too much, we might trigger false-positives by inducing timeouts, and avoiding false positives is extremely important.) To maximise the probability of triggering the test failure, we start high-priority-only intervals as often as possible, i.e. one for D' seconds starting every 5xD' seconds. The start time of the first interval is chosen uniformly randomly to be between 0 and 4xD'.
+<p>If we guessed D' and the low-priority thread correctly, the probability of triggering the test failure is 1 if T >= 4xD', T/4xD' otherwise, i.e. >= T/8xD. (Higher values of D' than optimal can also trigger failures, but at reduced probabilities since we can schedule them less often.)
+<p>I've written some artificial testcases showing that this works. I've also been able to reproduce the motivating bug from the first paragraph. I think it's a clear improvement over the previous approach. No doubt as more bugs come up that we can't reproduce, we can make further improvements.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Once you get the kinks worked out, you should write a research paper on chaos mode!  Seems genuinely novel and really useful.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That would be fun, but it would require quite a lot of time to properly study the effects of the heuristics compared to a baseline.
+
+Maybe I could collaborate with someone in academia to do it...</div>
+</div>
+</div>
+
+</div>

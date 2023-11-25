@@ -1,0 +1,11 @@
+---
+layout: "post"
+title: "Omniscient Printf Debugging In Pernosco"
+date: "2019-11-06 12:42:00 +0000"
+categories: "Pernosco"
+permalink: "/2019/11/omniscient-printf-debugging-in-pernosco.html"
+---
+<p>Pernosco supports querying for the <a href="https://pernos.co/about/expressions/">execution of specific functions</a> and the <a href="https://pernos.co/about/source/">execution of specific source lines</a>. These resemble setting breakpoints on functions or source lines in a traditional debugger. Traditional debuggers usually let you filter breakpoints using condition expressions, and it's natural and useful to extend that to Pernosco's execution views, so <a href="https://pernos.co/about/source/">we did</a>. In traditional debuggers you can get the debugger to print the values of specified expressions when a breakpoint is hit, and that would also be useful in Pernosco, so we added that too.
+<p>These features strongly benefit from Pernosco's omniscient database, because we can evaluate expressions at different points in time &mdash; potentially in parallel &mdash; by consulting the database instead of having to reexecute the program.
+<p>These features are relatively new and we don't have much user experience with them yet, but I'm excited about them because while they're simple and easily understood, they open the door to "query-based debugging" strategies and endless possibilities for enhancing the debugger with richer query features.
+<p>Another reason I'm excited is that together they let you apply "printf-debugging" strategies in Pernosco: click on a source line, and add some print-expressions and optionally a condition-expression to the "line executions" view. I believe that in most cases where people are used to using printf-debugging, Pernosco enables much more direct approaches and ultimately people should let go of those old habits. However, in some situations some quick logging may still be the fastest way to figure out what's going on, and people will take time to learn new strategies, so Pernosco is great for printf-debugging: no rebuilding, and not even any reexecution, just <a href="https://pernos.co/about/source/">instant(ish) results</a>.

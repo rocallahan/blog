@@ -1,0 +1,84 @@
+---
+layout: "post"
+title: "The Costs Of Programming Language Fragmentation"
+date: "2018-10-01 23:00:00 +0000"
+permalink: "/2018/10/the-costs-of-programming-language.html"
+---
+<p>People keep inventing new programming languages. I'm surprised by how many brand-new languages are adopted by more than just their creators, despite the network effects that would seem to discourage such adoption. Good! Innovation and progress in programming languages depend on such adoption. However, let's not forget that fragmentation of programming languages reduces the sum of those beneficial network effects.
+<p>One example is library ecosystems. Every new language needs a set of libraries for commonly used functionality. Some of those libraries can be bindings to existing libraries in other languages, but it's common for new languages to trigger reimplementation of, e.g., container data structures, HTTP clients, and random number generators. If the new language did not exist, that effort could have been spent on improving existing libraries or some other useful endeavour.
+<p>Another example is community support. Every new language needs an online community (IRC, StackOverflow, etc) for developers to help one another with questions. Fragmenting users across communities makes it harder for people to find answers.
+<p>Obviously the efforts needed to implement and maintain languages and runtimes themselves represents a cost, since focusing efforts on a smaller number of languages would normally mean better results.
+<p>I understand the appeal of creating new programming languages from scratch; like other green-field development, the lure of freedom from other people's decisions is hard to resist. I understand that people's time is their own to spend. However, I hope people consider carefully the social costs of creating a new programming language <em>especially if it becomes popular</em>, and understand that in some cases creating a popular new language could actually be irresponsible.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Ian Bicking</div>
+<div class='content'>A countervailing force is the power of ownership. There is no C++ community. There is no one you can go to and convince who can change C++. It&#39;s bigger than any person, and as an individual coming upon it, it is like an immovable machine. This is inevitable and appropriate given its size and history. But it&#39;s understandable that there&#39;s an attraction to a more human-sized programming language endeavor. And there&#39;s things you can create – things which may one day become successful – that just doesn&#39;t happen in a necessarily bureaucratic regime.
+
+That said, I think there&#39;s a lot of effort that goes into language design that could instead go into language tooling. But maybe that itself is a language design issue: the runtimes haven&#39;t made themselves easy enough to manipulate, to write true &quot;meta programs&quot; (being a program that operates on programs) and instead we&#39;re all stuck doing meta programming that is the program operating on itself.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Good points. I think communities can recognize the problem and take steps to make themselves more flexible, and I think the C++ community has actually done this.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>CanadianFox</div>
+<div class='content'>Despite the large number of languages that have been created there is also the issue that many of them are based on the same paradigm that began with Algol.  IMHO recreating more of the same is a little like arranging the deck chairs on the Titanic.  This will not change outcomes greatly. 
+
+My guess is that most programmers have never ventured far beyond the safety of the curly brackets and so we languish in a comfort zone with little real innovation.</div>
+</div>
+<div class='comment'>
+<div class='author'>kAATOSade</div>
+<div class='content'>Creating language is great learning opportunity, your lang might never be used by anyone but you can spend many hours figuring out how current languages work, maybe even develop some compassion for them. On the other hand computing hardware has changed considerably in past 30 years. Maybe there is room for Idris, Futhark, Rust, Datalog and others.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I think you would learn more about &quot;how current languages work&quot; by studying and working on those languages directly.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Deepankar Sharma</div>
+<div class='content'>Ian Bicking - I think you hit the nail on the head above regarding tooling. Every new and existing language needs code walkers, framework to write linters and good tracing tools. </div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>_creating_ something should never be deemed irresponsible. If that creation becomes popular (being it a programming language, a painting, or any other form of art -- as in knuth&#39;s concept of art) the downsides of that popularity can&#39;t be tracked to the creator. And IMHO the opposite of creativity is way worse than whatever fragmentation causes.</div>
+<div class='comment'>
+<div class='author'>Jake Howarth</div>
+<div class='content'>Except when you create a new virus and release it upon the world.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Sorry, I don&#39;t agree with this at all. Unfortunately, not knowing you at all, I don&#39;t know how to craft an example to convince you, but perhaps Jake&#39;s?</div>
+</div>
+<div class='comment'>
+<div class='author'>Aman</div>
+<div class='content'>I agree</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>i need to know how to code</div>
+</div>
+<div class='comment'>
+<div class='author'>fogus</div>
+<div class='content'>The VAST majority of new programming languages make ZERO impact on the industry. A majority of the remaining languages find a very small niche. Only a fraction of a percentage point gain any traction in the industry. Therefore maybe it&#39;s safe to say that the cost of any random language is basically nil, but the cost of a language that makes it is very high. So would you say that people should reconsider creating new languages because they MIGHT make some waves?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I pretty much did say that explicitly, in the highlighted text &quot;especially if it becomes popular&quot; in the last paragraph.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>I wrote an essay about a project that can reduce the costs and fragmentation of the programming language ecosystem dramatically:
+
+https://blog.plan99.net/graal-truffle-134d8f28fb69
+
+Graal/Truffle allow new languages to be created that can use existing codebases written in other languages, run at high speed, and benefit from mature tools like interactive debuggers. 
+
+Of course, it won&#39;t achieve universal adoption. But for those who do adopt it, the tower of babel problem should be massively reduced.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That looks like a great way to reduce costs!</div>
+</div>
+</div>
+
+</div>

@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "Handling Read-Only Shared Memory Usage In rr"
+date: "2016-06-28 07:16:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/06/handling-read-only-shared-memory-usage.html"
+---
+<p>One of rr's main limitations is that it can't handle memory being shared between recorded processes and not-recorded processes, because writes by a not-recorded process can't be recorded and replayed at the right moment. This mostly hasn't been a problem in practice. On Linux desktops, the most common cases where this occurs (X, pulseaudio) can be disabled via configuration (and rr does this automatically). However, there is another common case --- dconf --- that isn't easily disabled via configuration. When applications read dconf settings for the first time, the dconf daemon hands them a shared-memory buffer containing a one-byte flag. When those settings change, the flag is set. Whenever an application reads cached dconf settings, it checks this flag to see if it should refetch settings from the daemon. This is very efficient but it causes rr replay to diverge if dconf settings change during recording, because we don't replay that flag change.
+<p>Fortunately I've been able to extend rr to handle this. When an application maps the dconf memory, we map that memory into the rr supervisor process as well, and then replace the application mapping with a "shadow mapping" that's only shared between rr and the application. Then rr periodically checks to see whether the dconf memory has changed; if it is, then we copy the changes to the shadow mapping <em>and record that we did so</em>. Essentially we inject rr into the communication from dconf to the application, and forward memory updates in a controlled manner. This seems to work well.
+<p>That "periodic check" is performed every time the recorded process completes a traced system call. That means we'll forward memory updates immediately when any blocking system call completes, which is generally what you'd want. If an application busy-waits on an update, we'll never forward it and the application will deadlock, but that could easily be fixed by also checking for updates on a timeout. I'd really like to have a kernel API that lets a process be notified when some <em>other</em> process has modified a chunk of shared memory, but that doesn't seem to exist yet!
+<p>This technique would probably work for other cases where shared memory is used as a one-way channel from not-recorded to recorded processes. Using shared memory as a one-way channel from recorded to not-recorded processes already works, trivially. So this leaves shared memory that's read and written from both sides of the recording boundary as the remaining hard (unsupported) case.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>You may need ask man for inotify.
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It says &quot;The inotify API does not report file accesses and modifications that may occur because of mmap(2), msync(2), and munmap(2).&quot;</div>
+</div>
+</div>
+
+</div>

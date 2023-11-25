@@ -1,0 +1,21 @@
+<div id="nav">
+<h2>Archive</h2>
+
+{% assign postsByYear =
+    site.posts | group_by_exp:"post", "post.date | date: '%Y'" %}
+{% for year in postsByYear %}
+  <details><summary>{{ year.name }}</summary>
+  {% assign postsByMonth =
+    year.items | group_by_exp:"post", "post.date | date: '%B'" %}
+  {% for month in postsByMonth %}
+    <details><summary>{{ month.name }}</summary><ul>
+    {% for post in month.items %}
+      <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+    </ul></details>
+  {% endfor %}
+  </details>
+{% endfor %}
+</div>
+
+<div id="body">

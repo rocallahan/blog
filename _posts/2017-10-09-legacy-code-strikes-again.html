@@ -1,0 +1,9 @@
+---
+layout: "post"
+title: "Legacy Code Strikes Again"
+date: "2017-10-08 11:01:00 +0000"
+permalink: "/2017/10/legacy-code-strikes-again.html"
+---
+<p><a href="https://googleprojectzero.blogspot.co.nz/2017/10/using-binary-diffing-to-discover.html">This blog post</a> describes using binary diffing to find security-relevant bugs in Windows 7 that were fixed in Windows 10. It's an interesting example of the problems you can get into if you don't fix bugs across all your product versions at about the same time.
+<p>CVE-2017-8685 is particularly sad. The system call <tt>NtGdiEngCreatePalette</tt> can leak uninitialized values from kernel memory to user-space; these leaks are quite serious security issues. This is basically the old <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd183507(v=vs.85).aspx">GDI CreatePalette</a> function. It's a system call because in Windows NT 4.0 (1996) Microsoft moved the GDI subsystem into the kernel for performance reasons. That may have made sense at the time, but at that time GDI was already a mess of complicated legacy code, so this was a large increase in attack surface that's been hurting security and stability for Microsoft users ever since.
+<p>What's especially sad about this function is that <tt>CreatePalette</tt> is only useful for palette-based displays, which became obsolete in the 1990s, around the time NT 4.0 came out. It's been about 20 years since this API was useful for anything other than compatibility with even older software ... or kernel memory disclosure!

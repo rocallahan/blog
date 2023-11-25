@@ -1,0 +1,83 @@
+---
+layout: "post"
+title: "Discontent On The Web"
+date: "2010-05-11 22:42:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/05/discontent-on-web_11.html"
+---
+<div class="columns"><p>I just read <a href="http://sachin.posterous.com/the-web-sucks">Sachin Agarwal's post</a> titled "The web sucks. Browsers need to innovate" and my head exploded. But I can see that he's not alone in his views.<br/><p>His basic thesis --- at least, the part that makes my head explode --- is that standardization efforts are slowing down innovation on the Web and therefore browsers should just provide whatever APIs they want and make no effort to standardize. Web authors should target particular browsers and then market pressure will force other browsers to implement those APIs.<br/><p>Well, we tried that and it didn't work. It was called IE6. There were several problems, but the main problem is that the last step --- post-facto cloning of APIs based on reverse-engineering of the dominant browser --- is absolutely horrible in every way. It's expensive, slow, error-prone, and leads to a crappy platform because the dominant browser's bugs *are* the standard so you're stuck with whatever insane behaviour the dominant browser happens to have.<br/><p>It's also highly prone to creating monopolies due to network effects. Agarawal supposes that users will just install several browsers and view each site using the browser it works in. But that won't happen due to corporate policies, platform limitations (how many browsers can you use on the iPad, again?) and sheer inconvenience. Inevitably one dominant browser will rise, the others will find it impossible to keep up with the reverse-engineering, and it will be IE6 all over again. Keep in mind that if Firefox --- and standards --- hadn't broken down the IE6 hegemony, Safari on the iPhone would be useless and the iPhone probably wouldn't be where it is today.<br/><p>This sentiment is ill-timed. For a long time we had to burn a lot of energy to recover from the damage of the IE6 era. Now we are really in a new era of innovation on the Web. There is far more investment in browsers than there ever was before, and we're expanding what Web apps can do faster than ever. Agarwal complains<br/><blockquote>Web applications don't have threading, GPU acceleration, drag and drop, copy and paste of rich media, true offline access, or persistence.</blockquote><br/>but we've already shipped HTML5 offline apps, drag and drop, and Web Workers in Firefox, we've got WebGL and GPU-accelerated everything in the works (some already in nightly builds), and WebSimpleDB is coming along for persistent storage.<br/><p>One area where we do have a problem is ease of development, especially tools. Agarwal is right about that.<br/><p>Parting shots:<br/><blockquote>Right now browser updates fix bugs and add application features, but can't enhance the functionality of the web. This is only done by standards boards.</blockquote><br/>This is just incorrect. Browsers add functionality on their own initiative all the time --- hopefully prefixed so that developers know it's non-standard.<br/><blockquote>Browsers are forced to implement every "standard" that is agreed on, even if it's not the best decision for the platform.</blockquote><br/>Not at all true. Right now I'm explaining to people that we don't want to implement SVG fonts because they're almost entirely useless.<br/><blockquote>Browsers don't add functionality outside of standards because developers wouldn't utilize them. This means they can't innovate.</blockquote><br/>Untrue, see first point. But we get the best results when standards are developed in parallel with implementations.<br/><blockquote>Browsers don't even comply with standards well. Developing for the web is a disaster because every browser has its own quirks and issues. They can't even do one thing right.</blockquote><br/>But it's constantly getting better, especially as old Microsoft browsers go away. Plus you can't complain about cross-browser compatibility and advocate targeting one browser at the same time.<br/><blockquote>When GMail launched in 2004, it took one step forward and 10 steps backwards from the mail application I was using. Even today, the major features GMail is releasing are simply trying to match the features I've had on the desktop for years.</blockquote><br/>And yet, people have migrated to Web-based email en masse. Why is that?<br/><blockquote>I think this is the tipping point for the web. The modern web had over 10 years to reach parity with desktop applications, and it couldn't even hit that. Now it faces extinction as innovation in native applications accelerates.</blockquote><br/>The Web didn't exactly fail while it was miles behind native apps. Now it's a lot closer and moving a lot faster.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Miguel, I almost completely agree with you. I would just say that there is a big difference between IE6 features and what happened with &lt;canvas&gt;. Browsers did not implement &lt;canvas&gt; by reverse-engineering Safari. Instead a spec was written, with the cooperation of Safari developers, and other browsers implemented that spec. The spec was not a direct copy of what Safari did; for example Safari&#39;s &lt;canvas&gt; was a self-closing element like &lt;img&gt;, but in the spec we require it to be closed with &lt;/canvas&gt; so you can enclose fallback content in it. Therefore Safari in some cases changed its behaviour to follow the spec. Various extensions to &lt;canvas&gt; were then developed; some first in various browsers and then added to the spec, some first in the spec and then implemented in browsers.<br>&lt;canvas&gt; does not seem to me to be an example of what Sachin is proposing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Miguel de Icaza</div>
+<div class='content'>You picked IE6 as your example that &quot;it didn&#39;t work&quot; and yet, Canvas came out of Apple circumventing the standards process and cooking their own.<br>There are dozens of -moz-* and -webkit-* selectors that are effectively innovations that have not gone through a standards process.   One would hope that they eventually would become standard.<br>Innovation needs to start somewhere, and it needs to start with a prototype.   You can&#39;t really start with an idea and having people agree on it before you write a line of code.  The Bike shed and all that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>Given roc&#39;s comment (7:37), I think there&#39;s 4 elements that we are mixing together. In between innovation and standardisation there sits specification and discussion.<br>Specification is documentation that allows other browser developers to replicate the innovation. (Which is a bit like experiment replication in science ... or not.) Innovation that is missing specification needs to be reverse-engineered, second-guessed, potentially masks security and other bugs and issues and just generally causes everyone a huge headache.<br>Discussion, on the other hand, is equivalent to peer review in science. It won&#39;t identify all the problems with an innovation, but it can avoid the obvious issues.<br>Ideally, a browser developer will hit upon an innovation, create a decently replicable specification for it, put it up for discussion for a short period (a month or even less would be enough) and then go ahead and implement it if there are no major issues identified. If the innovation catches on, it can then be standardised. (Lots of variations on this process would also work.)<br>This seems to me pretty close to what Mozilla already does. If this process is considered slow (and I don&#39;t think anyone believes it is), then I think people are being short-sighted, petty, selfish and impatient.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Walden</div>
+<div class='content'>Wow, that article really is pretty disconnected from reality.  Also, if the web is a failure, it&#39;s definitely one of the most spectacularly successful failures ever.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tiago Sá</div>
+<div class='content'>&quot;Right now I&#39;m explaining to people that we don&#39;t want to implement SVG fonts because they&#39;re almost entirely useless.&quot;<br>Ah! So that&#39;s why Firefox doesn&#39;t pass Acid3. Good to know :)<br>Although it&#39;s a bit of bad publicity, to be honest. Stupid people who think Google Chrome is lighter than Firefox care about blunt Acid3 scores, and ignore that Firefox is the browser that best shows the content of the web... But I&#39;m not sure we want that kind of people using Firefox... After all, higher market share isn&#39;t necessarily beneficial...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Miller</div>
+<div class='content'>I think like most people he&#39;s frustrated that the web platform moves at such a glacial pace. It&#39;s 2010, and most sites are still dependant on flash or other plugins.<br>I think the main problem was IE6 wasn&#39;t that it ignored standards. Most early browsers had bad standards compliance. The main problem with IE6 is that people are still using it.<br>Browsers today include all kinds of non-standard ways of doing things as well. Canvas was just a proprietary Apple extension to Safari that exposed their drawing API to javascript, and only became a standard after the fact. The same thing is true of xmlhttprequest which was originally an *activex* extension for IE to support outlook web access.<br>I think the mistake is to assume there is some kind of conflict between standards and proprietary extensions. If a standard codifies and fixes something that&#39;s already been implemented and used in the real world, the results tend to be better than something that comes out of design by committee that has never been 100% implemented.<br>I do think implementation should lead the way, and standardisation should come second.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>M</div>
+<div class='content'>Do not use Mozilla products - as you can see its christian propraganda.<br>The whole developer team are Jesus Freaks.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Manu</div>
+<div class='content'>Why even take the time to respond to this guy?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Elixon</div>
+<div class='content'>Believe or not but you will find that you are not in the _direct_ opposition to Sachin.<br>Sachin wants browsers to create standards. It is not a bad idea. It is something that was happening and is happening and may yield very useful ideas.<br>Standardization is really slowing down the progress but the advantage of it is that it makes new things available to everybody and not only to elite. Slower progress but wider penetration. He is right. You are right. Depends on the problem you are solving.<br>BTW Half of your article is about proving that browsers do make great initiative outside of the standards and also don&#39;t follow standards (SVG fonts).<br>I think that the truth is exactly in the middle. We cannot allow one or two browsers to dominate and we need healthy progress that bubbles up from the bottom into the standards (We&#39;ve learn from XHTML failure, haven&#39;t we?).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Baka_toroi</div>
+<div class='content'>He must have awesome spam protection in his desktop.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>bastiaan</div>
+<div class='content'>The problem is not browsers being slow to innovate. The problem is website authors being slow to use innovations. Examples are HTML5 (e.g. video) and SVG, but there are many others.<br>The other obvious problem with the thesis is that there is no longer one single browser that could sway website authors to use browser-specific technologies.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tony Mechelynck</div>
+<div class='content'>About Gmail: unlike some of the above repliers, it went nowhere in trying to convince *me* that webmail is better than a mail client. If it hadn&#39;t offered POP3 I would have stayed with @skynet.be. As it is, I read my mail (even from Gmail) in SeaMonkey MailNews and I only access Google webmail now and then to check &quot;Spam&quot; for false positives and &quot;Trash&quot; for false negatives.<br>In fact, on some of the Google Groups to which I&#39;m subscribed, there are so many people (falsely) asserting &quot;I cannot bottom-post because of the Google web interface&quot; that everyday I&#39;m a little more convinced that reading these groups in some client like Sm-Mail or Thunderbird -- or even bad old Outlook Express -- (either as NNTP newsgroups or as mailing lists sent to a POP3 or maybe IMAP4 mail account) is the way to go.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Wilson</div>
+<div class='content'>Hi Robert,<br>Just a minor correction - I believe it&#39;s &quot;WebSimpleDB&quot;, the almighty Google knows of no WebIndexedDB.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Double</div>
+<div class='content'>I think GMail was the first web application I used that made me realise web applications could be better than desktop applications. I found it much better than any desktop mail app I&#39;d used in the past. I wish my desktop email client was more GMail like!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jigar Shah</div>
+<div class='content'>&quot;Not at all true. Right now I&#39;m explaining to people that we don&#39;t want to implement SVG fonts because they&#39;re almost entirely useless. &quot;<br>roc, issues is They are useless, but standardized. There are other people who has another big list of &quot;useless&quot; things, probably you (and web developer) feel useful. Difficult to justify anyone.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Ah, you&#39;re right.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>It&#39;s OK for standardization to come second, but it can&#39;t be a distant second or the de facto standard takes over. It also has to be a priority for everyone including the originating vendor.<br>It really seems to me that Sachin is proposing a mix of what we already do and stuff that makes no sense. Exactly how much of each is unclear.<br>It&#39;s certainly true that a lot of what holds Web apps back is legacy IE users. To the extent he&#39;s suggesting apps and users ditch legacy IE, I&#39;m on board with that!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>marcoos</div>
+<div class='content'>Another thing he&#39;s wrong about - he says that webmail broke &quot;mailto:&quot;. That&#39;s not true in Firefox - you can easily make &quot;mailto:&quot; links open in GMail, Yahoo and even local webmails, like Interia.pl in Poland. :)<br></div>
+</div>
+
+</div>

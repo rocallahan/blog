@@ -1,0 +1,30 @@
+---
+layout: "post"
+title: "rr 3.0 Released With x86-64 Support"
+date: "2014-12-11 12:34:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/12/rr-30-released-with-x86-64-support.html"
+---
+<p>I just pushed the release of <a href="http://rr-project.org">rr 3.0</a>. The big milestone for this release is that <strong>x86-64 support is fully functional!</strong> On 64-bit machines, we build a 64-bit rr that can record and replay 64-bit processes with the same set of features and performance-enhancing tricks that we developed for 32-bit. Not only that, but 64-bit rr can also record and replay 32-bit processes or even a mix of 32-bit and 64-bit processes in the same process tree. 64-bit support is mostly due to <a href="http://blog.mozilla.org/nfroyd/">Nathan Froyd</a> and we hope it significantly lowers barriers to using rr.
+<p>Many other internal improvements and sundry bug fixes have landed since 2.0. Some highlights:
+<ul>
+<li>rr can record executables that use a #! interpreter, e.g. bash scripts. Naturally the entire process tree is recorded, so this simplifies debugging of applications that use complex wrapper scripts.
+<li>A new <code>rr ps</code> command lists the processes recorded in an rr trace, making it easier to select the process you want to debug.
+<li>To make that even easier, <code>rr replay -p &lt;command&gt;</code> automatically attaches to the first exec of &lt;command&gt;. E.g. to debug e10s Firefox's first content process, use <code>rr replay -p plugin-container</code>.
+<li>Sometimes you record a trace, then modify the program but later want to replay the original trace, which requires the original program binaries. rr now uses hardlinks to save files in the trace so that in many cases, old traces are still replayable after a rebuild. Thanks to Karl Tomlinson for the idea.
+<li>Some small changes in command-line syntax were made to regularize the syntax and prepare for future expansion.
+<li>Many bug fixes to broaden the range of recordable applications. E.g. LibreOffice and QEMU work now.
+</ul>
+<p>Development carries on; visit <a href="https://mail.mozilla.org/listinfo/rr-dev">rr-dev</a> for exciting updates.
+<p>Have fun using rr!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>njn</div>
+<div class='content'>froydnj++</div>
+</div>
+<div class='comment'>
+<div class='author'>soniboni</div>
+<div class='content'>good you will certainly not contain any space kept in the inside storage area. <a href="https://snaptubedownloadapp.com" rel="nofollow">SnapTube Official Website</a> YouTube video applying SnapTube app. SnapTube Official great.</div>
+</div>
+
+</div>

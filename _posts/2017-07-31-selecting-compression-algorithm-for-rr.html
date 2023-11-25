@@ -1,0 +1,78 @@
+---
+layout: "post"
+title: "Selecting A Compression Algorithm For rr"
+date: "2017-07-30 22:22:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2017/07/selecting-compression-algorithm-for-rr.html"
+---
+<p>rr's traces are large. Memory-mapped files account for a lot of that, but the most efficient way to handle them is "zero copy" file cloning so we don't want to compress them during recording. Most of the rest is recordings of data copied into tracee address spaces by the kernel, and plus snapshots of registers, and these data are extremely compressible &mdash; often containing long runs of zeroes, for example. For a long time rr has used <tt>zlib</tt> to compress the non-mapped-file trace data, and <tt>zlib</tt>'s 'deflate' algorithm often achieves compression of 8x or more.
+<p>Of course <tt>zlib</tt> is pretty old and significantly better algorithms exist, so now seems like a good time to reevaluate that decision. I used the <a href="https://quixdb.github.io/squash/">Squash</a> framework to compare <tt>zlib</tt> to two contenders, <tt>brotli</tt> and <tt>zstd</tt>, on actual rr trace data: a single, fairly short Firefox run, 828MB uncompressed, treated as independent 1MB chunks because that's what rr does. Here are the results:
+<p><img src="/assets/images/rr-compression.png" width="766" height="431" title="rr Compression">
+<p>I've omitted compression levels that took more than 20 seconds to compress the data. Currently rr uses <tt>zlib</tt> level 6, which takes just over 12 seconds to compress the data. Data compression occurs in parallel with the rest of recording, and uses multiple cores when it needs to, so in practice is seldom a performance bottleneck.
+<p>On this data, both <tt>brotli</tt> and <tt>zstd</tt> beat <tt>zlib</tt> by a significant margin, so we're definitely leaving some performance on the table by sticking with <tt>zlib</tt>. In particular, given the same time budget, <tt>zstd</tt> can shave 14% off the size of the non-mapped-file trace data, and <tt>brotli</tt> can shave off 17%. Alternatively, for the same trace size we could use much less CPU time &mdash; <tt>zstd</tt> level 1 compresses slightly better than <tt>zlib</tt> level 6, at 10x the speed!
+<p>For rr I think <tt>brotli</tt> level 5 is an obvious choice. For some reason there's a sudden improvement in compression at level 5, where it passes <tt>zstd</tt> and reaches roughly its optimal compression given a reasonable time budget. At level 5 we're shaving 17% off the current size and also taking 32% off the CPU time.
+<p>Apart from the performance, <tt>brotli</tt> also has a better licensing story. <tt>zstd</tt> has Facebook's standard patent license, which terminates if you sue Facebook for any patent infringement, and some organisations aren't comfortable with that. Apparently people have done patent searches and haven't found any Facebook patents covering <tt>zstd</tt>, but that is not wholly reassuring (while also being mystifying &mdash; if they're not applying for relevant patents, why not make that clear?). On the other hand, Google <a href="https://datatracker.ietf.org/ipr/2396/">has made a clear commitment</a> to license <tt>brotli</tt> royalty-free with no such conditions. Of course there could be third-party patents, but if they became a problem it would be easy to switch rr's algorithm (especially compared to the trouble they would cause for Web sites and browsers!).
+<p>Of course there are lots of other compression algorithms I could evaluate, but I guess if there are any further gains to be had, they would be very minor.
+<p><strong>Update</strong> Unfortunately Ubuntu doesn't have a <tt>brotli</tt> library package. (Fedora does.) So, using <tt>brotli</tt> would mean everyone building rr on Ubuntu has to build <tt>brotli</tt> themselves first, or we vendor <tt>brotli</tt> into rr (or we do something truly insane like have rr pull and build brotli at build time if necessary). None of these approaches are appealing :-(. I guess there's also "rewrite rr in Rust so we can use cargo to have reasonable dependency management", which is appealing but not currently practical.
+<p>I'm leaning towards vendoring <tt>brotli</tt> into rr.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Zstd introduced long range mode. That allows to independently trade cpu and memory. Having large window (while not necessary increasing compression level) allows great compression of things far apart. I would suspect the traces to be just that case. If you allow larger window zstd will beat brotli by a margin in both compression and speed at the same time. At least until brotli finish their long range version ;-)
+
+In general (and over long term) zstd is faster with a little bit less compression ratio. Brotli is geared towards asymmetrical CDN scenario.
+
+Anyway, either one is a good choice.</div>
+</div>
+<div class='comment'>
+<div class='author'>fwang</div>
+<div class='content'>Hi Robert. FYI, the issue about brotli and woff2 being bundled and duplicated into various web engines was discussed during the 2016 edition of the Web Engines Hackfest. Since then, I have started to submit some patches to be able to use shared libraries and public headers so that these libraries can be packaged in Linux distros (this is what led to [1] btw) and used by web engines (especially WebKit and Gecko). Things seem to move very slowly on brotli/woff2 side but my plan is to continue pushing for that when brotli 1.0.0 is released [2]. 
+
+Frédéric Wang
+
+[1] https://github.com/google/brotli/issues/551
+[2] https://github.com/google/brotli/issues/483
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Thanks! For now I&#39;m just going to bundle brotli (0.6.0) with rr.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes, I just found that out. That&#39;s good.</div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>Just out of curiosity, was the zstd test using the multithreaded library?  And does the dictionary system have any effect on compression size? (I expect not, but…)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I did not experiment with dictionaries. rr compresses in 1MB blocks so I don&#39;t expect dictionaries to have much effect.
+
+I did not use zstd&#39;s multithreaded capabilities, because rr already chunks the data into 1MB blocks and compresses them on independent threads.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Jussi</div>
+<div class='content'>Any particular reason why you did not test lzma (in practice xz)? It is available on every platform and patent free. Is it just too slow?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>As you&#39;d expect, xz compression is better. A couple of data points:
+At 50s, xz shaves 20% off the current (zlib) size.
+At 181s, xz shaves 24% off the current (zlib) size.
+
+But at the 50s mark you&#39;re spending 6x the CPU time of brotli-5 to shave off 4% of its trace size. That feels like a poor return.
+
+But if we ever want to do something like recompress traces offline for long-term storage, we could use xz.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I did benchmark lzma2/xz, but they are far too slow. Every single compression level took more than 20s (i.e. failed to appear on that chart).</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>Not that even if you had chosen zstd, it only recently stabilized its stream and (I think) API, and Ubuntu 16.04 released with an old version...</div>
+</div>
+
+</div>

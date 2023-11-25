@@ -1,0 +1,83 @@
+---
+layout: "post"
+title: "CSS Units Changes Landed"
+date: "2010-08-20 12:36:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/08/css-units-changes-landed_20.html"
+---
+<div class="columns"><p>The CSS units changes that I <a href="/2010/01/css-absolute-length-units_12.html">blogged about</a> in January have landed and will be in the next Firefox milestone. With these changes, 1in = 96px always. Likewise 3pt = 4px, 25.4mm = 96px, etc.<br/>This matches the behaviour of Internet Explorer, Safari and Chrome.<br/><p>By default, when printing, 1in is rendered as one physical inch. For other output media, all these units are scaled in a medium-dependent and platform-dependent way by default. One goal of this scaling is to give results consistent with user expectations and other applications on the system. For example, standard form controls such as checkboxes should look the same in Web pages as in other applications, by default. Another goal is to choose default scaling so that a document designed to print well on normal-sized paper will be readable on the output device, e.g., a phone. So, the advice for authors using CSS physical units is to set lengths so the document looks good when printed without scaling; the browser will then scale those lengths to display the document suitably on different kinds of screens.<br/><p>There are some <em>rare</em> cases where it makes sense to include true physical measurements in a Web document --- for example, "life size" diagrams, or elements in a touch interface. For these cases we have introduced a new experimental unit, "mozmm". For media such as screens that can be touched, 1mozmm is rendered as one physical millimetre (or as close as we can get based on what we know about the medium). For other media, such as contact lens displays, brain-implanted electrodes, or lasers projecting into the sky, we reserve the right to treat 'mozmm' similarly to 'mm'. Authors should only use mozmm for elements which really need the same physical size on, for example, a 4" phone screen and a 24" monitor. This is hardly ever going to be what you want.<br/><p>Internally, our DPI code has been overhauled. Everything is now controlled by two parameters: for each window, the number of device pixels per inch (returned by nsIWidget::GetDPI), and also for each window, the default scale (returned by nsIWidget::GetDefaultScale). The 'layout.css.dpi' about:config pref overrides the result of nsIWidget::GetDPI, if present. nsIWidget::GetDPI only affects the interpretation of mozmm (unlike before, where on some platforms, some DPI values would trigger automatic scaling). We set CSS 1px to one device pixel times GetDefaultScale times the current zoom factor. Currently GetDefaultScale always returns 1.0 on all platforms, although on Mac we should set it to the system "default UI scale" (and change some other code to compensate), and on Windows we should set it based on the "system font DPI", which is essentially a user preference that controls scaling of all applications on the system. It's important that the default scale be based on a system-wide setting; that will keep Firefox consistent with the rest of the system, and ensure that the user doesn't get a surprise.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>mensajes claro</div>
+<div class='content'>I remember when Firefox was the &quot;standards&quot; browser. Now you&#39;re breaking the metric system!?</div>
+</div>
+<div class='comment'>
+<div class='author'>anon</div>
+<div class='content'>disappointing. the web is increasingly becoming a jumble of hacks without any long-term foresight and this is just another step in that direction<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Aha!<br>You blogged this before but removed it. But not before Planet Mozilla caught it, I was very confused.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>vtk</div>
+<div class='content'>Agree with anon:<br>---<br>What kind of BS is that. Everyone is buggy so we have to be buggy, too?<br>If I wanted 96DPI I&#39;d set my system to 96DPI.<br>---<br>There are historical reasons for 96DPI being so prevalent (if only approximating reality) over the years, and that has led to a lot of lazy code.  That code will prove problematic as high-DPI displays become more common (they&#39;re not all tiny phone screens) and you guys are falling into that trap.<br>The real solution is for designers to stop designing for specific display sizes, either in pixels or in inches.  Make the text a readable size (like 12pt) and let it flow in the available space.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Thanks for the comment Beat!<br>The reason why I say that Web authors misused pt (defined as a physical length) is that even where they avoided px and sized everything in physical pt, their sites almost certainly are not usable on both a desktop monitor and a handheld device. Physical units are simply not a good way to size fonts when you don&#39;t know the distance from the eye to the screen --- which you don&#39;t, on the Web.<br>Modulo that, you have a good question about why we didn&#39;t redefine 1px as 4/3 of a pt, at least for desktop users. (Another way to think about that is as a default zoom based on the user&#39;s desktop monitor DPI.) Here are a few reasons why we don&#39;t do that:<br>1) We&#39;d have to resize all images, which reduces performance and decreases image quality.<br>2) When the user&#39;s monitor DPI is different from their manually-selected &quot;Windows font DPI&quot;, it would make the size of UI elements such as checkboxes inconsistent with other applications. (If we made checkbox px sizes variable, Web pages would break.)<br>Before Firefox 4 we actually did allow px to vary based on monitor DPI, and it was a frequent source of user complaints.<br>However, I think we can satisfy you. We need to make Firefox track the &quot;Windows font dpi&quot; setting to set a default zoom based on that setting, so if you manually make the Windows font dpi setting match your monitor, you&#39;ll get the effect you want. This will avoid problem #2 above, and problem #1 will be tolerable since you opted into it.<br>I will also reiterate that we have done our best to limit the fallout by a) ensuring that CSS units match their physical counterparts in print, where the viewing distance is much more predictable and b) introducing a true physical unit, mozmm, for the cases where you really need the same physical length regardless of the viewing distance.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>nice post <a href="http://laptopsya.com/" rel="nofollow">laptopsya</a></div>
+</div>
+<div class='comment'>
+<div class='author'>db48x</div>
+<div class='content'>There is a pref you can use, as a quick look at the code will tell you. Just set layout.css.devPixelsPerPx to 2.<br>See http://mxr.mozilla.org/mozilla-central/source/gfx/src/thebes/nsThebesDeviceContext.cpp?mark=667-671#660<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mensajes claro</div>
+<div class='content'>I am agree with @<a href="http://www.deperu.com/mensajes/claro.php" rel="nofollow">Mensajes claro</a></div>
+</div>
+<div class='comment'>
+<div class='author'>Canciones nuevas</div>
+<div class='content'>I love mozilla , They are now 9 !</div>
+</div>
+<div class='comment'>
+<div class='author'>LaC</div>
+<div class='content'>I remember when Firefox was the &quot;standards&quot; browser. Now you&#39;re breaking the metric system!?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>juan carlos contieri</div>
+<div class='content'>is very good</div>
+</div>
+<div class='comment'>
+<div class='author'>Kamikaze</div>
+<div class='content'>What kind of BS is that. Everyone is buggy so we have to be buggy, too?<br>If I wanted 96DPI I&#39;d set my system to 96DPI.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>robome</div>
+<div class='content'>&gt; and on Windows we should set it based on the &quot;system font DPI&quot;<br>And there&#39;s a bug that this will done?<br>This ssentially ist a factor off &quot;system font dpi&quot; / 96. Here it&#39;s 1.04 for the current screen and using this in the equation would result in the same display as before where nsIWidget::GetDPI was part of the equation unless that now not only mm, in and pt but also px would be scaled, right?<br>Question is, why isn&#39;t there a pref &#39;layout.css.defaultScale&#39;? I&#39;d like to have a cm be a cm again on my screen and everyone else should also have the freedom to choose so.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laptops</div>
+<div class='content'>Thats right @robome.</div>
+</div>
+<div class='comment'>
+<div class='author'>skierpage</div>
+<div class='content'>(Posting failed for days, retrying...)<br>If the GetDefaultScale adjustments show up later, it seems you&#39;ll be confused by two different sets of bug reports.  Will the user see fuzzy lines if it is not an integer?<br>Will you apply a GetDefaultScale adjustment for the proud few who are able to adjust Linux font and resolution settings, http://www.mozilla.org/unix/dpi.html ? (The Linux desktops occasionally discuss implementing device-independent one point = 1/72 of an inch, then the conversations devolve into arguments about what happens to the 8x13 bitmap terminal font, and degrees of field of view measured at the retina.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Beat Stamm</div>
+<div class='content'>I think Mozilla (and before that, WebKit and IE) are putting the cart before the horse. Naive or innocent web &quot;developers&quot; may have casually mixed px and pt, creating &quot;hard-wired&quot; website layouts that may &quot;break&quot; once web surfers dial their actual (or preferred) DPI. But the problematic sites are not misusing pt, as Robert O&#39;Callahan put it (http://lists.w3.org/Archives/Public/www-style/2010Jan/0058.html), they are misusing px!!! Without knowing their clients&#39; DPI (actual or preferred), they had and have no business specifying their layout in px!<br>I&#39;m aware that the current &quot;solution&quot; (1 pt = 4/3 of a pixel) is a bit of a &quot;hack&quot; aimed at damage control, making as many websites as possible &quot;work&quot; with DPIs &gt; 96. I have been through a similar period of agony when I tried to &quot;shoehorn&quot; existing TrueType fonts into ClearType duty (www.rastertragedy.com, §4.1 and §4.2). Naive or innocent font &quot;hinting&quot; blew up characters seemingly at random and text got truncated on &quot;pixel-perfect&quot; dialog boxes, neither of which was a problem before, hence ClearType was implied as the culprit, and we had to &quot;fix&quot; it. The &quot;solution&quot; does not look optimal, but if nothing else, it doesn&#39;t blow up---never mind the &quot;casual hinting&quot; that never improved.<br>But why compromise pt for that &quot;hack?&quot; Why not compromise px, the unit few websites have any business to specify? In other words, why re-define 1 pt as 4/3 of a px instead of re-defining the size of 1 CSS px as 3/4 of 1 pt? This would render a 12 pt font at about the same physical size on my 96 DPI desktop, on my current 120 DPI laptop, and on my former 144 DPI laptop. And it would keep the concept of a pt: Unlike inches or millimeter, a 24 pt font doesn&#39;t have to be a linearly scaled-up 12 pt font. It may have slightly thinner stems and tighter character-to-character spacing than the 12 pt version.<br>This aspect of typography is now lost...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mensajes movistar</div>
+<div class='content'>To @<a href="http://www.mensajesperu.com/" rel="nofollow">Mensajes claro</a> They are not breaking the web , Mozilla is making the web better, I hope you understand.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; Will the user see fuzzy lines if it is not an<br>&gt; integer?<br>No, our full-zoom doesn&#39;t do that.<br></div>
+</div>
+
+</div>

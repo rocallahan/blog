@@ -1,0 +1,43 @@
+---
+layout: "post"
+title: "Another Case Of Obscure CPU Nondeterminism"
+date: "2017-06-09 02:46:00 +0000"
+categories: "rr"
+permalink: "/2017/06/another-case-of-obscure-cpu.html"
+---
+<p>One of "big bets" of rr is that commodity CPUs running user-space code really are deterministic in practice, or at least the nondeterminism can be efficiently detected and controlled, without restorting to pervasive binary instrumentation. We're mostly winning that bet on x86 (but not ARM), but I'm uncomfortable knowing that otherwise-benign architectural changes could break us at any time. (One reason I'm keen to increase rr's user base is make system designers care about not breaking us.)
+<p>I recently discovered the obscure <a href="http://www.felixcloutier.com/x86/XGETBV.html">XGETBV</a> instruction. This is a problematic instruction for rr because it returns the contents of internal system registers that we can't guarantee will be unchanged from run to run. (It's a bit weird that the contents of these registers are allowed to leak to userspace, but anyway...) Fortunately it's barely used in practice; the only use I've seen of it so far is by the dynamic loader <tt>ld.so</tt>, to return the contents of the XINUSE register. This obscure register tracks, for each task, whether certain CPU components are known to be in their default states. For example if your x86-64 process has never used any (legacy floating-point) x87 instructions, bit 0 of XINUSE should be clear. That should be OK for rr, since whether certain kinds of instructions have executed should be the same between recording and replay. Unfortunately I have observed cases where the has-used-x87 bit gets unexpectedly flipped on; by singlestepping the tracee it's pretty clear the bit is being set in code that has nothing to do with x87, and the point where it is set, or if it happens at all, varies from run to run. (I have no way to tell whether the bit is being set by hardware or the kernel.) This is disturbing because it means that XGETBV is effectively a nondeterministic instruction. Fortunately, the <tt>ld.so</tt> users are just testing to see whether AVX has been used, so they mask off the x87 bit almost immediately, eliminating the nondeterminism from the program state before it can do any damage (well, unless you were super unlucky and took a context switch between XGETBV and the mask operation). I haven't seen any bits other than the x87 bit being unexpectedly set.
+<p>Fortunately it seems we can work around the problem completely in rr by <a href="https://github.com/mozilla/rr/commit/33c4b4554163d2ff19d711983a20c458fd54e56c">setting the x87-in-use bit</a> immediately after every exec. If the bit is always set, it doesn't matter if something intermittently sets it again. Another day, another bullet dodged!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>KF5VTH</div>
+<div class='content'>Neat problem! From Volume 1:
+
+&quot;XINUSE denotes the state-component bitmap corresponding to the init optimization. If XINUSE[i] = 0, state component i is known to be in its initial configuration; otherwise XINUSE[i] = 1. It is possible for XINUSE[i] to be 1 even when state component i is in its initial configuration. On a processor that does not support the init optimization, XINUSE[i] is always 1 for every value of i.
+
+Executing XGETBV with ECX = 1 returns in EDX:EAX the logical-AND of XCR0 and the current value of the XINUSE state-component bitmap. Such an execution of XGETBV always sets EAX[1] to 1 if XCR0[1] = 1 and MXCSR does not have its RESET value of 1F80H. Section 13.2 explains how software can determine whether a processor supports this use of XGETBV.&quot;
+
+I read this to mean that the visible non-deterministic behavior in evaluating XINUSE is, in fact, architectural.</div>
+<div class='comment'>
+<div class='author'>KF5VTH</div>
+<div class='content'>I&#39;d change &quot;technically allowed&quot; to be a bit stronger. Maybe &quot;to be expected&quot; was the feeling I got from reading it.
+
+Makes sense what you&#39;re saying re: relying on undefined behavior in rr. Pragmatism is a bit more important to actually get things working. Would enjoy to see a post on this reliance on AF flag behavior if it catches your interest to write someday.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I agree that randomly flipping the bit to 1 is &quot;technically allowed&quot;, if that&#39;s what you mean.
+
+However, rr sometimes has to rely on behaviors beyond the letter of the manual. Another example is that a lot of instructions leave the AF flag &quot;undefined&quot;, so in theory it could be set nondeterministically, which could break rr, but in practice CPUs don&#39;t do that.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>runeks</div>
+<div class='content'>What is &quot;rr&quot;?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>http://rr-project.org/</div>
+</div>
+</div>
+
+</div>

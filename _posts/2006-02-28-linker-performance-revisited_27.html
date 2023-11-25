@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "Linker Performance Revisited"
+date: "2006-02-27 13:29:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/02/linker-performance-revisited_27.html"
+---
+<div class="columns">About this time last year, I did some work to improve <tt>ld</tt> performance and reported it on this blog, getting to the point where I could link <tt>gklayout.so</tt> with debug symbols in only five seconds. Sadly at some point during my SUSE upgrades, things went downhill again: recently it's been taking about 70 seconds to link. Vlad says he's seen similar performance regressions with the <tt>ld</tt> in Fedora Core 5.<br/><br/>So I went to investigate, and the first thing I found is that the <tt>ld</tt> in binutils CVS HEAD only takes 10 seconds, i.e., it's seven times faster that the SUSE package. So my advice to other Linux developers is, if you feel that the packaged <tt>ld</tt> is sluggish, try building your own from CVS.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Daniel Cater</div>
+<div class='content'>I love Gentoo.<br></div>
+</div>
+
+</div>

@@ -1,0 +1,36 @@
+---
+layout: "post"
+title: "Rust's Affine Types Catch An Interesting Bug"
+date: "2019-02-11 03:40:00 +0000"
+permalink: "/2019/02/rusts-affine-types-catch-interesting-bug.html"
+---
+<p>A function synchronously downloads a resource from Amazon S3 using a single <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html">GetObject</a> request. I want it to automatically retry the download if there's a network error. A wrapper function <tt>aws_retry_sync</tt> based on <a href="https://docs.rs/futures-retry/0.3.0/futures_retry/">futures-retry</a> takes a closure and automatically reruns it if necessary, so the new code looks like this:
+<pre>pub fn s3_download&lt;W: Write&gt;(
+    client: S3Client,
+    bucket: String,
+    key: String,
+    out: W,
+) -> io::Result&lt;()&gt; {
+    aws_retry_sync(move || {
+        let response = client.get_object(...).sync()?;
+        if let Some(body) = response.body {
+            body.fold(out, |mut out, bytes: Vec<u8>| -> io::Result<W> {
+                out.write_all(&bytes)?;
+                Ok(out)
+            })
+            .wait()?;
+        }
+    })
+}</pre>
+This fails to compile for an excellent reason:
+<pre>error[E0507]: cannot move out of captured variable in an `FnMut` closure
+   --> aws-utils/src/lib.rs:194:23
+    |
+185 |     out: W,
+    |     --- captured outer variable
+...
+194 |             body.fold(out, |mut out, bytes: Vec<u8>| -> io::Result<W> {
+    |                       ^^^ cannot move out of captured variable in an `FnMut` closure</pre>
+I.e., the closure can execute more than once, but each time it executes it wants to take ownership of <tt>out</tt>. Imagine if this compiled ... then if the closure runs once and writes N bytes to <tt>out</tt>, then the network connection fails and we retry successfully, we would write <em>those N bytes to <tt>out</tt> again</em> followed by the rest of the data. This would be a subtle and hard to reproduce error.
+<p>A retry closure should not have side effects for failed operations and should not, therefore, take ownership of <tt>out</tt> at all. Instead it should capture data to a buffer which we'll write to <tt>out</tt> if and only if the entire fetch succeeds. (For large S3 downloads you need parallel downloads of separate ranges, so that network errors only require refetching part of the object, and that approach deserves a separate implementation.)
+<p>Ownership types are for more than just memory and thread safety.

@@ -1,0 +1,27 @@
+---
+layout: "post"
+title: "Media Processing"
+date: "2011-06-15 15:25:00 +0000"
+categories: "Mozilla"
+permalink: "/2011/06/media-processing_15.html"
+---
+<div class="columns"><p>A number of proposed features with overlapping spec and implementation requirements are popping up:<br/><ul><br/><li>Advanced audio APIs that allow complex mixing and effects processing (e.g. Mozilla's AudioData, Chrome's AudioNode)<br/><li>Synchronization of multiple HTML media elements (e.g. proposed HTML MediaController)<br/><li>Capture and recording of local audio and video input (e.g. proposed HTML Streams)<br/><li>Peer-to-peer streaming of audio and video streams (e.g. proposed WebRTC and HTML Streams)<br/></ul><br/><p>At the API level, I want to integrate effects processing with capturing, recording and streaming by building an effects API for HTML Streams. There is <a href="https://wiki.mozilla.org/MediaStreamAPI">a proposal</a> on the Mozilla wiki --- it needs work.<br/><p>At the implementation level, all these features should be built on a common foundation to ensure that current and future integration requirements can be met; trying to bridge separate implementation models while maintaining global synchronization, high throughput and low latency seems very difficult. My <a href="http://hg.mozilla.org/users/rocallahan_mozilla.com/media-patches/">current project</a> is to build that foundation. It's challenging but fun. I've made it my top priority partly because it could block work on the above features, and also because there is an urgent need for practical comparisons of a Stream-based processing API against less-integrated APIs.<br/><p>I've found that to focus I really need to disconnect from the Internet. So I'm getting into the habit of working online in the first half of the day and then going offline around 2pm or 3pm (NZST) for the rest of the day. It's working. My apologies to anyone trying to find me online during that time.<br/><p>My current plan is to build the foundation and just enough of the DOM API to support Worker-based audio synthesis and capture of stream graph output; then I'll be able to write tests for the framework. Then we'll hook up actual audio and video output, make the HTML media element implementation use the framework, and flesh out the new features.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>SUN Haitao</div>
+<div class='content'>Maybe you&#39;ll interested in this:<br>https://addons.mozilla.org/en-US/firefox/addon/conductory/versions/?page=1#version-0.2.20110516<br>P.S: Version 0.2.20110516 no longer works on recent builds of Firefox 5, 6 and 7, for they don&#39;t load binary components linked against XUL Runner SDK 6.0a1 built on May 14, 2011.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Silvia Pfeiffer</div>
+<div class='content'>Wow, that sounds really interesting. The specs look like a new way of approaching media frameworks.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Kettler</div>
+<div class='content'>how much have you been integrating with Mozilla Rainbow? http://mozillalabs.com/rainbow/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;m going to be working with the Rainbow people.<br></div>
+</div>
+
+</div>

@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "Facebook's \"Explaining React's License\" Doesn't"
+date: "2017-09-16 11:59:00 +0000"
+permalink: "/2017/09/facebooks-explaining-reacts-license.html"
+---
+<p>This post <a href="https://code.facebook.com/posts/112130496157735/explaining-react-s-license/">"Explaining React's license"</a> confuses me. In particular:
+<blockquote>As our business has become successful, we've become a larger target for meritless patent litigation. This type of litigation can be extremely costly in terms of both resources and attention. It would have been easy for us to stop contributing to open source, or to do what some other large companies do and only release software that isn't used in our most successful products, but we decided to take a different approach.</blockquote>
+<p>This seems to claim that a) contributing to open source makes Facebook a larger target for meritless patent litigation and (later) b) the explicit patent license compensates for this somehow. The post does not spell out a rationale for a). Is it that exposing valuable source code make it easier for people to identify potential infringements of their (meritless?) patents? If so, I'm curious what evidence exists for that. And how does b) work? We know countersuits don't work against so-called Non-Practicing Entities &mdash; that's the point of NPEs. So is the goal only to deter meritless patent litigation by Practicing Entities, hoping that they'll use Facebook code and depend on a Facebook patent license? If that's the approach, how does applying the patent license to projects like zstd, where it appears Facebook doesn't have any patents, help? Just by increasing the general fear in a Practicing Entity that somewhere they use Facebook patents?
+<p>For a post claiming to be an explanation, it seems to leave a lot unexplained.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Gian-Carlo Pascutto</div>
+<div class='content'>It changes nothing about the gist of your argument, but note that after people brought up similar complaints to yours, at least the zstd situation was clarified and the patent clause was removed: https://github.com/facebook/zstd/pull/801
+
+They did not do the same for React. So I would not recommend using that. At all.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Wow, that&#39;s good to know! Looks like that changed about three weeks after I evaluated zstd for rr and noted the patent license problem.</div>
+</div>
+</div>
+
+</div>

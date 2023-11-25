@@ -1,0 +1,218 @@
+---
+layout: "post"
+title: "Hooray For WebExtensions"
+date: "2015-08-22 11:14:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/08/hooray-for-webextensions.html"
+---
+<p>Many of the comments on WebExtensions miss an important point: basing WebExtensions on the Chrome extension API does <b>not</b> imply <em>limiting</em> WebExtensions to the Chrome API. For example, Bill already <a href="https://billmccloskey.wordpress.com/2015/08/21/firefox-add-on-changes/">made it clear</a> that we want to support addons like Tree Style Tabs and NoScript, which Chrome does not support. So Firefox addons will continue to be able to do things you can't do in Chrome (though there will be some things you can hack into Firefox's XUL today that won't be supported by WebExtensions, for sure).
+<p>WebExtensions is something we need to do and should have done many years ago, before Chrome even existed. It's what Jetpack should have been. But better late than never!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>Regardless of the technical details, extensions (particularly as equals to core code) had always seemed like the key defining trait of the Firefox browser. (Mozilla&#39;s defining trait is openness.) It gave us game-changers like Firebug, AdBlock, TabMix and Greasemonkey, along with thousands of other useful smaller extensions. Whatever other problems people may have had with Firefox, its extensibility was simply untouchable.
+
+Now the extension system is being dropped in favour of an experimental cross-browser system, mostly already implemented by Firefox&#39;s major competitor. Maybe technically this is a good idea, but publicly this will play out (has played out) *really* badly and could very well kill Firefox altogether. The only *unique* reason people have to choose Firefox now is based on the openness of the company that happens to make it --- and most people (sadly!) don&#39;t see any value in that at all.
+
+I&#39;m hoping Servo is coming along well, because it will have an awful lot of responsibility on its shoulders.</div>
+</div>
+<div class='comment'>
+<div class='author'>JulienW</div>
+<div class='content'>&gt; It&#39;s what Jetpack should have been. 
+
+I admit I don&#39;t completely see the difference.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>If we made those changes to Jetpack (and other necessary changes like removing XUL access), it wouldn&#39;t really be Jetpack anymore. Most Jetpack addons would be broken and need significant modifications.
+
+WebExtensions requires big changes too, but at least it gives us the extra value of making it easy to have extensions work in multiple browsers.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Jetpack doesn&#39;t sandbox addons, does not ensure they work well in a multiprocess browser, and instead of being a stable API implemented in the browser, it was designed to be a library that ships with addons, which means you have to have repacks.</div>
+</div>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>I have to disagree. Jetpack implemented significant changes before, quite successfully. What we have now already isn&#39;t Jetpack as it was introduced a few years ago. Lots of APIs have been replaced by better designs and new APIs have been created. Mozilla finally committed significant resources towards developing well-designed add-on APIs, if these were added to Jetpack there would be far less incentive to break out of the sandbox - most add-ons could gradually migrate away from low-level APIs. But not all of them, because you simply cannot have an API for everything. That&#39;s why WebExtensions will have native.js which is the moral equivalent of require(&quot;chrome&quot;) - sometimes the only way is breaking out of the sandbox, even if there is a risk that some future browser version will break your extension (well, either that or losing many innovative extensions which is where Chrome is right now).
+
+I also don&#39;t buy the &quot;value of making it easy to have extensions work in multiple browsers&quot; talk. This kind of thing doesn&#39;t come for free, it forces you into bug-for-bug compatibility with a competitor and limits your innovation. Many Chrome&#39;s APIs have non-obvious bugs and limitations or are simply badly designed. Will Mozilla fix them even though that would mean losing compatibility with existing Chrome extensions?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Compatibility isn&#39;t all-or-nothing. There is some value in making it easy to port an extension between browsers, with some testing and tweaks, without going all the way to full drop-in compatibility.</div>
+</div>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>I&#39;m not sure what you mean by &quot;designed&quot; but JPM-packaged add-ons no long have any libraries in them - there is pretty much nothing but the add-on code there. So as of Firefox 38 Jetpack is an API implemented in the browser (which has its downsides, like a SeaMonkey-related bug which went unnoticed for a while and cannot be fixed for already released SeaMonkey versions). Also, the browser decides what the add-ons have access to - tomorrow the access to require(&quot;chrome&quot;) and low-level modules could be removed, and then the add-ons won&#39;t have a way of breaking out of the sandbox (or messing up multiprocess support).</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Robert, I would like to know why WebExtensions are &quot;what Jetpack should have been.&quot; From my point of view, Chrome&#39;s APIs have significant issues and are generally inferior to Jetpack (I&#39;ve used both). Could you maybe explain the advantages you see, either here or on https://palant.de/2015/08/23/missing-a-rationale-for-webextensions?</div>
+</div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>The reason people are confused is because of statements like the following which are incompatible with what you and Bill are saying:
+
+&quot;With this API, extension developers should be able to make the same extension available on Firefox and Chrome with a minimal number of changes to repackage for each platform.&quot;
+
+That&#39;s not true if the Web Extension API != Chrome Extension API.
+
+&quot;We have started discussions with other browser vendors to begin an effort to standardize at least some of this API…&quot;
+
+They key part there is &quot;some&quot; but I can see people thinking this will be like web standards where they move much slower than innovators/developers would like and so the APIs will be limited to what browsers can agree on and then implemented sometimes years later. This makes browser vendors the gatekeepers whereas current extensions can innovate outside the bounds of a constrained API. I&#39;m glad to hear Bill say will there likely still be some way to make XPCOM extensions but that wasn&#39;t clear in the original post and the opposite was actually communicated with a &quot;deprecation&quot; notice:
+
+&quot;We don’t have a specific timeline for deprecation, but most likely it will take place within 12 to 18 months from now.&quot;
+
+So we&#39;re sending a lot of mixed/conflicting messages and the &quot;official&quot; post  strongly implies that WebExtensions will be the only way supported at some point. I really hope that&#39;s not the case or it would mean we&#39;re killing one of our remaining strengths.</div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>The post doesn&#39;t make clear that the Web Extension API is supposed to be a superset and the post is specifically talking about making an extension work in both browsers which would require that the same APIs are present. My point is that the add-ons blog post caused confusion and negative press because it&#39;s inaccurate.</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>&quot;That&#39;s not true if the Web Extension API != Chrome Extension API.&quot;
+
+That&#39;s not a useful comparison, the thing is:
+
+It is true for Chrome Extension API ⊂Web Extension API
+
+Which is what the goal is, to have the Chrome Extension API as a miinimum baseline and then extend upon it.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Just because you&#39;re able to support doesn&#39;t translate to extension developers wanting to revamp their extensions to suit this new model, or others to do it in their stead. That&#39;s a cold reality and in the meantime, people will switch to Chrome. </div>
+</div>
+<div class='comment'>
+<div class='author'>J. McNair</div>
+<div class='content'>As with almost every Mozilla announcement bearing bad news with the good, there appears to be an attitude of &quot;do it now, announce it next, answer questions later&quot;.
+
+I shall freely admit my lack of knowledge here, but why build on top of a hard fork of the Chrome extension APIs? Is it impossible to add needed features to JetPack and deprecate require(&quot;chrome&quot;) ? Was it just EASIER and FASTER to use Chrome&#39;s existing and documented set of APIs? Does Mozilla Corp. leadership and engineering believe that attracting Chrome developers is the single best way to build a vibrant add-on ecosystem in the future? 
+
+I am being unfair to you, as one engineer can&#39;t possibly speak for a corporation, but I would like to know where to find answers to these questions. Thank you.</div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Kasting</div>
+<div class='content'>As Jesse alludes to, I think your statement about Chrome intentionally not supporting things like NoScript and Tree Style Tabs is false.  &quot;Doesn&#39;t currently support&quot; isn&#39;t the same as &quot;intentional WontFix&quot;.  Chrome is gaining a sidebar extensions API: https://code.google.com/p/chromium/issues/detail?id=477424 -- this is the primary blocker for something like Tree Style Tabs.  NoScript is definitely an extension we&#39;ve reached out to the author of in the past to try and support what it needs, and AFAIK we&#39;re still interested in doing so.
+
+So I suggest rephrasing your post to not say or imply things about Chrome&#39;s extension plans :)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I was parroting what I thought I heard at BlinkOn. I removed &quot;intentionally&quot; from the post.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Rob I love you man, and I know you mean well, but I don&#39;t think you did much research on Jetpack for this post.
+
+Jetpack was created over 5 years ago, it&#39;s purpose for existing was two fold. First to make extension development easier and more powerful, and second to provide a bridge for extensions developers to use in order to support the e10s and servo changes that all of Mozilla has known were coming for more than 5 years now.
+
+&gt; Jetpack doesn&#39;t sandbox addons
+
+This is wrong, all jetpack modules are loaded in sandboxes, including the jetpack loader itself.
+
+&gt; does not ensure they work well in a multiprocess browser, and instead of being a stable API implemented in the browser, it was designed to be a library that ships with addons, which means you have to have repacks.
+
+This is all wrong, if you watch Aza&#39;s videos and read his blog posts from 2009-2010, and look at the Jetpack wiki history, we had been planning to support e10s and servo, and ship the stable apis in the browser from the beginning over 5yrs ago.  We did the latter about two years ago as Wladimir mentions, and having the sdk support e10s is less than 2 weeks worth of work for one person by my estimate back in June, it&#39;s quite an easy thing to do.
+
+The last great repacks was in 2013, and there will never be a need for another one.  In other words this problem was fixed two years ago, so this is an invalid point.
+
+
+&gt; If we made those changes to Jetpack (and other necessary changes like removing XUL access), it wouldn&#39;t really be Jetpack anymore. Most Jetpack addons would be broken and need significant modifications.
+
+What changes are you referring to here?
+
+supporting e10s?  I mention above that this is not hard to do, and was part of the plan 5yrs ago.  Obviously we could not support vaporware at the time, so that is why it doesn&#39;t currently support e10s, but we always planned for doing this, and that is why it is very little work to.
+
+sandboxing? I mention above that this is done already.
+
+removing xul? I mention above the jetpack team had been planning for that for over 5yrs and this is one of the reasons why it was created, because 5yrs ago it was obvious that if XUL was going to die when Servo was used then Mozilla would have to offer an extension api that will work in both gecko and servo, which jetpack is designed to do.
+
+&gt; Most Jetpack addons would be broken and need significant modifications.
+
+This just is not true, modules for jetpack can be shared on npm, so if a module needs to be updated to support e10s, servo, or whatever then the module on npm merely needs to be updated then every add-on in the world that uses that module will be updated automatically when the add-on developer uses `npm install`.  So updating any broken add-on should be as easy as updating a dependency version in the package.json.  The module developer is the one that has to do work, but they only do it once and everyone benefits.
+
+Anyhow, I don&#39;t think this is true based on my recollection of the data on amo, please post data if you have it.
+
+
+&gt; WebExtensions is something we need to do and should have done many years ago, before Chrome even existed.
+
+This is cute, we should have copied the chrome.* api before it existed?
+
+
+&gt; It&#39;s what Jetpack should have been. But better late than never!
+
+Um no.   Jetpack is a much greater product than webextensions imo.  Jetpacks allow innovation, freedom, control, module reusability, tdd, and as I proved with chrome-tailor back in april (https://github.com/jetpack-labs/chrome-tailor/) Jetpacks can be used to convert google chrome apis in to firefox extensions.
+
+Web extensions allow none of these features afaict.
+
+Of course once `require(&#39;chrome&#39;)` is removed from Jetpack the freedom and innovation parts will no longer be accurate, and that is very bad decision imo.
+
+Jetpacks are now what Jetpacks should have always been, and it&#39;s painful that Mozilla does not see that.
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>| I don&#39;t think you did much research on Jetpack for this post.
+
+True. I combined what I athought I knew with info from other people I trust.
+
+| This is wrong, all jetpack modules are loaded in sandboxes, including the jetpack loader itself.
+
+That is not the same thing as being properly sandboxed. Every Jetpack addon that uses &quot;require(chrome)&quot; is not properly sandboxed. Furthermore, a key part of the sandboxing of a WebExtensions addon is an explicit manifest specifying a set of permissions, with the guarantee that whatever the addon&#39;s JS does, it can&#39;t wield permissions not granted in its manifest. As far as I know Jetpack doesn&#39;t have this; correct me if I&#39;m wrong!
+
+| This is all wrong, if you watch Aza&#39;s videos and read his blog posts from 2009-2010, and look at the Jetpack wiki history, we had been planning to support e10s and servo, and ship the stable apis in the browser from the beginning over 5yrs ago.
+
+Yes, I recall that being the plan at some point in the early days, but then we went and took the repacks path for three years (per your chronology), so we went far off the rails. (I&#39;m not blaming you for that, or anything else.)
+
+I apologize again for not remembering that we&#39;ve fixed the repacks problem since.
+
+| having the sdk support e10s is less than 2 weeks worth of work for one person by my estimate back in June, it&#39;s quite an easy thing to do.
+
+OK, but does &quot;sdk support&quot; include fixing all Jetpack API modules to support e10s? Can that even be done in a non-addon-breaking way? If the answers are &quot;yes&quot; and &quot;yes&quot;, we should probably still do it! I&#39;ve been told that&#39;s not the case.
+
+| What changes are you referring to here?
+
+Whatever changes are needed to make all Jetpack addons e10s-friendly, plus requiring Jetpack addons to ship with a permissions manifest which is enforced, plus ensuring that XUL is disabled in any context Jetpack addons can access (unless perhaps it gets its own permission).
+
+| if a module needs to be updated to support e10s, servo, or whatever then the module on npm merely needs to be updated then every add-on in the world that uses that module will be updated automatically when the add-on developer uses `npm install`.
+
+That only works if the API is e10s-friendly. The question then is how many APIs aren&#39;t e10s-friendly (by which I mean both support running the addon in a separate process to the browser chrome, and running the addon in a separate process to the content). I assumed from what I&#39;ve been told that the answer is &quot;many&quot;, but maybe I misunderstood.
+
+| This is cute, we should have copied the chrome.* api before it existed?
+
+No, we should have assumed a similar set of requirements and designed a similar sort of API and security model and shipped them in the browser from the beginning.
+
+| Of course once `require(&#39;chrome&#39;)` is removed from Jetpack the freedom and innovation parts will no longer be accurate, and that is very bad decision imo.
+
+It&#39;s tough. I think we should allow some extensions to do absolutely anything, but we need to very carefully separate those extensions from other extensions that are constrained so we can properly sandbox with a sane permissions system. The former extensions need to be carefully reviewed and will need to be regularly updated to account for browser changes. The latter can be supported via stable APIs indefinitely and need less careful review. We need to make sure there&#39;s an incentive for developers to create the latter kind of extension if their needs fit into those constraints (or work with us to expand the APIs to their needs do fit). Arguably as long as we support the very-old-fashioned classic addons, that satisfies the needs of the do-anything extensions, and we don&#39;t need to also support that class of extensions with Jetpack and WebExtensions.
+
+Anyway, sorry where I&#39;ve got things wrong, and FWIW I haven&#39;t been involved in any decision-making on these issues. And thanks for speaking up.</div>
+</div>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>| Furthermore, a key part of the sandboxing of a WebExtensions addon is an explicit manifest specifying a set of permissions, with the guarantee that whatever the addon&#39;s JS does, it can&#39;t wield permissions not granted in its manifest.
+
+Jetpack originally had this as well - only modules explicitly specified in the package manifest could be required. At some point the packaging changed and this restriction was removed. I don&#39;t know the reasoning but I guess that Mozilla&#39;s priorities shifted from enforcing sandboxing towards more flexibility. Now that the priorities are shifting back adding this functionality back would be pretty trivial.
+
+| That only works if the API is e10s-friendly. The question then is how many APIs aren&#39;t e10s-friendly (by which I mean both support running the addon in a separate process to the browser chrome, and running the addon in a separate process to the content). I assumed from what I&#39;ve been told that the answer is &quot;many&quot;, but maybe I misunderstood.
+
+I think you are. Jetpack APIs have been designed with e10s and out of process execution in mind, hence the extreme reliance on content scripts. That doesn&#39;t mean that there are no issues - since they never actually executed out of process before I would expect some issues that the API designers didn&#39;t foresee. But the issues definitely aren&#39;t massive.
+
+| No, we should have assumed a similar set of requirements and designed a similar sort of API and security model and shipped them in the browser from the beginning.
+
+IMHO that&#39;s exactly what Jetpack did.
+
+| The latter can be supported via stable APIs indefinitely and need less careful review.
+
+Sadly, that&#39;s wishful thinking in my experience. Providing stable APIs has been attempted a number of times before (remember FUEL?). The problem with those: if the platform changes in a radical way as is happening right now then these APIs won&#39;t survive either - unless the API designers knew that these changes were coming and prepared in advance. Jetpack and WebExtensions are prepared for e10s and Servo but who knows what will come up after that.
+
+Also, less careful reviews are already being performed for Jetpack-based extensions (the system warns if low-level modules are used and these parts can be reviewed more thoroughly then). The problem is, understanding extension logic still isn&#39;t optional for those reviews. The biggest problem with extensions isn&#39;t the ones that take over your computer but rather the ones that will spy on you - e.g. send your entire browsing history to some third party or even inject a remote script into every web page you are visiting. Most of the time the extension developers aren&#39;t actually malicious but simply use third-party services mindlessly (and don&#39;t get me started on jQuery-related security issues). I don&#39;t think that any kind of privilege system will make these any less problematic than they are right now. Chrome of course chose a different solution: they simply ignore the problem, spying on the user isn&#39;t prohibited behavior in Chrome Web Store.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>pkasting is willing to make changes to Chromium to help support add-ons like Tree Style Tab: https://code.google.com/p/chromium/issues/detail?id=344870#c113</div>
+</div>
+
+</div>

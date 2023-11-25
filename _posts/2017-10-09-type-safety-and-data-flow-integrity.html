@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "Type Safety And Data Flow Integrity"
+date: "2017-10-08 22:30:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/10/type-safety-and-data-flow-integrity.html"
+---
+<p>We talk a lot about memory safety assuming everyone knows what it is, but I think that can be confusing and sell short the benefits of safety in modern programming languages. It's probably better to talk about "type safety". This can be formalized in various ways, but intuitively a language's type system proposes constraints on what is allowed to happen at run-time &mdash; constraints that programmers assume when reasoning about their programs; type-safe code actually obeys those constraints. This includes classic memory safety features such as avoidance of buffer overflows: writing past the end of an array has effects on the data after the array that the type system does not allow for. But type safety also means, for example, that (in most languages) a field of an object cannot be read or written except through pointers/references created by explicit access to that field. With this loose definition, type safety of a piece of code can be achieved in different ways. The compiler might enforce it, or you might prove the required properties mechanically or by hand, or you might just test it until you've fixed all the bugs.
+<p>One implication of this is that type-safe code provides <strong>data-flow integrity</strong>. A type system provides intuitive constraints on how data can flow from one part of the program to another. For example, if your code has private fields that the language only lets you access through a limited set of methods, then at run time it's true that all accesses to those fields are by those methods (or due to unsafe code).
+<p>Type-safe code also provides control-flow integrity, because any reasonable type system also suggests fine-grained constraints on control flow.
+<p>Data-flow integrity is very important. Most information-disclosure bugs (e.g. Heartbleed) violate data-flow integrity, but usually don't violate control-flow integrity. "Wild write" bugs are a very powerful primitive for attackers because they allow massive violation of data-flow integrity; most security-relevant decisions can be compromised if you can corrupt their inputs.
+<p>A lot of work has been done to enforce CFI for C/C++ using dynamic checks with reasonably low overhead. That's good and important work. But attackers will move to attacking DFI, and that's going to be a lot harder to solve for C/C++. For example the checking performed by ASAN is only a subset of what would be required to enforce the C++ type system, and ASAN's overhead is already too high. You would never choose C/C++ for performance reasons if you had to run under ASAN. (I guess you could reduce ASAN's overhead if you dropped all the support for debugging, but it would still be too high.)
+<p><strong>Note 1</strong>: people often say "even type safe programs still have correctness bugs, so you're just solving one class of bugs which is not a big deal" (or, "... so you should just use C and prove everything correct"). This underestimates the power of type safety with a reasonably rich type system. Having fine-grained CFI and DFI, and generally being able to trust the assumptions the type system suggests to you, are essential for sound reasoning about programs. Then you can leverage the type system to build abstractions that let you check more properties; e.g. you can enforce separation between trusted and untrusted data by giving untrusted user input different types and access methods to trusted data. The more your code is type-safe, the stronger is your confidence in those properties.
+<p><strong>Note 2</strong>: C/C++ could be considered "type safe" just because the specification says any program executing undefined behavior gets no behavioral constraints whatsoever. However, in practice, programmers reasoning about C/C++ code must (and do) assume the constraint "no undefined behavior occurs"; type-safe C/C++ code must ensure this.
+<p><strong>Note 3</strong>: the presence of unsafe code within a hardware-enforced protection domain can undermine the properties of type-safe code within the same domain, but minimizing the amount of such unsafe code is still worthwhile, because it reduces your attack surface.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Nicholas</div>
+<div class='content'>&quot;Half a hole is still a hole.&quot;
+&quot;But it&#39;s a much smaller hole.&quot;</div>
+</div>
+
+</div>

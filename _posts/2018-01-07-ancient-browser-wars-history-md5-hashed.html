@@ -1,0 +1,113 @@
+---
+layout: "post"
+title: "Ancient Browser-Wars History: MD5-Hashed Posts Declassified"
+date: "2018-01-07 05:40:00 +0000"
+categories: "Mozilla"
+permalink: "/2018/01/ancient-browser-wars-history-md5-hashed.html"
+---
+<p>2007-2008 was an interesting time for Mozilla. In the market, Firefox was doing well, advancing steadily against IE. On the technical front we were doing poorly. Webkit was outpacing us in performance and rapid feature development. Gecko was saddled with design mistakes and technical debt, and Webkit captured the mindshare of open-source contributors. We knew Google was working on a Webkit-based browser which would probably solve Webkit's market-share problems. I was very concerned and, for a while, held the opinion that Mozilla should try to ditch Gecko and move everything to Webkit. For me to say so loudly would have caused serious damage, so I only told a few people. In public, I defended Gecko from unfair attacks but was careful not to contradict my overall judgement.
+<p>I wasn't the only one to be pessimistic about Gecko. Inside Mozilla, under the rubric of "Mozilla 2.0", we thrashed around for considerable time trying to come up with short-cuts to reducing our technical debt, such as investments in automatic refactoring tools. Outside Mozilla, competitors expected to rapidly outpace us in engine development.
+<p>As it turned out, we were all mostly wrong. We did not find any silver bullets, but just by hard work Gecko mostly kept up, to an extent that surprised our competitors. Weaknesses in Webkit &mdash; some expedient shortcuts taken to boost performance or win points on specific compatibility tests, but also plain technical debt &mdash; became apparent over time. Chrome boosted Webkit, but Apple/Google friction also caused problems that eventually resulted in the Blink fork. The reaction to Firefox 57 shows that Gecko is still at least competitive today, even after the enormous distraction of Mozilla's failed bet on FirefoxOS.
+<p>One lesson here is even insiders can be overly pessimistic about the prospects of an old codebase; dedicated, talented staff working over the long haul can do wonders, and during that time your competitors will have a chance to develop their own problems.
+<p>Another lesson: in 2007-2008 I was overly focused on toppling IE (and Flash and WPF), and thought having all the open-source browsers sharing a single engine implementation wouldn't be a big problem for the Web. I've changed my mind completely; the more code engines share, the more de facto standardization of bugs we would see, so having genuinely separate implementations is very important.
+<p>I'm very grateful to Brendan and others for disregarding my opinions and not letting me lead Mozilla down the wrong path. It would have been a disaster for everyone.
+<p>To let off steam, and leave a paper trail for the future, I wrote four blog posts during 2007-2008 describing some of my thoughts, and published their MD5 hashes. The aftermath of the successful Firefox 57 release seems like an appropriate time to harmlessly declassify those posts. Please keep in mind that my opinions have changed.
+<ol>
+<li><a href="/2007/01/ec06b3461cf0eaf3d3e4d7a2e429bddb_20.html">January 21, 2007</a>: <a href="https://raw.githubusercontent.com/rocallahan/blog-archive/master/hashed-blog1.txt">declassified</a>
+<li><a href="/2007/12/e0f4ffc0ddc898cd033567bc2d1fe084_01.html">December 1, 2007</a>: <a href="https://raw.githubusercontent.com/rocallahan/blog-archive/master/hashed-blog2.txt">declassified</a>
+<li><a href="/2008/06/5ce9134be8a642e1fbf3b93593da33e9_05.html">June 5, 2008</a>: <a href="https://raw.githubusercontent.com/rocallahan/blog-archive/master/hashed-blog3.txt">declassified</a>
+<li><a href="/2008/09/4a8dec89f08156ec972ddc3ff319eb01_06.html">September 7, 2008</a>: <a href="https://raw.githubusercontent.com/rocallahan/blog-archive/master/hashed-blog4.txt">declassified</a>
+</ol>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Lorenzo</div>
+<div class='content'>In short, Mozilla and Firefox still being around is a sort of miracle. The thing that confuses me most is the &quot;FirefoxOS bet&quot; that was about building a sort of crappy operating system for crappy phones on top a an huge pile of crap as codebase, plus &quot;web technologies&quot; again. I would not call it a &quot;bet&quot;.</div>
+</div>
+<div class='comment'>
+<div class='author'>VonCode</div>
+<div class='content'>I&#39;d love to hear more about &quot;automatic refactoring tools&quot;, what did they do, who provided them, and what impact they had?</div>
+<div class='comment'>
+<div class='author'>Joshua Cranmer</div>
+<div class='content'>The automated refactoring tools were built on Pork, and were developed largely in-house. In terms of impact, they were a dead-end. The main thrust was moving Gecko to a garbage-collected system, and they seemed to work well enough to suggest that the problems would be in the user&#39;s logic in doing the conversions, not so much the actual automation itself.
+
+As far as I am aware, the automated refactoring work was the first large-scale automated refactoring &quot;successfully&quot; done for C++. But that&#39;s sort of underwhelming, since Mozilla wasn&#39;t very aggressive at using complex C++ features at that time, and almost none of the work was ultimately committed (I think a few renaming patches were built on it and got checked in). A few years later, clang become self-hosting, and Google came along and pushed clang&#39;s automated refactoring and static analysis in a very big and public way.
+
+So the work was a dead end. Some of the ideas survived among Mozilla people (this is basically where the static analysis plugins and DXR came from), but the technical work wasn&#39;t going anywhere.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>We didn&#39;t get very far. I think maybe we were able to do some automatic renaming, but that&#39;s about it. Pretty lame compared to what&#39;s available today for C++ (even more so compared to other languages). Very little impact.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>I don&#39;t like saying &quot;I told you so&quot; so I won&#39;t :-P. I do hope you find someone to play the optimist to your pessimist in whatever enterprise you undertake. That seems important to me in my efforts, and I miss debating you!
+
+/be</div>
+</div>
+<div class='comment'>
+<div class='author'>Swatinem</div>
+<div class='content'>Interesting to see how much you talked about XUL, XUL developers, and rebuilding XUL on top of webkit.
+
+What is your opinion on XUL in retrospect?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>XUL was thrown together in a hurry in the late 90s/early 2000s to serve the immediate need of building a cross-platform UI using Web tech. Many mistakes were made, but under the circumstances it wasn&#39;t too bad.
+
+In hindsight I think Mozilla could have and should have recognized earlier that XUL was a dead end, put more effort into standardizing the parts of XUL that Web applications need, and moved earlier to reduce the usage of XUL beyond Firefox/Thunderbird and hence the ongoing burden of XUL in Gecko. In particular we should have shut off the use of XUL in non-privileged content as soon as the first security bugs involving XUL arose, instead of a few years later.
+
+We definitely should have initiated XUL-free WebExtensions much earlier.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>How do I verify the hashes? 
+
+$ curl https://raw.githubusercontent.com/rocallahan/blog-archive/master/hashed-blog1.txt | md5sum
+
+gives me 9ba0c5cba20cff553500f034f58d5bb7, not ec06b3461cf0eaf3d3e4d7a2e429bddb.
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I wondered if anyone would check :-).
+
+I&#39;m not sure what the problem is with the first post. It&#39;s been a long time. You&#39;ll have to take my word for it that the first post is the right text :-).
+
+You should be able to verify the others using that method.</div>
+</div>
+<div class='comment'>
+<div class='author'>Josh Cogliati</div>
+<div class='content'>Well, at least hashed-blog[2-4].txt match</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Steve Fink</div>
+<div class='content'>Thank you for exposing these. It&#39;s very illuminating to see these glimpses into the state of Mozilla and the world at those points in the past, and it reminds me of the need for humility in all of my own beliefs and opinions about the present day.
+
+I also just plain have a ton of respect for people who are willing to admit that they were wrong about substantial things. It&#39;s a great opportunity to learn vicariously in a way that isn&#39;t possible with the usual whitewashed histories.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>You wrote a little more than 9 years ago, &quot;the Web is
+winning.&quot;  <a href="http://www.asymco.com/2016/11/02/wherefore-art-thou-macintosh/" rel="nofollow">Still believe this? (see second chart)</a></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I&#39;m not sure how different Blink&#39;s codebase is from WebKit now, but either way there are now - in practical terms - only 3 (or 3.5) major browser engines left: EdgeHTML, Gecko and WebKit/Blink. I&#39;m definitely glad that Gecko did stick around in the end. It always seemed to maintain a stricter standards compliance than WebKit.
+
+Hopefully as much of Gecko&#39;s codebase is replaced with Servo modules, this will increase the speed of adding new features.</div>
+</div>
+<div class='comment'>
+<div class='author'>Gerv</div>
+<div class='content'>I still remember these... thank you for finally revealing the mystery :-)</div>
+</div>
+<div class='comment'>
+<div class='author'>MiracleBlue</div>
+<div class='content'>Well these certainly are fascinating to read!  I remember being a young, upstart web developer back then, and watching the browser wars intensely especially around that time.  Was a big FF user, then when Chrome started gaining traction, went to Chrome - now with FFQ, I&#39;m again a regular FF user :)
+
+I did notice, however, there are many more hashed posts in your archives than you&#39;ve &quot;declassified&quot; here.  I suspect there will be more reveals in the future?  What I&#39;m basically saying is: more, please!  :D
+
+Cheers!</div>
+</div>
+
+</div>

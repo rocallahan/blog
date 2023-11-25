@@ -1,0 +1,19 @@
+---
+layout: "post"
+title: "Debugging Transient Rendering Issues With GNOME Shell Screencasts"
+date: "2013-09-02 23:43:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/09/debugging-transient-rendering-issues.html"
+---
+<p>Debugging transient issues like flickering can be a real pain because it's difficult to see exactly what's happening when it only affects a few rendered frames. Enabling paint flashing in Firefox is useful for detecting unnecessary repainting but again it can be difficult to use when there's a series of consecutive interesting frames --- e.g., when you're trying to figure out why something has repainted many times in a row instead of just once. But now I have found an excellent solution to these problems!
+<p>Andrew Overholt recently pointed out to me GNOME Shell's built-in screencasting ability --- just press Shift-Ctrl-Alt-R to start recording, and a WebM file is dumped in ~/Videos. As far as I can tell, this file contains exactly one video frame per frame rendered by the desktop compositor, which is perfect for analyzing rendering issues. (Video frame timestamps are correct, so playing the file normally works as expected.) Loading it up in gmplayer, you can press '.' to advance one frame at a time. The video quality is high, and overall it's absolutely brilliant for frame-by-frame analysis of what was rendered.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Interesting use for the builtin recorder. If you ever need to tweak the video there&#39;s settings to tune it[1] or starting with the upcoming 3.10 version a dbus api[2].
+
+[1] https://git.gnome.org/browse/gnome-shell/tree/data/org.gnome.shell.gschema.xml.in.in?h=gnome-3-8#n154
+[2] https://git.gnome.org/browse/gnome-shell/tree/data/org.gnome.Shell.Screencast.xml</div>
+</div>
+
+</div>

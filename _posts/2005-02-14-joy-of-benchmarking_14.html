@@ -1,0 +1,19 @@
+---
+layout: "post"
+title: "The Joy Of Benchmarking"
+date: "2005-02-14 10:23:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/02/joy-of-benchmarking_14.html"
+---
+<div class="columns"><br/>I've just set up a swank new machine: dual Xeon Nocona 3.4 GHz (x86-64, hyperthreading) with 2GB RAM. To get the fastest possible Mozilla builds on a machine like this you use parallel make. The question is, how many simultaneous processes should make run to maximise throughput? Too few, and the system is underutilized (some processor(s) will go idle waiting for I/O or just have nothing to do), too many and the system will thrash on memory or I/O access.<br/><br/>So I did the virtuous thing and benchmarked it over the weekend. I tested setting the process limit between 1 and 8. For each test I did "rm -rf *; ../configure; time make -j<em>N</em>" three times and took the fastest run as definitive. I was building Firefox with "--enable-extensions=all" (a few don't actually get built for various reasons), optimized at -O3, no debug, for the x86-64 architecture. Then I plotted the results as "builds per hour" for each setting. The results are below.<br/><br/>So it looks simple: throughput basically tops out at 4 processes, which makes sense because I have two CPUs each supporting two hardware execution contexts simultaneously. I thought there might be a measurable improvement at 5 or more processes, so that something can run when one of the hardware contexts is stalled on I/O, but there isn't. Perhaps there's enough memory that there aren't many I/O stalls and the ones that happen block all processes. Interestingly there's no significant dropoff even at 8 processes, although there must be eventually as the overhead of juggling lots of simultaneous processes grows.<br/><br/>Anyway the bottom line is that I can build Firefox from scratch in 13 minutes 45 seconds :-).<br/></div><br/><br/><img alt="Firefox build times graph" src="/assets/images/images/FF-build-times.png" width="606" height="468" style="max-width:100%"/><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Marc Christensen</div>
+<div class='content'>It will be interesting to see if things change with dual-cor CPUs.  Especially dual-core w/hyper-threading - making your dual proc into an 8-way.  We had an 8-way Compaq at Caldera on the engineering team for out builds.  We were able to rebuild the entire distro in the time it took to make X. 8^)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ben</div>
+<div class='content'>I&#39;m jealous ;-) I thought a from scratch build in 21 minutes on my laptop (when it was new) was good. It&#39;s slower now... about 33... almost enough to make me reformat and start over.<br></div>
+</div>
+
+</div>

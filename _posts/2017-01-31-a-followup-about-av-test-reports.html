@@ -1,0 +1,42 @@
+---
+layout: "post"
+title: "A Followup About AV Test Reports"
+date: "2017-01-30 20:31:00 +0000"
+permalink: "/2017/01/a-followup-about-av-test-reports.html"
+---
+<p>Well, <a href="http://robert.ocallahan.org/2017/01/disable-your-antivirus-software-except.html">my post</a> certainly <a href="https://www.heise.de/newsticker/meldung/Ex-Firefox-Entwickler-wettert-gegen-Antiviren-Software-3609597.html">got</a> <a href="https://it.slashdot.org/story/17/01/27/144200/you-dont-need-an-antivirus-except-microsofts-built-in-on-windows-says-former-firefox-developer">a</a> <a href="https://www.theregister.co.uk/2017/01/27/gag_free_ex_mozilla_dev_joins_antivirus_roasting_chorus_its_poison/?mt=1485498327281">lot</a> <a href="http://www.zdnet.com/article/ex-top-mozilla-dev-to-windows-users-ditch-all-antivirus-except-microsofts-defender/">of</a> <a href="https://news.ycombinator.com/item?id=13489100">attention</a>. I probably would have put a bit more thought into it had I known it was going to go viral (150K views and counting). I did update it a bit but I see no reason to change its main thrust.
+<p><a href="http://robert.ocallahan.org/2017/01/disable-your-antivirus-software-except.html?showComment=1485779943413#c4724679045913256627">A respondent</a> asked me to comment on the results of some AV product comparison tests that show Microsoft's product, the one I recommended, in a poor light. I had a look at <a href="https://www.av-comparatives.org/wp-content/uploads/2016/12/avc_prot_2016b_en.pdf">one of the reports</a> they recommended and I think my comments are worth reproducing here.
+<p>In that test, MS got 97% (1570 out of 1619) ... lower than most of the other products, but the actual difference is very small.
+<p>The major problem with tests like this is that they are designed to fit the strengths of AV products and avoid their weaknesses. The report doesn't say how they acquire their malware samples, but I guess they get them from the same sources AV vendors do. (They're not writing their own since they say they independently verify that their malware samples "work" on an unprotected machine.) So what they're testing here is the ability of AV software to recognize malware that's been in the wild long enough to be recognized and added to someone's database. That's exactly the malware that AV systems detect. But in the real world users will often encounter malware that hasn't had time to be classified yet, and possibly (e.g. in spear-phishing cases) will never be classified. A more realistic test would include malware like that. Testers should cover that by generating a whole lot of their own malware that's not in any database, and see how AV products perform on that. My guess is that that detection rate would be around 0% if they do it realistically, partly because in the real world, malware authors can iterate on their malware until they're sure the major AV products won't detect it. (And no, it doesn't really matter if the AV classifier uses heuristics or neural nets or whatever, except that using neural nets makes it devilishly hard to understand false positives and negatives.)
+<p>So for the sake of argument let's suppose 20% of attacks in the real world use new unclassified malware and 80% use old malware and none of the 20% are detected by AV products. In this report, that would be 405 additional malware samples not detected by any product. Now Microsoft scores 77.6% and the best (F-Secure in this case) scores 79.9%. That difference doesn't look as important now.
+<p>The other major issue with this whole approach is that it takes no account of the downsides of AV products. If a product slows down your system massively (even more than other products), that doesn't show up here. If a product blocks all kinds of valid content, that doesn't show up here. If a product introduces huge security vulnerabilities --- even if they're broadly known --- that doesn't show up here. If a product spams the user incessantly with annoying messages (that teach them to ignore security warnings altogether, poisoning the human ecosystem), that doesn't show up here.
+<p>This limited approach to testing probably does more harm than good, because to the extent AV vendors care about these test results, they'll optimize for them at the expense of those other important factors that aren't being measured.
+<p>There are also some issues with this particular test report. For example they say how important it is to test up-to-date software, and then test "Microsoft Windows 7 Home Premium SP1 64-Bit, with updates as of 1st July 2016" and Firefox version 43.0.4. But on 1st July 2016, the latest versions were Windows 10 and Firefox 47.0.1. Another issue I have with this particular report's product comparisons is that I suspect all it's really measuring is how closely their malware sample import pipeline matches the pipelines of other vendors. Maybe F-Secure won that benchmark because they happen to get their malware samples from exactly the same sources as AV-Comparatives and the other products use slightly different sources. The source of malware samples is critical here and I can't find anywhere they say what it is.
+<p>Of course there may be research that's better than this report. This just happens to be one recommended to me by an AV sympathizer.
+<p><strong>Update</strong> Bruce points out that page 6 of the report, second paragraph, does describe a bit more about how they acquired their samples, and they say they scan the Internet themselves for malware samples. I don't know how I missed that! But there's still critical information missing like the lead time between a sample being scanned and then tested. I think the issues I wrote about above still apply.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Bruce</div>
+<div class='content'>From page 6 of the report you referenced: &quot;We use our own crawling system to search continuously for malicious sites and extract malicious URLs (including spammed malicious links). We also search
+manually for malicious URLs. If our in-house crawler does not find enough valid malicious URLs on one day, we have contracted some external researchers to provide additional malicious URLs  (initially for the exclusive use of AV-Comparatives) and look for additional (re)sources.&quot;
+
+As for using Windows 7 SP1 as their test OS, in July 2016 Windows 7 had about a 47% market share while Windows 10 was sitting at about 25%. So the report should indicate the results for the smaller user base?
+
+Although, I do agree about using such an old version of Firefox for the testing at that time.
+
+Also, that report says nothing about the other tests they perform regarding performance, false positives, etc. It is only one of 7 or 8 reports generated every year with each report focusing on specific testing areas.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&gt; From page 6 of the report you referenced
+
+Good point. I don&#39;t know how I missed that.
+
+However, the criticisms I wrote still apply.
+
+&gt; So the report should indicate the results for the smaller user base?
+
+Yes. If it turned out that for some AV product a plurality of users were still using some old version, would you then say that they should test that old version instead of the latest version?</div>
+</div>
+</div>
+
+</div>

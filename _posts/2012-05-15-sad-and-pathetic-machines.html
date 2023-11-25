@@ -1,0 +1,44 @@
+---
+layout: "post"
+title: "Sad And Pathetic Machines"
+date: "2012-05-14 22:23:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/05/sad-and-pathetic-machines.html"
+---
+<p>On Saturday I visited a friend’s house to see if I could help them with slowness problems on their home computer. This was a six-year-old machine running XP with 448MB RAM. I observed that on startup Windows Update would run and while running, pretty much all the RAM in the system was consumed by Windows, wuauclnt.exe and svchost.exe (which assists Windows Update). During this time, starting Firefox or IE took minutes; the machine would thrash itself senseless. This state lasted for quite a long time, about half an hour, probably exacerbated by my attempts to get stuff done. Once it subsided, Firefox started quickly and ran well.
+<p>This is apparently a <a href="http://www.techsupportforum.com/forums/f10/wuauclt-exe-and-svchost-exe-memory-problem-505461.html">known problem</a> and some kind of Microsoft regression.
+<p>Under these conditions, Firefox startup time and other metrics are bound to be awful.
+<p><strong>Update</strong> I forgot to mention, but the Microsoft malware checker was also running at the same time as Windows Update and contributing significantly to resource usage. I guess it checks the downloaded and installed updates for malware...
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Dan</div>
+<div class='content'>I only very recently inherited a new hand-me-down desktop. It replaces an old Dell (made in 2004) with a Pentium 4 processor and lots of other old kit. Testing nightlies with it often showed up problems that people with high-end hardware didn&#39;t see.
+
+An example of this is bug 509986 which was closed as WFM, but only because the person testing it was hitting the 60 FPS cap on newer hardware.
+
+I also agree with what Asa said. If a machine hasn&#39;t been booted for a while, every update service suddenly notices that the last update was &gt; 7 days ago (for example) and kicks in. Windows Update, AV update, Adobe Reader, Flash, Java, Apple stuff, HP update / other vendor-specific stuff.
+
+Does Telemetry provide relevant data about hardware? I think total RAM is reported, not sure if CPU information is.
+
+Searching for Windows XP + single-core 32-bit processor might give a rough estimate for the number of these kinds of machines in use.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Yes, I&#39;ve seen that kind of thing happening on my in-laws&#39; computer running XP. Windows Update doesn&#39;t only suck up the memory, it also thrashes the disk drive quite heavily (particularly when creating a restore point). Which is very bad if you are trying to do something else at that moment.</div>
+</div>
+<div class='comment'>
+<div class='author'>Asa Dotzler</div>
+<div class='content'>I&#39;ve seen this happen on relatively new hardware on Windows 7. One contributing factor was that the user of said machine turned it off for days at a time. I don&#39;t think many of us ever turn off our machines.</div>
+</div>
+<div class='comment'>
+<div class='author'>Sid</div>
+<div class='content'>Indeed, it&#39;s a perspective a lot of us developers with blazing fast quad-core i7 machines with multiple gigabytes of RAM and SSDs lose.
+
+That Windows Update issue in particular is really sad.</div>
+</div>
+<div class='comment'>
+<div class='author'>Taras</div>
+<div class='content'>I filed https://bugzilla.mozilla.org/show_bug.cgi?id=684646 about detecting common perf suckers like this. UX/frontend people are not super excited about this, mainly because we do not have a way to report info like this in the UI.</div>
+</div>
+
+</div>

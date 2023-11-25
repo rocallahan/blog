@@ -1,0 +1,51 @@
+---
+layout: "post"
+title: "Mitigating Dangling Pointer Bugs Using Frame Poisoning"
+date: "2010-10-15 10:20:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/10/mitigating-dangling-pointer-bugs-using_15.html"
+---
+<div class="columns"><p>The most important data structure in Gecko layout is the frame tree. Roughly speaking each frame object corresponds to a CSS box. The lifetimes of these frame objects are explicitly managed, and the structures get fairly complicated, so we sometimes have bugs where there is a dangling pointer to a frame object after it has been deleted. These bugs often used to be exploitable security bugs, since making a virtual call through a pointer to a deleted object can often be used to take control of the process using heap spraying. We fixed these bugs as fast as we could, but even after fixing all the ones we know about, experience suggests there are additional dangling frame pointer bugs we don't know about yet. So last year we implemented a mitigation technique that makes it impossible to exploit almost all bugs involving dangling pointers to frames. We call this technique <em>frame poisoning</em>. It incorporates some ideas that I first saw presented in a paper <a href="http://llvm.org/pubs/2003-05-05-LCTES03-CodeSafety.html">Memory Safety Without Runtime Checks or Garbage Collection</a>. Most of the work was done by Zack Weinberg, who is now a PhD student working with Collin Jackson at <a href="http://www.cmu.edu/silicon-valley/">CMU West</a>.<br/><p>Exploiting dangling pointers is essentially about exploiting type errors. An attacker writes an attacker-controlled data value to some memory location L in a deallocated object, typically by causing a new object to be allocated there. This data value is invalid for the type T the program expects when it accesses L through a pointer to the deallocated object. For example, the program may expect L to be a pointer to a C++ vtable, but the attacker has overwritten L with an integer --- which when interpreted as a vtable pointer, lets the attacker trigger arbitrary behavior.<br/><p>Our approach is to prevent the first phase of the attack by making it impossible to overwrite fields of deallocated objects with values of the wrong type. We do this by ensuring that whenever the memory used by a deallocated frame object is reallocated to a new object, the new object must always be exactly the same type as the old object and at exactly the same address. Thus whenever code writes a value to a field of the new object, the value must be valid for the type T the program expects when it access that location through a pointer to the new object *or* the old object. Thus, dangling-frame-pointer attacks cannot get started.<br/><p>This is implemented by keeping a "free list" of deallocated frames, one freelist per frame type. When a frame is deallocated, its memory is added to the freelist for its type. When a new frame is allocated, we check the freelist for its type and reuse memory from that freelist if the freelist is not empty, otherwise we allocate new memory for the frame.<br/><p>One complication is that we actually keep one set of freelists <em>per document</em> (i.e., Web page). When a document goes away, all frames are destroyed and all frame memory is returned to the general application heap. This is safe because almost all persistent pointers to frames are from data structures associated with that document, data structures which are torn down when the document goes away. Thus it is very unlikely we will see bugs involving dangling pointers to frames whose document has gone away (experience bears this out).<br/><p>An additional line of defense is that when frames are deallocated we fill the memory with a "poison value" --- a nonsense value which, when interpreted as a pointer, always points into a large region of invalid memory. This ensures that if the program loads a value from the memory of a deallocated object and dereferences that value as a pointer, it will almost certainly crash in a way that cannot be exploited. In practice this means when someone finds a bug involving a dangling frame pointer, the browser usually crashes immediately before doing anything an attacker would find interesting. "Frame poisoning crashes" are easy to identify because they're accesses through a pointer that is (or is close to) the "frame poison value". For more details see <a href="http://mxr.mozilla.org/mozilla-central/source/layout/base/tests/TestPoisonArea.cpp#40">TestPoisonArea</a>.<br/><p>We didn't use NULL (zero) for the poison value because a lot of code tests to see if a pointer is non-null, and if so dereferences it. If that code operates on a deallocated object, we want it to crash immediately, not carry on trying to use the deallocated object in some other way.<br/><p>We shipped frame poisoning in Firefox 3.6. In the end there was no significant performance impact, although we had to be careful because some of our earlier attempts did hurt performance! In particular, we optimize by not writing the poison value over deallocated frame objects when the entire document is going away.<br/><p>Like all mitigations, frame poisoning is not ideal. We still fix dangling frame pointer bugs on trunk as quickly as we can. However, we know of no way to bypass frame poisoning to exploit dangling frame pointer bugs, so we may choose to not fix certain bugs on a maintenance branch where we believe frame poisoning blocks exploitation and a proper fix would be very destabilizing.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Interesting post.  Can you comment on the memory overhead induced by maintaining separate freelists for the different frame types?  The paper you cited claims near-zero memory overhead for most of the embedded programs they analyzed, but it sounds like your implementation must necessarily vary from theirs.  Since type safety alone does not guarantee memory safety you should be cautious when classifying these issues as non-exploitable because of these mitigations.<br>Is there a maximize size to the freelist for each frame type?  If so, what happens when memory is freed?  Likewise, where does the memory come from when the freelist is empty?  If the answer to either of these questions is the system heap, then there is still the possibility of dangling pointers.  If there is no maximize freelist size then there is potential for memory overhead given certain allocation patterns (although this may be unconcerning in practice).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Anonymous: The extra memory overhead is low. In particular, we already used per-document freelists per frame object *size*, so making those lists per *class* was not a big change.<br>There is no maximum size to the freelists. When the freelist is empty, memory is taken from the system heap, but that doesn&#39;t create problems (if we have dangling pointers into the system heap, we&#39;ve got problems independent of frame pointers...).<br>Andreas: performance, mainly.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Moore&#39;s law helps if your performance targets are absolute, but that is not the world we live in. People compare Firefox against other browsers running on the same hardware, and we have to be faster.<br>I don&#39;t believe that Microsoft replaced usage if &quot;int&quot; with SafeInt everywhere. Got proof?<br>Frame objects aren&#39;t reference counted, so bringing up reference counting is not relevant here.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Napolitano</div>
+<div class='content'>If this was implemented back in Gecko 1.9.2, why is this only being described now? (It was mentioned in some meeting notes, but I don&#39;t remember seeing any real explanation of what it was). Was there need to check if this really behaved as planned before letting potential attackers know how it worked?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>No. Compartments only restrict JS references.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Andreas</div>
+<div class='content'>Robert: that&#39;s a sad excuse. For one, Moore&#39;s law is still applicable. A 10% performance hit will be offset by new hardware within months. And I also believe that a lot of people would gladly accept a small performance hit in exchange for a safer browsing experience. Microsoft, for instance, replaced all ints in their C++ code by SafeInt, which does the right thing in cases of integer overflows. Sure, their code became a few percent slower. But they vastly reduced the number of vulnerabilities in their code. &quot;Sure it crashes, but look how fast it is&quot; just isn&#39;t good engineering.<br>But even more depressing: There&#39;s a whole lot of reference counting going on in Mozilla, even with a cycle collector. That doesn&#39;t appear to be much faster than a parallel mark and sweep collector to me. In fact, naive reference counting is asymptotically much worse than mark and sweep.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Andreas</div>
+<div class='content'>Interesting mitigation strategy. However, I keep wondering why one wouldn&#39;t simply use a conservative garbage collector to prevent dangling pointers in the first place.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yeah, something like that. There was no real plan. For a while we didn&#39;t want to talk about it until we were confident in it, and then we kinda forgot to talk about it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Manoj Mehta</div>
+<div class='content'>Hey Roc,<br>Thanks for the insightful read. A few days ago, I was reading about the Compartmentalized Heap being introduced in Firefox 4. Would that work assist in preventing/obviating dangling pointer frame attacks?<br>Thanks,<br>Manoj<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Pseudonymous Coward</div>
+<div class='content'>Sounds like solid computer science. Keep it up, Mozilla!<br></div>
+</div>
+
+</div>

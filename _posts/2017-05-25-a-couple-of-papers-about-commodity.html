@@ -1,0 +1,29 @@
+---
+layout: "post"
+title: "A Couple Of Papers About Commodity Multicore Record And Replay, And A Possible Way Forward"
+date: "2017-05-25 02:29:00 +0000"
+categories: "rr"
+permalink: "/2017/05/a-couple-of-papers-about-commodity.html"
+---
+<p>Efficient record-and-replay of parallel programs with potential data races on commodity multicore hardware is a holy-grail research problem. I think that the best papers in this area so far, though they're a bit old, are <a href="https://pdfs.semanticscholar.org/d7c7/5388f0fcc2ac107570066001c191c4e7cbc7.pdf">SMP-Revirt</a> and <a href="http://web.eecs.umich.edu/~nsatish/papers/ASPLOS-11-DoublePlay.pdf">DoublePlay</a>.
+<p>DoublePlay is a really interesting approach but I'm skeptical it would work well in practice. Without going into too many details, for parallel applications that scale well the minimum overhead it can obtain is 100%. Obtaining that overhead relies on breaking application execution into epochs that are reasonably long, but externally-visible output must be suppressed within each epoch, which is going to be difficult or impossible to do for many applications. For example, for the Apache Web server they buffer all network output in the kernel during an epoch, but this could cause problematic side effects for a more complicated application.
+<p>Therefore I think the SMP-Revirt approach is more robust and more likely to lead to a practical system. This is a fairly simple idea: apply the well-known <em>concurrent-read, exclusive-write</em> (CREW) model at the page level, using hardware page protections to trigger ownership changes. If you imagine a herd of single-threaded processes all sharing a memory block, then each page is mapped read-only in all processes (unowned), or read-write in one process (the owner) and no-access in all the others. When a process writes to a page it doesn't own, a trap occurs and it takes ownership; when it reads from a page that has a different owner, a trap occurs and the page becomes unowned. SMP-Revirt worked at the hypervisor level; <a href="https://people.cs.umass.edu/~emery/pubs/dthreads-sosp11.pdf">dthreads</a> does something similar at user level.
+<p>A problem with SMP-Revirt is that when there is a lot of read/write sharing, the overhead of these transitions becomes very high. In the paper, for three of their six benchmarks recording the benchmark with four-core parallelism is slower than just recording on a single core rr-style!
+<p>I think it would be quite interesting for someone to implement a page-CREW approach in the Linux kernel. One of the problems <a href="https://people.cs.umass.edu/~emery/pubs/dthreads-sosp11.pdf">dthreads</a> has is that it forces all threads to be separate processes so they can have distinct memory mappings. Another problem is that <tt>mprotect</tt> on individual pages creates lots of kernel VMAs. Both of these add overhead. Instead, working in the kernel you could keep the normal process/thread setup and avoid having to create a new VMA when a page assignment changes, storing ownership values (CPU index) in per-page data. Then a page state transition from unowned to owned requires a page fault to the kernel, a change to the ownership value, and a synchronous inter-processor-interrupt to CPUs with a TLB mapping for the page; a transition from owned to unowned (or a different owner) requires just an IPI to the previous owner CPU. These IPIs (and their replies) would carry per-CPU timestamp values that get logged (to per-CPU logs) to ensure the order of ownership changes can be deterministically replayed.
+<p>Then some interesting questions are: how well does this perform over a range of workloads --- not just the standard parallel benchmarks but applications like Web browsers, memcached, JVMs, etc? Can we detect on-the-fly that some cluster of threads is experiencing severe overhead and degrade gracefully so we're at least no worse than running single-core? Are there other optimizations that we could do? (E.g. the unowned concurrent-read state could be bad for pages that are frequently written, because you have to send an IPI to all CPUs instead of just one when transitioning from unowned to owned; you could avoid that by forcing such pages to always be exclusively owned. When a CPU takes exclusive ownership you might want to block other CPUs from taking ownership away for a short period of time. Etc...) I think one could do quite a bit better than SMP-Revirt --- partly because kernel-level sharing is no longer an issue, since that's no longer being recorded and replayed.
+<p>To be clear: I don't want to work on this. I'm a lot more interested in the applications of record-and-replay than the machinery that does it. I want someone else to do it for us :-).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>coder</div>
+<div class='content'>You can do a similar optimization in JVM at user level. If the heap is small, for a 64bit address space, for each Java thread, you can give them a separate virtual address space that maps to the same physical memory space. Then you put some barriers when comparing references.
+
+With this approach, you can protect the virtual page for the thread, and you also can use access informations on the page table.
+
+-Xi</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That is a very interesting idea, but it would require instrumenting all memory accesses or at least pointer loads/stores, right?</div>
+</div>
+</div>
+
+</div>

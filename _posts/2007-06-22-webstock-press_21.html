@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "Webstock Press"
+date: "2007-06-21 12:43:00 +0000"
+categories: "New Zealand Mozilla"
+permalink: "/2007/06/webstock-press_21.html"
+---
+<p>Peter Griffin at the NZ Herald has <a href="http://www.nzherald.co.nz/section/story.cfm?c_id=5&objectid=10446902&pnum=0">blogged about my Webstock presentation</a>. It's pretty good although it doesn't capture the smile on my face when I commented about Safari market share.<br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>dev</div>
+<div class='content'>Hey,<br>Thanks a lot.<br>Well  I am trying to do it and it seems to work for areas a little larger than the size of the viewing area. But it seems to have stuck up on a max height / length and does not seem to go beyond that height even if I keep everything else the same and just do a +300 on the height/width part of draw window. To put it a little more clearly ..<br>ctx.clearRect(offsetLeft, offsetTop, offsetWidth , offsetHeight);<br>ctx.drawWindow(window, offsetLeft, offsetTop, offsetWidth , offsetHeight , &quot;rgb(0, 0 ,0)&quot;);<br>gives me an incomplete (cut at bottom) image of what I want , but even if I replace it with offsetWidth + 300, offsetHeight+300 (in both lines) I don&#39;t get ANY difference in the image ...<br>I know this is probably not the place to ask this, I thought I will take a chance :) . Sorry about something nearly akin to spam in your comments thread ...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; what If I sign my script?<br>Then you will be able to call drawWindow, yes.<br>&gt; Is this possible using the element?<br>Yes.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>dev</div>
+<div class='content'>Hey,<br>I needed a way to save up the image (thumbnail say) of a webpage to base64 data , purely with javascript. I know the code works from client side as say an extension etc i.e with chrome privileges.... but my question is .. what If I sign my script? then do I get the privileges necessary to do the imaging after adding<br>netscape.security.PrivilegeManager.enablePrivilege(&#39;UniversalBrowserRead&#39;);<br>in the script?<br>Also I want to get the image of the whole page (or maybe part of the page, but definitely more than the viewing area visible to the user). Is this possible using the element?<br>This question is specific to doing it without any extensions on the client ....<br>If I decide to use an extension, I will have a whole different set of questions :).<br>I posted here cos the orignal thread where you introduced this stuff seems to be closed for comments.<br></div>
+</div>
+
+</div>

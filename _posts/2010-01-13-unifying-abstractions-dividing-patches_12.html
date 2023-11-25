@@ -1,0 +1,31 @@
+---
+layout: "post"
+title: "Unifying Abstractions, Dividing Patches"
+date: "2010-01-12 21:28:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/01/unifying-abstractions-dividing-patches_12.html"
+---
+<div class="columns"><p>Speaking of architectural misfeatures, one that's been glaring for quite some time now is the Gecko "view system" --- <tt>nsIView</tt>, <tt>nsIViewManager</tt> and friends. Originally views were intended to be used as "heavyweight" rendering objects for elements that used "advanced" features such as translucency. Over time it became clear that it was simpler to just support those features directly in the "frame tree" of rendering objects that most elements have, and now we see that everything in the view system would be simpler and more performant if it was handled by the frame system.<br/><p>However, there are large chunks of functionality still handled in the view system. One big one is scrolling. Scrollable elements have an <tt>nsHTMLScrollFrame</tt> (or <tt>nsXULScrollFrame</tt>) which handles layout, scrollbars, and related stuff, except for the actual scrolling --- the visual movement. That is handled by <tt>nsScrollPortView</tt>. Well, until today, when I landed <a href="http://hg.mozilla.org/mozilla-central/pushloghtml?fromchange=5dca6c28cca5&tochange=47cd92d616d7">a series of patches</a> to move all scrolling functionality in the view system out to the frame system. The hard part of these patches is that there were two interfaces exposed to let other parts of Gecko manipulate scrolling --- <tt>nsIScrollableFrame</tt> and <tt>nsIScrollableView</tt>. A lot of code was using the latter view-system interface; APIs present in <tt>nsIScrollableView</tt> but not <tt>nsIScrollableFrame</tt> had to be added to <tt>nsIScrollableFrame</tt>, and then all the callers of <tt>nsIScrollableView</tt> APIs had to be modified to use the frame API instead. This was a lot of work --- not really very hard, but difficult to get right without accidentally causing regressions.<br/><p>Anyway, it's done. A lot of code that used to have to mess around with views no longer has to know about them. Scrolling code is simplified since it's all in one place. Page load is little more efficient because we don't have to construct scrollable view objects. Better still, this just happened to fix the long hang at the end of Firefox loading the HTML5 spec, since that was all about updating a big pile of scrollable view objects! (There are still some issues with slow script execution ... they're being worked on.)<br/><p>When I did this work I decided to do a little experiment in development style by breaking up the work into a very large number of small patches, managed with <a href="http://hgbook.red-bean.com/read/managing-change-with-mercurial-queues.html">Mercurial Queues</a>. The final commit has 37 separate changesets. I thought this might be overkill since our culture, and Bugzilla, isn't really designed to handle that many patches for a single bug. While Bugzilla (especially the way we use it for code review) could certainly be much better at handling a large set of patches, overall I declare the experiment a resounding success. I think this approach made it much easier for me to keep track of things, made code review much easier and less daunting, and made it much easier for me to keep the patches up to date over several months as the tree changed underneath it. I'll do it again. In fact, I'm already doing it again with the layers work --- more about that later :-).</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>yakobom</div>
+<div class='content'>Hi,<br>A problem I&#39;m facing with this change in my embedding application - including &quot;nsIScrollableFrame .h&quot; leads to a compilation error, since MOZILLA_INTERNAL_API is required (nsStringFwd.h).<br>Any idea regarding how to solve this?<br>Thanks,<br>yakobom<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Both. You&#39;ve inspired me to write another blog entry about this.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kyle Huey</div>
+<div class='content'>I&#39;m curious as to what your workflow looks like when you break a patch into 37 pieces.  Do you typically write the entire patch and go back and break it up into logical pieces, or do you approach the task one piece at a time?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dirkjan Ochtman</div>
+<div class='content'>Great to hear that chunking up the work in smaller patches worked so well, for you, it&#39;s one of the things Mercurial/MQ is really good at, and I really believe it makes things easier (for exactly the reasons you outlined).<br>I hope more people in the Mozilla community start doing the same thing, Mozilla patches are generally quite big IMO.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Arpad Borsos</div>
+<div class='content'>Amazing work, I always love to read about refactorings, knowing that it makes coders lives easier and the browser faster and more lightweight.<br>Don&#39;t stop your blogging-frenzy now :)<br></div>
+</div>
+
+</div>

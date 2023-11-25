@@ -1,0 +1,52 @@
+---
+layout: "post"
+title: "Static Customization Of Function Signatures In Rust "
+date: "2020-01-19 04:06:00 +0000"
+permalink: "/2020/01/static-customization-of-function.html"
+---
+<p>Sometimes I have a big function that does a lot, and in new code I need to do almost the same thing, but slightly differently. Often the best approach is to call the same function but add parameters (often described as "options") to select specific variations. This can get ugly when the function has optional outputs &mdash; results that are only produced when certain options were passed in &mdash; because typically there is the possibility of an error when code looks for an output (e.g. unwraps a Rust Option) at a site that did not request it. It would be great if the compiler could check that you only use an output when you passed in the option to enable it. Fortunately, some simple Rust coding patterns let us achieve this.
+<p>Here's an example simplified from some <a href="https://pernos.co">Pernosco</a> code. We have a function that pretty-prints a data structure at a specific moment in time, which takes an optional parameter specifying another time to render the change in values between the two times. If that optional parameter is specified, the function returns an additional result &mdash; whether or not there was any difference in the two values. The naive signature would look something like this:
+<pre>fn print(&amp;self, moment: Moment, other: Option&lt;Moment&gt;)
+-&gt; (String, Option&lt;Difference&gt;) {
+  ...
+  let difference = other.map(|moment| ...);
+  ...
+  (..., difference)
+}
+...
+let (string1, difference1) = value.print(moment, None);
+let (string2, difference2) = value.print(moment, Some(other_moment));
+println!("{:?}", difference1.unwrap()); // PANIC
+println!("{:?}", difference2.unwrap());
+</pre>
+It is possible to misuse this function by passing <tt>None</tt> in <tt>other</tt> and then expecting to find a meaningful value in the second part of the result pair. We'd probably catch it in tests, but it would be good to catch it at compile time. There is also a small efficiency issue: passing <tt>None</tt> for <tt>other</tt> is a bit less efficient than calling a customized version of <tt>print</tt> that has been optimized to remove <tt>other</tt> and the <tt>Difference</tt> result.
+<p>Here's a way to avoid those problems:
+<pre>trait PrintOptionalMoment {
+  type PrintOptionalDifference;
+  fn map&lt;F&gt;(&amp;self, closure: F) -&gt; Self::PrintOptionalDifference
+     where F: FnOnce(Moment) -> Difference;
+}
+impl PrintOptionalMoment for () {
+  type PrintOptionalDifference = ();
+  fn map&lt;F&gt;(&amp;self, closure: F) -&gt; Self::PrintOptionalDifference
+     where F: FnOnce(Moment) -> Difference {}
+}
+impl PrintOptionalMoment for Moment {
+  type PrintOptionalDifference = Difference;
+  fn map&lt;F&gt;(&amp;self, closure: F) -&gt; Self::PrintOptionalDifference
+     where F: FnOnce(Moment) -> Difference { closure(*self) }
+}
+fn print&lt;Opt: PrintOptionalMoment&gt;(&amp;self, moment: Moment, other: Opt)
+-&gt; (String, Opt::PrintOptionalDifference) {
+  ...
+  let difference = other.map(|moment| ...);
+  ...
+  (..., difference)
+}
+let (string1, ()) = value.print(moment, ());
+let (string2, difference2) = value.print(moment, other_moment);
+println!("{:?}", difference2);</pre>
+<p><a href="https://play.rust-lang.org/?version=stable&mode=release&edition=2018&gist=53c0ae3612f7b4e641809ef7615f943b">Rust playground link</a>.
+<p>This cleans up the call sites nicely. When you don't pass <tt>other</tt>, the "difference" result has type <tt>()</tt>, so you can't misuse it or cause a panic trying to unwrap it. When you do pass <tt>other</tt>, the "difference" result is not an Option, so you don't need to unwrap it. The implementation of <tt>print</tt> is basically unchanged, but now Rust will generate two versions of the function, and the version that doesn't take <tt>other</tt> should be optimized about as well as a handwritten function that removed <tt>other</tt>. (Unlike in C++, in Rust a <tt>()</tt> value does not take any space in a struct or tuple.)
+<p>If you're not familiar with Rust, the intuition here is that we define a <em>trait</em> <tt>PrintOptionalMoment</tt> that we use to mean "a type that is either nothing, or a <tt>Moment</tt>", and we declare that the "void" type <tt>()</tt> and the type <tt>Moment</tt> both satisfy <tt>PrintOptionalMoment</tt>. Then we make <tt>print</tt> generic over type <tt>Opt</tt>, which can be either of those. The <tt>PrintOptionalMoment</tt> trait defines an <em>associated type</em> <tt>PrintOptionalDifference</tt> which is the result type associated with each <tt>Opt</tt> that satisfies <tt>PrintOptionalMoment</tt>.
+<p>This approach easily extends to cover more complicated relationships between options and input and output types. In some situations it might be more trouble than it's worth, or the generated code duplication is undesirable, but I think it's a good tool to have.

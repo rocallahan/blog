@@ -1,0 +1,51 @@
+---
+layout: "post"
+title: "XTech"
+date: "2005-05-26 23:33:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/05/xtech_26.html"
+---
+<div class="columns">I'm currently at the XTech conference in Amsterdam. It's been lots of fun to meet up with people again ... Mozilla people, Novell people, and other people who I've interacted with online but never met face to face.<br/><br/>Amsterdam is an interesting city, dominated (to my mind) by bicycles and canals. I like seeing all the people on bicycles although it is hard to get used to pedestrians being distinctly third-class. I really enjoy just walking around the city ... it's about a 35 minute walk from my hotel to the conference centre, but I'm not tempted to catch a tram or taxi. I had a really good time with Martijn on Tuesday just walking around the central city area. But I get no feeling of "I'd like to live here" ... I guess Auckland has me hooked.<br/><br/>The conference technical talks have been good, especially given there was no real peer review selection mechanism.<br/><br/>A person from the BBC Creative Archive gave a good talk about the potential for users to remix and build on existing digital content and it's exciting to see the BBC making their content avaiable for this --- although the restriction to UK users is a bummer.<br/><br/>The XAML/Avalon talk was almost exactly what I expected. Rob Relyea focused on technical advantages and steered away from any direct discussion of a confrontation with the Web ... though Microsoft's desire to supplant the Web remains completely clear. One interesting point was that the Avalon team prioritizes ease of tooling over ease of hand editing. Another was that most of the demos relied to some extent on 3D effects, something that Cairo doesn't directly address. We need to work on our story there.<br/><br/>I gave my talk earlier today and it seemed to go down rather well. <a href="/XTech2005/ROC-XTech2005.html">Here it is</a> (apologies if it didn't all get through, uploading files to Moveable Type is a pain!). My main theme is that browsers are now or very soon shipping technology to do rich graphics on the Web --- SVG and <tt>&lt;canvas&gt;</tt> in particular --- and it's time for developers to start using them. These technologies don't force you to dive down into Flash; you can incrementally extend existing Web pages with existing scripts and CSS styling. This ties into a general theme that people have been pushing at this conference: that the Web can and is evolving, and there is no need to tear it down and replace it with something else.<br/><br/>I think the highlight was my demo of SVG <tt>foreignObject</tt> in my Cairo build. I really have to thank God for this demo; I was up all night working on it and not until the last minute did I get it working reasonably. Basically I modified our implementation of <tt>foreignObject</tt> in my Cairo-based build (which I just recently got working with SVG and <tt>canvas</tt>) to "do the right thing" ... painting the foreign content is subjected to SVG transforms, and event coordinates are translated appropriately. Interestingly, the latter was a lot harder than the former to get right. Of course this build still has many bugs, and performance is pretty bad too. But it's a nice demo. It's much more impressive live, when you can interact with the rotated/scaled content, type into the text fields, scroll, click on links, and so on.</div><br/><br/><div class="image"><img alt="30-degree rotated HTML" src="/assets/images/images/30degrees.png" width="863" height="778"/></div><br/><br/><div><b>Update!</b> Apparently there actually was peer review in most cases. Sorry Edd!</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Martijn Kint</div>
+<div class='content'>this look sick, like sick in a good way :) very cool Robert!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jens</div>
+<div class='content'>the slideshow looks a bit off in a Nightly Firefox and mouse navigation does not work. What&#39;s wrong?<br>I just went to the S5 site and opened a sample slideshow which looks fine in the nightly FF.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kamiel Martinet</div>
+<div class='content'>Great presentation this morning Robert. The demo indeed looks more impressive when you actually see it happening live.<br>It&#39;s a shame the windows daily builds still have problems displaying transparency/anti-aliasing but these will hopefully get solved once we get closer to the actual 1.1 release.<br>Excellent work. I really am looking foreward to exploring the many possibilities the canvas element and SVG has to offer.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edd Dumbill</div>
+<div class='content'>Just a note about the paper selection process. Most papers were indeed selected by peer review of abstracts.  Some talks were invited, more so among Mozilla and Open Data talks, as these are new tracks and the normal submissions process wouldn&#39;t generate the breadth and quality of talks I wanted.<br>It&#39;s been great to have you here at the conference.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The problems with the slideshow are probably because I haven&#39;t uploaded the files correctly.<br>Jed: you can&#39;t build all-cairo on Windows yet. I&#39;ll have to land my patches in CVS first.<br>The foreignObject patches to make this demo work probably won&#39;t land in their current form. In particular I want to do some major rework of event handling first and that can only happen after we branch for 1.8 final.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tristan</div>
+<div class='content'>It was actually amazingly cool. Congrats, Robert!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jed</div>
+<div class='content'>Roc: Do you know when we will be seeing Windows Cairo builds, or do you have any available I can try out?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gijs</div>
+<div class='content'>http://developer-test.mozilla.org/docs/XTech_2005_Presentations:Rich_Web:_SVG_And_Canvas_In_Mozilla<br>should work fine, and is your presentation if I&#39;m not very much mistaken :-).<br>I hate my exams, I would have loved to come to Amsterdam for a day (1 hour by train from here...) to meet some of you guys in person. Oh well, hopefully there&#39;ll be another opportunity someday ;-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>I&#39;m glad you enjoyed it.<br>I certainly did. I found it a real privilege to meet a genius like you. I&#39;m still embarrassed about the cigarette incident, though. Amsterdam at it&#39;s lowest.<br>You really look very different in real compared to the photo on your blog (is that really you?).<br>Something is wrong with your slides, they look a bit weird over here (especially at the bottom).<br>The VML history lesson I find very interesting:<br>why didn&#39;t VML become popular?<br>You&#39;re probably right by saying that timing is the major reason (too soon for the web).<br>But also, Microsoft didn&#39;t really promote it that much, I got the feeling.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Molly E. Holzschlag</div>
+<div class='content'>I&#39;m having the same trouble as you, Edd (hi Edd!).<br>Something is definitely amiss with the S5 templates because it&#39;s pretty much hosed in all browsers.<br>I look forward to seeing the presentation, this looks very interesting, Robert.<br></div>
+</div>
+
+</div>

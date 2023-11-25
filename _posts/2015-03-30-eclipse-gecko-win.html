@@ -1,0 +1,31 @@
+---
+layout: "post"
+title: "Eclipse + Gecko = Win"
+date: "2015-03-29 22:40:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/03/eclipse-gecko-win.html"
+---
+<p>With <a href="https://eclipse.org/downloads/packages/eclipse-ide-cc-developers/lunasr2">Eclipse 4.4.1 CDT</a> and the in-tree Eclipse project builder (<tt>./mach build-backend -b CppEclipse</tt>), the Eclipse C++ tools work really well on Gecko. Features I really enjoy:
+<ul>
+<li>Ctrl-click to navigate to definitions/declarations
+<li>Ctrl-T to popup the superclasses/subclasses of a class, or the overridden/overriding implementations of a method
+<li>Shift-ctrl-G to find all uses of a declaration (not 100% reliable, but almost always good enough)
+<li>Instant coloring of syntax errors as you type (useless messages, but still worth having)
+<li>Instant coloring of unknown identifier and type errors as you type; not 100% reliable, but good enough that most of my compiler errors are caught before doing a build.
+<li>Really good autocomplete. E.g. given
+<pre>nsTArray&lt;nsRefPtr&lt;Foo&gt;&gt; array;
+for (auto&amp; v : array) {
+  v-&gt;P</pre>
+Eclipse will autocomplete methods of Foo starting with P ... i.e., it handles "auto", C++ for-range loops, nsTArray and nsRefPtr operator overloading.
+<li>Shift-ctrl-R: automated renaming of identifiers. Again, not 100% reliable but a massive time saver nonetheless.
+</ul>
+<p>Thanks to Jonathan Watt and Benoit Girard for the mach support and other Eclipse work over the years!
+<p>I assume other IDEs can do these things too, but if you're not using a tool at least this powerful, you might be leaving some productivity on the table.
+<p>With Eclipse, <a href="http://rr-project.org/">rr</a>, and <a href="http://ahal.ca/blog/2014/new-mercurial-workflow/">a unified hg repo</a>, hacking Gecko has never felt so good :-).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Let me know if there&#39;s some low hanging fruits with eclipse and rr integration!</div>
+</div>
+
+</div>

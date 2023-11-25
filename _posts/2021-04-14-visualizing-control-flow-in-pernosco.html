@@ -1,0 +1,18 @@
+---
+layout: "post"
+title: "Visualizing Control Flow In Pernosco"
+date: "2021-04-14 03:37:00 +0000"
+categories: "Mozilla Pernosco"
+permalink: "/2021/04/visualizing-control-flow-in-pernosco.html"
+---
+<p>In traditional debuggers, developers often single-step through the execution of a function to discover its control flow. One of <a href="https://pernos.co">Pernosco</a>'s main themes is avoiding single-stepping by visualizing state over time "all at once". Therefore, presenting control flow through a function "at a glance" is an important Pernosco feature and we've recently made <a href="https://pernos.co/about/control-flow">significant improvements</a> in this area.
+<p>This is a surprisingly hard problem. Pernosco records control flow at the instruction level. Compiler-generated debuginfo maps instructions to source lines, but lacks other potentially useful information such as the static control flow graph. We think developers want to understand control flow in the context of their source code (so approaches taken by, e.g., reverse engineering tools are not optimal for Pernosco). However, mapping potentially complex control flow onto the simple top-to-bottom source code view is inherently lossy or confusing or both.
+<p>For functions without loops there is a simple, obvious and good solution: highlight the lines executed, and let the user jump in time to that line's execution when clicked on. In the example below, we can see immediately where the function took an early exit.
+<link rel="stylesheet" href="https://static.pernos.co/content/v3rmfHjihyEgbGH1be-MyYag5emkF4SJmVi99_QvsKY.css">
+<script src="https://static.pernos.co/content/G6-FcGO07G3ukY9auieyo6Vsf9LaRhcBn4W-6UW_rio.js" defer></script>
+<script src="https://static.pernos.co/content/-QahKkm_V-a-ov5CB3qSCh8Ok2BwyTks4Vlc0SlZ_TY.js" async></script>
+<div class="DOMRecMovie" id="controlFlowNoLoop" style="width:720px; height:435px"></div>
+<p>To handle loops, Pernosco builds a <em>dynamic control flow graph</em>, which is actually a tree where leaf nodes are the execution of source lines, non-leaf nodes are the execution of a loop iteration and the root node is the execution of the function itself. Constructing a dynamic CFG is surprisingly non-trivial (especially in the presence of optimized code and large functions with long executions), but outside the scope of this post. Then, given a "current moment" during the function call, we identify which loop iterations are "current", and highlight the lines executed by those loop iterations; clicking on these highlights jumps directly to the appropriate point in time. Any lines executed during this function call but not in a current loop iteration are highlighted differently; clicking on these highlights shows all executions of that line in that function call. Hover text explains what is going on.
+<div class="DOMRecMovie" id="controlFlowLoop" style="width:720px; height:435px"></div>
+<p>This presentation is still lossy &mdash; for example control-flow edges are not visible. However, user feedback has been very positive.
+<p>Try out Pernosco <a href="https://pernos.co/account">individual accounts</a> or <a href="https://github.com/Pernosco/on-prem">on-premises</a> today!

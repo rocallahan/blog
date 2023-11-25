@@ -1,0 +1,24 @@
+---
+layout: "post"
+title: "rr 2.0 Released"
+date: "2014-09-08 12:39:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/09/rr-20-released.html"
+---
+<p>Thanks to the hard work of our contributors, <a href="http://rr-project.org/">rr 2.0</a> has been released. It has many improvements over <a href="http://robert.ocallahan.org/2014/03/introducing-rr.html">our 1.0 release</a>:
+<ul>
+<li>gdb's <tt>checkpoint</tt>, <tt>restart</tt> and <tt>delete checkpoint</tt> commands are supported.<br>
+These are implemented using new infrastructure in rr 2.0 for fast cloning of replay sessions.
+<li>You can now run debuggee functions from gdb during replay.<br>
+This is a big feature for rr, since normally a record-and-replay debugger will only replay what happened during recording --- and of course, function calls from gdb did not happen during recording. So under the hood, rr 2.0 introduces "diversion sessions", which run arbitrary code instead of following a replay. When you run a debuggee function from gdb, we clone the current replay session to a diversion session, run your requested function, then destroy the diversion and resume the replay.
+<li>Issues involving Haswell have been fixed. rr now runs reliably on Intel CPU families from Westmere to Haswell.
+<li>Support for running rr in a VM has been improved. Due to <a href="http://robert.ocallahan.org/2014/09/vmware-cpuid-conditional-branch.html">a VMWare bug</a>, rr is not as reliable in VMWare guests as in other configurations, but in practice it still works well.
+<li>Trace compression has been implemented, with compression ratios of 5-40x depending on workload, dramatically reducing rr's storage and I/O usage.
+<li>Many many bugs have been fixed to improve reliability and enable rr to handle more diverse workloads.
+</ul>
+<p>All the features normally available from gdb now work with rr, making this an important milestone.
+<p>The ability to run debuggee functions makes it much easier to use rr to debug Firefox. For example you can dump DOM, frame and layer trees at any point during replay. You can debug Javascript to some extent by calling JS engine helpers such as <tt>DumpJSStack()</tt>. Some Mozilla developers have successfully used rr to fix real bugs. I use it for most of my Gecko debugging --- the first of my research projects that I've actually wanted to use :-).
+<p>Stephen Kitt has <a href="https://packages.debian.org/unstable/main/rr">packaged rr for Debian</a>.
+<p>Considerable progress has been made towards x86-64 support, but it's not ready yet. We expect x86-64 support to be the next milestone.
+<p>I recorded a screencast showing a quick demo of rr on Firefox:<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hYsLBcTX00I" frameborder="0" allowfullscreen></iframe>

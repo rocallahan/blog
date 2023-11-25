@@ -1,0 +1,19 @@
+---
+layout: "post"
+title: "Welcome To My Backing Store"
+date: "2007-10-12 09:28:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/10/welcome-to-my-backing-store_12.html"
+---
+<div class="columns"><p>In <a href="/2007/10/if_i_did_it.html">an earlier post</a> I raised the question of whether a truly radical redesign of the Gecko frame system could be developed incrementally (which is almost the same as asking whether it can be developed at all). I think I figured out how that could be done.<br/><p>What I would do is bolt on the new layout subsystem <em>in parallel</em> with the old one. So basically as well as running the frame constructor to build and update frame trees in response to DOM changes, and restyling and reflowing those trees, we could also have another DOM listener that builds and maintains some other kind of structure, and hooks to run layout in that structure. Initially all rendering and other uses of layout would continue using the frame tree. With this approach, we'd always have a working browser, and it would be possible to gradually extend the second layout engine to handle more and more element and styles, and to measure its space and time performance and compare them to the existing layout, and even to check its results for consistency with the existing layout. Then at some point we'd make it possible to render using the new layout, possibly even selectable at run time. Then we'd convert over other users of the frame tree and finally stop buildling it. This approach also has the advantage that the riskiest and most uncertain work --- how easy is it to fit the requirements of real-world Web layout into the new model, and how does it perform --- is tackled first.<br/><p>I'm not saying we should do anything like this. I'm mainly leaving a note for myself in case this becomes important later.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Noel Grandin</div>
+<div class='content'>Generally (in my somewhat limited experience) is<br>(a) prototype the new approach through all the layers - what Extreme Programming people call a spike solution<br>(b) gradually morph the old approach into the new one.<br>Stage 2 is hard. It normally requires moving all of the code that is common to both designs out of the old design, converting the easy parts of the old design, and then having a short painful period of brokenness while the remainder of the old design is converted.<br>I&#39;ve done this and I&#39;ve done complete re-writes.<br>I&#39;ve never regretted doing this, but I have severely regretted some of my re-writes.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Christopher Blizzard</div>
+<div class='content'>A little heart/lung bypass?<br></div>
+</div>
+
+</div>

@@ -1,0 +1,47 @@
+---
+layout: "post"
+title: "GNOME Themes In HTML"
+date: "2006-04-06 09:20:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/04/gnome-themes-in-html_06.html"
+---
+<div class="columns">A while ago we turned off GTK themes in HTML content in Mozilla cairo builds because of some bugs and performance issues. I wanted to get them turned on again and fixed some of the bugs, and then ran into a fundamental problem in the Clearlooks engine (which Novell's new theme is based on), and which probably applies to other themes.<br/><br/>The general problem is that the Clearlooks design simply isn't suitable for use with HTML. The immediate problem is that it wants to render the borders of buttons, textboxes and other widgets with a gradient based on the colors of their containing window (from the window's inset_dark to inset_light). This is no good for HTML because in HTML the widget could be (and often is) drawn over any color background, or an image, or any combination of anything, so one can't just "set the right colors" and be sure to get good results. This is not a technical problem, it is a problem with the design of Clearlooks ... it wouldn't look good even if you had a pure GTK+ application using Clearlooks widgets over complex backgrounds.<br/><br/>I'm not sure where to go from here. I think we need theme designers to think about what they want for themes in HTML content, and then we can figure out the best way to implement it. Certainly, Web uses will have to be taken into account during theme design. I plan to talk about this with Novell's theme artists when I get a chance.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>ant</div>
+<div class='content'>I think one way of fixing it would be to have GTK themes come with two sets of widgets where one is designed to look right on image backgrounds or whatever and the other is for solid colours.<br>But speaking as a user I don&#39;t really care how they look.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Calvin: with that theme and that background it doesn&#39;t look so bad. With Gilouche (which specifies a 3px border, whereas your screenshot is only using a 2px border I believe) and a black or gray background, it looks pretty bad.<br>Richard: I was referring to this in cl_draw_button:<br>if (!widget || !GTK_IS_NOTEBOOK (widget-&gt;parent))<br>{<br>gdk_draw_rectangle (window, bg_gc, FALSE, x, y, width-1, height-1);<br>Now that I look at it again, I see that it&#39;s only drawing the rectangle edge, not filling, but it&#39;s still a problem.<br>Would you mind CCing yourself to<br>https://bugzilla.mozilla.org/show_bug.cgi?id=329846<br>? That&#39;s probably the best place for this discussion.<br>I think the reason you&#39;re not getting a real x/y position from Firefox is because we only have one GTK widget of each type, it&#39;s just a proxy that we use to draw all widgets of that type. It&#39;s a hack. We really need a style API that lets us draw without an actual GTK widget. In the meantime we should figure out what you&#39;re working around and fix it in Firefox.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eike Hein</div>
+<div class='content'>&quot;The problem remains that many GTK2 themes are quite a bit more involved design-wise than the Windows widgets or the current Firefox form widgets, and can look out of place in websites not designed to accomodate them. [...] Trying to go native is more trouble than it&#39;s worth.&quot;<br>From http://weblogs.mozillazine.org/roc/archives/2006/02/cairo_linux_and_gtk2_themes.html<br>Told you so, hm? Good luck trying to evangelize theme designers to forego creative license and come up with designs always neutral enough to fit arbitrary web content.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Richard Stellingwerff</div>
+<div class='content'>Robert O&#39;Callahan: Well yes, in the cairo version at least, I manually draw the background behind buttons and entry&#39;s because of a Firefox bug.<br>If I don&#39;t manually draw the background on the down-arrow-button in the location bar, you get a white background. Since this looks ugly, I created a little workaround that draws a background if the x,y position of the button is -1, which is the case for all widgets in Firefox.<br>If you want to see the workaround code, grep for &quot;firefox&quot; in http://cvs.gnome.org/viewcvs/gtk-engines/engines/clearlooks/src/clearlooks_style.c?rev=1.56&amp;view=markup<br>At least in Clearlooks cairo, the way to fix this would be by setting the x/y position to their, you might guess, x/y position.<br>If I don&#39;t make sense, I&#39;ll try to explain better. Feel free to email me at remenic AT gmail DOT com.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Racer</div>
+<div class='content'>Would it be possible to make the colors of the button have alpha transparency (to pick up the background color)?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Richard Stellingwerff</div>
+<div class='content'>As the author of Clearlooks, I feel the need to reply.<br>Clearlooks is one of the very themes that draws an inset gradient, but it&#39;s easy to make Clearlooks not draw it.<br>The inset gradient is only drawn if the widget&#39;s style specifies a border of three pixels. If you set this to two pixels, the inset will not be drawn.<br>Since two pixels is the default for pretty much every theme, I wonder if you can&#39;t just force it to two pixels for all buttons.<br>If this isn&#39;t a satisfying solution, then maybe there should be a way to match HTML-rendered widgets using the gtkrc. widget_class &quot;*.HTML.GtkButton&quot; for example.<br>That way I can force Clearlooks to not draw the inset for widgets-on-HTML.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Calvin Walton</div>
+<div class='content'>Other programs are already using the gtk widgets on an arbitrary image background: gnome-panel is an example. I think it looks fine with clearlooks, although the &quot;inset&quot; line below the button is noticable, it doesn&#39;t really look bad.. And, for reference, a screenshot: http://kepstin.gotnull.net/clearlooksbg.png<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Racer: not with current GDK APIs.<br>Richard: hi! I did notice that. Novell&#39;s theme uses a border width of 3, unfortunately, for buttons and textboxes at least. Also, even if you don&#39;t draw the inset gradient, you still fill the button area with the window background color, which shows at the corners of the button. I wonder why this is necessary? (I can actually prevent that by hacking the bg_gc in the style to make it GDK_NOOP, but it&#39;s uuuugly and breaks other things.)<br>Having widget classes for HTML widgets sounds interesting, but wouldn&#39;t that make HTML widgets not so consistent with regular widgets?<br>Eike: I remain confident that we&#39;ll work something out that doesn&#39;t require radical changes. I&#39;ll have the last laugh! :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Millennium</div>
+<div class='content'>Alas, the Mac has been going through this same sort of problem.<br>The users, unfortunately, don&#39;t care. They want their &quot;REAL NATIVE AQUA WIDGETS!!!!!1!!one&quot; even though -just as you point out- a widget set that can&#39;t respond to styling is bad for the Web. It doesnt matter; they want something that &quot;feels like their operating system&quot;, and they don&#39;t care how it looks other than that.<br>Just a heads-up. True UI-zealotry (as in &quot;My Widgets, Right or Wrong&quot;) isn&#39;t as common on X11-based systems, but it&#39;s something you might run into, either now or in the future.<br></div>
+</div>
+
+</div>

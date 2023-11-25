@@ -1,0 +1,74 @@
+---
+layout: "post"
+title: "Firefox Vs The New York Times"
+date: "2012-05-24 09:26:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/05/firefox-vs-new-york-times.html"
+---
+<p>For several months I've noticed that when my Firefox session gets bloated, about:memory shows zombie compartments associated with the nytimes.com site. I don't visit that site very often, but over a week or three a small subset of the pages that I visit there are leaked. I worried about it but didn't know how to track it down. It's hard to debug problems that arise over a period of weeks. (It's a testament to the reliability of our nightly builds though!)
+<p>Yesterday and today I discovered that by clicking around a large set of nytimes.com pages I could reproduce the problem in a reasonably short amount of time with a fresh profile and a small set of tabs open. Furthermore, with about:ccdump and some help from Olli Pettay, I was able to identify the particular element which forced the cycle collector to keep everything else alive. The next step was to figure out where we added references to that element that the cycle collector didn't know about. It's a hard debugging problem because we don't know which element is the problematic element until long after the references have been added
+<p>I tried a few approaches but tonight I finally found a successful one. I made a Windows full memory dump of the errant Firefox process, and attached to it with WinDbg. In the still-running Firefox process I then used about:ccdump to identify the address of the leaking DOM object. I was then able to use WinDbg's "s" command to search the entire memory space for occurrences of that address. Then I had to identify each occurrence. For the references the cycle collector knows about, this is easy: about:ccdump reveals the addresses of the referencing objects so you know those memory areas will contain the address of the leaking object. For other occurrences I had to dig around in nearby memory to figure out what sort of object contained the occurrence. Sometimes it's easy because there's a nearby vtable pointer and WinDbg can tell you which class the vtable pointer belongs to (using the "ln" command). Other cases were trickier. For example I found a reference to the leaking object next to a reference to an XPCNativeWrapper, in what looked like an array of similar pairs, and guessed that this was part of the hash table that maps DOM objects to their JS wrappers.
+<p>Anyway, I finally identified two references to the leaking DOM object from inside an nsFrameSelection object. These references were buried inside a copy of an nsMouseEvent that nsFrameSelection keeps for obscure reasons --- and did not tell the cycle collector about. Having identified the problem, creating a fix was easy since we don't really need to keep that copy around at all. Hopefully it'll land soon.
+<p>WinDbg has awful usability but is quite powerful and can do useful things that Visual Studio's debugger can't. I'm a bit fond of it as the distant descendant of DEBUG.COM and SYMDEB.EXE, which I spent a lot of time with while reverse-engineering and patching MS-DOS binaries (i.e., stripping copy protection from games) in my misspent youth. Too bad the syntax hasn't improved over the years!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Damn it. How about Firefox vs robert.ocallahan.org now ;)
+
+ghost window: http://robert.ocallahan.org/2012/05/firefox-vs-new-york-times.html [3]
+Mozilla/5.0 (X11; Linux x86_64; rv:14.0) Gecko/20120602 Firefox/14.0a2
+
+http://i.imgur.com/MbPHj.png</div>
+</div>
+<div class='comment'>
+<div class='author'>Matthias</div>
+<div class='content'>Thanks for sharing !
+I really enjoy such Gecko developer posts</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Hello fellow Kiwi Christian ;-) another problem I have found is after I have opened FF, that there may be some errant extra FF Windows or Tabs. There seems few comments on removing these but the way around is to Ctrl-F4 each Window to properly close, otherwise you get what appears to be several instantiations of FF which is jolly annoying.
+BTW being a Christian check out music by Rob Berg - he is amazing. Thanks vm, Alistair George.</div>
+</div>
+<div class='comment'>
+<div class='author'>Josh Matthews</div>
+<div class='content'>Thanks for sharing! I was meaning to ask you about how you identified the culprit.</div>
+</div>
+<div class='comment'>
+<div class='author'>Ted Mielczarek</div>
+<div class='content'>I&#39;d hardly say your youth was misspent if you learned useful debugging techniques. :)</div>
+</div>
+<div class='comment'>
+<div class='author'>njn</div>
+<div class='content'>Lovely work.  Shame it required such heroics to find the bug :/</div>
+</div>
+<div class='comment'>
+<div class='author'>Markus Stange</div>
+<div class='content'>Is there any way we could automatically check for other instances of the same problem? Or could we maybe add something to Firefox that would make debugging similar problems easier?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Possibly we should add telemetry support to send back reports of persistent ghost windows. I assume jlebar has already considered this.
+
+At the code level, we could statically scan for cases where a cycle-collected class has a member that&#39;s a strong pointer to another potentially cycle-collected class, and report those as probable bugs. I&#39;ll talk to smaug about that.
+
+Debugging this already got a lot easier with the addition of about:ccdump and the APIs that support it. Perhaps we could automate more of what I did by adding APIs to scan the Firefox address space and try to identify unknown references. I&#39;m not sure whether that would be worthwhile.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Caspy7</div>
+<div class='content'>Nifty. So then this is a Firefox issue that just affects NYT or potentially other sites? (AKA this will help save memory across the board)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;ve only seen it affect the NYT; for the last several months the only zombie documents/ghost windows I&#39;ve seen have been NYT pages. I don&#39;t know why it only shows up on the NYT; it&#39;s certainly possible it also affects other sites.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I learned a lot of my assembly knowledge from something like that! No way this was misspent time and it&#39;s even fun.</div>
+</div>
+<div class='comment'>
+<div class='author'>Dan</div>
+<div class='content'>https://bugzilla.mozilla.org/show_bug.cgi?id=757807 for those looking.</div>
+</div>
+
+</div>

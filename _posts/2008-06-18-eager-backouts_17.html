@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "Eager Backouts"
+date: "2008-06-17 15:16:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/06/eager-backouts_17.html"
+---
+<div class="columns"><p>David Baron has argued that if someone checks in a patch and we later discover a serious regression from the patch, one that was not caught by tests --- we should behave the same as if there had been tests for that regression before the patch was checked in.<br/><p>The logic is compelling and I think I mostly agree. My only caveat is that once a patch has been landed for a while, the cost of backing it out --- due to other changes that have built on the patch --- may rise to make this impractical. But for most changes, big and small, there's a reasonably large window where that won't be the case.<br/><p>In practice it would mean backing out big patches a lot more often. That's probably a good thing, if we take seriously the goal of having the trunk remain in a shippable state at all times. I think it also lowers risk quite a bit ... compare the histories<br/><table><tr><br/><td><br/>Check in A<br><br/>Back out A<br><br/>Check in A+B<br><br/>Back out A+B<br><br/>Check in A+B+C<br><br/><td><br/>Check in A<br><br/>Check in B<br><br/>Check in C<br><br/></tr></table><br/>With the backout approach we would be much less likely to get into sticky situations where we don't know what has to be backed out to get to a good place. And because we periodically get the trunk back into a good state, it would be easier to distinguish the effects of A+B+C development from other ongoing trunk development.<br/><p>Distributed version control makes this approach more practical because it's now much easier to maintain A+B+C on a local branch until it finally sticks.<br/><p>People may argue that with long-lived experimental branches, tryserver builds, and improving test infrastructure, we won't have belatedly-discovered regressions, but I'm not that optimistic :-).</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Jonathan Watt</div>
+<div class='content'>Do we often have *serious* regressions that go unnoticed for long periods of time? Hopefully that&#39;s relatively rare and will become rarer as our test coverage continues to grow.<br>If there is nobody able and willing to fix such a regression (in a reasonable amount of time), and if the regression is deemed to be worse than the bugs fixed by the patch, then that would seem to make sense.<br>Of course the cost of removing the patch, reintroducing the bugs it fixed and working out and landing a new fix should be weight against the cost of accepting the regression for a while and working on a fix for the regression, but I&#39;m sure we&#39;ll do that sensibly on a case by case basis.<br></div>
+</div>
+
+</div>

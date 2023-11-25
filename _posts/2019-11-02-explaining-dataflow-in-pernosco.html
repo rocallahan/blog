@@ -1,0 +1,18 @@
+---
+layout: "post"
+title: "Explaining Dataflow In Pernosco"
+date: "2019-11-01 23:02:00 +0000"
+categories: "Pernosco"
+permalink: "/2019/11/explaining-dataflow-in-pernosco.html"
+---
+<p>Tracing dataflow backwards in time is an <a href="https://twitter.com/hsivonen/status/1182903874891505664">rr superpower</a>. rr users find it incredibly useful to set hardware data watchpoints on memory locations of interest and reverse-continue to find where those values were changed.
+Pernosco takes this superpower up a level with its <a href="https://pernos.co/about/dataflow/">dataflow pane</a> (see the demo there).
+<p>From the user's point of view, it's pretty simple: you click on a value and Pernosco shows you where it came from. However, there is more going on here than meets the eye. Often you find that the last modification to memory is not what you're looking for; that the value was computed somewhere and then copied, perhaps many times, until it reached the memory location you're inspecting. This is especially true in move-heavy Rust and C++ code. Pernosco detects copying through memory and registers and follows dataflow backwards through them, producing an explanation comprising multiple steps, any of which the user can inspect just by clicking on them. Thanks to omniscience, this is all very fast. (Jeff Muizelaar implemented <a href="https://github.com/jrmuizel/rr-dataflow">something similar</a> with scripting gdb and rr, which partially inspired us. Our infrastructure is a lot more powerful what he had to work with.)
+<p>Pernosco explanations terminate when you reach a point where a value was derived from something other than a CPU copy: e.g. an immediate value, I/O, or arithmetic. There's no particular reason why we need to stop there! For example, there is obviously scope to extend these explanations through arithmetic, to explore more general dataflow DAGs, though intelligible visualization would become more difficult.
+<p>Pernosco's dataflow explanations differ from what you get with gdb and rr in an interesting way: gdb deliberately ignores <em>idempotent</em> writes, i.e. writes to memory that do not actually change the value. We thought hard about this and decided that Pernosco should not ignore them. Consider a trivial example:
+<pre>x = 0;
+y = 0;
+x = y;</pre>
+If you set a watchpoint on <tt>x</tt> at the end and reverse-continue, gdb+rr will break on <tt>x = 0</tt>. We think this is generally not what you want, so a Pernosco explanation for <tt>x</tt> at the end will show <tt>x = y</tt> and <tt>y = 0</tt>. I don't know why gdb behaves this way, but I suspect it's because gdb watchpoints are sometimes implemented by evaluating the watched expression over time and noting when the value changes; since that can't detect idempotent writes, perhaps hardware watchpoints were made to ignore idempotent writes for consistency.
+<p>An interesting observation about our dataflow explanations is that although the semantics are actually quite subtle, even potentially confusing once you dig into them (there are additional subtleties I haven't gone into here!), users don't seem to complain about that. I'm optimistic that the abstraction we provide matches user intuitions closely enough that they skate over the complexity &mdash; which I think would be a pretty good result.
+<p>(One of my favourite moments with rr was when a Mozilla developer called a Firefox function during an rr replay and it printed what they expected it to print. They were about to move on, but then did a double-take, saying "Errrr ... what just happened?" Features that users take for granted but are actually mind-boggling are the best features.)

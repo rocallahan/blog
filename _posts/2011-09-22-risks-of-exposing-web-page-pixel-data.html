@@ -1,0 +1,63 @@
+---
+layout: "post"
+title: "Risks Of Exposing Web Page Pixel Data To Web Applications"
+date: "2011-09-22 00:23:00 +0000"
+categories: "Mozilla"
+permalink: "/2011/09/risks-of-exposing-web-page-pixel-data.html"
+---
+<p>Some Web applications require the pixel data of Web pages to be exposed to Web applications, e.g.<br />
+<ul><li>A 3D bookreader application that draws arbitrary Web pages into WebGL textures (from there, the pixel data of the pages can be extracted directly or using timing attacks)<br />
+<li>An interactive virtual environment that wants to render Web content onto 2D surfaces in the environment via WebGL<br />
+<li>A visual effect using 2D canvas that wants to draw a Web page into the canvas and cut it up into shards that move around under animation<br />
+<li>A screensharing application that sends the contents of Web pages over a video stream to help with support issues<br />
+<li>A bug-reporting tool that wants to grab the rendering of a Web page to capture in a bug report<br />
+</ul><p>There are some pretty big security implications here. The biggest problem is cross-origin information leakage. For example, an attack page could load a page from another origin in an IFRAME; rendering the attack page content will then capture the other origin's content and allow it to be returned to the attack server. The same goes for cross-origin images and other resources. To close this hole, we'd need to track the origins of data during painting and detect and/or block the painting of cross-origin data, which would add considerable complexity to the paint path and probably be error-prone. <p>Another problem is &lt;input type="file"&gt;. In many implementations the file input control renders the complete path of the file, or at least more than just the file name; capturing the pixel data of the page would leak that information which we intentionally conceal from Web pages. <p>Theme drawing is another problem. By capturing the rendering of themed form controls, a page could determine what system theme the user is using. This isn't a big problem by itself but it would contribute to fingerprinting.
+<p><strong>Update</strong> Commenters point out another problem I forgot to mention: CSS history sniffing. Access to rendered pixel data makes it easy to determine the visitedness of a link.
+<p>Any solution to the use-cases listed above needs to prevent the above problems. In Gecko we have the <a href="https://developer.mozilla.org/en/DOM/CanvasRenderingContext2D#drawWindow%28%29">drawWindow</a> API which lets you render the contents of arbitrary windows into a canvas, addressing all of the above use-cases, but it's only available to privileged content such as Firefox extensions. We've considered making it available to untrusted apps in some form, but the above issues have prevented that. <p>However, a little-known fact is that in Gecko we do have a limited way to render HTML content to a 2D or 3D canvas with access to the pixel data of the results! You can construct an SVG image containing a &lt;foreignobject&gt; containing arbitrary HTML, draw it to the canvas, and (if the image is same-origin with the page) call getImageData on the results. This approach avoids the problems above because the content of SVG images is extremely restricted in Gecko. The biggest restriction is that in Gecko, SVG images can only reference resources in the same document or loaded from data: URIs! Basically an SVG image has to be stand-alone. This prevents any kind of cross-origin attack. Issues with file controls or other interactive features are prevented because it's impossible for users to direct events to or otherwise interact with the contents of SVG images. Script can't run in SVG images, nor can script access the DOM of SVG images. Theme drawing will be disabled in SVG images. <p>Unfortunately this limited solution doesn't address most of the use-cases above. I don't have any good answers for those; this is a really hard problem.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I remember this.
+https://developer.mozilla.org/en/CSS/Privacy_and_the_%3Avisited_selector</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That&#39;s being discussed in public-fx.</div>
+</div>
+<div class='comment'>
+<div class='author'>ralpht</div>
+<div class='content'>What do you think of the Adobe CSS Shader work: http://www.adobe.com/devnet/html5/articles/css-shaders.html
+
+Is there a way to avoid RAF exposing composition time?</div>
+</div>
+<div class='comment'>
+<div class='author'>Sid</div>
+<div class='content'>I think exposing pixel data is too dangerous period and that we shouldn&#39;t even consider supporting it at all. (I also think the same for fullscreen, but apparently you disagree. :) )
+
+In general, I think trying to support everything a native app can do is a bad idea.</div>
+</div>
+<div class='comment'>
+<div class='author'>Luc</div>
+<div class='content'>On the top of my head:
+For the first 3 use cases:
+- There should be a way to load sandboxed content in the canvas. That is, content which would be rendered independently of user profile/context/inputs (enough for ebooks and demos on static content).
+- If the canvas is loaded with non-sandboxed content, it should no longer answer to any query on it content.
+
+The last 2 use cases are security holes by design. I don&#39;t think that there is a better solution than user authorization and phishing-like blacklist.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Luc: it&#39;s already done. If you draw an image from a different origin to a canvas, you can&#39;t read the canvas anymore.</div>
+</div>
+<div class='comment'>
+<div class='author'>Eamon Nerbonne</div>
+<div class='content'>In addition to the fingerprinting issue detecting a user&#39;s theme would help generating fake authoritative content (e.g. spoofing chrome) and might be part of trick to get the user to grant escalated privileges.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Luc: an app can&#39;t do a load fully independently of the user context, because the browser&#39;s location on the network is part of that context (IP address, behind firewall etc). The only way to do it properly is to have the server fetch the page and proxy it to the app, which is already possible today.
+
+Anonymous, Sid: thanks for reminding me about the link-visitedness issue. I&#39;ll update the post.</div>
+</div>
+
+</div>

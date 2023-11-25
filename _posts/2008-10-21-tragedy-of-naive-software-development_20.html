@@ -1,0 +1,66 @@
+---
+layout: "post"
+title: "The Tragedy Of Naive Software Development"
+date: "2008-10-20 20:44:00 +0000"
+permalink: "/2008/10/tragedy-of-naive-software-development_20.html"
+---
+<div class="columns"><p>A friend of mine is doing a graduate project in geography and statistics. He's trying to do some kind of stochastic simulation of populations. His advisor suggested he get hold of another academic's simulator and adapt it for this project.<br/><p>The problem is, the software is a disaster. It's a festering pile of copy-paste coding. There's lots of use of magic numbers instead of symbolic constants ("if (x == 27) y = 35;"). The names are all wrong, it's full of parallel arrays instead of records, there are no abstractions, there are no comments except for code that is commented out, half the code that isn't commented out is dead, and so on.<br/><p>It gets worse. These people don't know how to use source control, which is why the comment code out so they can get it back if they need it. No-one told them about automated tests. They just make some changes, run the program (sometimes), and hope the output still looks OK.<br/><p>This probably isn't anyone's fault. As far as I know, this was written by someone who had to get a job done quickly who had no training and little experience. But I think this is not uncommon. I know other people who did research in, say, aeronautics but spent most of their time grappling with gcc and gdb. That is a colossal waste of resources.<br/><p>What's the solution? Obviously anyone who is likely to depend on programming to get their project done needs to take some good programming classes, just as I'd need to take classes before anyone let me near a chemistry or biology lab. This means that someone would actually have to teach good but not all-consuming programming classes, which is pretty hard to do. But I think it's getting easier, because these days we have more best practices and rules of thumb that aren't bogus enterprise software process management --- principles that most people, even hardcore hackers, will agree on. (A side benefit of forcing people into those classes is that maybe some will discover they really like programming and have the epiphany that blood and gears will pass away, but software is all.)<br/><p>There is some good news in this story. This disaster is written in Java, which is no panacea but at least the nastiest sorts of errors are off-limits. The horror of this program incarnated in full memory-corrupting C glory is too awful to contemplate. I'm also interested to see that Eclipse's Java environment is really helping amateur programmers. The always-instant, inline compiler error redness means that wrestling with compiler errors is not a conscious part of the development process. We are making progress. I would love to see inline marking of dead code, though.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>b.m</div>
+<div class='content'>Great article. Good insights and concise. I loved it.<br>A quick comment on: &quot;but it&#39;s not doing enough whole-program analysis to know which public functions of classes are dead&quot;<br>IMHO this is quasi-impossible. It would be plain wrong for Eclipse (or any other tool) to assume that a method if it&#39;s public and is not explicitly called, it&#39;s not called at all and a warning should be shown. This method could be a part of an external API or could be called via reflection - either way there is no way of Eclipse figuring that out.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>zynasis</div>
+<div class='content'>dont listen to amk<br>his generation of n00blar crap coding needs to disappear<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>There are compiler warnings for obvious dead functions and variables, but it&#39;s not doing enough whole-program analysis to know which public functions of classes are dead, for example.<br>Besides, in this project there are so many compiler warnings the dead variable/function warnings are lost in the trees.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Barry Kelly</div>
+<div class='content'>Dead code has been marked by IDEs like Delphi for over a decade - if the linker eliminates it, it&#39;s not possible to place a breakpoint, so there&#39;s no &quot;little blue dot&quot; to the left of dead code.<br>Disclaimer: I work for CodeGear.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Haugeland</div>
+<div class='content'>Man, the thing most people don&#39;t understand about tragedies is that they occur everywhere, and it just takes someone at a higher level of understanding to recognize them.<br>For example, the same principle could be applied to your site design, which has left this article in six 11-line columns on my screen (borderline unreadable.)<br>Try not to be so harsh to your lessers, lest your betters remind you how it feels from the other side of the fence.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Pål</div>
+<div class='content'>Well, my philosophy is that there should be no warnings. If there is a warning that you know is safe, you add a SuppressWarnings to that line.<br>When the amount of warning increases beneath what you can remember in your head, you have to stop and do some refactoring and fixing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The application that inspired me is not a big floating point solver, it&#39;s a kind of discrete-entity simulator. I understand that for big floating point solvers the specific issues are different.<br>I didn&#39;t say refactoring was hard. With tools like Eclipse, it&#39;s very simple. It&#39;s just not done.<br>I do VCS archaeology almost every day. There are great tools to support it, for example:<br>http://bonsai.mozilla.org/cvsblame.cgi?file=mozilla/layout/generic/nsBlockFrame.cpp&amp;rev=3.959<br>Commenting out code does not scale over time and makes code hard to read. VCS browsing not only lets you see what changed, but why and when, and what the context looked like at the time...<br>I don&#39;t claim Java is &quot;the solution&quot; to every problem, I just said it&#39;s a lot better for this app than C.<br>For lots of FP apps, Kahan&#39;s issues are not relevant and Java would work fine and be better than C. For the others, use something else. (Actually I suspect for most people, availability of quality libraries is more likely to determine the language choice than Kahan&#39;s bugbears.) Using the right tool for the job (and knowing what tools are available and what their strengths and weaknesses are) is another area where a little training and experience provide great benefit.<br>I understand that automated testing of stochastic and numericallly sensitive algorithms is hard. But you can at least do sanity checks on output, catch crashes/exceptions and infinite loops, and in some cases compare to expected results with tolerance.<br>What really scares me is that code like this produces publishable results. If you don&#39;t have validation that&#39;s precise enough to be automatable then why should I trust your science? Having a human look over the results and see if they match expectations is obviously a hopeless methodology.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Maybe I wasn&#39;t clear enough --- the people who write this code aren&#39;t my &quot;lessers&quot;, my best guess is they&#39;re smart people doing their best in an unfamiliar world.<br>b.m: that&#39;s a weakness of Java, really. It should be possible to declare what your public API is, and what methods are exposed to reflection, and then tools can do intelligent dead code detection.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ademus05</div>
+<div class='content'>I work with scientific code for a living.  Some of your complaints are valid, while others are ignorant.<br>- Parallel arrays and index masks are the biggest design pattern known to the scientific community.  Any scientific coder would instantly know what way going on if he saw these things used in practice.  They are often used in scientific codes to quickly add extra &#39;properties&#39; to a calculation.  This allows you to create an array to hold intermediate projects, calculate pressure over a finite difference field, and generally makes the mathematics code look like math.  Changing this to standard object and records often leads to an even bigger mess.<br>- Commenting out a routine is perfectly appropriate when the code is traded around and no one looks at version control.  Seriously, when is the last time you traced backwards through version control when you had a problem understanding a given function?  At least with the commented out version, enabling features is as easy as removing or adding a comment.  Thank your stars you don&#39;t have to worry about #ifdefs.<br>- Count your blessings.  It&#39;s easier to refactor procedural code without horrendous abstractions.  The hardest part is dealing with global variables, and this can be fixed with a search and replace.<br>- Creating unit tests for numerical applications is actually a huge pain.  Only the most trivial problems have analytical solutions you can check against.  Furthermore, you can&#39;t take binary diffs of the program&#39;s output.  Most C/C++/FORTRAN compilers play fast and loose with floating point operator associativity when optimizing.  This can cause slightly different floating point results when two unrelated statements are ordered differently.  Often it&#39;s easier to run the simulation and compare the visualizations.<br>Your solutions to the problem are also naive.  Look at &quot;How Java’s Floating-Point Hurts Everyone Everywhere&quot; for a good description of why scientific coders shy away from Java.<br>http://www.cs.berkeley.edu/~wkahan/JAVAhurt.pdf<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Spudd86</div>
+<div class='content'>Re: Joshua Cranmer<br>Greg Wilson was my prof for a course and got me the job I mentioned in my other post...<br>Small world<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Davo</div>
+<div class='content'>eclipse already marks dead variables and functions no? (yellow as opposed to red)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joshua Cranmer</div>
+<div class='content'>The one problem I have with this is that most CS courses tend to reinforce bad program design. In fact, for the sake of simplicity, they seem to go one step further and extremely discourage good design for the sake of easy grading. I don&#39;t think any of my homeworks could muster an r+ in Mozilla-land; if I tried to write them in a way that would garner r+, I would be getting bad grades for not following the assignment.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>amk</div>
+<div class='content'>Greg Wilson has a set of lectures aimed at teaching good software development practices to scientists; see http://www.swc.scipy.org/ (also given as my URL).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Spudd86</div>
+<div class='content'>I&#39;m a CS student and I did a summer job for a prof in the forestry department (mostly developing NEW software thankfully). I saw C code that was written by a non-programmer...<br>There was no dynamic allocation at all.<br>It parsed a 30MB blob of numbers in ascii with scanf (this took a few minutes) stored it in a fixed 2d array, and had the rampant copy past programming.<br>It also had 2000 line functions (1500 line loops inside) and had some headers... that were treated no differently from regular source files...<br>Luckily my only task for this was to get it running... which it did without me having to changed the code.<br></div>
+</div>
+
+</div>

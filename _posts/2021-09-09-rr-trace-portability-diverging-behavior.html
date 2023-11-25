@@ -1,0 +1,44 @@
+---
+layout: "post"
+title: "rr Trace Portability: Diverging Behavior of RSQRTSS in AMD vs Intel"
+date: "2021-09-09 08:21:00 +0000"
+permalink: "/2021/09/rr-trace-portability-diverging-behavior.html"
+---
+<p>When we added Zen support to <a href="https://rr-project.org">rr</a>, it was an open question whether it would be possible to reliably replay Zen recordings on Intel CPUs or vice versa. It wasn't clear whether CPU instructions normally used by applications had bit-identical semantics across vendors. Over time the news was good: replaying Zen recordings on Intel generally works &mdash; if you trap and emulate CPUID to return the Zen results, and work around a difference in <a href="https://github.com/rr-debugger/rr/issues/2698">x87 FIP handling</a>. So <a href="https://pernos.co">Pernosco</a> has been able to handle submissions from Zen users.
+<p>Unfortunately, today I discovered a new difference between AMD and Intel: the <a href="https://www.felixcloutier.com/x86/rsqrtss">RSQRTSS</a> instruction. Perhaps this is unsurprising, since it is described as: "computes an <em>approximate</em> reciprocal of the square root of the low single-precision floating-point value in the source operand" (emphasis mine). A simple test program:
+<pre>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+int main(void) {
+  float in = 256;
+  float out;
+  unsigned int raw;
+  asm ("rsqrtss %1,%0" : "=x"(out) : "x"(in));
+  memcpy(&raw, &out, 4);
+  printf("out = %x, float = %f\n", raw, out);
+  return 0;
+}</pre>
+On Intel Skylake I get
+<pre>out = 3d7ff000, float = 0.062485</pre>
+On AMD Rome I get
+<pre>out = 3d7ff800, float = 0.062492</pre>
+Intel's result <em>just</em> stays within the documented 1.5 x 2<sup>-12</sup> relative error bound. (Seems unfortunate given that the exact reciprocal square root of 256 is so easily computed to 0.0625, but whatever...)
+<p>The net effect of this is that rr recordings captured on Zen that use RSQRTSS may not replay correctly on Intel machines. The instructions will execute fine but it's possible that the slight differences in results may later lead to diverging control flow which break the rr recording. We have seen this in practice with a Pernosco user.
+<p>I have some ideas about how to fix this for Pernosco. If they work that'll be fodder for another post.
+<p><strong>Update</strong> For what it's worth, the same issue exists with RCPSS (and presumably the SIMD versions (V)RCPPS and (V)RSQRTPS). Intel also has a number of new approximate-arithmetic instructions in AVX512, but has published software reference implementations of those, so hopefully if AMD does ever implement them Zen will match those. I'm not (yet) aware of any other non-AVX512 "approximate" instructions.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Gerald</div>
+<div class='content'>Since it&#39;s approximate by design, could future versions of chips of the same brand also introduce breaking &quot;improvements&quot;?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Possibly, but I hope not!</div>
+</div>
+<div class='comment'>
+<div class='author'>Tuna</div>
+<div class='content'>In theory yes, but Intel has only done that once a very long time ago (I want to say 287 -&gt; 387 but am not sure) and it was painful enough to everyone involved that they have never done it again.
+
+This is why so many of the more complex floating point instructions are so terrible, and should never be used.</div>
+</div>
+</div>
+
+</div>

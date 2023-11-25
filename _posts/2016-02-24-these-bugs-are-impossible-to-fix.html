@@ -1,0 +1,34 @@
+---
+layout: "post"
+title: "\"These Bugs Are Impossible To Fix Without rr\""
+date: "2016-02-23 21:45:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/02/these-bugs-are-impossible-to-fix.html"
+---
+<p>Jan de Mooij and the Mozilla JS team just used rr to figure out a <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1232229#c50">GC-related top-crash</a> in Firefox Nightly. The IRC discussion starts <a href="http://logs.glob.uno/?c=mozilla%23jsapi&s=23+Feb+2016&e=23+Feb+2016#c701602">here</a>.
+<p>I think rr is great for most kinds of bugs, not just the really hard ones. But obviously hard bugs are where there's the most win to be had.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Daniel</div>
+<div class='content'>Me: What is rr? I haven’t heard of it before. (Note: I came to this blog from a link to Rewrite Everything In Rust just a few minutes ago)
+*googles*
+Me: That EXISTS? Why have I not heard about this before? Why have I not been using this for years? This changes everything.
+
+Thank you for creating such an amazing-looking tool.</div>
+</div>
+<div class='comment'>
+<div class='author'>Steve Fink</div>
+<div class='content'>@Daniel because it hasn&#39;t existed for years, of course! (though I think Microsoft has something similar maybe sorta?)
+
+By the way, does rr work with Rust? I mean, I know it should accurately record and replay execution since I assume Rust doesn&#39;t make completely oddball syscalls or anything. I guess what I&#39;m really asking is if *gdb* works with Rust.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes it does. mbrubeck is apparently using rr to track down Servo intermittents.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Simon Lindholm</div>
+<div class='content'>A more permanent link to the IRC discussion: http://logs.glob.uno/?c=mozilla%23jsapi&amp;s=23+Feb+2016&amp;e=23+Feb+2016#c701602</div>
+</div>
+
+</div>

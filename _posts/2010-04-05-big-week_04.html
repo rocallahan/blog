@@ -1,0 +1,35 @@
+---
+layout: "post"
+title: "Big Week"
+date: "2010-04-04 19:19:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/04/big-week_04.html"
+---
+<div class="columns"><p>It's been quite a big week in Gecko-land!<br/><p>Bas Schouten landed his OpenGL <a href="/2010/04/layers.html">layers</a> backend and we're using it to accelerate full-screen video on Windows.<br/><p>David Baron landed his fixes to to the <a href="http://dbaron.org/mozilla/visited-privacy">:visited privacy leak</a>.<br/><p>Chris Pearce landed the <a href="http://blog.pearce.org.nz/2010/04/new-ogg-video-decoder-for-firefox.html">new Ogg decoder</a> to get rid of some nasty problems and make forward progress faster.<br/><p>Josh Aas turned on <a href="http://boomswaggerboom.wordpress.com/2010/03/28/out-of-process-plugins-for-firefox-on-mac-os-x/">out-of-process plugins for Mac</a>.<br/><p>Of course, lots of other people made huge contributions to these projects.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Rob</div>
+<div class='content'>That&#39;s some awesome work!<br>I just tested the full-screen video thing. It doesn&#39;t work as well as I hoped, it&#39;s much better than it was but it still uses too much CPU and isn&#39;t perfectly smooth. Direct2D produced much better results for me, and this is using an nVidia card which is supposed to have good OpenGL support. The task manager shows that 50% of the time is spent in the kernel/driver, maybe it&#39;s due to inefficient texture upload (does the OpenGL backed use PBOs?).<br>A bit off-topic, but is improving the software code patch out of the question? I hate to mention it here but Chromium just landed an optimized software resizer for video which is abut five times faster than what Firefox uses on Windows (see http://codereview.chromium.org/1556021 ). It uses 25% CPU for me when upscaling 480x272 -&gt; 1200x680. By comparison FF maxes one core using 65% total and drops frames left and right (about half framerate). Chromium also has the multi-process overhead to deal with (at least one extra memory copy).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We&#39;d have to enable the cairo SVG backend and do some work to emit metadata like hyperlinks and alt text. That can&#39;t be done as an addon, it would require core changes. A fun and doable project, though.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matthew Holloway</div>
+<div class='content'>This is a bit offtopic but I was wondering whether Firefox could do this easily?<br>With more browsers understanding SVG I was wondering whether we could make screenshots available to disabled people and search engines.<br>Is it possible for a Firefox addon to take screenshots as SVG/PDF? By this I mean vectors, base64 bitmaps, real text, embed ALT text for accessibility, real hyperlinks, etc. in an SVG file.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Out of process plugins already work on Linux. David Baron&#39;s and Chris Pearce&#39;s work is completely cross-platform. We just need to hook up the GL layers backend for Linux/X, that should be done soon. So I&#39;d say that&#39;s 3.5/4 for Linux? :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Rob, there were some bugs in the initial landing that made performance much worse than it should have been. You might want to try again with the latest nightly. There are still some issues with GL layers on trunk that we can speed up further.<br>We actually have a patch to import some Chromium code to speed up CPU YUV conversion and we&#39;ll land that shortly. We&#39;re wary of importing their scaling code because a lot of people have complained that it produces low-quality results. Possibly we should have multiple scaling algorithms and pick the highest-quality one that gives us full frame rate. Getting hardware-accelerated scaling working well is higher-priority, though.<br>The multi-process setup shouldn&#39;t add a copy if they&#39;re doing it right.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Lars Gunther</div>
+<div class='content'>Glad: So much goodness.<br>Sad: So little yet on Linux?<br></div>
+</div>
+
+</div>

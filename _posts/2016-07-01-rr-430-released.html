@@ -1,0 +1,24 @@
+---
+layout: "post"
+title: "rr 4.3.0 Released"
+date: "2016-06-30 12:43:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/07/rr-430-released.html"
+---
+<p>I've just released <a href="https://github.com/mozilla/rr/releases/tag/4.3.0">rr 4.3.0</a>. This release doesn't have any major new user-facing features, just a host of small improvements:
+<ul>
+<li>AVX (i.e. YMM) registers are exposed through gdb.
+<li><a href="/2016/04/leveraging-modern-filesystems-in-rr.html">Optimizations</a> for I/O-heavy tracees on btrfs. I highly recommend putting tracee data and the traces on the same btrfs filesystem to take advantage of this.
+<li>Support for <a href="/2016/06/handling-read-only-shared-memory-usage.html">dconf's shared memory usage</a>.
+<li>Much better support for <tt>vfork</tt>.
+<li>Much better support for <tt>ptrace</tt>. This allows <a href="/2016/04/using-rr-to-debug-rr.html">rr to record rr replay</a>.
+<li>Support for tracees calling <tt>setuid</tt>.
+<li>Support for tracees compiled with AddressSanitizer.
+<li>Support for optimized release builds via <tt>cmake -DCMAKE_BUILD_TYPE=Release</tt> (thanks to Keno Fischer).
+<li>Keno Fischer also dived into the guts of rr and did some nice cleanups.
+<li>As always, syscall support was expanded and many minor bugs fixed.
+<li>This release has been tested on Ubuntu 16.04 and Fedora 24 (as well as older distros).
+<li>With the help of Brad Spengler, we got rr working on grsecurity kernels. (The changes to grsecurity only landed a few days ago.)
+</ul>
+<p>In this release I've fixed the last known intermittent test failure! Some recent Linux kernels have a regression in performance counter code that very rarely causes some counts to be lost. This regression seems to be fixed in 4.7rc5 which I'm currently running.
+<p>Ubuntu 16.04 was released with gdb 7.11.0, which contains a serious regression that makes it very unreliable with rr. The bug is fixed in gdb 7.11.1 which is shipping as an update to 16.04, so make sure to update.

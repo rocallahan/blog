@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "Dell, Your Website Security Is Broken"
+date: "2016-10-19 20:59:00 +0000"
+permalink: "/2016/10/dell-your-website-security-is-broken.html"
+---
+<p>You can download firmware and BIOS updates <a href="http://www.dell.com/support/home/us/en/04/Drivers/DriversDetails?driverId=VNMDK&fileId=3566241828&osCode=WT64A&productCode=xps-15-9550-laptop&languageCode=en&categoryId=BI">from Dell</a>. Unfortunately the download link is plain HTTP :-(. Fortunately the page provides SHA hashes for the download, which are even correct --- though I imagine practically no-one checks them. Unfortunately, the download page itself is plain HTTP so those hashes can't be trusted either :-(.
+<p>Interestingly, the download page <em>is</em> available via HTTPS as well, but Google searches for "Dell bios update" etc point to the insecure version of the site. I have no idea why that would be.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>The page includes (both active and passive) mixed content. Google Search likely falls back to non-secure HTTP when linking to pages with mixed content issues.</div>
+</div>
+
+</div>

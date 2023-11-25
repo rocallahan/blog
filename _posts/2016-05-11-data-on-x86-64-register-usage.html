@@ -1,0 +1,38 @@
+---
+layout: "post"
+title: "Data On x86-64 Register Usage"
+date: "2016-05-11 04:12:00 +0000"
+categories: "Mozilla"
+permalink: "/2016/05/data-on-x86-64-register-usage.html"
+---
+<p>I looked into the frequency of register usage in x86-64. I disassembled optimized and debug builds of Firefox's libxul.so and counted, for each general-purpose register, the number of instructions referencing that register. The graph below shows those results, normalized to a fraction of the total number of instructions in each binary.
+<p><img src="/assets/images/Registers.png" width="1209" height="680">
+<p>These results severely undercount the actual usage of <tt>rsp</tt>, since it's implicitly used in every <tt>push</tt>, <tt>pop</tt>, <tt>call</tt> and <tt>ret</tt> instruction, but otherwise should be accurate. 8, 16 and 32-bit registers were counted as the 64-bit register they belong to.
+<p>Observations:
+<ul>
+<li>Debug builds use <tt>rax</tt> and <tt>rbp</tt> a lot more than optimized builds. This is because gcc debug builds keep local variables in memory and reference them via <tt>rbp</tt>. Optimized builds use register allocation to spread locals across registers and do a lot fewer memory references.
+<li>Optimized builds make far more use of <tt>r12</tt>-<tt>r15</tt> than <tt>r8</tt>-<tt>r11</tt>. I think that's because <tt>r12</tt>-<tt>r15</tt> are four of the six callee-saves registers in the System V x86-64 ABI (the others are <tt>rbx</tt> and <tt>rbp</tt>), so the third callee-saves register you allocate will be <tt>r12</tt>. On the other hand <tt>rdi</tt>, <tt>rsi</tt>, <tt>rax</tt>, <tt>rdx</tt> and <tt>rcx</tt> are all caller-saves so you don't get into <tt>r8</tt> etc until you need a sixth caller-saves register.
+<li>In optimized builds <tt>r11</tt> is referenced by less than 0.4% of instructions, so it looks like there's no need for more caller-saves general-purpose registers, and given the least-used callee-saves register <tt>r15</tt> is still used by 3% of instructions, maybe it would have been a good idea for the x86-64 ABI to make more registers callee-saves instead of caller-saves.
+</ul>
+It would be interesting to repeat this analysis weighting the instructions by execution count over some workload.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&gt; These results severely undercount the actual usage of rsp, since it&#39;s implicitly used in every push, pop, call and ret instruction
+
+Why not tick the $sp counter when you see those instructions?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Too much work :-). I mainly gathered this information to see which registers would be good to steal as scratch registers, and %rsp is obviously not going to be one of them.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>When you say optimized and debug builds of Firefox, do you mean --disable-debug/--enable-debug, or do you imply --disable-optimize for debug too? (which is not the default). Also, is it with --enable-profiling? (which if you take a Nightly, would be the case)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>--disable-optimize and --enable-profiling, yes.</div>
+</div>
+</div>
+
+</div>

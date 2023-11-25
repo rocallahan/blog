@@ -1,0 +1,11 @@
+---
+layout: "post"
+title: "An Inflection Point In The Evolution Of Programming Langauges"
+date: "2017-07-14 22:43:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/07/an-inflection-point-in-evolution-of.html"
+---
+<p>Two recent Rust-related papers are very exciting.
+<p><a href="https://people.mpi-sws.org/~dreyer/papers/rustbelt/paper.pdf">Rustbelt</a> formalizes (a simplified version of) Rust's semantics and type system and provides a soundness proof that accounts for unsafe code. This is a very important step towards confidence in the soundness of safe Rust, and towards understanding what it means for unsafe code to be valid &mdash; and building tools to check that.
+<p>This <a href="https://www.ics.uci.edu/~aburtsev/doc/crust-hotos17.pdf">systems paper</a> is about exploiting Rust's remarkably strong control of aliasing to solve a few different OS-related problems.
+<p>It's not often you see a language genuinely attractive to the systems research community (and programmers in general, as the Rust community shows) being placed on a firm theoretical foundation. (It's pretty common to see programming languages being advocated to the systems community by their creators, but this is not that.) Whatever Rust's future may be, it is setting a benchmark against which future systems programming languages should be measured. Key Rust features &mdash; memory safety, data-race freedom, unique ownership, and minimal space/time overhead, justified by theory &mdash; should from now on be considered table stakes.

@@ -1,0 +1,41 @@
+---
+layout: "post"
+title: "VMWare CPUID Conditional Branch Performance Counter Bug"
+date: "2014-09-08 11:37:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/09/vmware-cpuid-conditional-branch.html"
+---
+<p><em>This post will be uninteresting to almost everyone. I'm putting it out as a matter of record; maybe someone will find it useful.</em>
+<p>While getting <a href="http://robert.ocallahan.org/2014/03/introducing-rr.html">rr</a> working in VMWare guests, we ran into a tricky little bug. Typical usage of CPUID. e.g. to detect SSE2 support, looks like this pseudocode:
+<pre>CPUID(0); // get maximum supported CPUID subfunction M
+if (S <= M) { 
+  CPUID(S); // execute subfunction S
+}</pre>
+Thus, CPUID calls often occur in pairs with a conditional branch between them. The bug is that in a VMWare guest, when we count the number of conditional branches executed, the conditional branch between those two CPUIDs is usually (but not always) omitted from the count. We assume this is a VMWare bug because it does not happen on the same hardware outside of a VM, and it does not happen in a KVM-based VM.
+<p>Experiments show that some code sequences trigger the bug and other equivalent sequences don't. Single-stepping and other kinds of interference suppress the bug. My best guess is that VMWare optimizes some forms of the above code, perhaps to reduce the number of VM exits, and in so doing skips execution of the conditional branch, without taking into account that this might perturb performance counter values. Admittedly, it's unusual for software to rely on precise performance counter values the way rr does.
+<p>This sucks for rr because rr relies on these counts being accurate. We sometimes find that replay diverges because one of these conditional branches was not counted during recording but is counted during replay. (The other way around is possible too, but less frequently observed.) We have some heuristics and workarounds, but it's difficult to fully work around without adding significant complexity and/or slowdown.
+<p>The bug is easily reproduced: just use rr to record and replay anything simple. When replaying, rr automatically detects the presence of the bug and prints a warning on the console:
+<pre>rr: Warning: You appear to be running in a VMWare guest with a bug
+    where a conditional branch instruction between two CPUID instructions
+    sometimes fails to be counted by the conditional branch performance
+    counter. Partial workarounds have been enabled but replay may diverge.
+    Consider running rr not in a VMWare guest.</pre>
+<p>Steps forward:
+<ul>
+<li>Find a way to report this bug to VMWare.
+<li>Linux hosts can run rr in KVM-based VMs or directly on the host. Xen VMs might work too.
+<li><a href="http://www.parallels.com/">Parallels</a> apparently supports PMU virtualization now; if Parallels doesn't have this bug, it might be the best way to run rr on a Mac or Windows host.
+<li>We can add a "careful mode" that would probably almost always replay successfully, albeit with additional overhead.
+<li>The bug is less likely to show up once rr supports x86-64. At least in Firefox, CPUID instructions are most commonly used to detect the presence of SSE2, which is unnecessary on x86-64.
+<li>In practice, recording Firefox in VMWare generally works well without hitting this bug, so maybe we don't need to invest a lot in fixing it.
+</ul>
+
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Nickolay Ponomarev</div>
+<div class='content'>Probably worth updating with the solution - http://robert.ocallahan.org/2015/11/rr-in-vmware-solved.html
+
+On the other hand, I couldn&#39;t get Parallels to work - https://forum.parallels.com/threads/anybody-uses-pmu-virtualization-on-a-linux-guest.328958/</div>
+</div>
+
+</div>

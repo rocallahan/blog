@@ -1,0 +1,215 @@
+---
+layout: "post"
+title: "Investigating Performance Differences Between Firefox 4 And IE9"
+date: "2011-03-11 10:30:00 +0000"
+categories: "Mozilla"
+permalink: "/2011/03/investigating-performance-differences_11.html"
+---
+<div class="columns"><p>As I explained in <a href="/2011/03/the_myth_of_ful.html">my last post</a>, Microsoft's PR about "full hardware acceleration" is a myth. But it's true that some graphics benchmarks consistently report better scores for IE9 than for Firefox, so over the last few days I've been looking into that. Below I'll explain the details what I've found about various commonly-cited benchmarks, but the summary is that the performance differences are explained by relatively small bugs in Firefox, bugs in IE9, and bugs in the benchmarks, <b>not</b> due to any major architectural issues in Firefox (as Microsoft would have you believe).<br/><p><strong><a href="http://ie.microsoft.com/testdrive/Performance/FishIETank/Default.html">FishIE Tank</a></strong> This is one of many 2D canvas demos that focus on drawing images with various transforms. Firefox 4 RC spends a lot of its time doing security checks for the drawImage call, plus there are some smaller inefficiencies in our drawImage code. I added a simple cache to avoid security checks, and fixed other inefficiencies, and the <a href="http://ftp.mozilla.org/pub/mozilla.org/firefox/tryserver-builds/rocallahan@mozilla.com-16644bf2dbd2">resulting builds</a> are now slightly faster than IE9 RC1 on my system.(Although since both browser get 60fps for 1000 fish, I had to modify the test to use 2000 fish to see any differences.)<br/><p><strong><a href="http://ie.microsoft.com/testdrive/Performance/SpeedReading/default.html">Speed Reading</a></strong> This is also drawImage-heavy but exercises a path that wasn't well optimized in our D2D backend. The above builds include a tweak for that path, and are slightly faster than IE9 RC1 on my system on this test.<br/><p><strong><a href="http://www.craftymind.com/guimark2">GUIMark 2 Flash and HTML5</a></strong> <a href="http://www.conceivablytech.com/6020/products/firefox-4-rc-vs-ie9-rc-the-first-duel/2">Some</a> reports show differences between Firefox and IE9 on those benchmarks, but on my laptop their performance is very similar, except for HTML5 Text where Firefox is a bit faster.<br/><p><strong><a href="http://ie.microsoft.com/testdrive/Performance/MrPotatoGun/Default.html">Mr Potato Gun</a>, <a href="http://ie.microsoft.com/testdrive/Performance/Preschool/Default.html">Preschool</a> and <a href="http://demos.hacks.mozilla.org/openweb/HWACCEL/">HWACCEL</a></strong> These benefit hugely from the improvements in the builds I linked to above, but our score is still lower than IE9's. That's because these tests animate using setTimeout with a delay of zero, and count how may times the animation callback fires per second. In Firefox, delays of zero are clamped to a minimum of 10ms, but in IE9 they're clamped to a minimum of 4ms. In these benchmarks, the actual painting is incredibly fast in Firefox and IE9, so the limiting factor is this timeout delay, and IE9 gets 2.5x of our score. This difference is artificial and does not affect what users see on the screen, because it's impossible to display more than about 60 frames per second under any normal circumstances --- I have previously discussed this <a href="/2010/08/the_mozrequesta.html">on my blog</a>. In these tests the user will just see 60 frames per second in IE9 and Firefox. (HWACCEL actually clamps its reported FPS value to "60+", which is sensible, but some sites are reporting numbers higher than 60 anyway, which is strange; they must have modified the test or be using an old version of it.)<br/>In any case, post-FF4 we will change our timeout clamp to 4ms because that's <a href="http://www.w3.org/TR/html5/timers.html#dom-windowtimers-settimeout">what the spec says</a> now.<br/><p>But wait, there's more! My testing shows that in the above demos IE9 consistently clamps to less than 4ms --- about 3.2ms. In <a href="http://people.mozilla.org/~roc/setTimeout-canvas-clamping.html">my test</a>, if you click on the "run with draw" button you get 1000 callbacks in about 3200ms. If you click on the "run without draw" button you get 1000 callbacks in about 4000ms as expected. The only difference is that "run with draw" draws to a canvas in each iteration, and "run without draw" doesn't! It's definitely actual drawing to a canvas that triggers the reduced clamp; if instead of drawing you do some canvas operations that don't trigger drawing (e.g. a save()/restore() pair), you get the 4ms clamp. This is clearly a bug per spec, and I've <a href="https://connect.microsoft.com/IE/feedback/details/650728/incorrect-clamping-of-settimeout-delay-when-drawing-to-a-canvas">reported it</a>. (You won't be able to read the bug report without a Microsoft Connect account.) It's certainly both very strange and very convenient for Microsoft's test scores!<br/><p><strong><a href="http://ie.microsoft.com/testdrive/Performance/SantasWorkshop/Default.html">Santa's Workshop</a></strong> Microsoft had a <a href="http://blogs.msdn.com/b/ie/archive/2011/03/08/comparing-hardware-accelerated-svg-across-browsers-with-santa-s-workshop.aspx">whole blog post</a> about how Firefox's slow performance on this test was due to us not using <a href="/2011/03/the_myth_of_ful.html">"full hardware acceleration"</a>. But they guessed wrong --- hey, we're open source, they could have checked :-). My profiling shows that we spend less than 8% of the time painting on my laptop; the rest of the time is tied up in script execution and DOM manipulation. In particular our implementation of setAttribute and getAttribute for SVG transform attributes is pretty bad. We have a plan for fixing that. (The test is also quite stupid; it animates transforms using lots of string munging, instead of using the faster and more convenient SVG DOM API.) Anyway, it's nothing to do with hardware acceleration.<br/><p>PS, please don't bother posting all your test results in comments unless they're particularly interesting. Ta :-).<br/></div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Jon</div>
+<div class='content'>Thanks for the clarification. I tried your build, and after updating my graphics driver I did indeed see majorly improved performance, roughly on a par with IE9 in the tests you listed.<br>However, although you may have disproved Microsoft&#39;s FUD about GPU usage, the fact remains that, regardless of the actual reason you ARE slower without these improvements, and since FF4 will ship without them it will be less performant than IE9, which is a real shame.<br>It seems MS and Mozilla have both done a similar job of enabling GPU usage, but MS have been more aggressive about optimising other parts of their renderer to really squeeze out performance. Maybe it&#39;s a false impression, and they&#39;ve just been careful about how they code their demos, but if not then it seems like Mozilla could benefit from more focus on optimisation.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Justin Dolske</div>
+<div class='content'>Tangentially related, but since you mention FishIE it&#39;s worth plugging Jeff&#39;s blog post again... http://muizelaar.blogspot.com/2011/02/drawing-sprites-canvas-2d-vs-webgl.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>More on the timout clamp : it&#39;s quite easy to see on http://ie.microsoft.com/testdrive/HTML5/PowerMeter/Default.html<br>Just move the mouse and see the timer drop to 3.2 (and sometimes 2.0, I don&#39;t know why nor when exactly) ...<br>Funny thing is they (MS) drop the limit from 15ms in PP6 to 4ms in Final (but thay may limit to 15ms on battery, didn&#39;t test) ...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Omega X</div>
+<div class='content'>What&#39;s the status on relevant bugs landing? Fx 4.0.1?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Wolfgang</div>
+<div class='content'>Rob, thanks for the link to our site. We do actually quite a bit of benchmark testing and run as many benchmarks as our time allows - and include benchmarks from independent sources, Mozilla, Microsoft and Google. It is difficult to pinpoint the performance with no standard benchmark and our best option is to take an approach of an average result across a wide array of benchmarks (our standard run, which will be be updates as soon as you publish FF4, consists of 248 different tests (JS, HWAcceleration, offline page loading, Flash). The last time we did the test, FF4B10 was slightly ahead of IE9, but way behind Chrome, on average. It appears to us that plain code processing in offline page loading is much faster in Chrome than in any other browser.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>...........</div>
+<div class='content'>Speedreading scores &amp; average draw duration:<br>Chrome 11 Canary: 19sec, 18ms<br>IE 9 RC: 9sec, 10ms<br>FF 4 RC: 586sec, 29ms !!!!!!!<br>Nearly 10 minutes.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>Jon, they&#39;ve most likely just coded the demos, then optimized to them.  This is pretty clear in a lot of their SVG demos, which use the same 2 or 3 things over and over again, and those are the things IE9 makes fast, while ignoring other parts of SVG.<br>Nothing wrong with that, but the only way to match that in general is to optimize for exactly the edge cases their demos use.  We&#39;ll end up doing that, of course, but the value of that is unclear in general.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>I must be doing something terribly wrong, but i&#39;m getting extremely bad results on my macbook pro (core i7 2.66 Ghz, 4GB ram, NVIDIA GeForce GT 330M).<br>For example when i do the HWACCEL test I get no more than 4 fps.<br>When I go to about:support i get the following output:<br>Adapter Description 0x22600,0x20400<br>Vendor ID0000<br>Device ID0000<br>Adapter RAM<br>Adapter Drivers<br>Driver Version<br>Driver Date<br>Direct2D Enabled false<br>DirectWrite Enabled false<br>WebGL Renderer NVIDIA Corporation -- NVIDIA GeForce GT 330M OpenGL Engine -- 2.1 NVIDIA-1.6.26<br>GPU Accelerated Windows1/1 OpenGL<br>Is this expected behaviour Robert?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gary</div>
+<div class='content'>To really appreciate the speed increase ROC is talking about try his build of Fx4:<br>http://ftp.mozilla.org/pub/mozilla.org/firefox/tryserver-builds/rocallahan@mozilla.com-16644bf2dbd2/<br>Then change &#39;dom.min_timeout_value&#39; in about:config to 1.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris</div>
+<div class='content'>This article is pathetic.<br>IE9 is now the fastest browser because of a massive refactoring that addressed not only the graphic rendering pipeline but also the JS engine and overall parser. Just face it.<br>You can spend time trying to convince people that FF4 does this or that better. You are just part of this FUD machine you&#39;re complaining about.<br>Now, just focus on your stuff and make FF4 better.<br>End of line.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Richard Ayotte</div>
+<div class='content'>This is great, thanks for the explanation. What about the Linux results, any thoughts on that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Because I can see IE9 behaving incorrectly. You can run the testcase yourself in IE9 and observe that it doesn&#39;t follow the spec.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Zeir</div>
+<div class='content'>Your latest builds have already &quot;expired&quot; on the tryserver and have been moved to the &#39;old&#39; subdir.<br>Also, look into the &quot;maze solver&quot; test on the IE site. It says it tests CSS layout performance.<br>IE9 RC gets 17 seconds, Firefox 116, Chrome 12 133, Opera 11.10 (2039) embarrasingly beats all with just 9.1 seconds without any kind of hardware accel. On 30x30.<br>The funny thing is, on your build, if I ctrl-tab away from it immediately, it speeds up, getting 19 seconds. You have to refresh the page to make it solve a &#39;new&#39; one I think, but tabbing away makes it use much less CPU as well, for some reason. (The same thing does not appear to benefit Chrome any.)<br>If Mozilla can get basic rendering and speed issues sorted out (drawing/rendering times are essentially more important for the web at large than javascript speed, below a certain threshold), and get IPC working, then I&#39;d be relatively happy, I think.<br>Firefox&#39;s &quot;old&quot; javascript bug with the UI makes things extremely unresponsive if any webpages start to hog for any reason, which gets worse the larger number of tabs you have open (eventually almost anything will start hogging the CPU just because you have a lot of tabs).<br>Even the &quot;lowly&quot; IE9 is going to start drawing power users away, if FF continues to be wholly unusable (for basic performance reasons) with a large number of tabs, and where a single hog can essentially deadlock the browser.<br>(Unrelated security note, there seems to be no way to simply block &#39;mixed content&#39; from loading on secure pages? The warning doesn&#39;t stop it.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tom</div>
+<div class='content'>Hi, I&#39;m an average user and must say that those miliseconds don&#39;t do anything to me, but prefer Firefox for all it&#39;s addons and customization, my looks nothing like original. And this is a BIG difference comparing to IE. Also I never had a crash and every page opened I wanted. All that for free and for anyone to see (the source code).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Meh</div>
+<div class='content'>Meh, I use Opera 11 anway, well away from this pissing contest and faster than FF4 and IE9 in the real world.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>geeknik</div>
+<div class='content'>IE9 is faster than Firefox 4. I hate to disagree, but it is. Maybe that will change with Firefox 4.1 or 5.0. =) The benchmarks show it&#39;s faster and it just feels faster with scrolling, etc.<br>Test system: Windows 7 Pro x86 SP1, i7-920 2.8ghz, 6GB DDR3, 2x ATI HD 5770s in Crossfire. (Latest drivers, etc)<br>Latest nightly of 4.0b13pre:<br>FishIE: 18FPS (1000 Fish)<br>SpeedReading: 43FPS<br>GUIMark HTML5: 12FPS<br>HWACCEL: 60+FPS<br>Preschool: 60FPS 10ms draw time (NO AUDIO)<br>MrPotatoGun: 60FPS (NO AUDIO)<br>IE9 RC:<br>FishIE: 38FPS (1000 Fish)<br>SpeedReading: 60FPS<br>GUIMark HTML: 14FPS<br>HWACCEL: 60+FPS<br>Preschool: 60FPS 0ms draw time (WITH AUDIO)<br>MrPotatoGun: 60FPS (WITH AUDIO)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sid</div>
+<div class='content'>Firefox 4 is definitely cool but still it hogs a lot of memory. Whatever happened to the cool guys a Mozilla.<br>I write for http://hacktivist.tumblr.com/<br>It is a lot about browsers. Especially Firefox.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martin</div>
+<div class='content'>Very interesting reading!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>aa</div>
+<div class='content'>Some of the test are a bit unrealistic, but faster drawImage and other optimizations are really nice! =).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I can&#39;t go into details about IE bugs because I don&#39;t have IE source code.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gary McAllister</div>
+<div class='content'>&quot;relatively small bugs in Firefox, bugs in IE9, and bugs in the benchmarks&quot;<br>You only really elaborate on your bugs but don&#39;t go into any details about IE.<br>Is this just speculation?  Also, not sure if it is deliberate (or subconscious) but your language seems to portray that IE has bigger (Cockroach vs Tarantula) bugs than you.<br>Anyway, keep going, I really enjoy these posts.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rob</div>
+<div class='content'>This is all very pertinent, as i&#39;m trying to work out the reasons for performance difference between FF3 and FF4 at the moment on a project. FF4 is performing way, way slower than FF4 (which is for us performing worst of all browsers). Robert, could i share a link with you privately for you to look at? We&#39;d be very interested in Mozilla&#39;s take on what we may be doing wrong...<br>Rob.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>default</div>
+<div class='content'>What about improving hardware acceleration on the other platforms? i.e. OS X and Unix/Linux.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>another_sam</div>
+<div class='content'>awesome, awesome findings and post. can&#39;t wait for these patches to land. thank you!!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nicholas</div>
+<div class='content'>Thanks for the follow-up post. Re-reading my original comment I think it was a little snarky, I didn&#39;t mean it that way. Glad you could spell out the differences-- I can&#39;t wait to see what the future holds for all of the major browser vendors.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>keldorn</div>
+<div class='content'>So why aren&#39;t this fixes already landed on the trunk (before it was closed for RC)? You obviously know why Firefox is slow, what parts are badly implemented and have fixes for some of them, so why is Mozilla purposely not fixing the performance problems? IE9 tests have been around for quite some time and this is poor timing on Mozilla&#39;s part to make excuses on why Firefox is slower then IE9 in them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Robert quick question...<br>I&#39;ve been following the whole hardware acceleration debate since IE9 first appeared in beta. After recently installing Firefox 4 RC I still find it hard to understand which parts of the product are HWAcceling SVG?<br>Can you give the lowdown on what&#39;s not quite firing on all four in Firefox with SVG?<br>Canvas/JS in comparison is at least as fast in Firefox as it is in ie9.<br>Is there still work to be done with SVG in firefox?<br>Martin<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Devon Govett</div>
+<div class='content'>Thank you!  This is what I like to see: improvements based on competition rather than just bashing.  It&#39;s great that you took the time to get to the bottom of these issues and even fix some of them!  Gold star. :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris</div>
+<div class='content'>This article is pathetic.<br>IE9 is now the fastest browser because of a massive refactoring that addressed not only the graphic rendering pipeline but also the JS engine and overall parser. Just face it.<br>You can spend time trying to convince people that FF4 does this or that better. You are just part of this FUD machine you&#39;re complaining about.<br>Now, just focus on your stuff and make FF4 better.<br>End of line.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>gordon</div>
+<div class='content'>I don&#39;t really care about benchmarks. IE9 feels much faster than Firefox 4 in my day to day browsing, and the UI is way more responsive. That, I care about.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>firedfox</div>
+<div class='content'>Instead of bragging about useless synthetic benchmarks, why Mozilla doesn&#39;t concentrate its efforts first on the basics such as proper font rendering?<br>Look at the issues reported here:<br>https://bugzilla.mozilla.org/show_bug.cgi?id=635490<br>https://bugzilla.mozilla.org/show_bug.cgi?id=626293<br>I really think Firefox jeopardize its future by ignoring such fundamental bugs.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Javier</div>
+<div class='content'>@Robert<br>You can&#39;t give us details about IE bugs because you don&#39;t have IE code. Then, how do you know there are these bugs?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alfred Kayser</div>
+<div class='content'>Are there any bugs number on these fixes?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ben Curly</div>
+<div class='content'>Well, SpeedReading test doesn&#39;t work for me on Firefox 4 RC at all. The page just doesn&#39;t load. I see the blue background and that&#39;s it, the letters never come up and I can&#39;t run the test ;/<br>I&#39;m on Windows 7 64-bit.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Gentile</div>
+<div class='content'>What about say Maze Solver, FF 4 is much slower than IE9 RC, the page says that&#39;s mostly a CSS test. In addition, FF UI slows down while running this test.<br>IE9 is also faster at HTML5 Soduku, about 50% faster. The page says that&#39;s a javascript stressing test.<br>IE9 is faster at Map Zooming test as well, though the there is no FPS or score, it just looks faster on my machine (i7 965, gtx 580).<br>IE9 is about 100% faster than FF 4 at Psychedelic browsing test.<br>Additionally, IE has been sand boxed for about 4 years now, while still no sign of sand boxing from FF.  What happened to the million eyes/coders thing? Aren&#39;t you guys supposed to be FASTER, not 4 years SLOWER?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nathaniel Tucker</div>
+<div class='content'>This is really cool. I was wondering why there were differences in some of these benchmarks.<br>I was wondering, will your fixes for some of these problems be included in a &#39;stability&#39; release of Firefox 4, or Firefox 5?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Style Thing</div>
+<div class='content'>Yep, this build really improves the results.<br>But WHY oh why you did not include patches used for that build into the main tree? so anyone can see that Firefox beats IE in it&#39;s own tests :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sid</div>
+<div class='content'>BTW, from my experience there, Microsoft&#39;s generally a little paranoid about employees reading copyleft FOSS code.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris</div>
+<div class='content'>While I don&#39;t have FF installed on this computer, I decided to test IE9 RC1 and Opera 11.01 on a Quad Core 2.66Ghz, 8GB DDR2, ATI HD 3450, computer.<br>Results:<br>IE RC1: 13 seconds<br>Opera : 2392 seconds (39 minutes)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tim</div>
+<div class='content'>Boris, just an FYI that, as requested, I&#39;ve opened the following bug about the Letter-Heads demo still being very choppy even with DirectWrite/2D enabled using a Radeon 5700HD:<br>https://bugzilla.mozilla.org/show_bug.cgi?id=641758<br>Thanks.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sascha</div>
+<div class='content'>i can&#39;t help myself but there still a huge bug in the OSX version.... the right click menu for organising the bookmark does not appear in the folders of the bookmark bar.... under windows no prob... help !<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dessimat0r</div>
+<div class='content'>I&#39;m getting 10578ms with draw on your test, 10604ms without draw. This is running your build, so something&#39;s clearly wrong? I&#39;m not sure. The other tests are super-fast as expected compared to IE9.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>JK</div>
+<div class='content'>Thanks Robert for doing this work. You are the turn-to guy for cutting through the benchmark bullshit. I hope you stay with FireFox and the good guys for a loooong time!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Derek</div>
+<div class='content'>Great post.  I really appreciate the analysis.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tim</div>
+<div class='content'>Any insight into why the new demos meant to show off graphics in FF4 run much MUCH slower on my system than either the demo videos, or Chrome 10 on the same box? In particular: https://mozillademos.org/demos/shadows/demo.html the letter movement is EXTREMELY choppy on FF4 (RC1) vs Chrome. No extensions are enabled, just stock RC1. About:support output is as follows (running WinXP SP3):<br>Adapter Description: Mobile Intel(R) 4 Series Express Chipset Family<br>Vendor ID: 8086<br>Device ID: 2a42<br>Adapter RAM: Unknown<br>Adapter Drivers: igxprd32<br>Driver Version: 6.14.10.5303<br>Driver Date: 9-21-2010<br>Direct2D Enabled: false<br>DirectWrite Enabled: false (0.0.0.0, font cache n/a)<br>WebGL Renderer: Google Inc. -- ANGLE -- OpenGL ES 2.0 (ANGLE 0.0.0.541)<br>GPU Accelerated Windows: 1/1 Direct3D 9<br>Note, I&#39;m seeing the same behavior on my home desktop system. On that one, it&#39;s a RADEON 5700HD with the very latest drivers. FF4 RC1 VERY choppy (nothing like the Youtube video shown on the demo page), Chrome 10, perfectly fine. On that one Direct 2D and DirectWrite are both enabled as well, and the Direct3D is 10 (running Win7 SP1).<br>Should a performance bug be opened?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>Style Thing and keldorn: roc wrote these patches last week, after we were already frozen for RC.  They&#39;re not in Firefox 4 because they&#39;re not 100% risk-free and it&#39;s very late in the endgame.  So that was not an acceptable time to land the patches; they will be landing as soon as we reopen for development after shipping Firefox 4.<br>James Gentile, we have bugs on some of those tests, yes.  Some of those are JS performance issues.  Maze solver is about half painting and half layout (on Mac; on Windows the painting may well be faster with d2d).  The maze testcase is mostly a stress-test for handling lots of floats; I filed https://bugzilla.mozilla.org/show_bug.cgi?id=641340 on that.<br>Zeir, it makes sense that if you don&#39;t focus that tab while running the maze it goes faster: since it&#39;s not showing we don&#39;t have to do any painting or layout on those intermediate stages that you can&#39;t see anyway.  So it obviously goes much faster!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>geeknik, I don&#39;t understand what you&#39;re disagreeing with, exactly.  Did you _read_ Robert&#39;s post?  Say the second sentence of it?<br>Martin, SVG performance involves a lot more than drawing.  There&#39;s also the manipulation of the actual SVG objects.  This last is fairly slow in Gecko; we are working on fixing that.  Robert did say so in his discussion of Santa&#39;s Workshop.<br>Thinus, stuffing more stuff into Firefox 4 won&#39;t get it out there faster.  It just needs to ship.  Now.  All the fixes Robert talks about here will be shipping within three months after that.<br>Martijn, that&#39;s expected behavior: there is no 2d hardware acceleration on Mac yet.  So you&#39;re getting image compositing in canvas happening on the CPU.<br>Rob, please report a bug on whatever issues you&#39;re seeing?  Cc &quot;:bz&quot; and I&#39;d be happy to take a look at things.<br>default, it&#39;s being worked on!<br>Alfred, dropping the timer to 4ms is just too high-risk at this point.  And even if we did it wouldn&#39;t work right on Windows without even riskier code changes.  We should have done that back in the summer, yes.  But there were other things on our plates then.  Again, this is something that we will be shipping 3 months from now!<br>Tim, your problem is the &quot;Direct2D Enabled: false&quot; bit.  That means no 2d graphics acceleration, so canvas is not accelerated.  For the system where Direct2d is enabled, if you&#39;re seeing problems like that please do file a bug!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>simon</div>
+<div class='content'>that preschool thing actually crashed ff4 completely, making it give a black screen (tab preview still worked, but everything else was black)<br>is this just my machine?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alfred Kayser</div>
+<div class='content'>I think the 10ms to 4ms fix should be put into FF4.0 as soon as possible. IE9 will be released real soon as well as FF4. FF4 should not trail behind IE9 on this. With this simple fix, IE9 won&#39;t have much of an speed advantage over FF4.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Thinus</div>
+<div class='content'>Are you kidding me? Are you people that stupid and ignorant. Microsoft is back and in the next week they are going to turn on their FUD machine big time and you know what, people are going to believe them.<br>Seeing is believing, they know that if they spew untruths, the web will hold them accountable. They will also use their demos and their performance in those demos to drive their marketing point home. In their world, IE9 is the best out there and in every message they will prove it. Worst still, you can run independently those test and you will agree with them.<br>I am simply amazed that you have not picked up on these things earlier and get the updates into Firefox 4. IE9 message is standards, every other browser will have to do those demos just as well...<br>Simply put, when Firefox beta 1 came out, it was pretty cool, all these shining new things. By the time Firefox 4 ship, most of that features would be present in other browsers and Firefox appear to be slower to boot!<br>If Mozilla does not get more aggressive with performance and more polished features with every update, I am sorry to say, you might as well give up your market share right now.<br>Updates containing only security fixes is no longer good enough. You want to fight Microsoft and Google, you better need to step up. Holding big improvements till the next version is no longer going to cut it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>Too bad these fixes couldn&#39;t be included in time for FF4.<br>I&#39;ve heard that Mozilla intends to speed up releases afterwards.  Could these be included in FF5 (or 4.1?) in just a few months?  Or will it be closer to the end of the year before they come out?<br></div>
+</div>
+
+</div>

@@ -1,0 +1,38 @@
+---
+layout: "post"
+title: "PlayCanvas Is Impressive"
+date: "2016-06-22 22:47:00 +0000"
+categories: "Mozilla"
+permalink: "/2016/06/playcanvas-is-impressive.html"
+---
+<p>I've been experimenting on my children with different ways to introduce them to programming. We've tried <a href="http://www.stencyl.com/">Stencyl</a>, <a href="https://scratch.mit.edu/">Scratch</a>, <a href="http://developer.mozilla.org/">JS/HTML</a>, <a href="https://www.python.org/">Python</a>, and <a href="https://www.codecademy.com/">CodeAcademy</a> with varying degrees of success. It's difficult because, unlike when I learned to program 30 years ago, it's hard to quickly get results that compare favourably with a vast universe of apps and content they've already been exposed to. Frameworks and engines face a tradeoff between power, flexibility and ease-of-use; if it's too simple then it's impossible to do what you want to do and you may not learn "real programming", but if it's too complex then it may just be too hard to do what you want to do or you won't get results quickly.
+<p>Recently I discovered <a href="http://playcanvas.com/">PlayCanvas</a> and so far it looks like the best approach I've seen. It's a Web-based 3D engine containing the <a href="https://github.com/kripken/ammo.js/">ammo.js</a> (Bullet) physics engine, a WebGL renderer, a WYSIWYG editor, and a lot more. It does a lot of things right:
+<ul>
+<li>Building in a physics engine, renderer and visual editor gives a very high level of abstraction that lets people get impressive results quickly while still being easy to understand (unlike, say, providing an API with 5000 interfaces, one of which does what you want). Stencyl does this, but the other environments I mentioned don't. But Stencyl is only 2D; supporting 3D adds significant power without, apparently, increasing the user burden all that much.
+<li>Being Web-based is great. There's no installation step, it works on all platforms (I guess), and the docs, tutorials, assets, forkable projects, editor and deployed content are all together on the Web. I suspect having the development platform be the same as the deployment platform helps. (The Stencyl editor is Java but its deployed games are not, so WYS is not always WYG.)
+<li>Performance is good. The development environment works well on a mid-range Chromebook. Deployed games work on a new-ish Android phone.
+<li>So far the implementation seems robust. This is really important; system quirks and bugs make learning a lot harder, because novices can't distinguish their own bugs from system bugs.
+<li>The edit-compile-run cycle is reasonably quick, at least for small projects. Slow edit-compile-run cycles are especially bad for novices who'll be making a lot of mistakes.
+<li>PlayCanvas is programmable via a JS component model. You write JS components that get imported into the editor and are then attached to scene-graph entities. Components can have typed parameters that appear in the editor, so it's pretty easy to create components reusable by non-programmers. However, for many behaviors (e.g. autonomously-moving objects) you probably need to write code --- which is a good thing. It's a bit harder than Scratch/Stencyl but since you're using JS you have more power and develop more reusable skills, and cargo-culting and tweaking scripts works well. You actually have access to the DOM if you want although mostly you'd stick to the PlayCanvas APIs. It looks like you could ultimately do almost anything you want, e.g. add multiplayer support and voice chat via WebRTC.
+<li>PlayCanvas has WebVR support though I haven't tried it.
+<li>It's <a href="https://github.com/playcanvas">developed on github</a> and MIT licensed so if something's broken or missing, someone can step in and fix it.
+</ul>
+<p>So far I'm very impressed and my child is getting into it.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Diego</div>
+<div class='content'>Your former colleagues are working on https://aframe.io/ that implements a DOM based entity component system focused on Web VR.</div>
+</div>
+<div class='comment'>
+<div class='author'>Gerald</div>
+<div class='content'>Your initial paragraph made me think of something I&#39;ve experimented on my non-programmer wife:
+https://tomorrowcorporation.com/humanresourcemachine
+It&#39;s a game with some basic programming primitives (load, store, add/sub, goto, if-goto) and dark humor.
+The later levels can get quite difficult, I myself have been stuck on some of them!</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That looks cool!</div>
+</div>
+</div>
+
+</div>

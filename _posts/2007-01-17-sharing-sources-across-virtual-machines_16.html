@@ -1,0 +1,19 @@
+---
+layout: "post"
+title: "Sharing Sources Across Virtual Machines"
+date: "2007-01-16 12:05:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/01/sharing-sources-across-virtual-machines_16.html"
+---
+<div class="columns"><p>As I mentioned in my last post, I would like to have a single set of source trees which I can edit, diff, patch etc in the host OS (Mac OS X) but from which I can easily make and test Mac, Linux or Windows builds. The obvious way to do it is to host the sources in OS X and mount them in the guest VMs using CIFS. Overnight I did some experiments to see how much this will slow down builds in a Linux guest VM, compared to hosting the sources in the Linux VM's own filesystem.<br/><p>The results are in and they're pretty good! A from-scratch Firefox debug build with -j2 averaged 2647 seconds over four runs with sources in the native filesystem, 3308 seconds over four runs with sources in CIFS --- a 25% slowdown. I tested incremental builds using "touch layout/generic/nsBlockFrame.cpp" and then remaking layout; over four builds it averaged 27 seconds with sources in the native filesystem and 30 seconds with sources in CIFS, about 10% slowdown. (I discarded the first two runs in each configuration to ensure I was only testing warm-cache performance.) The object files in both cases were hosted in the Linux filesystem, of course.<br/><p>This is definitely good enough to use the CIFS configuration in the Linux VM. Hopefully it will work just as well for Windows.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Shawn Wilsher</div>
+<div class='content'>Was this with Parallels?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>loufoque</div>
+<div class='content'>There wouldn&#39;t be any real slowdown if you actually used hardware virtualization.<br></div>
+</div>
+
+</div>

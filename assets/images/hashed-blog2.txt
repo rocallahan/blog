@@ -1,0 +1,90 @@
+Gecko Is A Losing Bet
+
+Gecko is behind Webkit on Web features, performance, code footprint, and
+code quality. Web features where they're ahead include HTML5 SQL, HTML5
+drag-drop, downloadable fonts, CSS transforms and animation, CSS media
+queries, CSS box-shadow, text-shadow, text-stroke, text-overflow, CSS
+display:compact and run-in, CSS3 borders and backgrounds, SVG <img>s,
+two-pass layout and frame flattening for mobile (see Android).
+Performance: almost every third-party JS/DOM and pageload perf test
+shows us behind, sometimes way behind; we can quibble about individual
+tests but the trend is clear. Code footprint: I don't think there's any
+argument. Code quality: everyone who's hacked on both prefers Webkit.
+Gecko has many areas that need major rework or are unowned and rotting:
+e.g. HTML parsing, docshell/history/bfcache, focus, nsIFrame
+continuation model (fundamentally broken), abs-pos containers,
+selection, editor, floats, frame construction, inline layout, XUL layout
+especially box/block interaction, logic in frames that should be in
+content, plugins, imglib, printing, view system (to be removed),
+XPConnect, DOM/native event split, embedding APIs. Not to say Webkit is
+perfect, but we've got a lot of work just to prevent gangrene.
+
+Where are we ahead? In Web features: JS1.7 and E4X, a few DOM APIs, some
+text rendering and I18N, accessibility. We seem to have a better data
+footprint for page loads. We talk about Web compatibility but I think
+that's almost entirely a market share issue, and Webkit is getting there
+and surely will have "enough" with GBrowser.
+
+Of course we can fix everything where we're behind eventually, but in
+the meantime they're not standing still. Will we even progress faster
+than them (Apple, Google, the Qt guys and a growing open community, with
+a cleaner base) and be catching up over time? I think not.
+
+I used to think that if Firefox gets crushed by Webkit-based browsers
+and drags down Mozilla, that would be sad and we'd go and work for Apple
+and Google and c'est la vie. But Brendan and Mitchell convinced me
+that's not an acceptable outcome, so I believe betting Mozilla on Gecko
+is a big mistake and we must change course.
+
+A Better Bet
+
+Suppose we were able to get Firefox and the rest of the XUL ecosystem
+running on Webkit. This would facilitate Mozilla's survival, by removing
+a key competitive edge that other browsers have over Firefox and letting
+us focus on our strengths --- brand, mission, user community, open
+source community, extension community, XUL app community. But it would
+also be tremendously good for the Web. Our combined market share would
+be a stronger lever than ever against IE-only holdouts. Web developers
+would be happier with one less browser engine to target. Embedders
+wouldn't have to make difficult choices. But most importantly, with the
+open-source browser community and its backers pulling together on a
+single code base we would make progress so much faster against IE and
+the Web competitors.
+
+It's true that two open-source engines gives some benefit in standards
+orgs, but there would still be multiple stakeholders with their Webkit
+variants, so I think we'd be OK there. Ditto for the benefits of
+competition. In the long term, a hegemony of Webkit derivatives could be
+a reasonable sweet spot as the implementation of the open Web, IMHO.
+
+Getting There
+
+We'd have to port XUL and XPCOM infrastructure over (including XBL,
+probably as XBL2) and fill in other bits of Webkit that are broken or
+missing. But however hard that problem is, it's not getting bigger over
+time (unlike the effort required for Gecko to catch up to Webkit...). In
+fact it gets smaller as Webkit gets more features and bug fixes.
+
+Some of our work, such bug fixes, XUL box layout and XBL2, would
+hopefully be accepted into Webkit proper. If Apple hates us and won't
+take our patches, it won't look good in their open source community (or
+to their own Webkit people). We can use distributed source control to
+share with other Webkit stakeholders outside of webkit.org SVN, anyway.
+
+Of course we'd have to keep Gecko moving while working on this. There
+are a number of projects that we could do that would add value to Gecko
+*and* future XUL-Webkit: for example, a GL cairo backend,
+cross-process-shareable profiles+Necko, out-of-process plugins, and of
+course, making XPCOM/XPConnect not suck. There's also lots of
+work-in-progress that would fuel Gecko 1.9.1 and beyond.
+
+We'd have to make sure the XUL community survives the transition. The
+good news is that we've always required testing and fixing with each
+major release. Also, I think that a Webkit transition plan would counter
+the panic that's likely to set in as Webkit gains momentum, especially
+when GBrowser surfaces.
+
+This would obviously be organizationally difficult. There's loss of
+control, and a drastic course change with risk, pain, fear and
+uncertainty. But I believe we face the latter no matter what. Without
+them, working for Mozilla just wouldn't be the same! :-)

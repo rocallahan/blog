@@ -1,0 +1,81 @@
+---
+layout: "post"
+title: "Introducing rr"
+date: "2014-03-26 01:59:00 +0000"
+categories: "Chronicle Mozilla"
+permalink: "/2014/03/introducing-rr.html"
+---
+<p>Bugs that reproduce intermittently are hard to debug with traditional techniques because single stepping, setting breakpoints, inspecting program state, etc, is all a waste of time if the program execution you're debugging ends up not even exhibiting the bug. Even when you can reproduce a bug consistently, important information such as the addresses of suspect objects is unpredictable from run to run. Given that software developers like me spend the majority of their time finding and fixing bugs (either in new code or existing code), nondeterminism has a major impact on my productivity.
+<p>Many, many people have noticed that if we had a way to reliably <em>record</em> program execution and <em>replay</em> it later, with the ability to debug the replay, we could largely tame the nondeterminism problem. This would also allow us to deliberately <a href="/2014/03/introducing-chaos-mode.html">introduce nondeterminism</a> so tests can explore more of the possible execution space, without impacting debuggability. Many record and replay systems have been built in pursuit of this vision. (I built <a href="/2007/08/announcing-chronomancer_21.html">one</a> myself.) For various reasons these systems have not seen wide adoption. So, a few years ago we at Mozilla started a project to create a new record-and-replay tool that would overcome the obstacles blocking adoption. We call this tool <a href="https://github.com/mozilla/rr">rr</a>.
+<h3>Design</h3>
+<p>Here are some of our key design parameters:
+<ul>
+<li>We focused on debugging Firefox. Firefox is a complex application, so if rr is useful for debugging Firefox, it is very likely to be generally useful. But, for example, we have not concerned ourselves with record and replay of hostile binaries, or highly parallel applications. Nor have we explored novel techniques just for the sake of novelty.
+<li>We prioritized deployability. For example, we deliberately avoided modifying the OS kernel and even worked hard to eliminate the need for system configuration changes. Of course we ensured rr works on stock hardware.
+<li>We placed high importance on low run-time overhead. We want rr to be the tool of <em>first</em> resort for debugging. That means you need to start getting results with rr about as quickly as you would if you were using a traditional debugger. (This is where my previous project Chronomancer fell down.)
+<li>We tried to take a path that would lead to a quick positive payoff with a small development investment. A large speculative project in this area would fall outside Mozilla's resources and mission.
+<li>Naturally, the tool has to be free software.
+</ul>
+<p>I believe we've achieved those goals with our 1.0 release.
+<p>There's a lot to say about how rr works, and I'll probably write some followup blog posts about that. In this post I focus on what rr can do.
+<p>rr records and replays a Linux process tree, i.e. an initial process and the threads and subprocesses (indirectly) spawned by that process. The replay is exact in the sense that the contents of memory and registers during replay are identical to their values during recording. rr provides a gdbserver interface allowing gdb to debug the state of replayed processes.
+<h3>Performance</h3>
+<p>Here are performance results for some Firefox testsuite workloads:
+<img style="display:block; margin:1em; border:2px solid black" src="/assets/images/rr-perf-chart.png" title="Overhead of rr recording and replay (mostly well below 2x)">
+These represent the ratio of wall-clock run-time of rr recording and replay over the wall-clock run-time of normal execution (except for Octane, where it's the ratio of the normal execution's Octane score over the record/replay Octane scores ... which, of course, are the same). It turns out that reftests are slow under rr because Gecko's current default Linux configuration draws with X11, hence the rendered pixmap of every test and reference page has to be slurped back from the X server over the X socket for comparison, and rr has to record all of that data. So I also show overhead for reftests with Xrender disabled, which causes Gecko to draw locally and avoid the problem.
+<p>I should also point out that we stopped focusing on rr performance a while ago because we felt it was already good enough, not because we couldn't make it any faster. It can probably be improved further without much work.
+<h3>Debugging with rr</h3>
+<p>The <a href="http://rr-project.org/">rr project landing page</a> has a screencast illustrating the rr debugging experience. rr lets you use gdb to debug during replay. It's difficult to communicate the feeling of debugging with rr, but if you've ever done something wrong during debugging (e.g. stepped too far) and had that "crap! Now I have to start all over again" sinking feeling --- rr does away with that. Everything you already learned about the execution --- e.g. the addresses of the objects that matter --- remains valid when you start the next replay. Your understanding of the execution increases monotonically.
+<h3>Limitations</h3>
+<p>rr has limitations. Some are inherent to its design, and some are fixable with more work.
+<ul>
+<li>rr emulates a single-core machine. So, parallel programs incur the slowdown of running on a single core. This is an inherent feature of the design. Practical low-overhead recording in a multicore setting requires hardware support; we hope that if rr becomes popular, it will motivate hardware vendors to add such support.
+<li>rr cannot record processes that share memory with processes outside the recording tree. This is an inherent feature of the design. rr automatically disables features such as X11 shared memory for recorded processes to avoid this problem.
+<li>For the same reason, rr tracees cannot use direct-rendering user-space GL drivers. To debug GL code under rr we'll need to find or create a proxy driver that doesn't share memory with the kernel (something like GLX).
+<li>rr requires a reasonably modern x86 CPU. It depends on certain performance counter features that are not available in older CPUs, or in ARM at all currently. rr works on Intel Ivy Bridge and Sandy Bridge microarchitectures. It doesn't currently work on Haswell and we're investigating how to fix that.
+<li>rr currently only supports x86 32-bit processes. (Porting to x86-64 should be straightforward but it's quite a lot of work.)
+<li>rr needs to explicitly support every system call executed by the recorded processes. It already supports a wide range of syscalls --- syscalls used by Firefox --- but running rr on more workloads will likely uncover more syscalls that need to be supported.
+<li>When used with gdb, rr does not provide the ability to call program functions from the debugger, nor does it provide hardware data breakpoints. These issues can be fixed with future work.
+</ul>
+<h3>Conclusions</h3>
+<p>We believe rr is already a useful tool. I like to use it myself to debug Gecko bugs; in fact, it's the first "research" tool I've ever built that I like to use myself. If you debug Firefox at the C/C++ level on Linux you should probably try it out. We would love to have feedback --- or better still, contributions!
+<p>If you try to debug other large applications with rr, you will probably encounter rr bugs. Therefore we are not yet recommending rr for general-purpose C/C++ debugging. However, if rr interests you, please consider trying it out and reporting/fixing any bugs that you find.
+<p>We hope rr is a useful tool in itself, but we also see it as just a first step. rr+gdb is not the ultimate debugging experience (even if gdb's backtracing features get an rr-based backend, which I hope happens!). We have a lot of ideas for making vast improvements to the debugging experience by building on rr. I hope other people find rr useful as a building block for their ideas too.
+<p>I'd like to thank the people who've contributed to rr so far: Albert Noll, Nimrod Partush, Thomas Anderegg and Chris Jones --- and to Mozilla Research, especially Andreas Gal, for supporting this project.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>busterb</div>
+<div class='content'>This sounds amazing. Since it supports virtualizing many different architectures, was implementing this as a Valgrind tool ever considered?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>What Chris said.
+
+Given our design parameters, we always believed no approach based on code translation or even lightweight emulation would be able to reach the performance targets we were hoping to reach --- and have reached!</div>
+</div>
+<div class='comment'>
+<div class='author'>njn</div>
+<div class='content'>roc will be able to say more, but AIUI his previous implementation (Chronomancer) *was* a Valgrind tool. And it was much too slow.</div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Jones</div>
+<div class='content'>There are two parts to this answer.  The first part is, yes as njn says valgrind instrumentation is too heavyweight for rr&#39;s <em>recording</em> phase.  Recording with valgrind would probably incur 5x-10x overhead.  rr&#39;s approach has lower overhead, usually below 1.5x.  This is important because 5x lower overhead means developers have 5x more chances to reproduce and record their intermittent bug.  (And for reproducible bugs, they can get started debugging 5x more quickly.)
+
+But the second part of the answer is, rr will eventually add valgrind-style instrumentation for <em>replay</em>.  (And in fact, we plan on porting roc&#39;s old chronicle tool to use that replay instrumentation.)  We can get away with high overhead in replay because the developer has already recorded their failure.  Developers can simply decide whether it&#39;s worth their time to run a high-overhead tool like chronicle to get richer debugging data, or just immediately start debugging their failure &quot;bare bones&quot; in gdb.  Or they can do both at the same time and see which approach &quot;wins&quot; :).</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Awesome stuff!  As you know, I&#39;ve also been interested in this for a while :-)  I&#39;m curious, how does this relate to the academic literature on record / replay?  I feel like there have been a lot of papers on the topic lately, but I don&#39;t know how many of them are relying on special hardware support.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I plan to write a blog post about that. Basically, there is only one really novel technique in rr --- a technique that allows us to record most syscalls without taking a context-switch to the supervisor process and without modifying the kernel. It&#39;s based on injecting code into the tracee user-space, leveraging the Linux &quot;seccomp-bpf&quot; API, and monitoring the kernel&#39;s &quot;context-switches&quot; performance counter.
+
+Of course, the major difference between rr and academic work is our focus on building a really useful tool.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Your &quot;I built one myself&quot; Chronomancer link is broken...</div>
+</div>
+
+</div>

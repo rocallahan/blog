@@ -1,0 +1,71 @@
+---
+layout: "post"
+title: "The mozRequestAnimationFrame Frame Rate Limit"
+date: "2010-08-17 10:49:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/08/mozrequestanimationframe-frame-rate_17.html"
+---
+<div class="columns"><p>A few people have been playing with <a href="/2010/08/mozrequestanima.html">mozRequestAnimationFrame</a> and noticed that they can't get more than 50 frames per second. <em>This is intentional, and it's a good feature.</em><br/><p>On modern systems an application usually cannot get more than 50-60 frames per second onto the screen. There are multiple reasons for this. Some of them are hardware limitations: CRTs have a fixed refresh rate, and LCDs are also limited in the rate at which they can update the screen due to <a href="http://www.tweakguides.com/Graphics_8.html">bandwidth limitations in the DVI connector and other reasons</a>. Another big reason is that modern operating systems tend to use "compositing window managers" which redraw the entire desktop at a fixed rate. So even if an application updates its window 100 times a second, the user won't be able to see more than about half of those updates. (Some applications on some platforms, typically games, can go full-screen, bypass the window manager and get updates onto the screen as fast as the hardware allows, but obviously desktop browsers aren't usually going to do that.)<br/><p>So, firing a MozBeforePaint event more than about 50 times a second is going to achieve nothing other than wasting CPU (i.e., power). So we don't. Apart from saving power, reducing animation CPU usage helps overall performance because we can use the free time to perform garbage collection or other house-cleaning tasks, reducing the incidence or length of frame skips.<br/><p>We need to do some followup work to make sure that on each platform we use the optimal rate; modern platforms have APIs to tell us the window manager's composition rate. But 50Hz is almost always pretty close.<br/><p>This all means that measuring FPS is a bad way to measure performance, once you're up to 50 or more. At that point you need to increase the difficulty of your workload.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Chris Dolan</div>
+<div class='content'>There&#39;s no real advantage to choosing 60 Hz vs. 50 Hz.  About half the world uses multiples of 25 Hz (PAL/SECAM) and about half the world uses multiples of 29.97 Hz (NTSC) and another fraction uses multiples of 30 Hz (NTSC, non-dropframe).  Film is 24 fps which doesn&#39;t divide evenly into 50 or 60 or 59.94 anyway.  So, you&#39;ll inevitably have to interpolate no matter what base you choose.  So, I say 50 is a fine choice.<br>http://en.wikipedia.org/wiki/Moving_image_formats#50_vs_60_Hz<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t understand how you would use frame count.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>modeless</div>
+<div class='content'>[forgot to sign the Anonymous comment above]<br>Thanks, and I should have also mentioned that mozRequestAnimationFrame is awesome, especially for Canvas (WebGL!).  Hopefully it can be standardized.  Something similar might be useful for audio rendering via the Audio Data API too...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Lord</div>
+<div class='content'>Just to mirror what&#39;s already been said, 60Hz is a far more common refresh rate. It would be a much better fall-back than 50Hz when the refresh rate can&#39;t be detected.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Yaffle</div>
+<div class='content'>if (!window.mozRequestAnimationFrame) {<br>(function () {<br>var funs = [],<br>timer = null,<br>timeStamp,<br>ft = false;<br>function onTimer() {<br>ft = true;<br>timer = null;<br>timeStamp = +(new Date());<br>var x = funs,<br>l = x.length, i;<br>funs = [];<br>for (i = 0; i &lt; l; i++) {<br>x[i](timeStamp);<br>}<br>ft = false;<br>}<br>window.mozRequestAnimationFrame = function(fun) {<br>funs.push(fun);<br>if (timer === null) {<br>timer = window.setTimeout(onTimer, Math.floor(1000 / 60));<br>}<br>};<br>window.mozAnimationStartTime = {<br>valueOf: function() {<br>if (!ft &amp;&amp; timer === null) {<br>timeStamp = +(new Date());<br>window.mozRequestAnimationFrame(function() { });<br>}<br>return timeStamp;<br>}<br>};<br>}());<br>}<br>What do you think?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chad Austin</div>
+<div class='content'>I should have mentioned that I love the idea of mozRequestAnimationFrame, by the way.  Keep it up!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That&#39;s a good workaround for browsers that don&#39;t have equivalent functionality. It doesn&#39;t give you the benefits of requestAnimationFrame of course (such as automatic reduction in CPU usage for background tabs).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Charles</div>
+<div class='content'>What is needed is a unique way to identify which frame is currently being displayed. I&#39;m not going to do this in particular but here is an example:<br>Say you have a traditional slots game with 3 slots rolling by showing the different fruit at different rates. 2 things need to be done when the player hits the 1 armed bandit.<br>a) adjust all frames to the closest top of slot<br>(align)<br>b) know which frame to know how to score it.<br>So anytime there is a need for fine adjustment of which frame is being displayed or how that frame relates to a user input, then you need this knowledge.<br>Thanks ;8^)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Anonymous: yeah, we&#39;ll get it right, but in the meantime whatever we do will be no worse than current JS apps that basically choose random numbers.<br>Chad: that seems like a good idea.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chad Austin</div>
+<div class='content'>Shouldn&#39;t 60 be the max?  It seems far more standard than 50.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>tom</div>
+<div class='content'>i agree (and support) wholeheartedly..<br>but just maybe you could up this to 60fps (by default, if not detected to be otherwise), as i suspect it might be the most standard refresh rate today (most notebook panels use this by default, plus the HDTV stuff)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anon</div>
+<div class='content'>50 hz is too low, Make it 60 as that is what most in North America use for their monitors.<br>50 will mean dropped frames. Composited windowing systems will run at the refresh rate or they would drop frames.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&quot;Pretty close&quot; isn&#39;t good.  Framerates that are close but not equal cause judder.  If the display is running at 60Hz, rendering at a consistent 30Hz may look better than 50Hz (with a 10Hz beat frequency of missed frames).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Charles</div>
+<div class='content'>How about the frame count so that it is not only synced on time but also frame count. If one is doing interactive animation, frame count is more important than time. time is how good it looks, count is how well it works correctly. Just my 2 cents worth.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Thomas</div>
+<div class='content'>reply to Chris Dolan:<br>It is not correct that half the world uses 50hz for computer monitors, you are talking about television systems, that is something different. Also in europe and other &quot;PAL countries&quot; 60 hz is more or less standard for computer monitors (I live in europe).<br>So I suggest just as several others that this limit is set to 60 fps instead.<br></div>
+</div>
+
+</div>

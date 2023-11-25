@@ -1,0 +1,58 @@
+---
+layout: "post"
+title: "MediaStreams Processing Demos"
+date: "2012-01-17 00:01:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/01/mediastreams-processing-demos.html"
+---
+<p>I'm at <a href="http://linux.conf.au/">linux.conf.au</a> at the moment (until Wednesday) and yesterday I attended the browsers miniconf. It went well, better than I expected. I had a slot to talk about the <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/streams/StreamProcessing.html">MediaStreams Processing API proposal</a> to enable advanced audio effects (and much more!) in browsers, which has been my main project for the last several months (see my earlier post <a href="http://robert.ocallahan.org/2011/06/media-processing_15.html">here</a>. I worked frantically up to last minute to create demos of some of the most interesting features of the API, and get my implementation into a state where it can run the demos. By the grace of God I was successful :-). Even more graciously, the audio in the conference room worked and even played my stereo effects properly!
+<p>I have made available experimental <a href="http://people.mozilla.org/~roc/stream-demos/firefox-12.0a1.en-US.win32.zip">Windows</a> and <a href="http://people.mozilla.org/~roc/stream-demos/firefox-12.0a1.en-US.mac.dmg">Mac</a> Firefox builds with most of the MediaStreams Processing API supported. (But the Mac builds are <em>completely untested</em>!) The demos are <a href="http://people.mozilla.org/~roc/stream-demos/">here</a>. Please try them out! I hope people view the source, modify the demos and play with the API to see what can be done. Comments on the API should go to me or to the <a href="http://www.w3.org/2011/audio/">W3C Audio Working Group</a>.
+<p>I must apologise for the uninspired visual design and extraordinarily naive audio processing algorithms. Audio professionals who view the source of my worker code will just laugh --- and hopefully be inspired to write better replacements :-). Making that easy for anyone to do is one of my goals.
+<p>Some of the things I like about this API:
+<ul>
+<li>First-class support for JS-based processing. In particular, JS processing off the main thread,
+using Workers. This lets people build whatever effects they want and get reasonable performance. Soon we'll have something like <a href="http://blogs.intel.com/research/2011/09/15/pjs/">Intel's River Trail</a> in browsers and then JS users will be able to get incredible performance.
+<li>Leverages MediaStreams. Ongoing work on WebRTC and elsewhere is introducing MediaStreams as an abstraction of real-time media, and linking them to sources and sinks to form a media graph. I don't think we need another real-time media graph in the Web platform.
+<li>Allows processing of various media types. MediaStreams currently carry both audio and video tracks. At the moment the API only supports processing of the audio because we don't have graphics APIs available in Workers to enable effective video processing, but that will change. Applications will definitely want to process video in real time (e.g. QR code recognizer, motion detection and other "augmented reality" applications). Soon we'll want Kinect depth data and other kinds of real-time sensor data.
+<li>First-class synchronization. Some sources and effects have unbounded latency. We want to make sure
+we maintain A/V sync in the face of latency or dynamic graph changes. This should be automatic so authors don't have to worry about it.
+<li>Support for streams with different audio sample rates and channel configurations in the same graph. This is important for efficient processing when you have a mix of rates and some of them are low. (All inputs to a ProcessedMediaStream are automatically resampled to the same rate and number of chnanels to simplify effect implementations.)
+<li>No explicit graph or context object. It's not needed.
+</ul>
+<p>Most of the features in <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/streams/StreamProcessing.html">the proposed spec</a> are implemented. Notable limitations:
+<ul>
+<li>"blockInput" and "blockOutput" are not implemented; there is no way for streams to opt out of being synchronized. For example it would be nice to be able to pipe a media resource into a processing node and if the resource pauses (e.g. due to a network delay), the processing node doesn't block but just treats the paused input as silence. This is probably the trickiest feature not yet implemented.
+<li>No support for "live" streams. Similar to above, if a stream feeds into an output node that is blocked, we sometimes don't want to buffer the input stream. E.g. if the input is a live webcam you often (but not always) want to throw away buffered data so that when the output unblocks it immediately gets the latest video frames.
+<li>There has been very little tuning to optimize throughput and latency, especially across a range of devices. This will be a lot of work.
+<li>In general the API is very lightly tested. I'm sure there are lots of bugs.
+<li>Video elements don't play in sync with streams captured from them. In my demos I worked around this by hiding the source video elements and creating new video elements to play the video via the stream. Fixing this bug would simplify the demos a bit.
+<li>Canvas video sources are not implemented.
+<li>The built in audio resampler is stupendously naive and needs to be replaced.
+<li>Add support multiple audio and video tracks and the MediaStream track API.
+<li>ProcessedMediaStreams using JS workers need to add checks ensuring that all upstream media sources are same-origin.
+<li>The biggest limitation is that it's not shipping in Firefox yet. My giant patch is messy and a lot of cleanup needs to be done. I have a plan to split the patch up, clean up the pieces and land them piecemeal. In particular I need to get some of the infrastructure landed ASAP to help the WebRTC team make progress. (When we ship it, much or all of the API will probably be disabled by default, behind a hidden pref, until the standards situation is resolved.)
+<p><strong>Update</strong> Updated the build links to point to new builds with improved performance (faster JS execution in workers due to type inference being turned on; fewer control loop wakeups due to more intelligent buffering decisions for ProcessedMediaStreams).
+</ul>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>rauschma</div>
+<div class='content'>Good stuff. Will this be supported in browsers other than Firefox?</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Awesome! :)  - looking forward to trying the builds.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Cool stuff :)</div>
+</div>
+<div class='comment'>
+<div class='author'>Paul Stone</div>
+<div class='content'>I don&#39;t see any mention of the &#39;C&#39; word in any of these new web media specs. Presumably audio and video data will be handled &#39;raw&#39; in the browser, but what happens when data is streamed to a peer or uploaded to a server? Can peers negotiote codecs?</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Since working on audio, don&#39;t forget text to speech and also C-sound style sound effects.</div>
+</div>
+
+</div>

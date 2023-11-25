@@ -1,0 +1,33 @@
+---
+layout: "post"
+title: "Web Specifications And The Frame Problem"
+date: "2014-01-12 21:14:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/01/web-specifications-and-frame-problem.html"
+---
+<p>I've noticed a pattern of mistakes when some smart people think about Web specifications. They think that a general rule in some spec does not apply to some specific situation that they're focused on, because the spec does not mention their specific situation. One example: someone suggested that we could make typed arrays returned by Web Audio APIs not be neuterable, arguing that this did not alter already-specified behavior because "nothing currently specifies how typed arrays work with Web Audio". Another example: someone argued that CSS does not specify how to determine the size of CSS content, padding and border boxes when the 'overflow' property is not 'visible'.
+<p>I hope it's clear that these are mistakes because when a Web spec states a general rule, that rule applies in all situations unless there is specific text contradicting it elsewhere (in which case, some spec should clearly indicate which rule prevails ... and I recognize that's not always true). Any other approach leads to madness; modularity and extensibility would be destroyed if, any time a feature is added to the Web platform, we had to explicitly reaffirm the behavior of all other features.
+<hr>
+<p>I think this is a form of the "frame problem" in AI, or "default logic". A kind of intertia requires previously specified rules to remain true until explicitly changed by another spec.
+<p>In typical programming languages, we tackle these issues by making every modifiable rule an explicit extension point (which could be implemented in lots of ways --- a virtual function call, a function value, an enum value, etc). Modifications explicitly utilize the extension point. This is sometimes done in specs, but rarely. One reason is that it makes your specs verbose and hard to read. Another reason is that it's hard to know the set of extension points ahead of time, so when you discover later you need to make modifications, you have to go back and add those extension points. That's getting easier now that more specs are using the "living standard" model, but it used to be hard.
+<p>There are programming languages that support this kind of dynamic extensibility. Languages with externally defined multimethods have a taste of it. CSS itself, ironically, orders rules by specificity and allows more-specific rules to override less-specific rules.
+<p>One problem I've been interested in for a long time is encoding the semantics of board games. Board game rules are often designed like Web specs, with some rules overriding others in special cases. Board games have extensibility problems, when expansions come out which lead to ambiguities in the context of the original game. (<em>Munchkin</em> makes sport of the problem.)
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I also see odd mixes of specialists in standards bodies. Two notable &quot;types&quot;:
+
+1. Compiler writers, who generally have enough PLT to get the need for orthogonal primitives that compose cleanly according to algebraic rules, but who love to underspecify (room for optimization).
+
+2. Testsuite writers and QA autodidacts, who excel at enumerating cases and wading into legacy swamps to catalog all the flora and fauna. These may not know how to generalize, even if they can glimpse some kind of taxonomy. It&#39;s easy to be fooled by surface traits and miss the underlying genetic info.
+
+HTML5 required type 2, I&#39;m not disrespecting them at all. Web standards, for interop among unrelated implementations, need more specificity from type 1. Both need an artful design sense for general rules with specific, principled, and few overrides. Not everyone has this sense.
+
+/be</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>The frame problem was one of the first things I learned about when I went to university (My BSc was in AI). Thank you for both bringing back memories and applying some of my &#39;old&#39; knowledge to the work I do right now, as well as one of my hobbies. Look forward to running into you at work at some point. :-)</div>
+</div>
+
+</div>

@@ -1,0 +1,112 @@
+---
+layout: "post"
+title: "mozRequestAnimationFrame"
+date: "2010-08-14 23:13:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/08/mozrequestanimationframe_14.html"
+---
+<div class="columns"><p>In Firefox 4 we've added support for two major standards for declarative animation --- SVG Animation (aka SMIL) and CSS Transitions. However, I also feel strongly that the Web needs better support for JS-based animations. No matter how rich we make declarative animations, sometimes you'll still need to write JS code to compute ("sample") the state of each animation frame. Furthermore there's a lot of JS animation code already on the Web, and it would be nice to improve its performance and smoothness without requiring authors to rewrite it into a declarative form.<br/><p>Obviously you can implement animations in JS today using setTimeout/setInterval to trigger animation samples and calling Date.now() to track animation progress. There are two big problems with that approach. The biggest problem is that there is no "right" timeout value to use. Ideally, the animation would be sampled exactly as often as the browser is able to repaint the screen, up to some maximum limit (e.g., the screen refresh rate). But the author has no idea what that frame rate is going to be, and of course it can even vary from moment to moment. Under some conditions (e.g. the animation is not visible), the animation should stop sampling altogether. A secondary problem is that when there are multiple animations running --- some in JS, and some declarative animations --- it's hard to keep them synchronized. For example you'd like a script to be able to start a CSS transition and a JS animation with the same duration and have agreement on the exact moment in time when the animations are deemed to have started. At each paint you'd also like to have them sampled using the same "current time".<br/><p>These problems have come up from time to time on mailing lists, for example on <a href="http://www.mail-archive.com/public-webapps@w3.org/msg05877.html">public-webapps</a>. A while ago I worked out <a href="/2009/07/progress.html">an API proposal</a> and Boris Zbarsky just implemented it; it's in Firefox 4 beta 4. Here's the API, it's really simple:<br/><ul><br/><li><tt>window.mozRequestAnimationFrame()</tt>: Signals that an animation is in progress, requests that the browser schedule a repaint of the window for the next animation frame, and requests that a <tt>MozBeforePaint</tt> event be fired before that repaint.<br/><li>The browser fires a <tt>MozBeforePaint</tt> event at the window before we repaint it. The <tt>timeStamp</tt> attribute of the event is the time, in milliseconds since the epoch, deemed to be the "current time" for all animations for this repaint.<br/><li>There is also a <tt>window.mozAnimationStartTime</tt> attribute, also in milliseconds since the epoch. When a script starts an animation, this attribute indicates when that animation should be deemed to have started.  This is different from Date.now() because we ensure that between any two repaints of the window, the value of window.mozAnimationStartTime is constant, so all animations started during the same frame get the same start time. CSS transitions and SMIL animations triggered during that interval also use that start time. (In beta 4 there's a bug that means we don't quite achieve that, but we'll fix it.)<br/></ul><br/><p>That's it! Here's <a href="http://people.mozilla.com/~roc/mozRequestAnimationFrame-demo.html">an example</a>; the relevant sample code:<br/><pre>var start = window.mozAnimationStartTime;<br/>function step(event) {<br/>var progress = event.timeStamp - start;<br/>d.style.left = Math.min(progress/10, 200) + "px";<br/>if (progress < 2000) {<br/>window.mozRequestAnimationFrame();<br/>} else {<br/>window.removeEventListener("MozBeforePaint", step, false);<br/>}<br/>}<br/>window.addEventListener("MozBeforePaint", step, false);<br/>window.mozRequestAnimationFrame();</pre><br/><p>It's not very different from the usual setTimeout/Date.now() implementation. We use window.mozAnimationStartTime and event.timeStamp instead of calling Date.now(). We call window.mozRequestAnimationFrame() instead of setTimeout(). Converting existing code should usually be easy. You could even abstract over the differences with a wrapper that calls setTimeout/Date.now if mozAnimationStartTime/mozRequestAnimationFrame are not available. Of course, we want this to become a standard so eventually such wrappers will not be necessary!<br/><p>Using this API has a few advantages, even in this simple case. The author doesn't have to guess a timeout value. If the browser is overloaded the animation will degrade gracefully instead of uselessly running the step script more times than necessary. If the page is in a hidden tab, we'll be able to throttle the frame rate down to a very low value (e.g. one frame per second), saving CPU load. (This feature has not landed yet though.)<br/><p>One important feature of this API is that mozRequestAnimationFrame is "one-shot". You have to call it again from your event handler if your animation is still running. An alternative would be to have a "beginAnimation"/"endAnimation" API, but that seems more complex and slightly more likely to leave animations running forever (wasting CPU time) in error situations.<br/><p>This API is compatible with browser implementations that offload some declarative animations to a dedicated "compositing thread" so they can be animated even while the main thread is blocked. (Safari does this, and we're building something like it too.) If the main thread is blocked on a single event for a long time (e.g. if a MozBeforePaint handler takes a very long time to run) it's obviously impossible for JS animations to stay in sync with animations offloaded to a compositing thread. But if the main thread stays responsive, so MozBeforePaint events can be dispatched and serviced between each compositing step performed by the compositing thread, I think we can keep JS animations in sync with the offloaded animations. We need to carefully choose the animation timestamps returned by mozAnimationStartTime and event.timeStamp and dispatch MozBeforePaint events "early enough".<br/><p><tt>mozRequestAnimationFrame</tt> is an experimental API. We do not guarantee to support it forever, and I wouldn't evangelize sites to depend on it. We've implemented it so that people can experiment with it and we can collect feedback. At the same time we'll propose it as a standard (minus the moz prefix, obviously), and author feedback on our implementation will help us make a better standard.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Corban Brook</div>
+<div class='content'>I have hacked this into processing-js and am noticing on some of my FPS benchmarks that sketches that run at ~85 FPS are pretty much locked at 40 FPS with mozRequestAnimationFrame(); Does the API impose and FPS limit?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kr@n</div>
+<div class='content'>What about mozAnimationFrameTime or something ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We thought about using something like CLOCK_MONOTONIC. However, milliseconds since the epoch is what JS uses everywhere else (e.g. the Date object, and the new WebTiming proposal). NTP should not normally jump around much, and if someone resets their system clock, too bad! That&#39;s an edge case that would already break all the Date.now animations out there. It&#39;s better to keep the platform API simple and consistent instead of worrying about such edge cases.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike</div>
+<div class='content'>Will new API helps browser to make lowprio or even suspend animations running in background tabs?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>NFL Snapback Hats</div>
+<div class='content'>When a script starts an animation, this attribute indicates when that animation should be deemed to have started. </div>
+</div>
+<div class='comment'>
+<div class='author'>Dave</div>
+<div class='content'>Hi Robert,<br>I&#39;m not so sure.  Does the browser double buffer the scene today?  Does it wait for vsync already, too?  In any case, how does the browser &quot;know&quot; I&#39;m done painting my scene and it is safe to flip?  My understanding was that most browsers just progressively draw as changes come to the DOM.  I was hopeful that this event was a new way for me to cue firefox that I wanted it to flip buffers, but apparently it&#39;s more of a timing accuracy convenience.<br>I agree with you that it&#39;s Firefox&#39;s job to wait on vsync, it&#39;s the prerogative of the Mozilla developers to do that.  So it follows that the fact that I see tearing tells me that there is no wait-on-vsync before the frame buffers flip on my system.<br>Still, I would argue that IF mozRequestAnimationFrame fired just after vsync, there would be a valuable benefit to my code - I would be given the maximum amount of time to make changes to the DOM and cause paints to occur before the *NEXT* vsync event.  Lining up my changes with vsync would give me the best shot at getting all my DOM changes done and laid out before the browser paints the next frame.  I believe this would lead to a more steady frame rate, especially on less complex scenes where I make only a few changes.<br>I hope that makes sense, and I hope you agree lining up vsync with MozBeforePaint could still be useful.<br>Could you answer these questions:<br>- Does Firefox wait on vsync before flipping the frame buffers?  Do I need to enable some experimental D3D mode or something to get that?  - If yes, is there some way to know that Firefox is waiting on vsync?  (Don&#39;t want to idle the processor in mozRequestAnimationFrame if its not going to give me the desired effect.)<br>- What do you think of the possibility of lining up vsync with MozBeforePaint?  (Because if you say &quot;not gonna happen&quot; I&#39;ll give up on mozRequestAnimationFrame.)<br>- Perhaps I am really asking for a new API/event??  MozAfterSwapBuffers?  (Oh, I think that would be more appropriate, keeps mozRequestAnimationFrame uncluttered and not tied to composition rate.)<br>Cheers,<br>Dave Woldrich<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>You can flush. However, that problem exists independent of this API.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tobu</div>
+<div class='content'>As a minor point, did you consider CLOCK_MONOTONIC for the timestamp? This is guaranteed to advance by one second every second, unlike posix time which may get adjustments if the ntp sees it has drifted far or if a leap second happens. It has an arbitrary start point.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Johan Sundström</div>
+<div class='content'>+1 mozAnimationFrameTime -- much better.<br>The original name gave me the impression that this was some ill-conceived API with a design bug of only allowing one animation to go on at a time, with mozAnimationStartTime (kept constant until animation ends) being its start time.<br>mozAnimationFrameTime gives more hints about it monotonically increasing over time and sugesting you store a copy yourself some place for as long as you need it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave</div>
+<div class='content'>Does this API wait for vsync as well and only fire the event at the next vsync?  I&#39;ve got visible tearing in my animation when the paint crosses the scanline.  I would love to see this API tackle that one for me as well.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Evan M</div>
+<div class='content'>On X11, how do you know when painting has finished?  Isn&#39;t there the potential that the X server is just buffering all the paint commands you&#39;re sending it and getting progressively further behind?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yes, I mentioned that in my post.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Exactly when and what browsers paint depends on the browser and platform, but the fundamental principle is that painting only looks at DOM states while scripts are not running.<br>Q1. I don&#39;t know, but it definitely depends on the platform and which acceleration options are being used. Please file bugs on platforms where it&#39;s not happening.<br>Q2. I see what you&#39;re saying and I think you&#39;re right. We should do that.<br>Q3. No, I don&#39;t think we need that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Marcus Tucker</div>
+<div class='content'>All sounds good to me, except the limit of 50fps - since the vast majority of monitors in use nowadays are LCD and 99% of those are locked at 60Hz refresh, then surely 60Hz should be the maximum FPS (instead of 50) so that there is at least the potential for 1:1 parity between rendered frame and displayed frame?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anthony Ricaud</div>
+<div class='content'>Also, in the example, you should remove the listener after the animation ran.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Louis: http://weblogs.mozillazine.org/roc/archives/2010/08/the_mozrequesta.html<br>It&#39;s not a bug, it&#39;s a feature. The number of times per second that your callback fires is a bad measure of performance.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>dirlinigritton</div>
+<div class='content'>good for house windows 10 or Apple pc Computer/laptop or computer system. <a href="http://android-emulator.com" rel="nofollow">visit this site</a> Bluestacks can be downloaded and applying by nice.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Corban: yes, but the limit should be about 50 FPS.<br>Anthony: good points...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>louisremi</div>
+<div class='content'>Hello,<br>I&#39;ve built a bookmarklet that allows to switch jquery animation logic from a setInterval to a MozRequestAnimationFrame based one.<br>It turns out that the latter always yields lower fps. Could you have a look at my code?<br>Check out my URL and contact me by email if you want further info.<br>Thank you in advance,<br>Louis-Rémi<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Erik Landvall</div>
+<div class='content'>I created a JavaScript that uses thees principles. Check it out on github: https://github.com/erik-landvall/animator</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I am pleased to say that requestAnimationFrame works great at 120fps on 120Hz monitors on most web browsers nowadays.  Chrome 18+, FireFox 24+, Opera 15+, and Safari 6+.  W3C standard on animation timing now recommends requestAnimationFrame to operate at a rate matching the refresh rate, whenever possible.
+
+Tests were done:
+http://www.blurbusters.com/blur-busters-120hz-web-browser-tests/
+
+This is beneficial for users of 120Hz computer monitors, as there are dramatic differences, and visible in motion tests such as TestUFO.com --  (In a scientific blind test, the vast majority of gamers preferred 120Hz over 60Hz -- google &quot;120Hz blind test&quot; for a bunch of links)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That&#39;s really an issue with browser painting, not particularly related to this API.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anthony Ricaud</div>
+<div class='content'>The name mozAnimationStartTime could be a bit confusing for authors. I understand that it&#39;s a discrete timer that I should store for later. But it feels like requesting it in my MozBeforePaint callback will give me the start time of my animation.<br>I don&#39;t have an alternative proposition, but that&#39;s a feeling I needed to share :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Lars Gunther</div>
+<div class='content'>I quite like Mozilla&#39;s proposal. I hope this will get momentum and that we soon will see some cool demos. It seem that nowadays having a demo is the most important way to inform the public about a technology.<br></div>
+</div>
+
+</div>

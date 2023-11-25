@@ -1,0 +1,20 @@
+---
+layout: "post"
+title: "Skylake Erratum Affecting rr"
+date: "2016-04-06 22:48:00 +0000"
+categories: "rr"
+permalink: "/2016/04/skylake-erratum-affecting-rr.html"
+---
+<p>I've encountered a Skylake bug that affects rr. Turns out it's (vaguely) <a href="http://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/desktop-6th-gen-core-family-spec-update.pdf">documented</a>:
+<blockquote>The performance monitoring events INST_RETIRED (Event C0H; any Umask value) 
+and BR_INST_RETIRED (Event C4H; any Umask value) count instructions retired and branches retired, respectively. However, due to this erratum, these events may 
+overcount in certain conditions when:
+<ul>
+<li>Executing VMASKMOV* instructions with at least one masked vector element
+<li>Executing REP MOVS or REP STOS with Fast Strings enabled (IA32_MISC_ENABLES MSR (1A0H), bit 0 set)
+<li>An MPX #BR exception occurred on BNDLDX/BNDSTX instructions and the 
+BR_INST_RETIRED (Event C4H; Umask is 00H or 04H) is used.
+</ul>
+</blockquote>
+<p>Fortunately, in my tests, this overcount only happens when you configure more than one hardware performance counter for the same task, and rr only needs one ("conditional branches retired"). Well, except for one rr test: the new <tt>record_replay</tt>. In that test, rr records rr replaying a simple program, and the recorder process and the replayer process each configure a counter to count conditional branches in that program. Because they're counting the same event, we can avoid using two hardware counters by having the recorder <em>emulate</em> the replayer's <tt>perf_event_open</tt> and related syscalls, returning results using its own underlying conditional branch counter. This is a bit annoying to have to do, and it adds overhead to rr-in-rr scenarios, but I think it's worth doing to keep the record_replay test working in Skylake. So this is <a href="https://github.com/mozilla/rr/commit/987b8f54306833b766383a03059738d0bc4a432c">on master</a>.
+<p>On the bright side, I'm glad to see that miscounted performance events warrant errata. That means people other than rr users care about event counts being correct, increasing the likelihood they'll continue to be usable for rr. Maybe one day instructions-retired will be usable enough we can dispense with the workarounds for not having it!

@@ -1,0 +1,75 @@
+---
+layout: "post"
+title: "display:inline and tables"
+date: "2005-06-16 13:39:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/06/displayinline-and-tables_16.html"
+---
+<div class="columns">We have run into a problem. Some important Web sites have HTML like this:<br/><br/><pre>&lt;div&gt;Hello &lt;table style="display:inline"&gt;...&lt;/table&gt; Kitty&lt;/div&gt;</pre><br/><br/>The intent seems to be to create an inline table. Unfortunately<br/><a href="http://www.w3.org/TR/CSS21/tables.html#anonymous-boxes">the CSS spec</a> currently says otherwise:<br/><ul><br/><li>"display:inline" turns the table element into a regular inline element, not a table at all.<br/><li>The presence of table rows and columns causes an anonymous table box to be created to wrap them. This happens to be in roughly the same place as the original table element.<br/><li>The spec is quite clear that this anonymous table box has "display:table". (It says "a box corresponding to a 'table' element will be generated between P and T", and the default style sheet is clearly "table { display: table }".)<br/><li>This is a block-level box inside an inline box, which causes complicated splitting to happen. But the important thing is that this table box will be on its own line, not inline.<br/></ul><br/><br/>Currently, in Gecko we have a bug which effectively causes the anonymous table to be treated as an inline-table, usually (but not always!). Because we don't really support inline-table, it probably doesn't work the way an inline-table should.<br/><br/>What should we do? There are a few possibilities:<br/><ol><br/><li>Fix our code so that the anonymous table is a block-level table, according to spec. Then get everyone who relies on our behaviour to fix their sites --- soon, before Firefox 1.1 is released. One big problem here is that because we don't support inline-table or inline-block, there may be no way to work around the removal of this feature/bug.<br/><li>Get the spec changed so that when the parent box is an inline box, the anonymous table is made an inline-table. Then change our code to support inline-table as best we can before release.<br/><li>Leave the spec as is, but implement inline-table so people can get the old behaviour.<br/></ol><br/><br/>I'm leaning towards the second option, but any feedback would be helpful.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>I like option 2.<br>Is this something what could be generalized in css?<br>When you have this for example:<br>&lt;div style=&quot;display:inline;&quot;&gt;<br>&lt;div style=&quot;display:table-cell;&quot;&gt;&lt;/div&gt;<br>&lt;/div&gt;<br>you also get display:inline-table; for the generated anonymous table?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Martijn: my proposal #2 would do that.<br>ant: that requires a lot of web sites to be changed. I also think the proposed change is both simple and more intuitive for web authors and is therefore a good idea even if web authors weren&#39;t already depending on it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anko</div>
+<div class='content'>Forgive me if i&#39;ve misunderstood, but am i right to understand that you&#39;re suggesting a change to the spec just because one browser is broken?<br>What is the state of other browsers supporting this feature?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>fantasai</div>
+<div class='content'>If I&#39;m not misunderstanding things here, option 2 has been approved by the CSSWG at the last telecon.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bernd</div>
+<div class='content'>Option 1 would require a split between standards and quirks mode. This thing is pretty common, so we would need to have a quirk for it. I would say the spec is contradictory to what one would expect, as if I specify display:inline on something I do it just to avoid a new block context and the creation of a new line. At least it did never come to my mind that we should move the table onto a new line.<br>Option 1 without option 3 is not an option.<br>Fixing bug 18217 seems like a good idea anyway, but moving people to untested code seems like a bad idea to me, when the tree is already frozen. In the last time I worked on the fallout from the scrollframe landing, so I know what I am talking about.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>delaPipol</div>
+<div class='content'>The overflow:auto fails in table element, too (and others)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel Glazman</div>
+<div class='content'>roc: yes, yes, no worries, I was more replying to hyatt&#39;s suggestion.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurens Holst</div>
+<div class='content'>We, too, are depending on the current behavior to solve a problem which is caused by the lack of ability to use inline-block, and solution 1 would cause breakage of that, with no way to fix.<br>With regard to solution 3, that would mean we have to change our current code:<br>table {<br>display:inline;<br>}<br>into:<br>table {<br>display: inline;<br>display: table-inline;<br>}<br>Where the display inline is there in order to make it still work in FF 1.0. So I guess that�s feasible.<br>So I am personally in favour of solution no. 2, because that makes the most sense and would cause the least trouble with existing sites, but I wouldn�t mind solution 3 either, if the standards people want that.<br>~Grauw<br></div>
+</div>
+<div class='comment'>
+<div class='author'>minghong</div>
+<div class='content'>Ideally the third one, if there is contributor who is able to make such changes...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>hyatt</div>
+<div class='content'>Safari turns display:inline into inline-table.  We had a bunch of bugs on this from sites that coded to WinIE.  I highly recommend using inline-table as the solution to this problem.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>hyatt: I assume you mean you make the anonymous table box an inline-table, rather than make the actual  element an inline-table, which would be rather egregious...<br>bernd: I agree<br>Anko: you misunderstood. What IE is doing is broken. And because of that, current usage and implementations are inconsistent with the spec. I&#39;m suggesting we change the spec so that what every major browser currently does, and what Web authors expect, is correct.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel Glazman</div>
+<div class='content'>hyatt, roc: I think turning automagically &#39;inline&#39; into &#39;inline-table&#39; is not a good solution, impacting people who *need* to flatten tables that way for accessibility reasons. Please remember that&#39;s the kind of things I do for small screen rendering in Minimo.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Carl Parrish</div>
+<div class='content'>I *strongly* support solution no 3.<br>btw something seems to be wrong with the preview feature - when I selected it the Comments box didn&#39;t populate.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ant</div>
+<div class='content'>I&#39;d prefer just sticking to the spec and implelenting inline-*.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Andrew Smith</div>
+<div class='content'>As others have stated, I think updating the spec to meet the behaviour of the current implementations is probably the best option. It wouldn&#39;t be the first time it was done; CSS2.1 changes the default value for border-collapse from collapse to separate based on the default used by &quot;several popular browsers&quot;.<br>http://www.w3.org/TR/2005/WD-CSS21-20050613/changes.html#q19<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Daniel: I am not proposing to turn &#39;inline&#39; into &#39;inline-table&#39;. I am proposing that when an anonymous table box is generated (e.g., when we encounter a naked element with &#39;display:table-cell&#39; or &#39;display:table-row&#39;), it be given &quot;display:inline-table&quot; if its parent box is an inline box, &quot;display:table&quot; otherwise. So your table-flattening stylesheet would not be affected. This is a *very* small change to the spec.<br>I&#39;m not sure exactly what hyatt is proposing, or what Safari does.<br></div>
+</div>
+
+</div>

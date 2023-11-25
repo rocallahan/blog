@@ -1,0 +1,88 @@
+---
+layout: "post"
+title: "What Is The Minimal Set Of Optimizations Needed For Zero-Cost Abstraction?"
+date: "2020-08-07 11:19:00 +0000"
+permalink: "/2020/08/what-is-minimal-set-of-optimizations.html"
+---
+<p>A compelling feature of Rust and C++ is "zero-cost abstractions". You can write "high level" code, e.g. using iterators, that compiles down to the same machine code as the low-level code that you'd write by hand. You can add layers of abstraction, e.g. wrapping a primitive value in a struct and providing a specialized API for it, without adding run-time overhead. However, "zero-cost" only applies <em>if you enable an adequate set of compiler optimizations</em>. Unfortunately, enabling those optimizations slows down compilation and, with current compilers, trashes a lot of debug information, making it very difficult to debug with those binaries. Since the Rust standard library (and increasingly the C++ standard library) makes heavy use of "zero-cost" abstractions, using non-optimized builds for the sake of better debugging and build times creates binaries that are many times slower than release builds, often untenably slow. So the question is: <strong>how can we get fast builds and quality debuginfo while keeping zero-cost abstractions?</strong>
+<p>An obvious approach is limit the set of enabled compiler optimizations to the minimum necessary to achieve zero-cost abstraction, and hope that that produces acceptable build speed and debuginfo quality. But what is that set? If it's "all optimizations", then this is no help. I guess it depends on the exact set of "zero-cost abstraction" patterns we want to support. Here are some optimizations that I think need to be on the list:
+<ul>
+  <li><em>Inlining</em>: Most or all abstractions depend on inlining functions to achieve zero-cost, because they encapsulate code into functions that you'd otherwise write yourself. So, we must have aggressive inlining.
+  <li><em>Copy propagation</em>: After inlining functions, there will be chains of assignments through parameters and results that will need to be shortened using copy propagation.
+  <li><em>Limited dead store elimination and temporary elimination</em>: After copy propagation, a lot of temporary values aren't needed. We shouldn't store their values or allocate space for them.
+  <li><em>Scalar replacement</em>: Many abstractions package up variables into structs and encapsulate operations on the struct into functions. It seems likely that the optimizer needs to be able to undo that, taking structs apart and treating primitive components like any other scalar variable. This would typically be needed to make the above optimizations work on those components.
+</ul>
+<p>Here are some optimizations that I think <em>don't</em> need to be on the list:
+<ul>
+  <li><em>Register allocation</em>: Unoptimized debug builds typically do almost no register allocation: local variables live in stack slots. Thus, if unnecessary temporaries are eliminated (see above) storing the surviving variables on the stack is not penalizing abstraction.
+  <li><em>Vectorization</em>: Unoptimized debug builds typically don't do any vectorization, so again we can just keep on not doing it without penalizing abstraction.
+  <li><em>Tail calls</em>: I can't think of a Rust or C++ abstraction that relies on TCO to be zero-cost.
+</ul>
+<p>Here's an optimization I'm not sure about:
+<ul>
+  <li><em>Common subexpression elimination</em>: Are there common abstractions that we think should be zero-cost in Rust and C++ that require CSE? I can't think of any off the top of my head.
+</ul>
+<p>It would be very interesting to dive into this further and actually configure the Rust compiler with a promising set of optimizations and evaluate the results.
+<p>A somewhat orthogonal approach to the whole problem is to simply improve the debuginfo quality and build speed of optimized builds. The former is mostly a lot of engineering and architectural work to preserve debuginfo through various optimization passes. There are issues where some optimizations (e.g. register allocation) cause variable values to be unavailable at program points where they're technically still in scope &mdash; but good record-and-replay debuggers like <a href="https://rr-project.org">rr</a> or better still omniscient debuggers like <a href="https://pernos.co">Pernosco</a> can get around that. Build speed is really the harder problem: doing lots of optimizations, especially with all the bookkeeping to preserve debuginfo, is inherently expensive.
+<p>I wonder what a compiler backend would look like if you designed from scratch with the goal of good debuginfo and the fastest possible builds while enabling zero-cost abstractions.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>bryan e</div>
+<div class='content'>I&#39;m having a difficult time reading this blog because you force custom fonts which are too small.  Please allow readers to select their own.</div>
+</div>
+<div class='comment'>
+<div class='author'>jlebar</div>
+<div class='content'>&gt; Since the Rust standard library (and increasingly the C++ standard library) makes heavy use of &quot;zero-cost&quot; abstractions, using non-optimized builds for the sake of better debugging and build times creates binaries that are many times slower than release builds, often untenably slow. So the question is: how can we get fast builds and quality debuginfo while keeping zero-cost abstractions?
+
+Huh.  If the problem you&#39;re trying to solve is that debuggable builds are slow to execute, then the more obvious question to me would be, what are the set of optimizations that are (a) fast to run during compilation, (b) preserve debuginfo, or could easily be fixed to preserve debuginfo, and (c) get you &quot;enough of the way&quot; towards fast excutables.
+
+Like, I don&#39;t get how zero-cost abstractions are the key here?  Even in a language which didn&#39;t have zero-cost abstractions, you&#39;d be asking the same question, no?
+
+To me, the fact that an abstraction is or isn&#39;t zero-cost is an assertion about -O2 builds.  I&#39;m not sure it makes sense to promise anything about the performance of non-O2 builds.
+
+FWIW I think/hope if folks engaged on the LLVM list about this you&#39;d get some traction with Google folks who have been thinking about similar things.  Off the top of my head I recall that e.g. simplify-cfg is a big optimization that we ought to be able to enable in debug builds.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Then of course, the meat of this post is, given we can&#39;t remove the abstractions already built and we wouldn&#39;t want to give up zero-cost abstractions even if we could, how can we start keeping our promise for &quot;fast debuggable&quot; builds?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I agree with those points but I&#39;m after something a little stronger.
+
+The attraction of &quot;zero-cost&quot; abstractions (over &quot;low-cost&quot; abstractions) is that developers can introduce these abstractions wherever they make conceptual sense, without worrying about performance impact.
+
+I&#39;m pointing out that those abstractions we market as &quot;zero-cost&quot; actually aren&#39;t, for the &quot;fast debuggable&quot; build configurations we use today. For developers who care about those builds, it&#39;s a promise we fail to keep.
+
+I&#39;m also pointing out that in Rust, and increasingly C++, standard (and nonstandard) libraries have been designed *assuming that promise is kept* ... which is a problem when it isn&#39;t.
+
+In a language without zero-cost abstractions developers would (hopefully!) be more judicious about piling up abstractions and this would be less of a problem.</div>
+</div>
+<div class='comment'>
+<div class='author'>jlebar</div>
+<div class='content'>OK, I think I understand what you&#39;re saying much better, thanks.  If I can rephrase:
+
+It&#39;s not that you want zero-cost abstractions to be exactly zero-cost in debug builds, just that
+ 1. you observe that zero-cost abstractions have a particularly large performance overhead in -O0 builds, and
+ 2. you speculate that significantly reducing this overhead wouldn&#39;t require the &quot;full power&quot; of -O2, just a subset of passes.
+
+Is that a fair summary?  FWIW I think both of those claims are probably correct.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s true that we can incrementally improve the quality of &quot;fast debuggable&quot; builds without making them preserve zero-costness, and this would be useful, but fundamentally if they don&#39;t preserve zero-costness then we&#39;re not keeping our promise to developers. If word gets out that we can&#39;t keep that promise, we discourage use of those abstractions in libraries etc.
+
+Sorry that I&#39;m rambling on here, I&#39;m still thinking these things through.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The problem is that if your &quot;fast debuggable&quot; optimization set does not preserve zero-cost abstractions, then the performance delta between your &quot;fast debuggable&quot; builds and proper release builds inevitable diverges as you build higher towers of abstraction.
+
+If your language doesn&#39;t have zero-cost abstractions, or you just don&#39;t use them, this problem does not arise.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>If you think zero-cost abstractions are a great feature (I do) then you want people to be able to use them freely without tanking the performance of &quot;fast debuggable&quot; builds.</div>
+</div>
+</div>
+
+</div>

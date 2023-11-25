@@ -1,0 +1,58 @@
+---
+layout: "post"
+title: "Assorted Thoughts"
+date: "2006-05-04 20:47:00 +0000"
+permalink: "/2006/05/assorted-thoughts_04.html"
+---
+<div class="columns">As a vehement opponent of monopolies, I am glad to see that <a href="http://www.nzherald.co.nz/section/story.cfm?c_id=5&objectid=10380213">the New Zealand government is taking a hard line</a> against our local telecommunications monopoly. Yay!<br/><br/>The news from Iran gets increasingly more depressing. I'm amazed nuclear weapon technology has been contained as well as it has for the last sixty years ... just think, nuclear weapons are nearly as old as television and older than general-purpose computers. But the nuclearization of India, Pakistan, North Korean, and now --- seemingly inevitably --- Iran may indicate that we're reaching a tipping point. I just can't see a good future for a world of loose nukes. New Zealand may be one of the best places to be, but that's not saying much. Christians, start your prayers.<br/><br/>I've been fixing random Mozilla bugs lately, mostly regressions plus a few security/stability issues. I've also been spending a lot of time reviewing Darin's event/thread rewrite. It's great stuff which will simplify our code, fix a lot of bugs, and seems to improve performance.<br/><br/>Over the last few months I've also reviewed a lot of SVG fixes --- the <a href="/2006/02/anatomy_of_bloat.html">SVG issues</a> that I highlighted in February are largely fixed! A lot of the remaining performance issues are lower-level problems with cairo and platform-specific rendering code.<br/><br/>Now that SVG is getting cleaned up, I'm hopeful that Brian Birtles and the rest of the SVG crew will be able to look at updating and landing Brian's SMIL animation patch without much more delay.<br/><br/>I'm trying to finally land a patch which will unify all documents into a single view manager hierarchy. This will let you do things like have the browser stack translucent XUL elements over content windows. Every time I try to land it, we encounter performance problems, and my attempt tonight did too, so I backed it out. I did gather some data so hopefully I'll be able to figure out what the problem is and get it right.<br/><br/>I've started working on pulling plugin windows up to the top-level window. We should be able to do it in a way that also lets us compute visibility information for plugin windows, so you can have a DIV with a solid background actually render on top of the plugin window --- by clipping a hole in the window where the DIV needds to appear. It's not hard in theory but as usual the devil is in the details, getting reasonable performance and dealing with fallout from touching the fragile, platform-specific plugin handling code.<br/><br/>I've installed SuSE Linux Enterprise Desktop 10 (hope I got that right!) on my desktop and laptop. It's very slick. Xgl and compiz look fantastic on my laptop, and work flawlessly with my ATI graphics hardware, but I've had some problems with my desktop's NVidia setup ... this is ironic because NVidia has usually been considered reliable and ATI the problem child of Linux graphics drivers. I have to say that due to some combination of Xgl, compiz, the fonts, the default theme, and my laptop's high-density screen, my laptop now has the sexiest-looking graphical environment that I've ever used (and I'm writing this on an iMac at home). I wonder what more Windows Vista will offer that required Microsoft to dictate massive changes to their graphics stack and onerous hardware requirements, not to mention spend so much time developing the thing.<br/><br/>One thing that I really like about <a href="http://en.wikipedia.org/wiki/Compiz">compiz</a> that you don't see in the demos is that it grays out windows that aren't responding to events (a lovely effect, it makes the window a little darker and turns it black-and-white). This is a real usability win; you know that the application is not going to be responsive, so you don't keep clicking on it in hope, and there's no uncertainty about "maybe it didn't work because I clicked in the wrong place". Even better, you can see when it becomes usable again without having to periodically click on it to check.<br/><br/>One effect is still missing ... applications that crash just disappear abruptly. Abrupt shutdown should make the application's window explode in a realistic particle simulation.<br/><br/>Another Mozilla thing I'm planning to work on soon is getting the new textframe code into the tree so we can get  people working on improving it in multiple directions. Before I do that I want to simplify the way textframes and inline reflow handle some corner cases, which I'll talk about in another blog post.<br/><br/><strong>Update:</strong> By popular demand, I've made a <a href="/images/SLED-10-desktop.png/screenshot.html" onclick="window.open('http://weblogs.mozillazine.org/roc/archives/images/SLED-10-desktop.png/screenshot.html','popup','width=1400,height=1050,scrollbars=no,resizable=no,toolbar=no,directories=no,location=no,menubar=no,status=no,left=0,top=0'); return false">screenshot</a>. Because a great deal of the sexiness is the animation, you really need a video, something I can't be bothered doing (and which would probably get me booted off weblogs.mozillazine.org). All you can see here is the obligatory cube in action, plus window drop shadows and translucent window borders. Because the cube sides are lit, the actual desktop is considerably brighter than you see here.<br/><br/>Here's <a href="/images/SLED-10-desktop-2.png/screenshot.html" onclick="window.open('http://weblogs.mozillazine.org/roc/archives/images/SLED-10-desktop-2.png/screenshot.html','popup','width=1400,height=1050,scrollbars=no,resizable=no,toolbar=no,directories=no,location=no,menubar=no,status=no,left=0,top=0'); return false">another</a> showing the desktop in normal mode. Here I've stopped the OpenOffice process to demonstrate the grayed-out effect.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Jonathan Watt</div>
+<div class='content'>Some screenshots would be nice. :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sebastian Redl</div>
+<div class='content'>Actually, there&#39;s a compiz demo video that does show the graying-out effect.<br>The exploding windows would be just too cool. But they might scare people :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jonathan Watt</div>
+<div class='content'>&gt; For various reasons that doesn&#39;t actually work and is merely a source of performance problems and bugs.<br>It would be really nice to have a separate blog post disseminating the leasons learned (explaining in much more detail why this approach doesn&#39;t work).<br>Thanks for the screenshots BTW. :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robin</div>
+<div class='content'>&quot;One effect is still missing ... applications that crash just disappear abruptly. Abrupt shutdown should make the application&#39;s window explode in a realistic particle simulation.&quot;<br>Great idea!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Hearn</div>
+<div class='content'>Event/thread rewrite?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Darin would be the best person to do that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ok</div>
+<div class='content'>Ok, but where are the screenshots or video of your sex-se desktop?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>https://bugzilla.mozilla.org/show_bug.cgi?id=326273<br>We currently have an XPCOM abstraction for threads, and an XPCOM abstraction for event queues, which contain PLEvents that aren&#39;t actually XPCOM objects. There&#39;s actually a stack of event queues for each thread, this was introduced to allow you to temporarily suspend normal event processing but still process some events while you do some synchronous, long-running operation. For various reasons that doesn&#39;t actually work and is merely a source of performance problems and bugs. Darin&#39;s work eliminates the event queue stack, folds event processing directly into the thread objects, simplifies the APIs a lot, adds helpers for the common operations, and makes events true ref-counted XPCOM objects which actually makes them much easier to use.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>skierpage</div>
+<div class='content'>Re: bombs, don&#39;t forget Israel has a substantial nuclear arsenal and never signed the Nuclear Non-proliferation treaty (http://en.wikipedia.org/wiki/Nuclear_non-proliferation_treaty#India.2C_Pakistan.2C_Israel).<br>The blatant hypocrisy of the USA and UN Security Council in deciding whom to sanction and whom to ignore provides convenient moral cover for any country developing nuclear arms.  Every country with nuclear weapons (http://en.wikipedia.org/wiki/List_of_countries_with_nuclear_weapons) needs to show that it&#39;s serious about reducing its arsenal, and open up to full inspection. South Africa dismantled its nukes, it can be done!<br>Thanks for all the Mozilla patch review work!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>skierpage: Indeed, it would be better if Israel didn&#39;t have nukes, but it&#39;s less of a worry given that it&#39;s a democracy, and has no record of proliferating nukes itself, or threatening to do so, or threatening to wipe another nation off the map.<br>At this point complete disarmament would be quite dangerous even if it could be achieved, because we don&#39;t want one rogue state to take nuclear supremacy (and I include the US!). And I don&#39;t know that it matters much if the USA, Russia and China have 100 nukes or 10000. There is hypocrisy, but the &quot;moral cover&quot; is weak, a story mostly trotted out by villains.<br>About the desktop ... there are plenty of screenshots around the net, but you really need videos to experience the coolness, and I don&#39;t have the time to learn how to make them. Sorry!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>He&#39;s not actually changing the guts of thread implementation; we use native threads via NSPR and that&#39;s not going to change.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Hearn</div>
+<div class='content'>Thanks, interesting stuff.<br></div>
+</div>
+
+</div>

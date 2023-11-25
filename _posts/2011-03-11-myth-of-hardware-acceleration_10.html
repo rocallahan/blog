@@ -1,0 +1,163 @@
+---
+layout: "post"
+title: "The Myth Of &quot;Full Hardware Acceleration&quot;"
+date: "2011-03-10 21:36:00 +0000"
+categories: "Mozilla"
+permalink: "/2011/03/myth-of-hardware-acceleration_10.html"
+---
+<div class="columns"><p>A browser that <a href="http://blogs.msdn.com/b/ie/archive/2011/03/08/comparing-hardware-accelerated-svg-across-browsers-with-santa-s-workshop.aspx">"fully hardware-accelerates the entire Web platform"</a> shouldn't have any trouble with a simple HTML scrolling testcase, should it? Try <a href="http://people.mozilla.org/~roc/scrolling-boxes.html">this testcase</a> in the browsers on your machine. Running fullscreen on my laptop, IE9 RC1 takes <b>more than ten times as long</b> as Firefox 4. That doesn't seem very accelerated to me. View the source to see that the testcase does nothing tricky.<br/><p>When we designed our <a href="/2010/07/retained_layers.html">"layers" framework</a> for GPU acceleration in Firefox, one of the goals was to accelerate scrolling, especially on pages where some parts of the page move as you scroll and other parts don't --- like that testcase. We have a component called FrameLayerBuilder that separates the moving parts from the stationary parts and assigns them to separate "layers". (The vicissitudes of CSS make this surprisingly difficult, but that's a topic for another blog post...) Each layer gets a VRAM buffer into which we draw the layer's contents; when we scroll, we only have to draw the content that has scrolled into view, and then we use the GPU to composite the layers together at their new positions.<br/><p>I can't say for sure what IE9 is doing in this case, but experimentation suggests that it simply repaints the entire page from scratch every time it scrolls the above testcase. This does not make best use of the hardware.<br/><p>I'm not here to bash IE9, just its marketing. Microsoft's message that IE9 is the apex of what a browser can do with the GPU is nonsense; in the above example, Firefox's rendering architecture makes better use of the GPU, by design. Microsoft's claim to hardware-accelerate "the entire Web platform" was always ridiculous because "the entire Web platform" contains features like HTML parsing, Javascript execution, and DOM manipulation which are simply not suitable to run on today's GPUs, and IE9 does not do so. (I'm assuming that Microsoft's "hardware acceleration" means "uses the GPU" ... if it actually means "uses hardware", that isn't saying much :-).) Microsoft's disdainful statement that "[other browsers are] choosing to accelerate only pieces of the Web platform" is hypocritical, because that's exactly what they do themselves.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anup</div>
+<div class='content'>I guess screen resolution also makes a diff?<br>2048 x 1152:<br>IE9 latest: 104,855ms<br>Chrome Canary: 18,542ms<br>Chrome 10: 17,989ms<br>Firefox 4 RC: 11,825ms<br>1280 x 1024<br>Firefox 4 RC: 6,051ms<br>(Didn&#39;t test the rest in that resolution)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nicholas</div>
+<div class='content'>Any comment as to why FireFox4 can&#39;t keep up with IE9 on these sort of tests:<br>http://blogs.msdn.com/b/ie/archive/2011/03/08/comparing-hardware-accelerated-svg-across-browsers-with-santa-s-workshop.aspx<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Allan</div>
+<div class='content'>My system shows quite different results.<br>CPU: i7 920 (2.67 GHz)<br>Graphics: Radeon HD 3600<br>Firefox 4 RC1: 12s<br>[Do not know how to switch between D3D9/10 and off.]<br>Firefox 3.6.14: 1414s<br>IE 9: 5s [running in a Win7 VM]<br>IE 8: Error<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RyanVM</div>
+<div class='content'>How exactly does taking a few minutes to make a counter argument mean that Mozilla isn&#39;t focused on making Firefox better? That&#39;s making a pretty big logical leap.<br>In fact, roc&#39;s next post makes it pretty clear that Mozilla is working quite hard on analyzing their performance in the benchmarks specifically to do better. However, as they&#39;ve found, some of the benchmarks aren&#39;t what they claim to be and I think Mozilla has every right to say that!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael Burgstahler</div>
+<div class='content'>Don&#39;t want to spoil the party but Safari 5.0.3 consistently scores around 4300ms.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Since you asked...<br>On my laptop, on battery since I don&#39;t have my charger at home:<br>Firefox 4 RC1 with D3D9: 7s<br>Firefox 4 RC1 with no GPU acceleration: 8s (the layers stuff I mentioned works pretty well even if we just use the CPU)<br>Firefox 4 RC1 with D3D10: 9s<br>Chrome 11.0.696.0: 25s<br>IE9: 190s<br>No idea why the results for Firefox and Chrome are so different to yours. However, that was not the point of this post.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>op:sorry to have to correct you but did you try hard to test ie9!i ll give you a hint!activate compatibility in ie9 and retest,since ie9 hasnt changed since it was lunched it is no cheat,according to my informal test minefield did your test in 5000(+- 700)ie9 did it in 1500((+-700)so as you can see ie 9 wasnt an issue,true if you disable compatibility thing look different but it is hardly slow it is just that some stuff used in that test is either not recognised by ie9 or is very old software.wouldnt have posted but my friend told me it needed to be posted so you would need these info for accurate comparision</div>
+</div>
+<div class='comment'>
+<div class='author'>fr</div>
+<div class='content'>Note that your own marketing also uses the term &quot;full hardware acceleration&quot;...<br>http://www.mozilla.com/en-US/firefox/RC/features/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jata</div>
+<div class='content'>@RyanVM<br>&gt; So if that roc&#39;s demo had some fancy design you would believe that IE9 is worse?<br>I&#39;m not talking about a fancy design, I&#39;m talking about games like http://ie.microsoft.com/testdrive/Performance/Helicopter/Default.xhtml or http://www.pirateslovedaisies.com/ and any other demo that goes further than just scrolling thousands of circles<br>&gt; Do you know that IE9 cheats on SunSpider benchmark?<br>Oh please, don&#39;t go that way. What IE9 does is a very common practice on any compiler. Anybody with little knowledge about compilers/jitters design know that this is a standard optimization.<br>@Adrian:<br>&gt; Note that your own marketing also uses the term &quot;full hardware acceleration&quot;...http://www.mozilla.com/en-US/firefox/RC/features/<br>This is funny, I guess it will be removed soon after this post<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tonis</div>
+<div class='content'>All this would be great if this Layers framework really worked. Unfortunately it doesn&#39;t and instead breaks functionality from Firefox3 https://bugzilla.mozilla.org/show_bug.cgi?id=637597<br></div>
+</div>
+<div class='comment'>
+<div class='author'>FDL</div>
+<div class='content'>Thinkpad T23, mixture of Debian Unstable and Ubuntu Natty, 1.2 GHz PIII-m, 768 MB, no GPU worth speaking of (SuperSavage).<br>Chromium 11.0.696.0: 9155 ms<br>Minefield 4.0b13pre: 7133 ms<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jorde Vorstenbosch</div>
+<div class='content'>Chrome:<br>Test #1: 3123ms<br>Test #2: 3173ms<br>Test #3: 3242ms<br>Firefox:<br>Test #1: 10788ms<br>Test #2: 5532ms<br>Test #3: 5579ms<br>Safari:<br>Test #1: 4696ms<br>Test #2: 4337ms<br>Test #3: 5031ms<br>Latest Versions<br>This is on a macbook 5.1 running OS X 10.6.6<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&gt;I mean guys really, mozilla performs quite bad compared to IE9 in many demos that look much more real than a bunch of circles in a page.<br>So if that roc&#39;s demo had some fancy design you would believe that IE9 is worse?<br>And debunking myths of competitiors is an important part of marketing. Do you know that IE9 cheats on SunSpider benchmark?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>FM</div>
+<div class='content'>Well, IE9 RC still seems to ourperform FF4 RC in the benchmarks: http://bit.ly/g8SbSc<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Pascal Chevrel</div>
+<div class='content'>ok, the perf difference is caused by border-radius and box shadow that do not have prefixes for 3.6.<br>With prefixed border-radius and box-shadow:<br>3.6: 16108ms<br>4.0: 3795ms<br>Without border-radius and box-shadow:<br>3.6: 2435ms<br>4.0: 1494ms<br>You should update the css with the various vendor prefixes so as that all browsers are on an equal testing ground :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robbie</div>
+<div class='content'>&quot;Try this testcase in the browsers on your machine&quot;<br>A testcase in a transitional mode doctype.<br>Are you serious?<br>To compare with IE9 at least force a standards doctype either trough either HTML or strict.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dhruv</div>
+<div class='content'>I don&#39;t know what these test cases do, but (consistently):<br>1. Firefox 3.6.15: 2200ms (approx)<br>2. Chrome 8.0.552.237 (that&#39;s Chrome&#39;s version number, not my IP address): 4500ms (approx)<br>Lenovo X200, Windows XP, running on AC power.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Pascal Chevrel</div>
+<div class='content'>On my Linux laptop, Firefox 3.6 is much faster at this test than the latest nightly:<br>3.6: 1995mn<br>4.0b13pre: 3838ms<br>Should I file a bug?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>pd: Yes.<br>Jaspio: I was testing the 32bit version.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Card/Driver: GTX295/260.19.06-0ubuntu1<br>Browser: Chrome 9.0.597.107 (Official Build 75357)<br>Resolution: 1920x1080<br>Time: 2153ms<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RichB</div>
+<div class='content'>Lenovo T410 with GMA HD and up to date drivers/WinXP.<br>Firefox 4 B12 with h/w accel enabled: 14348ms<br>Chrome 11.0.696.0 DEV: 8698ms<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alex Bishop</div>
+<div class='content'>From visual inspection only, Safari 5.0.4 seems to support border-radius but not box-shadow, so its results are almost as meaningless as Firefox 3.6.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Adrian</div>
+<div class='content'>mandriva 2010.2 x86_64<br>kernel 2.6.36.2-desktop-2mnb<br>Intel(R) Core(TM)2 Duo CPU E8200  @ 2.66GHz<br>4 gb ram, nvidia g220<br>Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.15) Gecko/20110307 Mandriva Linux/1.9.2.15-0.1mdv2010.2 (2010.2) Firefox/3.6.15<br>--&gt;  result : 2690ms<br>Chromium 11.0.657.0 (73275) Mandriva 2010.2<br>--&gt;  result : 4421ms<br>HTH<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yes. I commented in that blog, and I&#39;m writing a new post for my own blog explaining some of these things.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jlp</div>
+<div class='content'>Not too realistic a test for average website performance; I don&#39;t think it&#39;s common for websites to have 10 thousands elements on a single page.<br>But, it seems a reasonable test of a browser&#39;s rendering architecture efficiency.<br>My system:<br>Intel Core 2 Duo w/integrated gfx (NVIDIA 9300)<br>Ubuntu 10.10 64bit w/NVIDIA 64-bit linux driver<br>Yes, FF4 hw acceleration does work with this config; WebGL works as well.<br>And because it matters, the size of the viewports I tested were roughly 1152x720.<br>(rounded averages from several runs)<br>FF 4.0rc : 2s<br>FF 3.6.15 : 1.3s<br>Chrome 11.0.686.3 : 3.4s<br>Opera 11.01 : 25.8s<br>Look at FF3.6! Unfortunately, the FF3.6 test is skewed because the border-radius and box-shadow CSS properties didn&#39;t have the -moz prefix and so were ignored; web pages can render a lot faster when not applying rounded borders and shadows to over a hundred on-screen elements.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anthony Ricaud</div>
+<div class='content'>Robert, can you add -webkit and -moz versions of box-shadow and border-radius? That way, people can compare Firefox 3.6, Safari 5, etc.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jaspio</div>
+<div class='content'>This issue was documented and confirmed by Microsoft:<br>The 64bit version has not been speed optimized yet. Most of the resources have been committed to the more popular 32bit version.<br>source:<br>http://www.zdnet.com/blog/networking/chrome-10-vs-internet-explorer-9-reconsidered/792<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Richard Ayotte</div>
+<div class='content'>Specs: AMD Phenom 1090T, nVidia GeForce GTX 460 (using the nVidia drive ver 270.29), 8G RAM.<br>Firefox 4.0b13pre (2011-03-10) on Ubuntu 10.10.<br>---&gt; 87,974ms, 93,106ms and the whole browser is very slow.<br>Chrome 11.0.686.3 (76659) Ubuntu 10.10<br>---&gt; 1978ms, 1883ms, 1911ms.<br>What&#39;s going on here? Should I be heading to bugzilla?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Devon Govett</div>
+<div class='content'>OK, so Firefox 4 excels at some things and IE9 at others - neither has a perfect rendering engine.  IE9 gets the same or better score on your own HW stress test. http://www.conceivablytech.com/wp-content/uploads/2011/03/stress.jpg  Scrolling is just one area where IE9 is lacking - thanks for pointing that out.  Can&#39;t the browsers just live in peace and harmony?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>Will firefox ever support more acceleration than just WebGL on Windows XP?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Ratcliffe</div>
+<div class='content'>Chrome 9.?.?.?: 18898ms<br>Chrome 10.0.648.127: 16715ms<br>Chrome 11.0.696.0: 17360<br>Minefield 4.0b12 (2011-02-22) with D3D10: 6387ms<br>Minefield 4.0b13 (2011-03-03) with D3D10: 6361ms<br>I have not installed IE9 because of having to rebuild my PC due to a previous installation so no stats there :o/<br>This really shows how well the layers stuff works, amazing!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>simplynonna</div>
+<div class='content'>I haven&#39;t had a chance to fiddle/play around with FF4 too much yet and I hate to keep making suggestions,but why not have the URL place (real techie talk;)be a mouseover instead of taking up room??Or maybe someway to rearrange location like on the vertical? just thinking out loud. I&#39;m constantly awed by the creativess;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris</div>
+<div class='content'>FF 4b13pre (64 bit, Win7): 3743ms<br>IE9 RC (64 bit, Win7): 59537ms<br>Google Chrome (32 bit on 64 bit Windows 7): 5624ms<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sean Hogan</div>
+<div class='content'>Have you checked that IE9 isn&#39;t using Software Rendering Mode, as per http://blogs.msdn.com/b/ieinternals/archive/2011/02/17/ie9-benchmark-tests-and-gpu-fallback-to-software-rendering-mode.aspx<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jata</div>
+<div class='content'>Lately mozilla just continues to criticize IE9, shouldn&#39;t be better that you keep focus on making mozilla better?<br>I mean guys really, mozilla performs quite bad compared to IE9 in many demos that look much more real than a bunch of circles in a page. I would love to read articles talking on how you work to make it better instead of just saying it already does good or that IE9 does not or it is not modern...<br>Keep up the good work and stop talking about other browser (or whatever marketing campaign)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That testcase uses a standards-mode doctype.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>As others have noted, the FF3.6 results are meaningless because the unprefixed border-radius and box-shadow are not supported, and they&#39;re key to this test. The same may be true for Safari 5 but I can&#39;t check right now --- look closely at the page for shadows and rounded corners.<br>I didn&#39;t add prefixed border-radius or box-shadow because you just know someone is going to see &quot;-moz&quot; in the test and conclude that it&#39;s rigged somehow.<br>A large window size does show the performance differences more clearly. My windows were fullscreen on a 1920x1080 screen, minus the Windows 7 taskbar on the left and each browsers&#39; chrome at the top.<br>Of course IE9 is using acceleration on my system :-).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan G. Switzer, II</div>
+<div class='content'>What I find odd is FF 3.6.15 is in the 1.8s range, while FF4rc1 is in the 5.8s range. I find it strange that FF3 is 3x times faster (and I have a bunch of open tabs in FF3 and nothing in FF4rc.)<br></div>
+</div>
+
+</div>

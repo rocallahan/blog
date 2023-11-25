@@ -1,0 +1,74 @@
+---
+layout: "post"
+title: "More Apple Evil"
+date: "2010-04-09 12:35:00 +0000"
+permalink: "/2010/04/more-apple-evil_09.html"
+---
+<div class="columns"><p>Chris Double just pointed out to me the new <a href="http://daringfireball.net/2010/04/iphone_agreement_bans_flash_compiler">iPhone development agreement terms</a> that require an application's <em>original</em> source language to be C, C++ or Objective C (plus maybe JS running on Webkit). Basically they're outlawing compilers like Adobe's Flash-to-iPhone compiler, Innerworks' J2ME-to-iPhone compiler, the Mono iPhone compiler, etc. They're also forbidding compatibility layers that wrap Apple's APIs.<br/><p>This is mind-boggling. There's no possible technical justification for this. It's pure evil. I'm not even sure why Apple would do this. Maybe to make it harder for people to write cross-platform apps that run on the iPhone?<br/><p>The lesson for those companies that just got hung out to dry is simple: don't build on locked-down platforms.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>Simply the same as they were doing before - blocking interpreters.<br>The locked down model of applications on the iPhone OS requires that the developer (or some third party) can&#39;t change the application after it&#39;s been approved and put in the store. An interpreter allows you to run any code at any time, including malicious code.<br>It&#39;s a shame - I&#39;d love the iPad as a Pharo development environment. That would so rock.<br>But &quot;Evil&quot;? Seriously? Apartheid South Africa&#39;s treatment of 20 million of it&#39;s citizens is sort of my low bar for evil, and frankly that&#39;s a bit higher than an SDK agreement for a device that I am not forced to own.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Screwtape</div>
+<div class='content'>I recall reading an opinion piece that said that while Apple currently has a majority market share, they&#39;re getting worried about things like Android. If they lose the majority market-share position, they can still make a lot of money off high-end products (as they do with Macintosh), but developers will start trying to write cross-platform apps that work on all the major devices... if the App Store is filled with apps that are dull and clunky ports that ignore the iPhone&#39;s features in favour of cross-platform compatibility, and the available apps work just as well or better on other, cheaper platforms (Android), even more people are likely to switch to Android and hasten the iPhone&#39;s marginalisation.<br>OTOH, if the App Store requires all apps to be native apps while the iPhone is still the leader, it&#39;s much more difficult for developers to write cross-platform apps and thus the iPhone&#39;s App Store is more likely to maintain its lead.<br>So, yeah... evil.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>tom</div>
+<div class='content'>My macbook pro turns into a hot chunk of metal with Flash.<br>The os x compiler tools are opensource - both gcc and clang.<br>Webkit and jscore are opensource.<br>Thats good enough for me.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>There are many kinds and degrees of evil.<br>This is not the same as blocking interpreters. Read the text. Various companies including Adobe were using compilers to translate code and not including an interpreter in the final app.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>fqueze: my understanding is that you don&#39;t submit your source code to Apple when you submit your app to the app store, so that couldn&#39;t be it.<br>Edouard: they&#39;ve already blocked interpreters, so that is simply not the reason.<br>The quality argument is bogus. Apple can and do already vet apps for quality, and they can reject apps that don&#39;t look or feel right regardless of the underlying technology. And from what I hear, they already admit thousands of low-quality apps written in Objective-C...<br>Our cross-platform UI support is a lot better than Eclipse&#39;s IMHO. We do not use native widgets. It&#39;s simply a matter of having done a lot of work on it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>ROC: I honestly think it&#39;s part of the reason - it has the effect of blocking interpreters, and there&#39;s a defendable security angle there. Apple&#39;s nightmare would be a virus affecting their platform distributed via Apple&#39;s store. That would be a massive hit. Chris&#39; take on this is the &quot;anti-flash&quot; angle but I&#39;m not sure that&#39;s the really reason.<br>The other part may simply be quality - most of the cross platform UI systems I&#39;ve seen are pretty appalling. Mozilla and Eclipse&#39;s SWT are the only two that have ever been even passable (it&#39;s been a while actually; do you guys still render down to native widgets?)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Andrew Stephens</div>
+<div class='content'>I saw this earlier and also wondered what Apple is playing at. I would like to see some clarification about what that clause actually means before jumping to conclusions but it certainly seems like they are deliberately screwing over other development environments. I was under the impression that the Adobe Flash-to-iPhone app-builder was officially sanctioned by Apple (I could be wrong about this) so it would be weird for them to include language in the license to shut Adobe down.<br>I suspect that the AppStore verification process is largely automated, so perhaps Apple&#39;s verification tools don&#39;t work properly on Apps that aren&#39;t compiled with XCode. But even then, apps should be considered on a case-by-case basis, not by the compiler used to build them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>fqueze</div>
+<div class='content'>Isn&#39;t the use of static analysis tools compatible only with these languages as part of the verification process a possible technical justification?<br>Or maybe the code needs to be human readable in these languages because the verification staff is skilled only in these languages?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Zach Stein</div>
+<div class='content'>Really easy to enforce... Just ask the developer for the sourcecode of their application and make it a term of acceptance. A lot of people wouldn&#39;t like that (as I wouldn&#39;t want to give a potential competitor with a history of borrowing others&#39; ideas my sourcecode), but they could very well do that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Screwtape: yeah that&#39;s my theory too.<br>Ben: of course they can enforce this. This provision doesn&#39;t have to be automated. They can just ask the developers. Sure, the developers can lie, but if they get found out, Apple can potentially sue for breach of contract and can certainly ban the developer from the iPhone forever.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jmdesp</div>
+<div class='content'>Something else much more positive, did you see that google blog entry taking position in favor of Theora, it seems no Mozillian is talking about it yet http://google-opensource.blogspot.com/2010/04/interesting-times-for-video-on-web.html<br>This sounds very, very good.<br>I also noticed this inside the comments, from someone who works for google :<br>&quot;Theora can already playback in real time on an iPhone 3GS at native screen resolution, 25 fps, without any optimizations except for the final YUV2RGB stage.<br>Hardware decode support is a red herring. I&#39;ve brought this up many times with various organizations, and once you demonstrate that decoding on a portable can in fact already be done, they admit that it&#39;s actually a political issue. It&#39;s just a convenient excuse to hide the real reasons.&quot;<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ben Basson</div>
+<div class='content'>Maybe I&#39;m missing something, but surely they can&#39;t actually enforce this. Even if there are tell-tale signs at the moment, the tools could just be adapted to hide them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jack</div>
+<div class='content'>@Edouard<br>&quot;Apartheid South Africa&#39;s treatment of 20 million of it&#39;s citizens&quot;<br>Like what? Torture, rape, murder...<br>What&#39;s really your &quot;low bar&quot; on evil?<br>What&#39;s needed for you to considered it evil?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>G</div>
+<div class='content'>I&#39;m with you. My company had plans to create several iPhone/iPad applications in C# using MonoTouch and now we&#39;re going to have to go back to the drawing board. None of us really want to be forced to use Objective-C.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Erunno</div>
+<div class='content'>Screwtabe, Apple does neither have a majority market share in the cell phone nor the smartphone market. And that applies to both the US and the international market.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Greg</div>
+<div class='content'>And yet another reason to switch your daily computer use to Linux...<br></div>
+</div>
+
+</div>

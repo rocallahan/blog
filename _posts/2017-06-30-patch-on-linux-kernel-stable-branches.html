@@ -1,0 +1,10 @@
+---
+layout: "post"
+title: "Patch On Linux Kernel Stable Branches Breaks rr"
+date: "2017-06-29 23:30:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2017/06/patch-on-linux-kernel-stable-branches.html"
+---
+<p><a href="https://github.com/torvalds/linux/commit/cc1582c231ea">A change</a> in 4.12rc5 breaks rr. We're trying to get it fixed before 4.12 is released, and I think that will be OK. Unfortunately that change has already been backported to 3.18.57, 4.4.72, 4.9.32 and 4.11.5 :-( (all released on June 14, and I guess arriving in distros a bit later). Obviously we'll try to get the 4.12 fix also backported to those branches, but that will take a little while.
+<p>The symptoms are that long, complex replays fail with  "overshot target ticks=... by <N>" where N is generally a pretty large number (> 1000). If you look in the trace file, the value N will usually be similar to the difference between the target ticks and the previous ticks value for that task --- i.e. we tried to stop after N ticks but we actually stopped after about N*2 ticks. Unfortunately, rr tests don't seem to be affected.
+<p>I'm not sure if there's a reasonable workaround we can use in rr, or if there is one, whether it's worth effort to deploy. That may depend on how the conversation with upstream goes.

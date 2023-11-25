@@ -1,0 +1,47 @@
+---
+layout: "post"
+title: "Sword +5 Against Orange"
+date: "2009-11-13 21:58:00 +0000"
+categories: "Chronicle Mozilla"
+permalink: "/2009/11/sword-5-against-orange_13.html"
+---
+<div class="columns"><p>Today for the first time I seriously used VMWare's record-and-replay feature for debugging. Chris Pearce had set up the mochitest harness to run test_access_controls.html over and over until it failed, to try to catch the "random orange" where the test has been intermittently failing on Tinderbox. He caught a failure after about 30 minutes of continuous test running in a recording VM a couple of days ago. (Each test run takes about 15 seconds, so this represents over a hundred test runs before we reproduced the failure.) Today I got around to debugging it.<br/><p>Chris had captured an output log and had added some code to nsGlobalWindow::Dump to number the dump() messages. Then we can set a conditional breakpoint in nsGlobalWindow::Dump to stop whenever a particular message is about to be printed. A sensible thing to do is to break when we output the last "TEST PASSED" message before the first test failure. It took almost an hour to replay up to that point (replay is a bit slower than recording), so another sensible thing to do is to then immediately take a VM snapshot so future debugging can resume from that point relatively quickly as often as you like. It takes about two minutes to resume replay from a snapshot.<br/><p>From then on it was fairly similar to a normal debugging session: setting breakpoints, looking at variables, rerunning the program as you work backwards towards the cause. Except that you don't have to worry about the execution being different and the bug not showing up. You know exactly what the log output is going to be, right down to the addresses of objects dumped in the log, so it's easy to set conditional breakpoints to stop on log events you want to look into.<br/><p>The whole experience is pretty much what I expected: fabulous! It would be nice if the couple of minutes to restart execution from a snapshot could be reduced, and some of the other UI operations feel sluggish and heavyweight, but this was certainly by far the best way to debug what turned out to be a complex and very hard to reproduce failure. It's a good feeling to know that whatever happens, you will be able to go back over this execution again; it takes the fear out of debugging, and replaces it with confidence that you *will* be able to find the bug. My hat's off to E Lewis and the rest of the VMWare team.<br/><p>We need to do a bit more work to optimize and document our setup, get some more experience with these features and perhaps get some more automation for running tests, catching failures and building that vital initial snapshot. But I'm pretty confident that soon this will be an essential tool for us.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Mook</div>
+<div class='content'>Doesn&#39;t VMware have some sort of talk-to-the-host thing?  Just wondering if, instead of the VM looping, it would make sense to issue a command from inside that restored the snapshot to before the run instead (so that you&#39;d never have more than one run to wait through).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mmc</div>
+<div class='content'>what&#39;s the bug number of the orange you were hunting?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Edouard: it doesn&#39;t work in Fusion, not yet anyway.<br>Mook: you might be able to do something from the guest, but it&#39;d be tricky because you don&#39;t want the guest to issue commands during recording and have those same commands issued during replay...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ted Mielczarek</div>
+<div class='content'>So how did you notice that the orange had happened, just manual monitoring? It would be interesting, as Mook said, to figure out some way to be smarter about the record/replay times. Perhaps run buildbot or something like it on the host machine, with a slave in the guest machine, and roll back the guest&#39;s snapshot before every run? Then if the test fails, you can save another snapshot from the host machine.<br>It seems like VMWare could supply some guest tools to let you do that from within the guest OS in record mode, but have it be harmless when running in replay mode.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>526323.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yeah, Chris P just stopped the recording manually.<br>One way that&#39;s pretty easy is to tee the test log to a file on the host file system mounted in the guest and have a host process stop recording when we see a test failure in that log file. During replay the guest is not allowed to affect the outside world so that file doesn&#39;t change.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>Nice work and nice technique!<br>I&#39;ll look into VMWare for that form of debugging for my own work (Hmmm, does it work in Fusion? I&#39;ll have to find out...)<br>I&#39;m still hurting from the lack of Valgrind on Mac 10.6 in the meantime, but this will give me something to look at in the meantime!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan</div>
+<div class='content'>So where was the bug and why did it happen so rarely?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gerv</div>
+<div class='content'>So what was the bug? :-)<br>Gerv<br></div>
+</div>
+
+</div>

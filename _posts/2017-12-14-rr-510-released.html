@@ -1,0 +1,9 @@
+---
+layout: "post"
+title: "rr 5.1.0 Released"
+date: "2017-12-14 04:43:00 +0000"
+categories: "rr"
+permalink: "/2017/12/rr-510-released.html"
+---
+<p>This is a minor maintenance release. It fixes a few issues that showed up in Ubuntu 17.10 and Fedora 27, such as glibc switching to the <tt>openat</tt> system call which then had to be supported by rr's syscall buffering for good performance. <tt>info proc maps</tt> works in gdb during rr replay now. Of course various other bugs were fixed.
+<p>One interesting thing about this release is that it's the first to have <a href="/2017/08/stabilizing-rr-trace-format.html">guaranteed backward compatibility</a> with an earlier release: traces made by rr 5.0.0 should be replayable in rr 5.1.0 (and any later release, I hope).

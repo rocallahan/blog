@@ -1,0 +1,21 @@
+---
+layout: "post"
+title: "Payment Express's \"Account2Account\" Is Bad For Security"
+date: "2018-04-10 02:21:00 +0000"
+permalink: "/2018/04/payment-expresss-account2account-is-bad.html"
+---
+<p>Today I discovered that an Australian company called Payment Express has started offering, in addition to credit-card payment processing, a feature called "<a href="https://www.paymentexpress.com/merchant-ecommerce-account2account.html">Account2Account</a>". With this feature, customers enter their online banking credentials <em>into Payment Express' Web site</em> which then performs a payment transaction on the customer's behalf. This is insane and I don't know why banks allow it.
+<p>The security FAQ presented to customers (which I can't find a public URL for) emphasizes that Payment Express does not store the customer's credentials or other information. Good, but the problem is that even if customers can completely trust Payment Express (and I don't know why they should; Payment Express' terms and conditions disclaim all liability), any workflow that trains customers to enter their banking credentials into a Web site other than their bank's site makes them vulnerable to phishing attacks. Online banking phishing attacks are ubiquitous. Even worse, Payment Express advertises "Payment page look and feel customisable via an online wizard", which suggests that the appearance of pages presented to customers can vary, making those customers even more vulnerable to phishing. Payment Express doesn't even use an EV certificate.
+<p>Maybe banks allow this because they get a bigger cut of the transactions than they do with a credit-card transaction, enough to cover the cost to them of any increase in phishing losses? If so I don't know how they're calculating the cost to our entire social ecosystem of people being trained to enter critical login credentials into random Web sites.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Mark</div>
+<div class='content'>This is why we built https://www.paymark.co.nz/products/online-eftpos/
+It may not be ubiquitous yet, and definitely has further to go for improvements, but the model is secure by keeping control of authentication in the hands of the banks.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>The german sofort.com does the same thing. It was ruled unreasonable (&quot;nicht zumutbar&quot;) by the highest civil court (&quot;Bundesgerichtshof&quot;) and is no longer allowed to be the only payment option: http://juris.bundesgerichtshof.de/cgi-bin/rechtsprechung/document.py?Gericht=bgh&amp;Art=en&amp;nr=79691&amp;pos=0&amp;anz=1</div>
+</div>
+
+</div>

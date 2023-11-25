@@ -1,0 +1,64 @@
+---
+layout: "post"
+title: "Introducing Chaos Mode"
+date: "2014-03-10 00:46:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/03/introducing-chaos-mode.html"
+---
+<p>Some test failures are hard to reproduce. This is often because code (either tests or implementation code) makes unwarranted assumptions about the environment, assumptions that are violated nondeterministically. For example, a lot of tests have used setTimeout to schedule test code and assumed certain events will have happened before the timeout, which may not be true depending on effects such as network speeds and system load.
+<p>One way to make such bugs easier to reproduce is to intentionally exercise nondeterminism up to the limits of API contracts. For example, we can intentionally vary the actual time at which timers fire, to simulate the skew between CPU execution time and real time. To simulate different permitted thread schedules, we can assign random priorities to threads. Since hashtable iteration is not defined to have any particular order, we can make a hashtable iterator always start at a randomly chosen item.
+<p>I tried applying this to Gecko. I have patches that define a global "chaos mode" switch, and in several different places, if we're in chaos mode, we choose randomly between different valid behaviors of the code. Here's what the patches currently do:
+<ul>
+<li>Sometimes yield just before dispatching an XPCOM event. This gives another thread a chance to win an event-dispatch race.
+<li>On Linux, give threads a random priority and pin some threads to CPU 0 so they contend for CPU.
+<li>Insert sockets in random positions in the list of polled sockets, to effectively randomize the priority of sockets in poll results.
+<li>Similarly, when putting HTTP transactions into the HTTP transaction queue, randomly order them among other transactions with the same specified priority.
+<li>Start hashtable iteration at a random entry.
+<li>Scale timer firing times by random amounts (but don't vary the order in which timers fire, since that would violate the API contract).
+<li>Shuffle mochitests and reftests so they run in random order.
+</ul>
+<p>Note that it can be valuable to make a single random choice consistently (for the same object, thread, etc) rather than making lots of fine-grained random decisions. For example, giving a thread a fixed low priority will starve it of CPU which will likely cause more extreme behavior --- hopefully more buggy behavior --- than choosing a random thread to run in each time quantum.
+<p>One important source of nondeterminism in Gecko is XPCOM event (i.e. HTML5 task) dispatch. A lot of intermittent bugs are due to event timing and ordering. It would be nice to exploit this in chaos mode, e.g. by choosing the next event to fire randomly from the set of pending events instead of processing them in dispatch order. Unfortunately we can't do that because a lot of code depend on the API contract that firing order follows dispatch order. In general it's hard to determine what the valid alternative firing orders are; the first item on my list above is my best approximation at the moment.
+<h3>Important Questions</h3>
+<p><strong>Does this find bugs?</strong> Yes:<br>
+<img src="/assets/images/ChaosMode.png" width="1040" height="784" title="Lots of orange on a try push">
+<p><strong>Which chaos features are the most helpful for producing test failures?</strong> I don't know. It would be a very interesting experiment to do try pushes with different patches enabled to figure out which ones are the most important.
+<p><strong>Does it help reproduce known intermittent bugs?</strong> Sometimes. In bug 975931 there was an intermittent reftest failure I could not reproduce locally without chaos mode, but I could reproduce with chaos mode. On the other hand chaos mode did not help reproduce bug 791480. Extending chaos mode can improve this situation.
+<p><strong>Isn't this just fault injection?</strong> It's similar to fault injection (e.g. random out-of-memory triggering) but different. With fault injection typically we expect most tests to fail because faults like OOM are not fully recoverable. Chaos mode should not affect any correctness properties of the program.
+<p><strong>Wasn't this already done by <em>&lt;insert project name&gt;</em>?</strong> Probably. I don't claim this is a new idea.
+<p><strong>When is this going to land and how do I turn it on?</strong> It has already landed. To turn it on, change isActive() to return true in mfbt/ChaosMode.h. Shuffling of reftests and mochitests has to be done separately.
+<p><strong>OK, so this can trigger interesting bugs, but how do we debug them?</strong> Indeed, chaos mode makes normal debugging workflows worse by introducing more nondeterminism. We could try to modify chaos mode to reproduce the random number stream between runs but that's inadequate because other sources of nondeterminism would interfere with the order in which the random number stream is sampled. But we are working on a much better solution to debugging nondeterministic programs; I'll be saying more about that very soon!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Mihai Sucan</div>
+<div class='content'>This is really useful stuff.
+
+Would it make sense to have this chaos mode as a trychooser option? It would be very useful for us to do try pushes with this mode enabled, to check for oranges.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s easy to push a patch which enables chaos mode, like I did.
+
+I&#39;m not sure that&#39;s immediately useful for finding orange *regressions*, since we have so many oranges with chaos mode already.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mihai Sucan</div>
+<div class='content'>It&#39;s easy indeed, i tried it locally, but you also patched mochitests to do shuffling, and people tend to forget which files to change and so on. A trychooser option would make it more convenient.
+
+It is immediately useful for those tests that dont fail now with chaos mode enabled.
+
+Having the option in trychooser is also about visibiity - making chaos mode a thing more people play with.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>jto</div>
+<div class='content'>...*Now* I see.
+
+Great hack.</div>
+</div>
+<div class='comment'>
+<div class='author'>دانلود  آهنگ جدید</div>
+<div class='content'>tanks for this article  my friend   
+<a href="http://www.parsianmusic.ir/" title="دانلود آهنگ جدید" rel="nofollow">دانلود آهنگ جدید</a></div>
+</div>
+
+</div>

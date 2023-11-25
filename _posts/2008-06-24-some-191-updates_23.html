@@ -1,0 +1,55 @@
+---
+layout: "post"
+title: "Some 1.9.1 Updates"
+date: "2008-06-23 20:53:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/06/some-191-updates_23.html"
+---
+<div class="columns"><p>Over the last couple of weeks I've done a variety of fun things. I've got patches for the remaining Acid3 layout bugs (excluding CSS @font-face, which isn't really a layout issue). There were only actually four layout bugs affecting the rendering of Acid3. One was to support text-shadow, which landed a while ago (I'll post Michael Ventnor's guest blog about that soon). Another one was to allow floats that aren't at the start of a line to be placed on that line instead of always pushed to the next line; I took this one on a few weeks ago because I thought it would be scary, but it turned out to be easy now thanks to the big changes David Baron made in 1.9, so the fix for that landed a couple of weeks ago.<br/><p>Another Acid3 bug is that absolutely positioned elements with no positioned ancestor element should be positioned relative to the initial containing block, but in Gecko 1.9 they're positioned relative to the padding edge of the root element. I have a nice fix for this that also enables positioning of the root element. It hasn't landed yet, parts still need review.<br/><p>The last Acid3 layout bug is that Gecko 1.9 follows the CSS2 restrictions on generated content (::before/::after), which were lifted in CSS2.1. In particular we don't allow generated content to be positioned. We also don't allow it to be floated, or be any 'display' type except block or inline, or overflow:auto, or use columns, etc. So I have a patch that reworks generated content to support all of those things by treating it much more like normal content. It actually simplifies the code overall IMHO. This still needs review before it can land.<br/><p>I've started cutting up my SVG-CSS-integration branch and submitting pieces for review. One part that's in the process of landing is infrastructure for tracking which element is associated with a given ID. This is important in SVG; if, say, an SVG &lt;use&gt; element references URI "#foo", it will need to be updated every time the canonical "element with ID 'foo'" changes, and currently we fail to do that. For example, that would happen if an element with id='foo' is inserted into the document before the element that is currently the canonical 'foo' element, or if the element with id='foo' gets its ID changed to 'bar', or if the element with id='foo' is removed from the document, or if an element earlier in the document gets its 'id' set to 'foo', etc. This isn't actually that hard, since to make getElementById fast we already have a table that maps IDs to elements, so we just need to extend that so if an entry for a given ID changes, we notify observers associated with that ID. However, when I implemented this I discovered that we actually have three implementations of getElementById! One is in nsHTMLDocument (used for HTML/XHTML documents), and is reasonably clean and does what you expect. One is in nsXMLDocument, and is completely stupid and uses no hashtable at all. The other is in nsXULDocument, and is rather insane. It uses its own very ugly hashtable-ish structure and stores not only elements by 'id', but also elements by 'ref'. So in preliminary patches, which I actually landed today, I hoist the good implementation of getElementById from nsHTMLDocument to nsDocument and get rid of the dumb one in nsXMLDocument. I also force nsXULDocument to use the shared table for elements indexed by 'id', and give it a separate table of elements indexed by 'ref' so that getElementById can continue to do its crazy thing for XUL documents. Maybe one day we can get rid of that. Anyway, at least things are getting better.<br/><p>In the last couple of days I decided to implement white-space:pre-line since it's one of the last bits of CSS 2.1 we don't implement and it's easy to do on top of the improved text subsystem we have in 1.9. The patch for that is up for review too.<br/><p>I'd quite like to implement text-overflow, but it turns out to be complicated to spec --- there's a reason why it's not in the CSS3 Text draft :-). There are several incompatibilities in the way browsers have implemented it today; for example, only IE7 makes an attempt to handle bidi in a reasonable way. There are several other issues that need to be tested and resolved. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=312156">The bug</a> contains gory details.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>sky</div>
+<div class='content'>Many thanks, especially for the float bug which really drove me crazy!<br>However, the workaround for it was always to add margin-top:-1em;  Now a lot of sites are going to break.  Is there a mozilla-endorsed way to support workarounds for older browser CSS bugs?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Neil</div>
+<div class='content'>This patch still allows XUL to support multiple elements with the same id right? You tested the Thunderbird account manager which relies on this?<br>What we actually want to do is change xul templates to store identifiers in the ref attribute rather than the id attribute, then we can make the xul id attribute a true xmlid type.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Olly Hodgson</div>
+<div class='content'>You&#39;re on fire! I expected you all to sit back and take a well earned break after all the excitement of FF3. I know at least one person who will be absolutely overjoyed at the float fixes :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul</div>
+<div class='content'>Do the changes in generated content now also allow to select the generated content in the rendered document?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel</div>
+<div class='content'>Everything&#39;s nice, I too hope for display: run-in; to get into 1.9.1 :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robin</div>
+<div class='content'>It’s great that all the refactoring work over the 1.9 cycle has paid off with ease of implementation for a whole load of remaining issues :) Now all we need is for zweinberg to not find display:run-in intractable and I’ll be very happy!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>ryan: yes, it&#39;s being worked on.<br>Paul: no, that is a separate issue. Is there a bug on that? As far as I can tell from the code, it&#39;s intentional that generated content cannot be selected and it would be simpler if we allowed it to be selected...<br>Neil: I didn&#39;t test the Thunderbird account manager but the code still supports returning all elements with a given ID. I don&#39;t know if there&#39;s a mochitest for it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Smokey Ardisson</div>
+<div class='content'>The inability to select/copy/etc. generated content seems to be https://bugzilla.mozilla.org/show_bug.cgi?id=12460 (one of those old 5-digit ones).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>B.J.</div>
+<div class='content'>I just visited your blog for the first time and I like the changing number of columns based on page size.<br>However, did you know there&#39;s a bug related to using a maximized windows (on Windows XP, Firefox 3)?  If you switch to a maximized window and then revert to non-maximized window, the scroll bars vanish and the end of the page can&#39;t be read.  Changing the size of the window at all brings back the scroll bar.<br>It&#39;s not my extensions, I got the same behavior using Safe Mode Firefox.<br>B.J.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Andriy</div>
+<div class='content'>It is very interesting to read about internal getElementById logic. Thank you<br>(in addition: There is old bug about  https://bugzilla.mozilla.org/show_bug.cgi?id=75435 it is should be closed now?)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ryan</div>
+<div class='content'>Good update.<br>Are there plans to support @font-face ?<br></div>
+</div>
+
+</div>

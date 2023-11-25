@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "rr 4.4.0 Released"
+date: "2016-10-01 09:54:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/10/rr-440-released.html"
+---
+<p>I just pushed out the release of <a href="https://github.com/mozilla/rr/releases/tag/4.4.0">rr 4.4.0</a>. It's mostly the usual reliability and syscall coverage improvements. There are a few highlights:
+<ul>
+<li>Releases are now built with <tt>CMAKE_BUILD_TYPE=Release</tt>. This significantly improves performance on some workloads.
+<li>We support recording and replaying Chromium-based applications, e.g. <tt>chromium-browser</tt> and <tt>google-chrome</tt>. One significant issue was that Chromium (via SQLite) requires writes performed by syscalls to be synced automatically with memory-maps of the same file, even though this is technically not required by POSIX. Another significant issue is that Chromium spawns a Linux task with an invalid TLS area, so we had to ensure rr's injected preload library does not depend on working glibc TLS.
+<li>We support Linux 4.8 kernels. This was a significant amount of work because in 4.8, <tt>PTRACE_SYSCALL</tt> notifications moved to being delivered before seccomp notifications instead of afterward. (It's a good change, though, because as well as fixing a security hole, it also improves rr recording performance; the number of ptrace notifications for each ptrace-recorded syscall decreases from 3 to 2.) This also uncovered a serious (to rr) kernel bug with missing <tt>PTRACE_EVENT_EXIT</tt> notifications, which fortunately we were able to get fixed upstream (thanks to Kees Cook).
+<li>Keno Fischer contributed some nice performance improvements to the "slow path" where we are forced to context-switch between tracees and rr.
+<li>Tom Tromey contributed support for accessing thread-local variables while debugging during replay. This is notable because the "API" glibc exports for this is ghastly.
+</ul>

@@ -1,0 +1,103 @@
+---
+layout: "post"
+title: "Long-Term Consequences Of Spectre And Its Mitigations"
+date: "2018-01-17 01:02:00 +0000"
+categories: "Mozilla"
+permalink: "/2018/01/long-term-consequences-of-spectre-and.html"
+---
+<p>The dust is settling on the initial wave of responses to Spectre and Meltdown. Meltdown was relatively simple to deal with;  we can consider it fixed. Spectre is much more difficult and has far-reaching consequences for the software ecosystem.
+<p>The community is treating Spectre as two different issues, "variant 1" involving code speculatively executed after a conditional branch, and "variant 2" involving code speculatively executed via an indirect branch whose predicted destination is attacker-controlled. I wish these had better names, but c'est la vie.
+<h2>Spectre variant 1 mitigations</h2>
+<p>Proposals for mitigating variant 1 have emerged from <a href="https://webkit.org/blog/8048/what-spectre-and-meltdown-mean-for-webkit/">Webkit</a>, <a href="https://lwn.net/Articles/744287/">the Linux kernel</a>, and <a href="https://blogs.msdn.microsoft.com/vcblog/2018/01/15/spectre-mitigations-in-msvc/">Microsoft</a>. The former two propose similar ideas: masking array indices so that even speculative array loads can't load out-of-bounds. MSVC takes a different approach, introducing LFENCE instructions to block speculative execution when the load address appears to be guarded by a range check. Unfortunately Microsoft says
+<blockquote>It is important to note that there are limits to the analysis that MSVC and compilers in general can perform when attempting to identify instances of variant 1. As such, there is no guarantee that all possible instances of variant 1 will be instrumented under /Qspectre.</blockquote>
+This seems to be a great weakness, as developers won't know whether this mitigation is actually effective on their code.
+<p>The Webkit and Linux kernel approaches have the virtue of being predictable, but at the cost of requiring manual code changes. The fundamental problem is that in C/C++ the compiler generally does not know with certainty the array length associated with an array lookup, thus the masking code must be introduced manually. Webkit goes further and adds protection against speculative loads guarded by dynamic type checks, but again this must be done manually in many cases since C/C++ have no built-in tagged union type.
+<p>I think "safe" languages like Rust should generalize the idea behind Webkit's mitigations: require that speculatively executed code adhere to the memory safety constraints imposed by the type system. This would make Spectre variant 1 a lot harder to exploit. It would subsume every variant 1 mitigation I've seen so far, and could be automatic for safe code. Unsafe Rust code would need to be updated.
+<p>Having said that, there could be variant-1 attacks that don't circumvent the type system, that none of these mitigations would block. Consider a browser running JS code:
+<pre>let x = bigArray[iframeElem.contentWindow.someProperty];</pre>
+Conceivably that could get compiled to some mix of JIT code and C++ that does
+<pre>  if (iframeElemOrigin == selfDocumentOrigin) {
+    index = ... get someProperty ...
+    x = bigArray[index];
+  } else {
+    ... error ...
+  }</pre>
+The speculatively executed code violates no type system invariants, but could leak the value of the property across origins. This example suggests that complete protection against Spectre variant 1 will require draconian mitigations, either pervasive and expensive code instrumentation or deep (and probably error-prone) analysis.
+<h2>Spectre variant 2 mitigations</h2>
+<p>There are two approaches here. One is microcode and silicon changes to CPUs to enable flushing and/or disabling of indirect branch predictors. The other is "retpolines" &mdash; replace indirect branches with an instruction sequence that doesn't trigger the indirect branch predictor. (More precisely, that doesn't use the BTB; the RSB prediction is used instead, but its prediction is directed to a safe destination address.) Apparently the Linux community is advising all compilers and assembly writers to avoid all indirect branches on Intel even in user-space. This means, for example, that we should update rr's handwritten assembly to avoid indirect branches. On the other hand, Microsoft is not giving such advice and apparently is not planning to introduce retpoline support in MSVC. I don't know why this difference is occurring, but it seems like a problem.
+<p>Assuming the Linux community advice is followed, things get even more complicated. Future CPUs can be secure against variant 2 without requiring retpolines. We will want to avoid retpolines on those CPUs for performance reasons. Also, Intel's future CET control-flow-integrity hardware will not work with retpolines, so we'll want to turn retpolines off for security! So software will need to determine at run-time whether retpolines should be used. JITs and handwritten assembly will need to add code to do that. This is going to be a burden on lots of software developers for a very long time.
+<h2>Security/performance tradeoffs</h2>
+<p>There is now a significant performance penalty for running untrusted code. If you know for sure there is no malicious code running in your (virtual) machine you can turn off these mitigations and get significant performance wins. This wasn't really true before. (Unikernels reaped some performance benefits but created too many other problems to be generally useful.) Inventorying the entire collection of software running in your VM to verify that it's all trusted may be difficult in practice and reduces defense-in-depth ... but no doubt people will be tempted to do it.
+<p>We could see increased interest in source-based distributions like Gentoo. Recompiling your software stack to include just the mitigations that you need could bring performance benefits.
+<h2>Javascript implications</h2>
+<p>The isolation boundary between Javascript and a browser content process' native code is not visible to the CPU, which makes hardware mitigations difficult to use for JS &mdash; and any other system running code in the same process with different levels of trust. It's hard to say what the immediate implications of this are, but I think it makes "one site per process" policies in browsers more appealing in the long term, at least as an option to deploy in case some future difficult-to-mitigate vulnerability hits. Right now browsers are trying to keep the problem manageable by making it difficult for JS to extract information from the timing channel (by limiting timer resolution and disabling features like SharedArrayBuffer that can be used to implement high-resolution timers), but this unfortunately limits the power of Web applications compared to native applications. For example, as long as it lasts we can't run idiomatic parallel Rust code in browsers via WebAssembly :-(. Also I suspect in the medium term attackers will find other ways to read the timing channel that will be less feasible to disable.
+<p>I think it would be a grave mistake to simply give up on mixing code with different trust labels in the same address space. Apart from having to redesign lot of software, that would set a hard lower bound on the cost of transitioning between trust zones. It would be much better if hardware mitigations can be designed to be usable within a single address space.
+<h2>Other attacks</h2>
+<p>Perhaps the biggest question is whether we are seeing just the start of a flood of serious attacks based on Spectre-like ideas. I think it's entirely possible, and if so, then dealing with those attacks piecemeal as they surface is going to be incredibly expensive and painful. There is even a possibility that the cost of mitigations will compound as mitigations interfere with one another and fewer and fewer people are capable of understanding what's going on. Therefore I hope and pray that people in positions of power &mdash; CPU vendors, big software vendors, etc &mdash; work together to come up with comprehensive, preventative fixes that simply rule out these classes of attacks, and don't let themselves be entirely consumed by demands for immediate responses to zero-day vulnerabilities. I applaud the sentiment of <a href="https://riscv.org/2018/01/more-secure-world-risc-v-isa/">RISC-V's statement to this end</a>, self-serving as it is.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Trevor Saunders</div>
+<div class='content'>yeah, process per origin is certainly a good thing in any case.  I don&#39;t really think the embargo hurt in the web browser space the way it kind of did in the VPS / virtualized server provider space, I imagine if your a small provider competing with Amazon and Google that wasn&#39;t great.
+Yeah, the synchronization is a real problem especially when power usage is important and spinlocking is really unfortunate.  Also I&#39;m not entirely sure how many things out there deal with multiple trust domains in one process like thing other than web browsers.  I seem to remember servo doing dom / js on a separate thread from layout, and people trying to run multiple dom threads in quantum, even if you wanted to share processes for memory usage reasons I wonder how thread per origin would work out / if either of these things gets you close enough to only one trust domain per thread.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&quot;Little interpreters in the same address space&quot; include, say, Truetype hinting programs and Dwarf debuginfo expression evaluators.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Ben Karel</div>
+<div class='content'>Languages that track effects in their type system, like Koka, could have an appealing story: both trusted code and untrusted code with sufficiently restricted effects (no concurrency and no timer access) can run &quot;full speed&quot;; only untrusted code needing access to dangerous primitives will have to take the full hit of Spectre mitigations. That is, rather than paying the cost for mitigations in all code, the type system can be used to elide the mitigations for code that doesn&#39;t have the power to (reliably) observe the microarchitectural side channel.
+
+One tiny (?) design cost of Spectre for effect type systems is that effect masking must be done more carefully. After all, Spectre leaks data via implementation details, and effect masking can hide such details! So while masking away internal mutation is probably still OK, masking away internal concurrency is a no-go.
+
+A complication for existing effect-typed languages like Haskell is that their effects aren&#39;t fine-grained enough to be useful in this context -- we&#39;d need to get rid of the IO sin bin. Having only coarse-grained effects is probably not more useful than having no effects at all. That said, I also don&#39;t have a principled answer for where to draw the line for &quot;sufficiently&quot; fine grained effects. Is network access OK? Console access? Filesystem access? For the time being, it&#39;ll boil down to unsubstantiated beliefs about the rates exposed by different potential channels.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t think this is a viable approach mainly because multithreaded shared-memory code is not going to go away, so solutions must be developed that still allow that code to run (fast), and if you have those solutions then your languages that prevent observing the timing channel are no longer needed.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t understand how effect types would help against Spectre. Are you suggesting that effect types could block extraction of data from timing channels?</div>
+</div>
+<div class='comment'>
+<div class='author'>Ben Karel</div>
+<div class='content'>That&#39;s one way of looking at it. Of course it&#39;s not really the effect types themselves that do the blocking, it&#39;s the higher-level environment which uses effect types to decide what level of protections to apply to a given piece of code (or whether to run that code at all!). Effect types simply identify code which does (or does not) happen to make use of primitives that can be used as a high-bandwidth channel. That knowledge can then be used to selectively apply mitigations to only the code that actually needs it.
+
+It&#39;s the same intuition behind the mitigations in Firefox: take the observation tools away (direct 
+and indirect access to precise timers), and the channel&#39;s bandwidth gets drastically reduced.
+
+</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Seth</div>
+<div class='content'>You wrote: &quot;The other is &quot;retpolines&quot; — replace indirect branches with an instruction sequence that doesn&#39;t trigger the indirect branch predictor.&quot; 
+
+That is not what retpolines do.  They capture speculative execution so that even if speculation occurs, it cannot be exploited.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s effectively the same thing: effectively, no speculation occurs. But I&#39;ll fix the post.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>It was my understanding that retpolines do both these things. They turn indirect branches into a call/[alter address]/ret instruction sequence which doesn&#39;t use the same branch prediction logic in the processor, and they also include a speculative execution trap.</div>
+</div>
+<div class='comment'>
+<div class='author'>mself</div>
+<div class='content'>Retpoline converts indirect branch instructions to return instructions.  These use a different hardware prediction mechanism, which is easier for the application to control (since it is stack-based rather than hash-based).  The modified code forces the speculative execution to always go to the trap. </div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Trevor Saunders</div>
+<div class='content'>On the question of hardware mitigation it seems like sharing address spaces between trust zones could be made to work, but the caches and branch prediction data probably have to be per trust domain?  At that point I wonder if you might actually get better performance with  putting each trust domain in its own processs, running them on different cores within the CPU in parallel and communicating back and forth with shared memory, that way each of them might be able to keep their own cache warm.  The part of me that doesn&#39;t like interacting with webapps isn&#39;t too sad about this, but that&#39;s rather selfish.
+My impression from RedHat folks (Jeff Law specifically I think) is that they&#39;re hoping using retpolines in the kernel and sensitive apps like browsers will be enough, and they can rely on the kernel to protect processes that don&#39;t run untrusted code.
+I think I&#39;ve heard speculation Chrome has pushed on the process per site because of this (or maybe they just got lucky), which raises some interesting questions around embargoes around security bugs.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Chrome&#39;s site per process work has been going on for years so I don&#39;t think the embargo was an issue here. In a way they got lucky, but it&#39;s also fair to argue that it was forward-thinking.
+
+Good point about separating trust across multiple cores. Since cores are relatively cheap these days that could be a good way to go ... if you can make the synchronization cheap enough.</div>
+</div>
+</div>
+
+</div>

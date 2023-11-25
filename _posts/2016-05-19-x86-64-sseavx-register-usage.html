@@ -1,0 +1,18 @@
+---
+layout: "post"
+title: "x86-64 SSE/AVX Register Usage"
+date: "2016-05-19 02:27:00 +0000"
+categories: "Mozilla"
+permalink: "/2016/05/x86-64-sseavx-register-usage.html"
+---
+<p>Following up on my <a href="/2016/05/data-on-x86-64-register-usage.html">previous post</a>, I counted the fraction of instructions in Firefox opt/debug libxul.so that use each XMM/YMM register.
+<p><img src="/assets/images/MMRegisters.png" width="1227" height="706" title="x86-64 SSE/AVX Register Usage">
+<p>Observations:
+<ul>
+<li>As before, debug builds are heavily weighted towards use of the first few registers, and opt builds allocate across more registers as you'd expect.
+<li>In debug builds, usage of the higher-numbered registers (up to 7) is a combination of va_start spilling all parameter registers (0-7) to the stack, and handwritten-assembly. It looks like almost all the handwritten assembly in Firefox restricts itself to registers 0-7, presumably so it works in x86-32 as well. Maybe some of that code would benefit from being updated for x86-64 with more registers?
+<li>In opt builds there's a clear drop-off in usage after register 7, more than can be explained by handwritten assembly or va_start spilling (since those equally affect debug). It's not related to caller/callee-saves status because all MM registers are caller-saves on Linux. It appears that in some functions experiencing moderate register pressure, gcc has freely used registers 0-7 but avoided using 8-15. Maybe that's because the latter require longer instruction encodings in some cases. You don't see the same dropoff moving to the upper eight GP registers, which have the same encoding length issue, but that may because of callee-saves and generally increased register pressure.
+<li>In libxul at least, MM registers are used far less often than GP registers. Register 0, the most-used by far, is used by barely 1% of instructions, comparable to the least-used GP registers. Registers 8 to 15 are each used by less than 0.1% of instructions.
+</ul>
+<p>As before, these are static counts and I'd expect weighting instructions by dynamic frequency would change the results dramatically --- on the right workloads --- since most of the hand-written assembly in Firefox is hand-written specifically to optimize use of MM registers in hot loops.
+<p><strong>Update</strong> One interesting takeaway is that you have eight huge registers (256 bits each, 512 soon) unused by most code. That creates some interesting possibilities...

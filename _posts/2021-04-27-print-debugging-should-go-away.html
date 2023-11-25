@@ -1,0 +1,78 @@
+---
+layout: "post"
+title: "Print Debugging Should Go Away"
+date: "2021-04-27 11:50:00 +0000"
+permalink: "/2021/04/print-debugging-should-go-away.html"
+---
+<p><em>This is based on <a href="https://news.ycombinator.com/item?id=26928959">a comment</a> I left on HN.</em>
+  
+<p>Many people prefer print debugging over interactive debugging tools. Some of them seem to have concluded that the superiority of print debugging is some kind of eternal natural law. It isn't: almost all the reasons people use print debugging can be overcome by improving debuggers &mdash; and to some extent already have been. (In the words of William Gibson, the future is already here, it's just not evenly distributed yet). The superiority of print debugging is <em>contingent</em> and, for most developers, it will end at some point (or it has already ended and they don't know it.)
+
+<p>Record-and-replay debuggers like <a href="https://rr-project.org">rr</a> (disclaimer: I initiated it and help maintain it), <a href="https://undo.io">Undo</a>, <a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/time-travel-debugging-overview">TTD</a>, <a href="https://replay.io">replay.io</a>, etc address one set of problems with interactive debuggers. You don't have to stop the program to debug it; you can record a complete run, and debug it later. You can record the program many times until it fails and debug only the execution that failed until you understand the failure. You can record the program running in a far-off machine, extract the recording and debug it wherever you want.
+
+<p><a href="https://pernos.co">Pernosco</a> (disclaimer: also my baby) and other omniscient debuggers go much further. Fans of print debugging observe that "step debuggers" (even record-and-replay step debuggers, like rr) only show you one point in time, and this is limiting. They are absolutely right. Omniscient debuggers have fast access to all program states and can <a href="https://pernos.co/about/control-flow">show you at a glance</a> how program state changes over time. One of our primary goals in Pernosco (mostly achieved, I think) is that developers should never feel the need to "step" to build up a mental picture of how program state evolves over time. One way we do this is by supporting a form of "<a href="https://pernos.co/about/expressions">interactive print debugging</a>":
+  
+<link rel="stylesheet" href="https://static.pernos.co/content/v3rmfHjihyEgbGH1be-MyYag5emkF4SJmVi99_QvsKY.css">
+<script src="https://static.pernos.co/content/Y3eDBKwZQJgV9XX5s4xLgyMsWE_zVE1uTNN5THB8W1s.js" defer></script>
+<script src="https://static.pernos.co/content/-QahKkm_V-a-ov5CB3qSCh8Ok2BwyTks4Vlc0SlZ_TY.js" async></script>
+  
+<div class="DOMRecMovie" id="expressionsMovie" style="width:1194px; height:658px"></div>
+
+<p>Once you buy into omniscient debugging a world of riches opens to you. For example omniscient debuggers like Pernosco let you <a href="https://pernos.co/about/dataflow/">track dataflow backwards in time</a>, a debugging superpower print debugging can't touch.
+
+<p>There are many reasons why print debugging is still the best option for many developers. rr, Pernosco and similar tools can't even be used at all in many contexts. However, most of the limitations of these tools (programming languages, operating systems, hardware platforms, overhead) could be mitigated with sufficient investment in engineering work and a modicum of support from platform vendors. It's important to keep in mind that the level of investment in these tools to date has been incredibly low, basically just a handful of startups and destitute open source projects. If the software industry took debugging seriously &mdash; instead of just grumbling about the tools and reverting to print debugging (or, at best, building a polished implementation of the features debuggers have had since the 1980s) &mdash; and invested accordingly we could make enormous strides, and not many people would feel the need to resort to print debugging.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>As far as pytrace.com &quot;beams one&#39;s code off to wherever&quot;, according to https://github.com/gleb-sevruk/pycrunch-trace , &quot;In case if you want to run UI locally, instead of using hosted version:&quot; you can run your own copy of the UI with this code: https://github.com/gleb-sevruk/pycrunch-tracing-webui</div>
+</div>
+<div class='comment'>
+<div class='author'>smitty1e</div>
+<div class='content'>https://pytrace.com/ beams one&#39;s code off to wherever?
+
+Seems a non-starter for all but the most trivial code.</div>
+</div>
+<div class='comment'>
+<div class='author'>Ashish Narmen</div>
+<div class='content'>I am a test engineer, and I used interactive debugging tools in the past.  However, of late,  programming languages that I use for work have limited support. Most of the developers I work with have never used any interactive debugging tools and rely solely on print debugging. One of them almost fell off his chair when I mentioned that the Visual Studio debugger had features to edit code and step back in real-time. Then, there are influential authors and experts like Bob Martin who are against using debuggers. (https://twitter.com/unclebobmartin/status/1196057403449659393?lang=en)</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Try debugging in LSL (Linden Scripting Language).</div>
+</div>
+<div class='comment'>
+<div class='author'>Zac</div>
+<div class='content'>The best Python implementation I know of is https://pytrace.com/</div>
+</div>
+<div class='comment'>
+<div class='author'>Ineiti</div>
+<div class='content'>Most of the programming environments I&#39;m working on have very poor debugging support. Choosing between spending hours to set up the debugger and just adding a `println` mostly lets me do the latter.
+
+Also, I never got a debugger running for distributed systems - you&#39;d have to be able to keep all the servers under one debugger, and then somehow debug what&#39;s happening as messages go back and forth.
+
+The closest I found for distributed systems is stuff like Honeycomb, but it&#39;s still only an advanced print debugging tool...
+
+Of course the question is: how do you propose to debug distributed systems?</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Try debugging in LSL (Linden Scripting Language).</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Try debugging in LSL (Linden Scripting Language).</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Try debugging in LSL (Linden Scripting Language).</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Is there a way to do replay debugging for python?</div>
+</div>
+<div class='comment'>
+<div class='author'>Josh Cogliati</div>
+<div class='content'>I would like to echo Ineiti&#39;s question, how do you propose to debug distributed systems? (Even getting print debugging working on them can be a pain since you have multiple programming languages running on multiple hosts in multiple processes.)</div>
+</div>
+
+</div>

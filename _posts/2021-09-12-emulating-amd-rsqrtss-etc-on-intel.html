@@ -1,0 +1,46 @@
+---
+layout: "post"
+title: "Emulating AMD Approximate Arithmetic Instructions On Intel"
+date: "2021-09-11 23:59:00 +0000"
+permalink: "/2021/09/emulating-amd-rsqrtss-etc-on-intel.html"
+---
+<p><a href="https://pernos.co">Pernosco</a> accepts uploaded <a href="https://rr-project.org">rr</a> recordings from customers and replays them with <a href="/2020/12/rr-remix-efficient-replay-only-binary.html">binary instrumentation</a> to build a database of all program execution, to power an amazing debugging experience. Our infrastructure is Intel-based AWS instances. Some customers upload recordings made on AMD (Zen) machines; for these recordings to replay correctly on Intel machines, instruction execution needs to produce bit-identical results. This is almost always true, but I <a href="https://robert.ocallahan.org/2021/09/rr-trace-portability-diverging-behavior.html">recently discovered</a> that the approximate arithmetic instructions RSQRTSS, RCPSS and friends do not produce identical results on Zen vs Intel. Fortunately, since Pernosco replays with binary instrumentation, we can insert code to emulate the AMD behavior of these instructions. I just needed to figure out a good way to implement that emulation.
+<p>Reverse engineering AMD's exact algorithm and reimplementing it with Intel's instructions seemed like it would be a lot of work and tricky to reimplement correctly. Instead, we take advantage of the fact that RSQRT/RCP are unary operations on single-precision float values. This means there are only 2<sup>32</sup> possible inputs, so a lookup table of all results is not out of the question: in the worst case it would only be 16GB. Of course we would prefer something smaller, so I computed the full table of Intel and AMD results and looked for patterns we can exploit.
+<p>Since the Intel and AMD values should always be pretty close together, I computed the XOR of the Intel and AMD values. Storing just this table lets us convert from AMD to Intel and vice versa. It turns out that for RSQRT there are only 22 distinct difference values, and for RCP only 17. This means we can store just one byte per table entry, an index into a secondary lookup table that gives the actual difference value. Another key observation is that the difference value depends only on the upper 21 bits of the input. (I suspect RSQRT/RCP completely ignore the bottom 11 bits of the input mantissa, but I haven't verified that.) Thus the main table can be stored in just 2<sup>21</sup> bytes, i.e. 2MB, and of course we need one table for RSQRT and one for RCP, so 4MB total, which is acceptable. With deeper analysis we might find more patterns we can use to compress the table further, but this is already good enough for our purposes.
+<p>That part was pretty easy. It turned out that most of the work was actually implementing the instrumentation. The problem is that each instruction comes in five distinct flavours. For RSQRT, there is:
+<ul>
+  <li><a href="https://www.felixcloutier.com/x86/rsqrtss">RSQRTSS</a>: compute RSQRT of the bottom 32 bits of the input operand, store the result in the bottom 32 bits of the output register, leaving all other output register bits unchanged
+  <li><a href="https://www.felixcloutier.com/x86/rsqrtps">RSQRTPS</a>: compute RSQRT of the bottom four 32-bit lanes of the input operand, store the results in the bottom four 32-bit lanes of the output register, leaving all other output register bits unchanged
+  <li><a href="https://www.felixcloutier.com/x86/rsqrtss">VRSQRTSS</a> (two input operands): compute RSQRT of the bottom 32 bits of the second input operand, store the result in the bottom 32 bits of the output register, copy bits 32-127 from the first input register to the output register, zero all bits >= 128 of the output register (seriously, Intel?)
+  <li><a href="https://www.felixcloutier.com/x86/rsqrtps">VRSQRTPS</a>, 128-bit version: compute RSQRT of the bottom four 32-bit lanes of the input operand, store the results in the bottom four 32-bit lanes of the output register, zero all bits >= 128 of the output register
+  <li><a href="https://www.felixcloutier.com/x86/rsqrtps">VRSQRTPS</a>, 256-bit version: compute RSQRT of the eight 32-bit lanes of the input operand, store the results in the eight 32-bit lanes of the output register
+</ul>
+In each of these instructions the primary input operand can be a memory load operand instead of a register.
+<p>So our generated instrumentation has to perform one table lookup per lane and also handle the correct effects on other bits of the output register. If we really cared about performance we'd probably want to vectorize the table lookups, but that's hard and the performance impact is unlikely to matter in our case, so I kept it simple with serial logic using general purpose registers.
+<p>Anyway it's working well now and Pernosco is able to process AMD submissions using these instructions, so go ahead and <a href="https://pernos.co/account">send us</a> your recordings to debug! (The logic also handles emulating Intel semantics if you happen to be running <a href="https://github.com/Pernosco/on-prem">Pernosco on-prem</a> on Zen hardware.) Tracing replay divergence back to RSQRTSS (through many long def-use chains) was extremely painful so I wrote a fairly good automated test suite for this work; I want to never again have to debug divergence caused by this.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Bruce Hoult</div>
+<div class='content'>In RISC-V land we have provided the exact lookup table to be used in the specification, so there should not be any divergence.
+
+It would be interesting to know how it differs from your x86 results.
+
+https://github.com/riscv/riscv-v-spec/blob/master/vfrsqrt7.adoc
+
+https://github.com/riscv/riscv-v-spec/blob/master/vfrec7.adoc
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Good!</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Lars Hansen</div>
+<div class='content'>It could appear (https://github.com/WebAssembly/design/issues/1401#issuecomment-796346096) that the reciprocal instructions may have different lookup tables on different families of Intel chips, too.  I&#39;m having a hard time finding anything definitive on this, but it has come up as a fingerprinting concern in the context of webassembly.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>OK. We haven&#39;t seen any similar issues migrating rr traces across Intel processor families. Maybe that&#39;s just luck, maybe not.</div>
+</div>
+</div>
+
+</div>

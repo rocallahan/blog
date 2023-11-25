@@ -1,0 +1,87 @@
+---
+layout: "post"
+title: "Grumble Grumble"
+date: "2008-11-03 21:44:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/11/grumble-grumble_03.html"
+---
+<div class="columns"><p>I've been hacking up an implementation of <em>interruptible reflow</em>. Laying out large pages is sometimes a source of unacceptable delays. It would be a better user experience if, during a long layout, we could detect that there's pending user input, get out of the layout code, handle the user input, and then resume the layout. In principle this isn't that hard now that we use dirty bits to track what needs to be laid out. It's simply a matter of making sure the right dirty bits are set as we bail out of reflow, and then making sure we enter reflow again eventually to complete the unfinished work. We also have to make sure we accurately distinguish "interruptible" reflows from "uninterruptible" reflows. For example, if a reflow is triggered by script asking for the geometry of some element, that's uninterruptible since returning with some work undone would give incorrect results and break things.<br/><p>I have a patch that basically works, at least for pages that are dominated by block layout. But I've run into a severe problem: I don't know how to detect pending user input in Mac OS X or GTK :-(. On Windows, for about 20 years there's been a function called <a href="http://msdn.microsoft.com/en-us/library/ms644935%28VS.85%29.aspx">GetInputState</a> which does exactly what we need. OS X and GTK/X11 just don't have anything like it. I've tried Appkit's nextEventMatchingMask; it sometimes processes some events, which is unacceptable. X11 doesn't seem to provide a way to peek the event queue without blocking; the only nonblocking event queue reading APIs always remove the event from the queue if they find one.<br/><p>OS X and GTK suck, Windows rules. Prove me wrong, fanboys!</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>It&#39;s a tradeoff between responsiveness and throughput. Yes, it would be best if animations etc kept playing at full speed, but that&#39;s not possible --- animations in the page content will usually depend on reflow anyway. And we don&#39;t want to hurt page load times by interrupting reflow any more than absolutely necessary.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Passing NO for the dequeue flag and passing NSDefaultRunLoopMode for the mode parameter, IIRC.<br>What I mean is that that call to nextEventMatchingMask is actually dispatching events that reenter Gecko (and cause havoc).<br>I actually see the same thing for a call to nextEventMatchingMask:dequeue:NO that&#39;s already in the tree:<br>http://mxr.mozilla.org/mozilla-central/source/widget/src/cocoa/nsAppShell.mm#603<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert 'Groby' Blum</div>
+<div class='content'>It&#39;s probably not easily accessible on the Mac because the first rule of UI programming is to keep event handling and time-consuming actions on different tasks. (Hey, Apple is opinionated if nothing else ;)<br>You might want to take a look at IsEventInQueue or AcquireFirstMatchingEventInQueue, if multi-threaded is not the way you can go. See the Carbon Event Manager Reference [1]<br>For X11, XPeekEvent is your friend. Or, if you need more than the head of the queue, go for XCheckIfEvent<br>As for GTK - who knows or cares? ;)<br>Like all things slightly out of the ordinary for OSX programs, you need to drop out of Cocoa and into Carbon to achieve things.<br>[1] http://developer.apple.com/documentation/Carbon/Reference/Carbon_Event_Manager_Ref/index.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>I don&#39;t think we want to be providing web-accessible freeze+thaw.  Too much abuse potential there.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>Looking at Qt, it seems they try to use g_main_context_pending when built with GLib support.<br>Without it the code gets much more complicated but it looks to me like they are using XNextRequest, XEventsQueued, and XNextEvent.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colin Barrett</div>
+<div class='content'>What do you mean when you say &quot;[nextEventMatchingMask] sometimes processes some events&quot;?<br>Are you passing [[NSRunLoop currentRunLoop] currentMode] for the mode parameter? Are you passing NO for dequeue flag?<br>Post your code :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>gtk_events_pending and g_main_context_pending don&#39;t work because we often have pending GTK events like I/O that we don&#39;t want to interrupt on.<br>nsIdleService doesn&#39;t work since it doesn&#39;t detect pending input that hasn&#39;t been processed by Gecko yet.<br>pkasting, returning to the event loop periodically kinda works but it&#39;s a heck of a performance penalty because bailing out of reflow and restarting is really inefficient. It could even starve us indefinitely in some situations. And, unless we bail out *really often*, like every 100ms, we won&#39;t be responsive enough.<br>Looks like gdk_events_pending calls XPending or XEventsQueued or something. Anyway, it seems to work OK, although using that alone means we interrupt on mouse moves, which I don&#39;t really want. Then again so would GetInputState. I wonder how fast gdk_events_pending is, though.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Seth Spitzer</div>
+<div class='content'>Roc,<br>Could you use nsIIdleService&#39;s idleTime to determine if there is pending user input?  If idleTime is small, there might be pending user input?<br>-Seth<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Benjamin Otte</div>
+<div class='content'>Depending on what you want, I can see 2 possibilities with Gtk: If you just want to know if events are pending, you can use gdk_events_pending () or - if you want it per-display - gdk_display_peek_event(). This will however get you all X events, including property change notifications (like switching the active window) or repaints you triggered through Gtk.<br>If you however want to decide on a per-event basis if you need to interrupt reflow, the only option I can come up with is to call gdk_display_get_event() until you got all queued events - when it returns NULL (otherwise you mess up the ordering of events), then decide based on all pulled events if you need to interrupt, and afterwards stuff them back using gdk_display_put_event(); gdk_event_free().<br>If you go that route, you definitely want to file an enhancement bug with your implementation so Gdk gets support for it in the next release.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>anon</div>
+<div class='content'>No, you are right - GTK does suck.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Zack</div>
+<div class='content'>For Gtk+ I believe you want g_main_context_pending() (see http://library.gnome.org/devel/glib/stable/glib-The-Main-Event-Loop.html).  I poked around in the OSX documentation but couldn&#39;t find anything.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Zack</div>
+<div class='content'>Robert Blum: I think XIfEvent/XCheckIfEvent are the APIs that roc was referring to at the beginning when he said &quot;the only nonblocking event queue reading APIs always remove the event from the queue if they find one.&quot;  XPeekIfEvent doesn&#39;t remove the event from the queue, but -- if the manpage is to be believed -- it can, on occasion, block, which would also be unacceptable.<br>A dirty trick would be to call XCheckIfEvent with a predicate that always returns false (thus leaving the event queue intact) and that uses the closure argument to indicate whether anything was actually found.  That should be safe, as long as there isn&#39;t any problem with flushing the output queue.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ka-Hing Cheung</div>
+<div class='content'>g_main_context_pending?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>crowder</div>
+<div class='content'>Is gtk_events_pending() not what you&#39;re after (for gtk)?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Kasting</div>
+<div class='content'>Do you have to actually detect pending input?  If you&#39;re in the midst of interruptible reflow that&#39;s &quot;taking too long&quot;, could you just return to the event loop regardless?  In the case where input isn&#39;t pending this presumably adds a small amount of overhead, but if the event loop is written well, I&#39;d imagine it wouldn&#39;t be noticeable (alas, I&#39;m unfamiliar with Gecko&#39;s event loop).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Use Qt. Win32 blows.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ac</div>
+<div class='content'>You should also provide a pair of freeze/thaw operations if you let user interrupt so we can do some batch operation between reflow.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rob</div>
+<div class='content'>I don&#39;t know at which level you hook into the gtk stack, but probably something like gdk_events_pending() [1] or XEventsQueued()/XPending() [2] might help.<br>[1] http://library.gnome.org/devel/gdk/stable/gdk-Events.html#gdk-events-pending<br>[2] http://www.sbin.org/doc/Xlib/chapt_08.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Benjamin Otte</div>
+<div class='content'>Upon further thinking about that problem, why do you only want to return to the main loop upon user input, but not unconditionally?<br>Your whole app will appear frozen if you don&#39;t return (no redraws, animations will stop, progressbars won&#39;t advance etc) and I can&#39;t imagine that&#39;d be intended.<br>So it seems to me that you should return to the main loop after X ms (95% confidence interval of a normal page being rendered I&#39;d say, but that&#39;s just gut feeling) and return unconditionally, then process all events and resume layouting.<br></div>
+</div>
+
+</div>

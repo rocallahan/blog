@@ -1,0 +1,66 @@
+---
+layout: "post"
+title: "Initial IE8 Thoughts"
+date: "2008-03-06 09:36:00 +0000"
+permalink: "/2008/03/initial-ie8-thoughts_06.html"
+---
+<div class="columns"><p>I just finished digesting the interesting-looking <a href="http://code.msdn.microsoft.com/ie8whitepapers/">IE8 whitepapers</a>. Some thoughts...<br/><p>The IE team has obviously worked really hard and made a lot of good decisions. Good on them.<br/><h2>The Good News</h2><br/><p>They're fixing zoom to work like Opera and Firefox 3. Makes sense.<br/><p>They're doing WAI ARIA support, great for the accessible Web.<br/><p>They've implemented some HTML5 features! In particular, <a href="http://www.whatwg.org/specs/web-apps/current-work/#the-history">navigation</a>, <a href="http://www.whatwg.org/specs/web-apps/current-work/#storage">storage</a>, <a href="http://www.whatwg.org/specs/web-apps/current-work/#browser0">online/offline events</a>, and <a href="http://www.whatwg.org/specs/web-apps/current-work/#cross-document">postMessage</a>. Interestingly, as far as I know, they've only provided public feedback on the last one. I'm really glad MS has opened the door on HTML5.<br/><p>Acid2 support, of course, including the data: protocol and fixes to &lt;object&gt;.<br/><p>Selectors API support is good, we need to get down and implement that.<br/><p>Making tabs run in their own processes is probably a good architectural move, but it will be interesting to see what that does to footprint.<br/><h2>Outlook Mixed</h2><br/><p>The <a href="http://code.msdn.microsoft.com/Project/Download/FileDownload.aspx?ProjectName=ie8whitepapers&DownloadId=1025">"CSS 2.1 Compliance" whitepaper</a> has the interesting sentence<br/><blockquote><br/>In this vein, Internet Explorer 8 will ship with an additional layout engine that is fully compliant with CSS 2.1 upon final release.<br/></blockquote><br/>That is a rather strong statement... Are they really promising to have no bugs? That whitepaper is also incomplete; if they're planning full 2.1 compliance they'll need a number of features not listed. Their list of CSS3 features is also very short, consisting really only of 'box-sizing' (since they already supported 'writing-mode'). I assume they're doing more here that's not described in the whitepaper yet.<br/><p>They've done work to deal with DOM-JS cycle leaks, which is great for Web developers and users. But there's a very strange sentence in <a href="http://code.msdn.microsoft.com/Project/Download/FileDownload.aspx?ProjectName=ie8whitepapers&DownloadId=1023">here</a>:<br/><blockquote><br/>This feature may affect the behavior of Web pages that depend on garbage memory that, only as the result of a memory leak, existed in previous versions of Internet Explorer. In Internet Explorer 8 Beta 1 for Developers, these pages will reference unallocated memory and generate a fault.<br/></blockquote><br/>Web pages <em>should not</em> be able to reference unallocated memory and fault, that is a browser bug. Memory should not be collected as long as it's accessible to a page. Maybe they're talking about trusted Web pages using ActiveX controls that keep pointers to DOM objects?<br/><p>They've done some work on <a href="http://code.msdn.microsoft.com/Project/Download/FileDownload.aspx?ProjectName=ie8whitepapers&DownloadId=1029">developer tools</a>, but it just looks like a partial Firebug clone. They'll need to do more to catch up there ... but we'll need to do more to maintain our lead. Yay for competition!<br/><h2>The Bad News</h2><br/><p>The untold story here is what's missing. Obvious omissions that the other major browsers have already shipped --- no SVG, no &lt;canvas&gt;, no JS setters/getters, not even DOM2 Events.<br/><p>Their implementation of XML namespaces is supposed to be improved but it's still badly broken and they know it. I wonder why this wasn't fixed.<br/><p>They've introduced their own cross-site XMLHttpRequest-alike, when the W3C is in the throes of standardizing cross-site extensions for the regular XMLHttpRequest. That's bad form. Likewise, "Activities" really needs a cross-browser spec; it would be good to get spec coverage and feedback <em>before</em> releasing a beta.<br/><p>As I suspected, interacting pages in different compatibility modes creates really nasty problems, so there's even <a href="http://code.msdn.microsoft.com/Project/Download/FileDownload.aspx?ProjectName=ie8whitepapers&DownloadId=1056">a whitepaper</a> dedicated to it. It makes me feel sorry for the IE team, but it will also complicate things for Web developers.<br/><p>One thing that really ticks me off is that the IE messaging is very very careful to never mention any other browser. I know it's standard practice but frankly, it's rude, especially in relatively technical documents and blogs. Would it kill them to mention which features they're adding have cross-browser support?<br/><h2>Looking Ahead</h2><br/><p>Some of the things I thought might be there aren't, or at least they're not talking about them yet. Their CSS3 grid proposal isn't mentioned. There's no talk about WPF or DirectX integration (beyond what IE already has), although that may be felt to fall outside the scope of IE8 proper.<br/><p>Implementing a big feature list is only a first step. The real test is to follow through with careful testing and bugfixing, especially for interoperability. Careful tracking of specs as they evolve before IE8 ships is also going to be important.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anup</div>
+<div class='content'>Hmmm... you can probably ignore my previous question about whether Firefox and others will follow suit on the number of connections increase -- I believe you all support 8? I missed that... IE really is catching up more than I thought :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Naylor</div>
+<div class='content'>&quot;but it just looks like a partial Firebug clone&quot;<br>that&#39;s a bit harsh/negative? Surely that&#39;s great news.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I didn&#39;t say anything was wrong with it, but cloning Firebug shows a certain lack of imagination. There&#39;s a lot more that could be done to improve Web development and debugging. Hopefully Mozilla will be able to do some of it...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Naylor</div>
+<div class='content'>Dean did plenty of nodding in his keynote though...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>There are a lot of ways browsers can help Web developers beyond what Firebug provides. So Firebug is not &quot;the best&quot; way to do things, although it may be part of the best way.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Schiller</div>
+<div class='content'>My biggest disappointment is obviously SVG.<br>Anyway, thanks roc for putting into words what I was feeling reading the release notes and web pages.  The lack of a nod to other browsers is, quite simply, rude.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Naylor</div>
+<div class='content'>It&#39;s pretty ironic how Mozilla have just decided to extract the DOM inspector from Firefox, and along comes IE8 with (as far as I can tell) a very similar tool. :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anup</div>
+<div class='content'>Some good observations. I was interested to read them say they would help increase parallel downloads by allowing 6 concurrent HTTP connections to the same domain. (Or something like that).<br>I *think* the HTTP spec says you should only have 2, but these days a tiny bit more (too many may lead to other problems for the browser, maybe) seems reasonable.<br>Is this something useful for Firefox and other modern browsers, do you think?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurens Holst</div>
+<div class='content'>What’s even more strange about that is: they do support VBScript getters and setters. And you can access VBScript objects from Javascript.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Naylor</div>
+<div class='content'>Umm.. ok. Firebug has been getting tons of praise, and then when IE does something similar that&#39;s lack of imagination? Isn&#39;t it simply the best developer tool around, and the best way to do things?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>&quot;just a .. firebug clone&quot; ????<br>What indeed is actually wrong with cloning Firebug for IE? My web development job would be extremely easier if I had access to firebug in IE.<br>I develop with Firebug and use IE View to check IE compatibility. When IE screws up, where do I start debugging?<br>Yes I know debugging existed before Firebug, but I don&#39;t want to remember those dark horrid evil days!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sean Hogan</div>
+<div class='content'>My biggest disappointment is no JS getters/setters. I think there are work-arounds for most of the deficiencies.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Drinkwater</div>
+<div class='content'>What about their half-arsed data: implementation? For instance, &lt;a href=&quot;data:,this%20wont%20work&quot;&gt;not supporting&lt;/a&gt; the usefulness of being able to create a URL on the fly for a vcard and presenting it like a file massively limits offline support imho.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jacob L</div>
+<div class='content'>I just hope they&#39;ll soon include APNG support...<br></div>
+</div>
+
+</div>

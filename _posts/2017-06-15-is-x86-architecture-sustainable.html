@@ -1,0 +1,48 @@
+---
+layout: "post"
+title: "Is The x86 Architecture Sustainable?"
+date: "2017-06-15 06:36:00 +0000"
+permalink: "/2017/06/is-x86-architecture-sustainable.html"
+---
+<p>My <a href="http://robert.ocallahan.org/2017/06/another-case-of-obscure-cpu.html">earlier post</a> pointed to one strange little corner of the x86 instruction set. There is much, much more where that came from. My latest copy of Intel's "Combined Volumes" Software Developer’s Manual runs to 4,684 pages and it doesn't include new features they've announced such as <a href="https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-enforcement-technology-preview.pdf">CET</a>. There's <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2017/05/baumann-hotos17.pdf">a good paper here</a> describing some of the new features and the increasing complexity they bring. It also touches on the "feature interaction problem"; i.e., the complexity of the ISA grows superlinearly as Intel adds more features. One aspect it doesn't touch is how many legacy compatibility features x86 processors carry, which continue to interact with new features. One of the key risks for Intel and its ecosystem is that many of the new features may end up being little-used &mdash; just like many of the legacy compatibility features &mdash; so their complexity ends up being "dead weight".
+<p>Is there a problem here for anyone other than Intel? Yes. Unnecessarily complex hardware costs us all in the end because those CPUs won't be as efficient, cheap, reliable or secure as they otherwise could be &mdash; especially as we seem to be hitting a process wall so that we can't rely on increasing transistor density to bail us out. Another issue is that complex ISAs make ISA-dependent tools &mdash; assemblers, disassemblers, debuggers, binary instrumentation tools, and even hypervisors and kernels &mdash; more difficult to build. Super-complex ISAs encourage software to depend on obscure features unnecessarily, which builds a competitive moat for Intel but makes competition at the CPU level more difficult.
+<p>The obvious technically-appealing approach &mdash; starting over with a clean-sheet architecture &mdash; by itself doesn't solve these problems in the long run (or the short run!). We have to acknowledge that architectures will inevitably grow features in response to market demand (or perceived value) and that some of those features will turn into legacy baggage. The question is, can we adjust the ecosystem to make it possible to drop legacy baggage, and is it worth doing so?
+<p>I'm not an ARM expert but the phone and embedded markets already seem to have moved in this direction. Phones use a plethora of ARM derivatives with different architectural features (though in spite of that, ARM has accumulated its own share of weirdnesses!) Can we do it in the cloud/desktop/laptop spaces? I don't see why not. Even software that reaches down to a relatively low level like a Web browser (with a complex tiered JIT, etc) doesn't rely on many complex legacy architectural features. Porting Firefox to a brand new processor architecture is a lot of work &mdash; e.g., implementing new JIT backends, FFI glue, and translating a pile of handwritten assembler (e.g. in codecs) to the new architecture. However, porting Firefox to an x86 or ARM variant minus unnecessary legacy baggage would be a <em>lot</em> easier. Your variant may need kernel and bootloader changes but that's certainly doable for Linux derivatives.
+<p>So, I think there's room in the market for architectures which may or may not be based on existing architectures but lack legacy features and offer less-than-total binary compatibility with a popular architecture. Perhaps the forthcoming ARM Snapdragon Windows laptops are a step in that direction.
+<p><strong>Update</strong> Many commenters on Hackernews suggested that x86 complexity is a non-issue because decoding legacy instructions to uops requires insignificant die area. But this really misses the point: x86 complexity is not just about legacy instructions which can be decoded down to some microcode. It's about architectural features like SGX, CET, MPX, TSX, VT &mdash; plus the legacy stuff like segment registers and 286 call gates and virtual 8086 mode and so on and so on. It's about the processor state required to support those features, how those features all interact with each other, and how they increase the complexity of context switching, OS support, and so on.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Peter McNeeley</div>
+<div class='content'>Intel tried to fix this with:
+https://en.wikipedia.org/wiki/IA-64 
+
+Spiritual Successor:
+https://en.wikipedia.org/wiki/Mill_architecture
+
+Emulation is usually a way out, however:
+https://www.theregister.co.uk/2017/06/09/intel_sends_arm_a_shot_across_bow/</div>
+<div class='comment'>
+<div class='author'>Peter McNeeley</div>
+<div class='content'>Yes you have an extensive blog going back to at least 2004. I will see if I can go through some of it.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;ve written about the IA64 disaster before: http://robert.ocallahan.org/2016/07/itanium-disaster-claims-another-victim.html
+
+Eliminating legacy cruft doesn&#39;t mean you have to jump to a radically new, untried design.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Any thoughts on Risc V ? It&#39;s getting some traction in terms of tooling support. There is some real silicon (not server grad, but that is planned as well). It&#39;s meant to be practical learning from existing lessons while still clean. Is this our new hope?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>RiscV looks like a nice clean-sheet design. However, as I wrote, a clean-sheet design is not necessarily required here.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>James</div>
+<div class='content'>how &#39;bout MMIX?  *ducks, runs*</div>
+</div>
+
+</div>

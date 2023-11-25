@@ -1,0 +1,16 @@
+---
+layout: "post"
+title: "Debugging With Screenshots In Pernosco"
+date: "2020-11-20 03:12:00 +0000"
+categories: "Mozilla Pernosco"
+permalink: "/2020/11/debugging-with-screenshots-in-pernosco.html"
+---
+<p>When debugging graphical applications it can be helpful to see what the application had on screen at a given point in time. A while back we added <a href="https://pernos.co/about/screenshots">this feature</a> to Pernosco.
+<p>This is nontrivial because in most record-and-replay debuggers the state of the display (e.g., the framebuffer) is not explicitly recorded. In <a href="https://rr-project.org">rr</a> for example, a typical application displays content by sending data to an X11 server, but the X11 server is not part of the recording.
+<p>Pernosco analyzes the data sent to the X11 server and reconstructs the updates to window state. Currently it only works for simple bitmap copies, but that's enough for Firefox, Chrome and many other modern applications, because the more complicated X drawing primitives aren't suitable for those applications and they do their complex drawing internally.
+<script src="https://static.pernos.co/content/HDe0YuPHD92lanERDBJTfhwfDe4JpWxbxampTZ4bvHA.js" defer></script>
+<script src="https://static.pernos.co/content/K0Fj5v8-lGHyz_B3ykPJ4shz9pNHBKXFY_XFLO0yN1Q.js" async></script>
+<link rel="stylesheet" href="https://static.pernos.co/content/1CTVKKU-PkZxpi3FpbNfOoxZS7Y7j-NwqxI0BlnOTdA.css">
+<div class="DOMRecMovie" id="screenshotsMovie"></div>
+<p>Pernosco doesn't just display the screenshots, it helps you debug with them. As shown in the demo, clicking on a screenshot shows a pixel-level zoomed-in view which lets you see the exact channel values in each pixel. Clicking on <em>two</em> screenshots highlights the pixels in them that are different. We know where the image data came from in memory, so when you click on a pixel we can trace the dataflow leading to that pixel and show you the exact moment(s) the pixel value was computed or copied. (These image debugging tools are generic and also available for debugging <a href="https://pernos.co/about/alerts">Firefox test failures</a>.) <a href="https://pernos.co/debug/x7NOZnfTFoc91Iht_kAt3Q/index.html#f{m[B1w,TV8_,t[AQ,g0g_,f{e[B1w,TVg_,s{af9FPO1AA,bZw,uSeo,oivw___,v[{wiLg,v[{f'source',q'source',p{_,xAYag_,{f'container',q'stack',p{_,xAYag___,{w/eg,v[{f'list',q'screenshots',p{_,xAYag____">Try it</a> yourself!
+<p>Try Pernosco on <a href="https://pernos.co/account">your own code</a> today!

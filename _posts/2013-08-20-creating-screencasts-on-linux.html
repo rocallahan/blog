@@ -1,0 +1,22 @@
+---
+layout: "post"
+title: "Creating Screencasts On Linux"
+date: "2013-08-20 03:05:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/08/creating-screencasts-on-linux.html"
+---
+<p>I had great difficulty creating a good screencast for the previous blog post. Various tools I tried all had horrible flicker problems in the captured video. I think the problem is related to the GNOME compositing window manager I'm using in Fedora 18. After various tools failed, I solved the problem using <tt>vncserver</tt> to set up a separate X11 display in which to run the demo app, and using <tt>ffmpeg</tt> to record the video like so:
+<p><tt>ffmpeg -f x11grab -s 1024x768 -i eternity:2 capture.webm</tt><br>
+(where 'eternity:2' is the DISPLAY for the vncserver)
+<p><strong>Update: Ignore the above solution. Andrew Overholt pointed out that GNOME Shell has screen-casting built in: just press Ctrl-Alt-Shift-R to start and stop, and .webm files are dumped in your Videos directory. It works perfectly for me! Somehow in all my Internet searching I never discovered this feature.</strong>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Andrew Overholt</div>
+<div class='content'>How does GNOME Shell&#39;s built-in recorder (start/stop with Ctrl-Alt-Shift-r) do?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Huh. It works perfectly and produces WEBM too. I don&#39;t know how I failed to find this. I&#39;ll update the post.</div>
+</div>
+</div>
+
+</div>

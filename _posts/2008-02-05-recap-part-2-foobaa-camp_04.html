@@ -1,0 +1,71 @@
+---
+layout: "post"
+title: "Recap Part 2: Foo/Baa Camp"
+date: "2008-02-04 14:22:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/02/recap-part-2-foobaa-camp_04.html"
+---
+<div class="columns"><p>Baa Camp was pretty good again. I have to admit I'm a cynic about a lot of Web companies so I'm not the most sympathetic attendee, but it's good to see what people are doing and of course there are a lot of interesting people there who aren't doing Web stuff.<br/><p>I went to a talk on AIR by John Ballinger. The pitch seems to be "The best of Flash and Web apps, on the desktop". That's confusing because there are a bunch of different and mostly orthogonal features that tend to distinguish Web apps from desktop apps, and AIR addresses several of them at once and kind of conflates them. For example, we heard about offline usage, persistent local storage, users dragging files into the application window, client-side image compression, giving applications their own dock/taskbar icon, and handling local file types --- all features that can and should be provided by browsers too, possibly via extensions like Gears for the laggards, ideally via standard APIs like HTML5. There are few philosophical differences between AIR and the browser. The biggest one is that AIR doesn't sandbox apps, so users have to make a trust decision to use an AIR app. I don't know how high a barrier that is to AIR app adoption; I hope it's a high one, because users should be reluctant to let applications abuse them! Another, related difference is that AIR lets apps escape browser chrome such as the forward/back buttons and the address bar. I can see that app designers would love that --- yay for integrity of artistic vision! --- but I'm not sure <em>users</em> would. Browser navigation (back, forward, bookmarks, addresses and autocomplete) is a powerful mental model that is not only deeply entrenched but is actually very useful. Some people have suggested this issue is one reason why Flash Central didn't work out. It'll be interesting to see how it plays out this time.<br/><p>One thing that came up a few times independently was that people really want vector graphics they can print out nicely --- so Flash currently doesn't cut it. Thanks to cairo our SVG printing is really nice in FF3. (It sucked on Mac for beta2 --- we took an image surface path for SVG on Mac to handle some edge cases --- but I mostly fixed that for beta3 by taking an optimistic approach and recovering with the image surface path only if we actually hit the edge case.) Of course recommending SVG is hard as long as IE ignores it. I just encourage people to ignore IE if they can get away with it and yell at Microsoft loudly if they can't (or even if they can).<br/><p>At the camp I heard about Microsoft and Yahoo. It seems crazy to me; merging two losing operations isn't going to produce something that can beat Google. The infighting and integration difficulties will most likely push them even further backwards. Who knows how the technology chasm will be bridged; either Yahoo's FreeBSD/PHP/Hadoop etc stack gets replaced by MS infrastructure, at unbelievable disruption and cost, or it doesn't and they eat the cost of supporting dual architectures, leaving a lot of the putative cost savings on the table and in fact adding additional complexity. Lots of good Yahoo employees are bound to quit. I can hardly believe this, Steve Ballmer must be truly desperate.<br/><p>On Friday night, before I arrived at the camp, a certain Ross Howard had "volunteered" me and Nigel Parker for a "WWF Smackdown" over the IE8 meta mode switch on Sunday morning. Of course I was up for that! It was a lot of fun ... for me at least. Most of the Web developers were pretty upset about the idea, more so than me actually, and Microsoft hasn't given Nigel much to work with. Anyway, I actually learned a few things, partly because we were able to question Nigel. I asked whether IE8 has an IE6 mode; the answer was no. That's as expected, but it's actually quite important because the motivation for the IE8 switch is the problems that prevent people from moving from IE6 to IE7. IE8 will actually do nothing to address those problems! The new mode switch will only help address any differences between IE7 and IE8. I'm not sure what giant IE7 standards-incompliance bugs IE8 will fix that require this big hammer.<br/><p>I asked Nigel if IE8 will support any new CSS features. He said no, it's just CSS 2.1. That shocked me; I guess we'll have to wait and see.<br/><p>I made it clear that non-IE browsers are just going to ignore the meta switch so it's really a Microsoft solution to a Microsoft problem, and as such, it doesn't bother me all that much. My biggest concern is that "IE8 mode" will actually be uniquely buggy while being nominally "more standards-compliant" --- i.e. that Microsoft will feel free to do random things where the standards are silent, instead of being careful about being backwards- and Web-compatible the way we and Webkit and Opera do.<br/><p>Now I'm back at work grinding away at bugs again! I hope we can polish off FF3 soon so I can start working on and talking about new stuff. I also want to get FF3 into the hands of users because it's already quite excellent.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Henry Blackman</div>
+<div class='content'>I think you miss the point regarding AIR.  It isn&#39;t intended to put a web browsing experience into an app without chrome, a la Prism.  It is intended to allow developers to create applications with a desktop experience, with familiar web technologies.  I for one, am incredibly excited by this.  It opens a whole new world of desktop application development (yes, desktop apps still have a place in the world) to web and Flash developers, lowering the entry requirements and ensuring they are still web enabled!<br>In other words, it&#39;s great stuff!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;m glad to hear that Chris, thanks.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mathieu 'p01' Henri</div>
+<div class='content'>Robert: I fully agree with your vision and concerns about AIR.<br>FF3b2 is indeed better than FF2.<br>Sorry to drop in, but I&#39;m particularly interested in animations and rendering speed ( redraw and/vs reflow ), and in this area FF3b2 is still behind Safari 3b and Opera 9.5b.<br>Some CSS updates are not optimized/categorized properly in FF3 and reflows are triggered when only a redraw is necessary.<br>Who should I talk to to try and improve this ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris</div>
+<div class='content'>Robert, actually we have been working quite hard on resolving the ambiguities in the specifications (particularly in CSS2.1) - check with the Mozilla rep in the CSS WG.  We realize that doing &quot;random things where the standards are silent&quot; on purpose would be incredibly stupid on our part.<br>I don&#39;t know where Nigel got that about CSS2.1 - we&#39;re not talking exact features quite yet.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Samantha</div>
+<div class='content'>Hi, I live in California but recently took a trip out to Auckland and loved it. I have extended family there and would love to work for Mozilla over there. Can you tell me what exactly is the location of the office there? I was looking for the address online but wasn&#39;t able to find it, and ended up finding your blog instead! If there&#39;s any help you can provide me, such as the name of and Auckland Mozilla recruiter, I would greatly appreciate it! Thanks!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>haber</div>
+<div class='content'>File bugzilla bugs in Layout with blocking1.9? and testcases<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Naylor</div>
+<div class='content'>It&#39;s interesting that new information about IE8 comes from all kinds of places *except* the IE blog...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Don</div>
+<div class='content'>Robert, great to hear you again at foo. On the IE8 thing I have been pointed to this article in the UK Guardian.<br>http://www.guardian.co.uk/technology/2008/feb/01/internet.explorer<br>The point made by the author is that the net is not as broken as MS might think. It only appears that way to IE users because web developers have been using the browser agent string for years to determine whether to send out buggy HTML or standards compliant HTML.<br>The solution, of course, is to change the IE8 browser agent string to something with a longer compliance track record. Perhaps Firefox could think of patch for IE8 users that would do this.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>enefekt</div>
+<div class='content'>&quot;yay for integrity of artistic vision! --- but I&#39;m not sure users would.&quot;<br>You mean &quot;yay&quot; for interaction, experience, and user interface design right? Many things incorporate artistic elements (I would say even code), but are not done solely for artistic purposes.<br>I think AIR actually gives users more control over tasks which they need to spend more un-interrupted time doing, and not mixing it up with general web browsing tasks.<br>Not everything is &quot;browsing&quot;.<br>&quot;I hope it&#39;s a high one, because users should be reluctant to let applications abuse them!&quot;<br>Yes, I routinely let applications abuse me too, I should be more reluctant about that. :)<br>The balance between ease of deployment, and alerting users to an application with more privileges is a delicate one indeed. I think Adobe is really doing some extremely important work here in exploring this. Getting this right is huge, and I think they&#39;re on the right track.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Maxo</div>
+<div class='content'>Microsoft problems with IE are problems for all of us that provide content via web browsers.  For example, if you want to include a .png image with transparency, you will be alienating a large portion of your users, making your page look like crap.  The problem is that IE6 doesn&#39;t support transparency in pngs so you must use gifs for transparency, even though they don&#39;t look very good.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Henry, that&#39;s the problem: people talk about &quot;a desktop experience&quot; without defining what that means. And when you drill down into what makes a &quot;desktop experience&quot; better than a &quot;Web experience&quot;, you get a list of mostly orthogonal features, most of which can be made available to Web apps pretty easily with some work in the browser --- work that we&#39;re doing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nigel Praker</div>
+<div class='content'>Robert wrote: I asked Nigel if IE8 will support any new CSS features. He said no, it&#39;s just CSS 2.1. That shocked me; I guess we&#39;ll have to wait and see.<br>Here I responded that as Chris has previously stated (http://brainstormsandraves.com/archives/2007/12/06/ie8/) that the new IE8 rendering engine is focused on adhering to the Cascading Style Sheets (CSS) 2.1 specification. There may be work going on within the team implementing some CSS3 features but we’ll just have to wait and see what comes out in the beta.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I guess I&#39;m the Auckland Mozilla recruiter. Email me, robert@ocallahan.org. Our office is in Newmarket, 8 Kent St to be precise.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>david hosking</div>
+<div class='content'>would appreciate a contact phone no for mozilla firefox 8 kent st newmarket auckland thanks david<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>File bugzilla bugs in Layout with blocking1.9? and testcases<br></div>
+</div>
+
+</div>

@@ -1,0 +1,24 @@
+---
+layout: "post"
+title: "Debugging Gdb Using rr: Ptrace Emulation"
+date: "2020-03-10 23:20:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2020/03/debugging-gdb-using-rr-ptrace-emulation.html"
+---
+<p>Someone tried using rr to debug gdb and reported an <a href="https://github.com/mozilla/rr/issues/2452">rr issue</a> because it didn't work. With some effort I was able to fix a couple of bugs and get it working for simple cases. Using improved debuggers to improve debuggers feels good!
+<p>The main problem when running gdb under rr is the need to emulate <a href="http://man7.org/linux/man-pages/man2/ptrace.2.html">ptrace</a>. We had the same problem when we wanted to <a href="https://robert.ocallahan.org/2016/04/using-rr-to-debug-rr.html">debug rr replay under rr</a>. In Linux a process can only have a single ptracer. rr needs to ptrace all the processes it's recording &mdash; in this case gdb and the process(es) it's debugging. Gdb needs to ptrace the process(es) it's debugging, but they can't be ptraced by both gdb and rr. rr circumvents the problem by <a href="https://github.com/mozilla/rr/wiki/Supporting-ptrace">emulating ptrace</a>: gdb doesn't really ptrace its debuggees, as far as the kernel is concerned, but instead rr emulates gdb's ptrace calls. (I think in principle any ptrace user, e.g. gdb or strace, could support nested ptracing in this way, although it's a lot of work so I'm not surprised they don't.)
+<p>Most of the ptrace machinery that gdb needs already worked in rr, and we have <a href="https://github.com/mozilla/rr/tree/master/src/test">quite a few ptrace tests</a> to prove it. All I had to do to get gdb working for simple cases was to fix a couple of corner-case bugs. rr has to synthesize <tt>SIGCHLD</tt> signals sent to the emulated ptracer; these signals weren't interacting properly with <tt>sigsuspend</tt>. For some reason gdb spawns a ptraced process, then kills it with <tt>SIGKILL</tt> and waits for it to exit; that wait has to be emulated by rr because in Linux regular "wait" syscalls can only wait for a non-child process if the waiter is ptracing the target process, and under rr gdb is not really the ptracer, so the native wait doesn't work. We already had logic for that, but it wasn't working for process exits triggered by signals, so I had to rework that, which was actually pretty hard (see the <a href="https://github.com/mozilla/rr/issues/2452">rr issue</a> for horrible details).
+<p>After I got gdb working I discovered it loads symbols very slowly under rr. Every time gdb demangles a symbol it installs (and later removes) a <tt>SIGSEGV</tt> handler to catch crashes in the demangler. This is very sad and does not inspire trust in the quality of the demangling code, especially if some of those crashes involve potentially corrupting memory writes. It is slow under rr because rr's default syscall handling path makes cheap syscalls like <tt>rt_sigaction</tt> a lot more expensive. We have the "syscall buffering" fast path for the most frequent syscalls, but supporting <tt>rt_sigaction</tt> along that path would be rather complicated, and I don't think it's worth doing at the moment, given you can work around the problem using <tt>maint set catch-demangler-crashes off</tt>. I suspect that (with <a href="https://en.wikipedia.org/wiki/Kernel_page-table_isolation">KPTI</a> especially) doing 2-3 syscalls per symbol demangle (<tt>sigprocmask</tt> is also called) hurts gdb performance even without rr, so ideally someone would fix that. Either fix the demangling code (possibly writing it in a safe language like Rust), or batch symbol demangling to avoid installing and removing a signal handler thousands of times, or move it to a child process and talk to it asynchronously over IPC &mdash; safer too!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Uncle Brad</div>
+<div class='content'>Could you point a casual observer toward the demangling code?
+
+Thanks for the awesome work you&#39;re doing.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The demangler is part of libiberty. The gdb signal handling stuff landed here: https://github.com/bminor/binutils-gdb/commit/992c7d700f99002ed455b0588488e0e42719ba81</div>
+</div>
+</div>
+
+</div>

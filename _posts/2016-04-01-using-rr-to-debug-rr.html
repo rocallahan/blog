@@ -1,0 +1,19 @@
+---
+layout: "post"
+title: "Using rr To Debug rr"
+date: "2016-03-31 11:48:00 +0000"
+categories: "rr"
+permalink: "/2016/04/using-rr-to-debug-rr.html"
+---
+<p>Working on rr has often been frustrating because although rr is immensely useful for understanding bugs, it often has complex bugs of its own and you can't use rr to debug them. You sometimes feel you're in debugging hell so that others can go to heaven.
+<p>I realized it might not be too hard to get rr to record and replay rr doing a replay. rr's behavior during replay is much simpler than during recording, partly because most kernel state does not exist during replay (file descriptors aren't really open, etc). Achieving this could be valuable because most of the work I plan to do on rr involves doing more interesting things during replay. So I've spent about a week working on that --- and it works! On master you can run:
+<pre>rr record ~/rr/obj/bin/simple
+rr record rr replay -a ~/.local/share/rr/simple-0
+rr replay -a</pre>
+The final line is rr replaying rr replaying <tt>simple</tt>. I've added <a href="https://github.com/mozilla/rr/commit/59aa1d079b89b982ec54d51bbf30fae17c27a8b6">a test</a> for this.
+<p>It's about 2,000 lines of new code, much of which is tests exercising the new ptrace features I had to implement. Fleshing out support for ptrace (including <tt>PTRACE_SYSCALL</tt>, <tt>PTRACE_SYSEMU</tt>, <tt>PTRACE_SINGLESTEP</tt> etc) was the majority of the work. (A process can't have two ptracers at the same time, so the outer rr must ptrace all the processes and the inner rr's use of ptrace has to be completely emulated by the outer rr.)
+Along the way I found and fixed some interesting existing rr bugs. In some cases I simplified rr replay to avoid use of ptrace features that it didn't really need (e.g. <tt>PTRACE_O_TRACEEXEC</tt>).
+<p>Debugging rr running under rr can be mind-bending. It's easy to get confused about which rr you're looking at, and it's hard to examine the behavior of the inner rr when you can't trust the outer rr. I hope I don't have to do much more of it!
+<p>As you'd expect, adding a level of record and replay makes things much slower.
+<p>As you'd expect, I tried rr recording rr replaying rr replaying <tt>simple</tt>. As you'd expect, it didn't work first time. It's probably a fixable bug but I have no desire to go deeper down the rabbit-hole at the moment.
+<p>An obvious question is whether rr could record rr recording as well as rr replay. In principle I think that could work, but it would not be very useful. If rr recording of X fails, then rr recording rr recording X is likely to experience the same fault in the outer rr (because it must record the inner rr <em>and</em> X), and be much more difficult to debug! For debugging rr recording really well we'd need a record and replay system built on an entirely different technology, e.g. Simics.

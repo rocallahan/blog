@@ -1,0 +1,79 @@
+---
+layout: "post"
+title: "Chrome"
+date: "2008-09-03 13:39:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/09/chrome_03.html"
+---
+<div class="columns"><p>A few people I know have asked me what I think about Google's Chrome browser.<br/><p>Technically, it looks good on paper. There are some interesting architectural problems they haven't solved yet, especially with the process separation model, especially with regard to windowless plugins, and also Mac. These are problems that will be encountered by anyone doing process separation so it will be interesting to see how that goes. V8 seems overhyped when you take into account the JS work being done by other browser vendors.<br/><p>I'm not sure how the competitive landscape is going to play out. Mozilla's in a strong position now and the immediate future looks great. We just need to stay focused, keep making smart decisions, and keep shipping great software.<br/><p>Overall, I'm actually really excited. No matter who gains and who loses, there's no doubt that this innovation and investment and energy is great for the Web (especially when it's delivered in free software).<br/><p>(Admittedly, there are moments when I half-wish for a nice quiet job where I'm not competing against the world's biggest tech companies and I don't have to worry about the future of the Internet. But that would be so boring. Having a job I'm passionate about is worth the stress.)</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Hi Mark!<br>Peter: here are some issues I&#39;m aware of:<br>-- Multiple processes rendering to a single window on Mac. There&#39;s no supported way to do that AFAIK. From your docs (great docs by the way!), it seems you don&#39;t have an answer there yet either.<br>-- Separate-process plugins rendering in windowless mode. I haven&#39;t had a chance to grovel through your code yet, but I didn&#39;t see anything in the docs about it. Sounds especially tricky in Chrome since, if I understand correctly, all interaction between the plugin and the page is routed through the master browser process.<br>-- Synchronous two-way script interaction between the page and a separate-process plugin seems like it&#39;s hard to make performant.<br>-- Running different-origin iframes in separate processes sounds hard; the interaction between iframes and their hosts is complex and bears on Web compatibility. (And the interaction gets more complicated with HTML5 &quot;seamless&quot; iframes.) But it really has to be solved, I think, because otherwise a compromised renderer process can violate the iframe security boundary --- a gaping hole in the security architecture.<br>Maybe the answer to some plugin problems is just to sandbox plugins and actually place them in the same process as the page. Sandboxing plugins is hard though, as you know. Acroread and Java spawn helper processes, for example, and I know Java is very firmly wedded to that approach. I suppose you can support limited subprocess spawning from the sandbox, but ugh.<br>Like I said, I&#39;m not implying the Chrome design is flawed. The approach you&#39;ve taken makes sense, it&#39;s just a really tough problem that you haven&#39;t reached the end of yet.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Larry Book</div>
+<div class='content'>+1 for politically correctedness (is that even a word!)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mark Thomson</div>
+<div class='content'>Yeah I&#39;d love to try Chrome. Agree it sounds interesting - but hey, I&#39;m a busy guy. They want me to read a 6.5 page Terms of Service agreement (cf 1.5 page for the FF EULA)? Yeah, right.<br>Mark.<br>[PS first comment here, but regular reader - remember you from ABC days. Still expat. Cheers]<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tristan</div>
+<div class='content'>I nodded all the way through your post, but this has really been ringing a bell:<br>&gt; there are moments when I half-wish for a nice quiet job where I&#39;m not competing against the world&#39;s biggest tech companies and I don&#39;t have to worry about the future of the Internet. But that would be so boring. Having a job I&#39;m passionate about is worth the stress.<br>So true!<br>--Tristan<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Browsers News</div>
+<div class='content'>I was excited till it was flooded in news pages, had like 50+ rss items about chrome today...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That&#39;s probably Skia&#39;s path rasterization performing better than cairo&#39;s. That&#39;s something we can look into.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard Poor</div>
+<div class='content'>The real news is *who* is leading the V8 development - Lars Bak. And there are other members of the original Strongtalk team in the too. Strongtalk and the Hotspot Java VM are some track record to bring to the table - I&#39;m expecting truly great things from their Javascript implementation.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>There are a lot of tech jobs that don&#39;t involve head-to-head product competition. Some of them are even quite interesting --- academic/industrial research, for example, which I have done. It&#39;s competitive, but nothing like this.<br>Another option is in-house development. Most of it&#39;s deadly dull, IT for banks and such, but some of it&#39;s fun, like bespoke development for movie studios.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ivan | JobsBlog.ie</div>
+<div class='content'>Speed, license, security,... blah, blah, blah!!!<br>Chrome has the nicest logo!<br>(and tht is what matters! It&#39;s all in packaging!:) )<br>Ivan | www.JobsBlog.ie<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard Poor</div>
+<div class='content'>The real news is *who* is leading the V8 development - Lars Bak. And there are other members of the original Strongtalk team in the too. Strongtalk and the Hotspot Java VM are some track record to bring to the table - I&#39;m expecting truly great things from their VM.<br>Plus, in the wider picture, I&#39;m hoping it turns into the CLR for dynamic languages. The potential for languages like Ruby, Smalltalk, and the rest of the dynamic crowd is huge.<br>That is, to my mind, the piece of the Chrome announcement that is really exciting.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jim Battle</div>
+<div class='content'>I have to say SVG rendering is a multiple faster on chrome than firefox 3.0, at least for large images.  I dunno if google worked some magic or if webkit provides the goodness.<br>load some static svg image, then hit ctrl-+ a few times and see how long it takes to update when the image gets large.  Try this one:<br>http://www.croczilla.com/svg/samples/tiger/tiger.svg<br>On my machine, just swag&#39;ing it, I&#39;d say chrome is 3x faster or more.<br>On the other hand, pages with embedded videos don&#39;t scroll very well in chrome as compared to FF3.  Go to youtube, select any video, and while it is playing, scroll the window up and down.  FF3 is pretty smooth, while chrome is choppy and the movement of the video window lags the movement of the rest of the web page.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gfans</div>
+<div class='content'>Chrome,nice broswer!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Actually, V8 is by far the weakest part of the Chrome story. Last night &quot;Squirrelfish Extreme&quot; landed in Webkit trunk, and today V8 is the third fastest JS engine on the Sunspider benchmark, behind Tracemonkey and SFX. (Sunspider is the standard benchmark that Opera, Webkit and Mozilla have been using for a while now.)<br>OK, V8 is still the fastest on their own hand-picked benchmarks. But I don&#39;t expect that to last for long; I&#39;m sure both SFX and Tracemonkey developers are working furiously on improving performance on those benchmarks.<br>[One of the most annoying things about the Chrome launch marketing was the way Google said &quot;V8 redefines Javascript performance! Everything else is crushed!&quot; and the press said &quot;Yeah!&quot;]<br>Anyway, this race is really fun and great for the open Web. I&#39;m optimistic about Tracemonkey&#39;s chances; I think trace compilation is great technology and a very good fit for JS.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Kasting</div>
+<div class='content'>So, out of curiosity, which architectural problems haven&#39;t we solved yet?  Perhaps we&#39;ve solved a few :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Walden</div>
+<div class='content'>Regarding that last paragraph, I don&#39;t think such a thing exists.<br>I remember going to a VMWare info session a couple years back, they&#39;d done VMotion or something, competition wasn&#39;t even discussed at any time, they were on cloud nine.  I dropped by two more recent ones within the last year, and the tone (I think this was brought up in questions afterward) had markedly changed as they noted Parallels, XenSource, Microsoft, and possibly InnoTek.  The same thing happened with OLPC as numerous competitors sprung up to do the same thing on cheaper, if possibly less principled and ambitious, systems.  Mozilla&#39;s already faced competitors even beyond the elephant in the corner for a few years.<br>Markets without competition simply do not stay that way for long; I think the only exceptions would require direct government restriction of competition, very limited scale, or a very very low level of interestingness.  I can&#39;t see most of the people I know being willing and able to settle for a job in a market which met any of these requirements.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael Sander</div>
+<div class='content'>I&#39;ve been using chrome for about a day now.<br>The process separation model seems like a smart move and it will be interesting to see how well it plays with multi-core architectures. roc... you spent a lot of time on multithreading a single display engine, but this is a much simpler way of taking advantage of multicore.<br>As far as features... On its face it has some really nifty features. Specifically I love how the status bar appears only when there is status, and how the CTRL+F find bar is more featureful and even less intrusive than firefox&#39;s. Chrome gives the user more page real estate than any other browser I&#39;ve seen.<br>But there are some things which clearly show its immaturity. Despite its multi-process magic its still noticeably slower than firefox. It doesn&#39;t have the nice history and bookmark sidebar that firefox has nor the separate downloads window. Its also a bit strange that it has its own vista-like UI theme.<br>And its buggy (but we can let that slide for now... its only been beta released for 48 hours).<br>Overall... this&#39;ll increase competition and will make guys like roc work harder which is good for us (but maybe not so good for you).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>chi</div>
+<div class='content'>Early stats are showing that chrome is penetrating into the Mozilla and Opera market.  It&#39;s already hopped to 1% penetration but maybe that&#39;s for web developer geeks.  Anyhow, I see big things for Google Chrome.<br></div>
+</div>
+
+</div>

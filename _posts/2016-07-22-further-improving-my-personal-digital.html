@@ -1,0 +1,16 @@
+---
+layout: "post"
+title: "Further Improving My Personal Digital Security"
+date: "2016-07-22 00:38:00 +0000"
+permalink: "/2016/07/further-improving-my-personal-digital.html"
+---
+<p> <a href="http://robert.ocallahan.org/2016/03/digital-spring-cleaning.html">A few months ago</a> I moved my 2FA secrets (my Github account and three Google accounts) from a phone app to a Yubikey. Recently, somewhat inspired by <a href="https://danielpocock.com/how-many-mobile-phone-accounts-will-be-hijacked-this-summer">Daniel Pocock's blog posts</a> about SMS and phone security --- plus other news --- I've decided to reduce the trust in my phone further.
+<p>I don't want my phone to be usable in an account-recovery attack, so I've removed it as a recovery option for my Google and Github accounts. To not increase the risk of losing control of those accounts unrecoverably, I bought a second Yubikey as a backup and regenerated 2FA secrets for those accounts onto both Yubikeys. (For both Google and Github, generating 2FA secrets invalidates existing ones, but it's easy enough to load a secret into any number of devices while the QR code for the new secret is visible.) I generated new backup verification codes and printed them without saving them anywhere. (Temporary data for the print job might linger on my laptop storage, though that's encrypted with a decent password. More worrying is that the printer might keep data around... I probably should have copied them down by hand!)
+<p>Unfortunately my other really important account --- my online banking account --- is weakly protected by comparison. Westpac's personal-banking system uses simple user-name-and-password logon. There are heuristics to detect "suspicious" transfers, which you need to confirm with a code sent to your phone by SMS. This is quite unsatisfactory, though not unsatisfactory enough to justify the trouble of switching banks (given that generally Westpac would reimburse me for losses due to my account being compromised).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>How about getting a cheap (feature) phone, and using it with a prepaid SIM card exclusively for 2FA. The SIM would be “no name” (bought for a few bucks at a kiosk), and you would never share it with anyone both online and offline. Of course, Yubikey is better, but if a service only supports SIM, this might be a good fallback solution.</div>
+</div>
+
+</div>

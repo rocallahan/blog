@@ -1,0 +1,29 @@
+---
+layout: "post"
+title: "Research Wishlist: A Filesystem For Efficient Host-Guest File Sharing"
+date: "2018-05-08 23:54:00 +0000"
+permalink: "/2018/05/research-wishlist-filesystem-for.html"
+---
+<p>Suppose you have a guest virtual machine and you'd like to give it read-only access to a set of (large) files created and managed in the host OS (or possibly a different guest VM). Current options for this are inefficient. You can use a network filesystem like 9pfs or NFS to share the files, but that means every read copies the data from host to guest, which means the data exists in two places in system RAM, and throughput is limited. Latency is also bad in practice. Alternatively you can copy the files into a filesystem on the guest, after which access is efficient, but the copy itself is slow especially if the guest won't read all the data, plus of course you have to manage replication and you need twice the persistent storage.
+<p>It seems to me a custom-designed host-guest filesystem could share data pages between host and guest, allowing very efficient I/O with no extra copies or memory footprint, as well as fully supporting mmap(), even for writing (i.e., you can have shared-memory communication between applications in different VMs). I imagine the host kernel would mmap() files into guest physical memory and the guest filesystem driver would use those pages as the data pages for its view of the files, similar to the way persistent memory storage devices work. Non-read/write operations such as open, close, directory reading, etc, could be hypercalls from the guest into the host, which I imagine can be quite fast. With this approach, guest reads and writes would have minimal added latency over host reads and writes: for guest-cached pages, none at all, and for guest-cache misses, just the cost of nested page faults.
+<p>Even a read-only version of this would be very useful to us. I'm surprised that it doesn't already exist. Maybe it does and it's just not well known? If it doesn't exist, it seems to me this would be an excellent grad-student OS research project. It doesn't sound very difficult. Stanford's Disco project had something like this 20 years ago.
+<p><strong>Update</strong> Kata Containers (aka Intel Clear Containers) <a href="https://github.com/kata-containers/documentation/wiki/temporary:-kata-1.0-arch-overview#dax">describes</a> something pretty close to what I want, using DAX and QEMU's nvdimm virtualization to map some host files into the guest. But it sounds like you can only map a filesystem image file into the guest, rather than accessing host files on a file by file basis, and then it wouldn't be possible to update files from the host.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Bryce Schober</div>
+<div class='content'>Is VirtIO (https://wiki.libvirt.org/page/Virtio) not a solution? Or maybe just not for your VM...</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Thanks, that is interesting! Might be a pain to configure but indeed it might be possible, though I guess you&#39;d end up replicating data in memory.</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Evidently, there are such things as &quot;shared-disk file systems&quot; that do not require exclusive access to the block device (see the first section of https://en.wikipedia.org/wiki/Clustered_file_system).  I don&#39;t know anything about them other than that they exist, so I don&#39;t know if they would help for your application.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Unfortunately virtio&#39;s block driver isn&#39;t helpful here. It gives the guest efficient access to block storage, but the host and guest can&#39;t share a writeable filesystem in those blocks --- filesystem implementations assume they have exclusive access to the storage (unless the storage is read-only to all of them).</div>
+</div>
+</div>
+
+</div>

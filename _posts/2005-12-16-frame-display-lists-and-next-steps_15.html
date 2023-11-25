@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "Frame Display Lists And Next Steps"
+date: "2005-12-16 06:50:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/12/frame-display-lists-and-next-steps_15.html"
+---
+<div class="columns">After extensive testing, I've submitted the frame display list patch for review. It's huge so that might take some time... The results are pretty good; it seems to be a little faster than today's code in Trender benchmarks, the code is smaller and cleaner and much more correct and extensible and better documented. It will also make it relatively easy to fix longstanding issues like caret drawing and visual merging of multiple outlines for the same element. It fixes two acid2 bugs (which I think leaves two left, both of which should be fixed by the reflow branch).<br/><br/>The question is where to go from here. I know where I want to get to:<br/><ol><br/><li>No view system<br/><li>Only toplevel windows, popups, and embedding widgets have native widgets.<br/><li>... except for plugins, which have platform-specific solutions, but at least initially on each platform we'll hang each plugin off the top-level widget, wrapped in its own container specifically so that we can clip the plugin to an arbitrary rectangle.<br/><li>Optimize window updates (repaints, scrolls, plugin geometry changes) as follows:<br/><ol><br/><li>First, compute the area that will be need to be repainted. This includes areas under plugins that will be moved/resized.<br/><li>Render that area into an offscreen buffer.<br/><li>Perform the scroll and/or plugin widget changes.<br/><li>Copy the repaint area from the offscreen buffer to the screen.<br/></ol><br/>This should keep flicker to a minimum. Control over this process should actually be moved down into toolkit-specific code because platforms need different approaches here. The above is merely the most generic and something that can be implemented with few changes to our cross-platform nsIWidget API, and therefore is a good first step.</ol><br/><br/>Getting rid of child widgets in Gecko content will eliminate a bunch of nasty per-platform code and associated platform-specific bugs, plus improve performance. In the short term it will break accessibility, at least on Windows.<br/><br/>Removing widgets from subdocuments and scroll areas can't happen until the plugin work happens (otherwise plugins will stop being clipped when they're outside the scrolling area ... eww!). Removing views will be easier when widgets are removed (otherwise we'll have to port a bunch of widget management code to the frame system). The plugin work will create significant flicker until the optimized window update is implemented, but the optimized window update would be a lot easier after the widget removal. Also it would be good to do optimized window update after view removal, otherwise we'll have to implement it in the view system and then reimplement in the frame system soon afterward.<br/><br/>So it's a bit of a conundrum. Currently I think the best approach is to do the plugin work first, then widget removal, then view removal, then optimized window update. We can live with flickery plugin scrolling on the trunk for a while. The main argument against this approach is that we might get to the end and discover that optimized window update hasn't really fixed flickery plugins, but I think we'll just have to chance our arm. We really need to move to platform-specific solutions to get plugins rendering into offscreen buffers, anyway.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yes, it&#39;s all 1.9 material.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mark El-Wakil</div>
+<div class='content'>Reading your last post on this patch, you mentioned there will be brief moments where memory will spike due to a large number of frames within a visible page (you said ~500k or so).  Are there any places in this new code where memory is conserved?  Does only requiring once pass make much of a difference on memory consumption.<br>The scenario that came to mind for me was having an RSS feed open a ton of links.  Would this be 500k * number_of_tabs, or 500k of memory that keeps getting allocated and deallocated serially?<br>Just curious :).  In any case, thanks!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Mark: the latter, 500K allocated and deallocated serially.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jason Barnabe</div>
+<div class='content'>Even though I don&#39;t understand any of it, it sounds cool. Good work!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel Cater</div>
+<div class='content'>It&#39;s bug 317375 I believe for those who are interested. There&#39;s no target milestone; is this 1.9 material?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rishi Maharaj</div>
+<div class='content'>What Jason said. ;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael</div>
+<div class='content'>You mentioned fixing &#39;many many bugs&#39; in the bug when testing Hixie&#39;s tests. Happen to recall a few of those? :)<br></div>
+</div>
+
+</div>

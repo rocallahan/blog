@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "Debugging Gecko With Reverse Execution"
+date: "2015-03-04 13:11:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/03/debugging-gecko-with-reverse-execution.html"
+---
+<p>Over the last month or so I've added reverse-execution support to <a href="http://rr-project.org">rr</a>'s gdb interface. This enables gdb commands such as <tt>reverse-continue</tt>, <tt>reverse-next</tt>, <tt>reverse-finish</tt> and <tt>reverse-step</tt>. These work with breakpoints and watchpoints, so you can do things like
+<pre>
+Breakpoint 1, nsCanvasFrame::BuildDisplayList (this=0x2aaadd7dbeb0, aBuilder=0x7fffffffaaa0, aDirtyRect=..., aLists=...)
+    at /home/roc/mozilla-inbound/layout/generic/nsCanvasFrame.cpp:460
+460   if (GetPrevInFlow()) {
+(gdb) watch -l mRect.width
+Hardware watchpoint 2: -location mRect.width
+(gdb) reverse-cont
+Continuing.
+Hardware watchpoint 2: -location mRect.width
+
+Old value = 12000
+New value = 11220
+0x00002aaab100c0fd in nsIFrame::SetRect (this=0x2aaadd7dbeb0, aRect=...)
+    at /home/roc/mozilla-inbound/layout/base/../generic/nsIFrame.h:718
+718       mRect = aRect;
+</pre>
+(Here the "New value" is actually the value before this statement was executed, since we just executed backwards past it.)
+<p>Since debugging is about tracing effects to causes, and effects happen after their causes, reverse execution is a big deal. I've just started using it to debug Gecko, and I'm enjoying it immensely! I find myself having to unlearn a lot of my usual debugging tactics; much of what I've learned about debugging up until now is really just workarounds for not having had reverse execution.
+<p>An example from today: working on bug 1082249, I was in a function <tt>nsDisplayTableItem::ComputeInvalidationRegion</tt> with a <tt>geometry</tt> variable pointing to an <tt>nsDisplayBackgroundGeometry</tt> when it should have been a <tt>nsDisplayTableItemGeometry</tt>. At first I considered various indirect ways to figure out where the <tt>nsDisplayBackgroundGeometry</tt> came from, but now there's an easy direct way: set a breakpoint on the <tt>nsDisplayBackgroundGeometry</tt>, make it conditional on <tt>this ==</tt> the current value of <tt>geometry</tt>, and reverse-continue to see exactly where that specific object was created (in a subclass of <tt>nsDisplayTableItem</tt> that I hadn't thought of).
+<p>This work is checked into <a href="https://github.com/mozilla/rr">rr master</a>. It's not well tested yet, so a new official rr release is not imminent, but I'd appreciate people trying it out and reporting issues. At least I have been able to use it to get work done today :-).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>April King</div>
+<div class='content'>Reverse execution!  This seems so sweet, you have no idea how much easier this will make my life.</div>
+</div>
+<div class='comment'>
+<div class='author'>kats</div>
+<div class='content'>*drool* Can&#39;t wait to try this out!</div>
+</div>
+
+</div>

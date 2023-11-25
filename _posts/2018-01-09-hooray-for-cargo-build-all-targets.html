@@ -1,0 +1,7 @@
+---
+layout: "post"
+title: "Hooray For cargo build --all-targets"
+date: "2018-01-09 00:25:00 +0000"
+permalink: "/2018/01/hooray-for-cargo-build-all-targets.html"
+---
+<p>Rust 1.23 just came out and the release notes failed to mention what is, for me, by far its best new feature: <tt>cargo build --all-targets</tt> and <tt>cargo check --all-targets</tt> work properly. For the first time, we have a single command that really builds all targets &mdash; examples, tests, etc &mdash; in a single pass. Likewise we finally have a single command that checks all that code. This has improved our build times and made <tt>cargo check</tt> much more useful. I'm surprised there isn't more fuss about it.

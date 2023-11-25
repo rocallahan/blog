@@ -1,0 +1,10 @@
+---
+layout: "post"
+title: "rr 3.1 Released"
+date: "2015-04-22 13:38:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/04/rr-31-released.html"
+---
+<p>I released <a href="http://rr-project.org/">rr 3.1</a> just now. It contains <a href="/2015/03/debugging-gecko-with-reverse-execution.html">reverse execution</a> support, but I'm not yet convinced that feature is stable enough to release rr 4.0. (Some people are already using it with joy, but it's much more fun to use when you can really trust it to not blow up your debugging session, and I don't yet.) We needed to do a minor release since we've added a lot of bug fixes and system-call support since 3.0, and for Firefox development rr 3.0 is almost unusable now. In particular various kinds of sandboxing support are being added to desktop Linux Firefox (using <tt>unshare</tt> and <tt>seccomp</tt> syscalls) and supporting those in rr was nontrivial.
+<p>In the future we plan to do more frequent minor releases to ensure low-risk bug fixes and expanded system-call support are quickly made available in a release.
+<p>An increasing number of Mozilla developers are trying rr, which is great. However, I need to figure out a way to measure how much rr is being used <em>successfully</em>, and the impact it's having.

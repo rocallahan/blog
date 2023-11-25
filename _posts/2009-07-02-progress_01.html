@@ -1,0 +1,51 @@
+---
+layout: "post"
+title: "Progress"
+date: "2009-07-01 17:46:00 +0000"
+categories: "Mozilla"
+permalink: "/2009/07/progress_01.html"
+---
+<div class="columns"><p>I've submitted all of my <a href="/2009/06/native_widgets.html">compositor phase 1</a> patches for review. The patches are also published <a href="http://hg.mozilla.org/users/rocallahan_mozilla.com/compositor-patches/">here</a>. 111 files changed, 2573 insertions, 1448 deletions, divided into 39 separate patches over multiple Bugzilla bugs. In theory every one of those steps should build and pass tests, although I haven't actually verified that for all the patches. I managed to break things up pretty well --- the largest patch is only 536 insertions and 75 deletions --- so hopefully that will make reviewing easier.<br/><p><a href="http://hgbook.red-bean.com/read/managing-change-with-mercurial-queues.html">MQ</a> has been working pretty well for me. I get into a routine of applying all the patches, doing some testing, fixing a number of bugs, and then redistributing the changes across the patches that they logically belong to. I'm not 100% sure this is the most efficient way to work --- sometimes I burn quite a bit of time putting all the changes in just the right places --- but at least it's now possible.<br/><p>Now it's time to start working on something else. My immediate next task is to restructure the media tests so we can generalize tests across file types and backends; for example, right now we have one set of seeking tests for Ogg and another for Wave, but we should just have a single set of tests parametrized by test files of different types.<br/><p>After that, I plan to do some cleanup that's enabled by compositor phase 1. In particular, we can move scrolling out of the view system and integrate it all directly into the scrollframes in layout.<br/><p>After that I plan to work on compositor phase 2. Right now in Gecko whenever something needs to be repainted we make platform-level invalidation requests, the platforrm dispatches paint events and we paint. This often leads to over-frequent painting. For example if there's a script changing the DOM 100 times a second, we'll try to paint 100 times a second if we can keep up, which is a waste of time since most screens only refresh at 60Hz or so. Even worse, if you have that script, and an animated image painting 20 times a second, and a video playing at 25 frames per second, we invalidate them all independently and if your computer is fast enough we'll paint 145 times a second. We need to fix this, and I have <a href="https://wiki.mozilla.org/Gecko:Compositor">a plan</a>.<br/><p>Part of that plan is to create an internal animation API that various Gecko components (animated images, video, smooth scrolling, SMIL, CSS Transitions, etc) can plug into. But we also recognize that declarative animations will never be expressive enough for all use cases, and there's a lot of existing scripted animation libraries out there, so I have an idea for tying in scripted animations as well. Basically, I would expose the following API:<br/><ol><br/><li>window.mozRequestAnimationFrame(): Signals that an animation is in progress, and requests that the browser schedule a repaint of the window for the next animation frame, if the window is visible.<br/><li>The browser will fire a mozBeforePaint event at the window before we repaint it. Animation libraries should register an event handler that checks the current time, and updates the DOM/CSS state to show that point in the animation. If the animation has not ended, the event handler should call window.mozRequestAnimationFrame() again to ensure another frame will be scheduled in a timely manner.<br/></ol><br/>That's it! That API gives the browser control over the frame rate, while allowing JS to do anything it wants in each frame.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>RyanVM</div>
+<div class='content'>Is finishing bug 130078 considered part of phase 1?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mardeg</div>
+<div class='content'>I mentioned this in the comments of https://bugzilla.mozilla.org/show_bug.cgi?id=500410<br>Feel free to resolve it however best suits.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>idragonet</div>
+<div class='content'>Is finishing  bug 215055  considered part of phase 2?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Steven Roussey</div>
+<div class='content'>Will this fix 90268 from 2001?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Diego: because I think it&#39;s easier to review one patch that&#39;s correct instead of one buggy patch and five bug fix patches on top of it. Or even worse, five buggy patches, and several bug-fixing patches, each one fixing bugs in several of the original patches.<br>Jonas: the internal API definitely will. The JS API, I&#39;m not sure. Authors might forget to use it. Ideally we&#39;d hook the JS engine so we can lie about Date.now() :-).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>No.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Diego</div>
+<div class='content'>Why redistribute the changes between the patches and not add yet another patch to the top of the queue? (That&#39;s how i understand most of people seem to use MQ)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Darktorres</div>
+<div class='content'>Nice! Keep up the good work!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Bug 215055 should be fixed by phase 1 already.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jonas Sicking</div>
+<div class='content'>When we fire the &#39;mozBeforePaint&#39; event, will that event contain a property indicating for what time we&#39;re currently painting?<br>This might be a good idea since all the eventhandlers we&#39;re firing from the various events (mozBeforePaint, scroll, SMIL) involved here could take long enough that if everyone calls Date.now() they&#39;ll end up animating to slightly different points in time.<br></div>
+</div>
+
+</div>

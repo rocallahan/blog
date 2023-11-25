@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "Small Change To rr Behavior"
+date: "2015-06-06 17:58:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/06/small-change-to-rr-behavior.html"
+---
+<p>To address <a href="https://github.com/mozilla/rr/issues/1490">issue 1490</a>, I just <a href="https://github.com/mozilla/rr/commit/ef4c2f05ff71437d6af4d106801d6a4c31eff289">checked in</a> an rr improvement that changes the behavior of gdb+rr in a user-visible way. When the last thread of the debuggee process exits, rr generates a fake SIGKILL signal before exiting the process. This gives the user a chance to reverse-execute from the end of the debuggee execution, when previously rr would have let the process terminate normally so reverse execution cannot occur. The new behavior is a little bit of a lie since in most cases SIGKILL was never actually sent, but I hope the usefulness of this new behavior outweights any possible confusion.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>Man, that would have been so useful in the various occasions where I had to debug a program that prematurely exited. That being said, considering reverse-execution is supported by gdb itself, I wonder if gdb shouldn&#39;t be the one doing it, possibly optionally.</div>
+</div>
+
+</div>

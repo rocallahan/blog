@@ -1,0 +1,24 @@
+---
+layout: "post"
+title: "Developer Parallelism"
+date: "2013-06-14 12:40:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/06/developer-parallelism.html"
+---
+<p>In Gecko we've often had N large projects be implemented by just one person each. This has some benefits; in particular it can be quite efficient, since coordination costs are low. It's also a good way to reduce the amount of code learning developers have to do. Another approach is to put N people to work on one large project, and hopefully get it done in roughly 1/N of the time. I think the latter is probably a better way to work. I think we get better reviews, since at least for me, I do much better reviews in code I've actually hacked on than in code I've never touched. It means that if someone gets hit by a bus --- or worse still, leaves Mozilla --- we've got people who we know can work on the code. Projects getting completed faster means there's less bitrot to deal with. It makes us more agile (I hate that word though). Perhaps most importantly, it's more fun.
+<p>Most of our projects go through a startup/prototyping phase where we write some new code and get things basically working. Then there's a grind phase where we get the code working on all platforms, iron out the corner cases, fix all the regressions, fix all the fuzz bugs, write tests, and get it landed. The latter phase is usually a lot more work than the startup phase, but it's also the phase that parallelizes across developers fairly easily. So I think we should consciously try to work this way: when a project enters the grind phase, we should shift developers onto it until it's over the line. We've done some of this recently with fixing rooting hazards in JS, and in the layers refactoring.
+<p>In cases like OMTC there's some flexibility since getting the project "over the line" isn't all-or-nothing. Having people individually bring up platforms one-by-one works OK and brings incremental benefits. Same goes for converting code from XPIDL to WebIDL. So for those, the benefit of having a lot of people pile on is reduced (especially, in a conversion project, if we know that for some reason or another we will never be able to completely eliminate the stuff we're converting from).
+<p>In any case, I hope that from now on, for any project of significant size we have at least two people working on it during the grind phase, to capture the benefits I mentioned above. If someone sees this not happening, let me know and we'll fix it :-).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>njn</div>
+<div class='content'>We did this to some degree with OdinMonkey, at least, at the end.  The tight deadline for the GDC presentation was the motivation -- it was a case of &quot;we need to fix these things by a hard deadline&quot;.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>njn: that is a good thing, in my experience. Need more of that, simulated or real, don&#39;t care.
+
+/be</div>
+</div>
+
+</div>

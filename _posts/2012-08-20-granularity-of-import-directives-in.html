@@ -1,0 +1,17 @@
+---
+layout: "post"
+title: "Granularity Of Import Directives In Programming Languages"
+date: "2012-08-20 03:12:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/08/granularity-of-import-directives-in.html"
+---
+<p>Look at any C/C++ source code in a large project and you'll see a lot of #include directives at the start of each file. Even in more modern languages like Java, C# and Rust, each file starts with a list of import directives.
+<p>These directives are a form of boilerplate code that rarely convey anything useful to human readers. For small files, they can occupy a significant fraction of the file. They have to be maintained by developers. They can cause merge conflicts.
+<p>On the other hand, they have some practical benefits. Import directives can be used to resolve ambiguities: when the same name occurs in two different scopes, import directives can be used to map the name to the desired definition. Another benefit is that declaring dependencies explicitly can make it easier to view and track dependencies, and prevent undesirable dependencies. Also, explicit dependencies reduce the problem of new definitions for a name changing the meaning of existing code.
+<p>Here's a proposal to capture most of the benefits, and greatly reduce the costs:
+<ul>
+<li><strong>Make import directives per-module instead of per-file or per-translation-unit</strong> (except in rare cases where a particular file wants to use a name defined in multiple modules). This lets developers observe and constrain dependencies at the module level, which seems to be all we need.
+<li><strong>Support labelled versions of a module's interface and allow import directives to import the names in a given version</strong>.
+<li><strong>When importing between modules in the same project, use wildcard imports that import all public identifiers. When importing from an external project, import a particular interface version</strong>. When modules are in the same project --- by which I mean they belong to the same version control repository and are built and tested together --- adding new definitions to a module won't cause latent problems for other modules, so there is no need to protect against that via import directives.
+</ul>
+<p>Unfortunately, you can't do those things in C/C++ --- at least, not without penalizing compilation time by creating omnibus header files. In new languages with more modern compilation models, you could. I wonder why it hasn't been done.

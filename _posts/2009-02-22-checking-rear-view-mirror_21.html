@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "Checking The Rear-View Mirror"
+date: "2009-02-21 13:34:00 +0000"
+categories: "Mozilla"
+permalink: "/2009/02/checking-rear-view-mirror_21.html"
+---
+<div class="columns"><p><a href="http://channel9.msdn.com/pdc2008/PC12/">This video from PDC 2008</a> is interesting; Alex Mogilevsky talks about IE8's new layout engine. It was generous of him to mention that the subpixel units and zoom approach first appeared in Firefox! It's interesting to get a little glimpse under the hood. It sounds like they have something much like our frame display lists. The glimpse we got of their "layout object dump" and "display list dump" output was quite revealing if you know what you're looking for, but I'll leave that as an exercise for the reader :-).<br/><p>On the flip side, the decision to make the layout code reusable for apps like Word seems dubious, and I fancy I could sense him doubting it too. And Alex seemed remarkably sanguine about supporting an IE8-mode in IE9; "putting an 'if' statement around every bug fix" is far from the whole truth and would itself be a big maintenance burden. I stand by <a href="/2008/01/post_2.html">my skepticism</a> of their whole approach here.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Damian</div>
+<div class='content'>It sounded to me like he was talking about the new layout engine being extendable enough so that an IE9 could have an IE8 mode the same way the IE7 rendering engine has a quirks mode. Although I concur with your assessment of the situation.<br>It&#39;s a shame it&#39;s not computationally efficient to calculate everything in quotient space, guess that&#39;s the mathematician in me not really like the imprecise nature of floats and the like :).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Hmm, so they&#39;re using 100 units per &quot;screen pixel&quot;. Interesting.<br>Firefox uses 60, right? 100 is nice in that you can always make percentages out of it if the starting point is an integer number of pixels. Not so much luck for thirds and sixths though.<br>It&#39;s easy to build tripcases for either choice though, so both browsers are just alleviating the problem. The fact that they choose different numbers will probably haunt us. I hope they changed behavior to always round down for non-exact matches.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RichB</div>
+<div class='content'>Another thought - if IE now has a switchable layout engine, there&#39;s nothing to stop them switching in a XAML (WPF/Silverlight) layout rather than using a plug-in system.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>miguel: unfortunately you can&#39;t just install IE6 since they have this absurd constraint that you can install only one version of IE at a time.<br>RichB: LineServices was used for a while, yes, but Page/Table Services has only just been integrated.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>miguel</div>
+<div class='content'>If they cut off backwards compatibility at IE8 then they&#39;re moving in the right direction.  If I need to use an IE6 only webapp then I&#39;ll just download IE6.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RichB</div>
+<div class='content'>&gt; the decision to make the layout code reusable for apps like Word seems dubious<br>The following blog post about Page/TableServices and LineServices is interesting:<br>http://blogs.msdn.com/murrays/archive/2006/11/15/lineservices.aspx<br>It says:<br>&quot;LineServices 3.0 was ... shipped with Word 2000, Internet Explorer 5.0&quot;<br>So I suspect that layout has been shared with other apps for a long time.<br>Which is interesting as the first blog post about IE8 way back in 2007 mentions layout and includes a snippet of their source code tree including things called &#39;PTLS&#39; and &#39;LS&#39;<br>http://blogs.msdn.com/ie/archive/2007/12/19/internet-explorer-8-and-acid2-a-milestone.aspx<br>eg:<br>//depot/longhorn_ie8/Inetcore/mshtml/src/PTLS/5.0/ls/src/LSCONTXT.CPP<br>//depot/longhorn_ie8/Inetcore/mshtml/src/PTLS/5.0/ls/src/LSCRLINE.CPP<br>//depot/longhorn_ie8/Inetcore/mshtml/src/PTLS/5.0/ls/src/LSCRSUBL.CPP<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel</div>
+<div class='content'>And you&#39;re right with your skepticism. It is an extreme example, but Acid 3 looks completly different in IE8&#39;s IE7 mode than it does in the real IE7.<br>I wish they just dropped that mode.<br></div>
+</div>
+
+</div>

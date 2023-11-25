@@ -1,0 +1,88 @@
+---
+layout: "post"
+title: "SVG In OpenType: A New Approach To SVG Fonts"
+date: "2013-02-01 02:22:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/02/svg-in-opentype-new-approach-to-svg.html"
+---
+<p>OpenType is the industry standard font format. This is good. However, OpenType fonts severely limit what can be drawn in a glyph: basically, you can fill simple paths, and that's it. Some use-cases, e.g. fonts for emoji, require colored and even animated glyphs. SVG is the vector graphics format for the Web platform, so it makes sense to support SVG content in glyphs. The <a href="http://www.w3.org/TR/SVG/fonts.html">SVG Fonts spec</a> defines a non-Opentype SVG-based font format which in theory lets glyphs contain any SVG content. However, this format has some deficiencies that I believe make it unsuitable for the Web:
+<ul>
+<li>SVG Fonts have very weak shaping support, which makes them unusable with Indic and other languages. A solution which is unusable by a large fraction of the world's population is inadequate for the Web.
+<li>As a side effect, SVG Fonts do not support advanced typographic features that are offered by OpenType and are being exposed to Web authors via the <a href="http://www.w3.org/TR/css3-fonts/">CSS3 Fonts</a> spec (e.g. stylistic alternates).
+<li>SVG Fonts have a somewhat broken model for how style on the text affects rendering of the glyphs: CSS style inherits directly from the text to the glyphs. This is difficult to implement in a performant way, and <a href="https://wiki.mozilla.org/SVGOpenTypeFonts#Style_Inheritance">doesn't do what authors expect</a>.
+</ul>
+<p>The Web needs an approach that overcomes these problems.
+<h1>Introducing <a href="http://dev.w3.org/SVG/modules/fonts/SVG-OpenType.html">SVG Glyphs In OpenType</a>!</h1>
+<p>We propose to extend OpenType with support for glyphs consisting of SVG content. A new "SVG" OpenType table is defined, containing one or more SVG documents, each of which contains one or more glyphs. It's almost as simple as that! SVG glyph documents are subject to the same restrictions as SVG image documents, i.e. animation is supported but not scripting or external resource loads. CSS style is not inherited from the text to the glyphs; instead, the stroke and fill property values of the text are available in the glyphs document as new CSS values "context-fill", "context-stroke" etc. (These new values would also be useful with other SVG features such as markers.)
+<p>This proposal has been implemented in Firefox. It's disabled by default (in order to not pollute the Web with our not-yet-standardized implementation), but can be enabled by toggling <tt>gfx.font_rendering.opentype_svg.enabled</tt> in about:config (test page <a href="http://people.mozilla.org/~roc/svg-opentype-font-demo.html">here</a>). The only significant missing feature in our implementation is that animation is not yet supported. There are some bugs :-). Currently "context-fill" etc are named "-moz-objectFill" etc.
+<p>This approach has some nice advantages:
+<ul>
+<li>Very simple spec and implementation. This proposal only affects glyph rendering. Shaping relies entirely on existing OpenType features, so there is nothing to say about that in the spec, and nothing new to implement. An intern was able to design and implement most of this feature in a few months with no prior Gecko experience. (Thanks Edwin!)
+<li>No way to mutate the glyph DOM, which simplifies implementation considerably.
+<li>Full power of OpenType shaping available, including support for every script supported by OpenType, which is to say almost all of them. In theory this should also "just work" in fonts that use <a href="http://scripts.sil.org/cms/scripts/page.php?site_id=projects&item_id=graphite_home">Graphite</a>, an alternate, more extensible shaping engine for OpenType.
+<li>Powerful ability to customize the stroking and filling of glyphs based on stroke and fill properties of the text.
+<li>Fallback to regular OpenType glyph rendering for renderers that don't support SVG glyphs, and also if we need to obtain the outline of a glyph as a path (e.g. for <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#dom-path-addtext">&lt;canvas&gt; addText()</a>).
+</ul>
+<p>We'll be working with other vendors like Adobe (who have a <a href="http://lists.w3.org/Archives/Public/www-font/2011AprJun/0171.html">similar proposal</a>) on the <a href="mailto:public-svgopentype@w3.org">public-svgopentype mailing list</a> to converge on a standard as soon as we can.
+<p>Thanks to Edwin Flores for doing the implementation work and Cameron McCormack for helping design the feature and write up the spec.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>I notice you don&#39;t mention hinting at all. How are you coping with that, since the SVG specification for the  element explicitly points out that if you want hinting, you should not use SVG but some other technology.
+
+And you *need* hinting; it&#39;s critical for real typography and text presentation since glyphs are defined on 1000x1000 or even 2000x2000 quads, so you can&#39;t scale them down to small point sizes without antialiasing ruining everything. And you can&#39;t design them on a small quad either, becuase then you can&#39;t scale the text up, instead of down, without text looking like it&#39;s using a scaled bitmap font.
+
+So how is hinting tackled? (and if the answer is &quot;we don&#39;t bother with that yet&quot;, bear in mind that&#39;s about as sensible as someone saying they made a new text editor but they&#39;re not bothering with unicode yet =)</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>There really is no need for hinting with modern high-resolution displays, for example Mac OS X discards all hints and it has great-looking fonts.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>We don&#39;t have any hinting support. None of the competing approaches do either. We need to add something to SVG to support hinting or some other kind of resolution-specific rendering. That would be useful for SVG images and regular content as well as glyphs.
+
+However, a lot of uses for SVG glyphs are things like smiley-faces where you don&#39;t need to grid-fit vertical and horizontal strokes and hinting isn&#39;t as important as for regular text.</div>
+</div>
+<div class='comment'>
+<div class='author'>Kevin</div>
+<div class='content'>Will SVG 2.0 Address that, or will such additions to SVG is something that will come later? </div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>without hinting... im kind of scratching my head here. 
+
+whats the point again?
+
+</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>How does text colouring work on multi-coloured glyphs? (Do you have to choose five text colours? Or are colours hard-coded? Do you choose one and everything else is defined in relation to that?)</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>There have been requests however to have the ability to declare some pre-defined slots/parameters that you can fill in with specific colours.  I have seen examples of lettering on signs where there were two or more highlight colours that were used in addition to the base glyph colour, and it could make sense to be able to pass those in to the font.
+
+This use case isn&#39;t supported by the current proposal, although I imagine if we did want to extend it to support parameterised colours that using CSS variables in the glyph definitions (and somehow being able to pass in colour values for those variables from the outside) would make sense.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;m not sure what you mean by &quot;five text colors&quot;.
+
+An SVG glyph can use any colors it wants. If it needs to draw something in the &quot;text color&quot; that was set on the text, an SVG glyph can use the new &quot;context-fill&quot; CSS value to get that color.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>IIUC it&#39;s accurate to describe Graphite as an alternative OpenType shaper. I think it addresses the fact that certain script languages cannot be accurately shaped with OpenType-based shapers.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Sorry _not_ accurate...</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Tigt</div>
+<div class='content'>Might this work with media queries embedded in the SVG glyphs, for responsive type that works kind of like the old Multiple Master format?</div>
+</div>
+
+</div>

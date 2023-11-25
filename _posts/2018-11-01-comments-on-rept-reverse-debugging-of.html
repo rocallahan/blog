@@ -1,0 +1,20 @@
+---
+layout: "post"
+title: "Comments on \"REPT: Reverse Debugging of Failures in Deployed Software\""
+date: "2018-11-01 04:42:00 +0000"
+categories: "rr"
+permalink: "/2018/11/comments-on-rept-reverse-debugging-of.html"
+---
+<p>It's a <a href="http://web.eecs.umich.edu/~barisk/public/rept.pdf">pretty good paper</a>! In fact, it won a "best paper" award.
+<p>The basic idea is to use Intel PT to gather a control-flow trace and keep just the last segment in a memory buffer, and dump that buffer as part of a crash memory dump. Then they perform some inference based on final memory values and the control-flow trace to figure out what the values of registers must have been during execution leading up to the crash. The inference is non-trivial; they have to use an iterative approach and sometimes make optimistic assumptions that later are corrected. With the register values and memory values they infer, they can provide some amount of reverse-execution debugging over the time interval leading up to the crash, with negligible overhead during normal execution. It's all done in the context of Windows and WinDbg.
+<p>One qualm I have about this paper's approach is that their optimistic assumptions mean in some cases they report incorrect data values. They're able to show that their values are correct most of the time, but I would hesitate to show users data that has a significant chance of being incorrect. There might be some room for improvement here, e.g. distinguishing known-correct values from maybe-incorrect values or using more sophisticated confidence estimation.
+<p>Overall using PT to capture control flow to be saved in crash dumps seems like a really good idea. Everyone should do that. The details of the interference are probably less important, but some kind of inference like in this paper seems really useful for crash dump analysis. I think you'll still want full rr-style recording when you can afford it, though. (I think it's possible that one day we'll be able to have full recording with negligible overhead ... a man can dream!)
+<p>I have a couple of quibbles. The paper doesn't describe how they handle the x86 EFLAGS register. This is important because if EFLAGS is part of their register state, then even simple instructions like ADD aren't reversible, because they reset flags; but if ELFAGS is not part of their register state, then they can't deduce the outputs for instructions like CMOVxx, SETxx, ADC etc. I asked the lead author and they confirmed they have special handling for EFLAGS.
+<p>Another quibble I have is that they don't describe how they chose the bugs to evaluate REPT against, therefore it's difficult to be confident that they didn't cherry-pick bugs where REPT performs well. Unfortunately, this is typical for computer science papers in areas where there is no accepted standard corpus of test subjects. Our field should raise standards by expecting authors to document protocols that avoid the obvious biases &mdash; not just test cherry-picking, but also tuning tools to work well on the same tests we then report results for.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>teambongda2</div>
+<div class='content'>Cảm ơn đã chia sẻ. Đón xem lịch aff cup 2018 bongda365 được cập nhật chính xác nhé</div>
+</div>
+
+</div>

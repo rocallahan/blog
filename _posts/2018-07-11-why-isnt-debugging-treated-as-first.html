@@ -1,0 +1,137 @@
+---
+layout: "post"
+title: "Why Isn't Debugging Treated As A First-Class Activity?"
+date: "2018-07-11 00:49:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2018/07/why-isnt-debugging-treated-as-first.html"
+---
+<p>Mark Côté has published a "vision for engineering workflow at Mozilla": <a href="https://mrcote.info/blog/2018/07/05/a-vision-for-engineering-workflow-at-mozilla-part-two/">part 2</a>, <a href="https://mrcote.info/blog/2018/07/10/a-vision-for-engineering-workflow-at-mozilla-part-three/">part 3</a>. It sounds really good. These are its points:
+<ul>
+<li>Checking out the full mozilla-central source is fast
+<li>Source code and history is easily navigable
+<li>Installing a development environment is fast and easy
+<li>Building is fast
+<li>Reviews are straightforward and streamlined
+<li>Code is landed automatically
+<li>Bug handling is easy, fast, and friendly
+<li>Metrics are comprehensive, discoverable, and understandable
+<li>Information on “code flow” is clear and discoverable
+</ul>
+<p>Consider also Gitlab's <a href="https://about.gitlab.com/product/">advertised features</a>:
+<ul>
+<li>Regardless of your process, GitLab provides powerful planning tools to keep everyone synchronized.
+<li>Create, view, and manage code and project data through powerful branching tools.
+<li>Keep strict quality standards for production code with automatic testing and reporting. 
+<li>Deploy quickly at massive scale with integrated Docker Container Registry.
+<li>GitLab's integrated CI/CD allows you to ship code quickly, be it on one - or one thousand servers.
+<li>Configure your applications and infrastructure.
+<li>Automatically monitor metrics so you know how any change in code impacts your production environment.
+<li>Security capabilities, integrated into your development lifecycle.
+</ul>
+<p>One thing developers spend a lot of time on is completely absent from both of these lists: <strong>debugging!</strong> Gitlab doesn't even list anything debugging-related in its <a href="https://about.gitlab.com/product/missing/">missing features</a>. Why isn't debugging treated as worthy of attention? I genuinely don't know &mdash; I'd like to hear your theories!
+<p>One of my theories is that debugging is ignored because people working on these systems aren't aware of anything they could do to improve it. "If there's no solution, there's no problem." With Pernosco we need to raise awareness that progress <em>is</em> possible and therefore debugging <em>does</em> demand investment. Not only is progress possible, but debugging solutions can deeply integrate into the increasingly cloud-based development workflows described above.
+<p>Another of my theories is that many developers have abandoned interactive debuggers because they're a very poor fit for many debugging problems (e.g. multiprocess, time-sensitive and remote workloads &mdash; especially cloud and mobile applications). Record-and-replay debugging solves most of those problems, but perhaps people who have stopped using a class of tools altogether stop looking for better tools in the class. Perhaps people equate "debugging" with "using an interactive debugger", so when trapped in "add logging, build, deploy, analyze logs" cycles they look for ways to improve those steps, but not for tools to short-circuit the process. <strong>Update</strong> This <a href="https://news.ycombinator.com/item?id=17505920">HN comment</a> is a great example of the attitude that if you're not using a debugger, you're not debugging.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Mobile applications benefit a lot from interactive debugging, and both Xcode and Android Studio have  decent capabilities around it. Games and GUI applications in general fit interactive debugging as well. I&#39;ve only met a single &quot;developer&quot; that refused to launch the debugger on a GUI program (due to the vanity of not being &quot;hackery&quot; enough, he also used emacs). He was the laughing stock of the company</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>He also took hours to track the simplest of bugs</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Rhyous</div>
+<div class='content'>I agree with you. For every open source project, the goal should be:
+
+1. Simple or 1 step check-out/clone of repo.
+2. 1 step build
+3. 1 step run in debug mode
+
+Is it just me, or does Microsoft put debugging at a high priority? They spend masses of time on improving it with each Visual Studio release, and it just keeps getting better.
+ </div>
+</div>
+<div class='comment'>
+<div class='author'>Bruce Hoult</div>
+<div class='content'>A lot of good points have been made here.
+
+With experience I create fewer bugs in the first place.
+
+With TDD I find the bugs quickly after I create them, and it&#39;s obvious which part of the code is responsible -- the part I just touched.
+
+And, as Florian points out, the nasty bugs are often crossing many different domains: different languages, different threads or processes, application/kernel, even different machines. Text-based logging is the lowest common denominator for all these, as well as (if properly implemented) being relatively low overhead and affecting program timing by us not ms.
+
+I think the hairiest debugging I had recently involved interactions between JITed Java code, the C runtime library, and Android&#39;s &quot;zygote&quot; that all apps and most services are forked from.
+
+printf() is already fairly low in execution overhead, but you can improve on it by using a version that just appends the arguments to a buffer and delays the actual formatting until a non-critical time (idle, program exit, just dump the binary and post-process later). For typical log messages with a format string and a couple of integer/pointer/FP values this can reduce the logging overhead to half a dozen instructions. That&#39;s ns if you don&#39;t get cache/tlb misses. But printf() is usually good enough :-)
+
+The final advantage of logging over interactive debugging is that (as with assertions) you can leave it permanently in the source code and switch it (or parts of it) on or off as needed.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s true that existing debuggers aren&#39;t very good at domain-crossing bugs. I believe most of those limitations can be fixed.
+
+I believe that logging has its place. However, rr and similar debuggers enable much more direct debugging strategies, e.g. jumping directly from where an incorrect value is observed to the point where it was generated. We can make debugging hard bugs much easier, but we can make debugging not-so-hard bugs faster too. Logs are always a more indirect method of deducing what the program must have done based on the log output you observed.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Generic Blogger Profile Goes Here</div>
+<div class='content'>A lot of people argue for &quot;Test driven development&quot;.  Why are more people not arguing for &quot;debug driven development&quot;?</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>lol, &quot;debug driven development&quot;, well, debug is not a thing that can drive a development, you just do it to fix bugs, that is. And from my point of view testing isn&#39;t the right driver for development, it&#39;s like give a F1 car to your granny to finish the race.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Bruce Hoult</div>
+<div class='content'>I think the faster computers got the less useful I found interactive debuggers. Single-stepping through code at human speed while the CPU can execute at a rate of ten billion instructions a second is awful.
+
+I don&#39;t feel &quot;trapped&quot; in an &quot;add logging, build, deploy, analyze logs&quot; cycle. At the moment I&#39;m working on LLVM for RISC-V. If I alter the logging in a .cpp file (or even a few of them) then even my tiny NUC only takes seven seconds to rebuild opt or nine for clang.
+
+A debugging run might produce megabytes of log in a few seconds. Or even hundreds of megabytes.
+
+It doesn&#39;t matter because I can use the power of the computer to analyse the logs, writing little analysis programs in perl, python, C++, Lisp or whatever I want. Those usually only take a second to run, and I find that pretty soon I iterate on the log analysis program a lot more than on adding more logging.
+
+Fortunately the things I&#39;m doing usually don&#39;t have much problem with reproducibility (at least if I disable ASLR).</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Thanks for the insightful reply.
+
+It&#39;s true that singlestepping through code is tedious and slow. It&#39;s a bad interface to the underlying data and we can improve that interface to make singlestepping much less necessary.
+
+I will note that Chandler Carruth really likes rr for hacking on LLVM: https://twitter.com/chandlerc1024/status/879962014860193792</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>John Brett</div>
+<div class='content'>My need for debugging dropped dramatically when I discovered unit testing. I still debug, I still retain the skills, but I regard having to debug as being a failure of the tests (and possibly the architecture). I&#39;d rather fix the tests to show the problem, and then that I&#39;ve resolved it forever more, over a one-time debugging session.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Your question made me remember of Smalltalk, where debug was something else...</div>
+<div class='comment'>
+<div class='author'>Rob G</div>
+<div class='content'>Yes, the Smalltalk family of languages really have yet to be surpassed. They really defined the idea of an Integrated Development Environment - the development environment was the same as the application.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Just want to link to my reply about debugging over on my blog: https://mrcote.info/blog/2018/07/10/a-vision-for-engineering-workflow-at-mozilla-part-three/#comment-3983862613</div>
+</div>
+<div class='comment'>
+<div class='author'>Vik Rubenfeld</div>
+<div class='content'>This is the first time I&#39;ve heard the opinion that interactive debugger are no longer needed. Question: when you need to find and fix bugs in your code (and they *will* be there), how do you do that without an interactive debugger? I&#39;m asking a serious question with no sarcasm attached.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;m a big believer in interactive debugging! I led the development of rr and I use it myself constantly. I want to understand why *other* developers don&#39;t believe in interactive debugging.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Thanks Florian. I agree that integrating JS supporting into a debugger would be very useful, and that is something we want to do in Pernosco at some point. I also agree that being able to share debugging state with other users would be very useful, and that is also on our roadmap.</div>
+</div>
+<div class='comment'>
+<div class='author'>Florian Quèze</div>
+<div class='content'>I&#39;m not aware of any interactive debugger that would let me debug Firefox code that crosses the JS &lt;-&gt; C++ boundary continuously. Adding debug output to the terminal doesn&#39;t have this problem but is of course tedious. Something I do increasingly often is instead of adding terminal output, I add a small sleep call in the code (long enough to ensure it&#39;ll be captured by a sampling profiler), and then capture the whole execution in the gecko profiler, which gives me a visual overview of what happened over time, with JS/C++ stacks. And then I can share that view easily.</div>
+</div>
+</div>
+
+</div>

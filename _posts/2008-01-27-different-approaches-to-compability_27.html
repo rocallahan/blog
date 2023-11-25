@@ -1,0 +1,47 @@
+---
+layout: "post"
+title: "Different Approaches To Compability Modes"
+date: "2008-01-27 09:49:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/01/different-approaches-to-compability_27.html"
+---
+<div class="columns"><p>Some people are comparing IE's support for compatibility-mode-switching to Firefox's "quirks mode" and suggesting that they're very similar in principle. In fact, they are not.<br/><p>Firefox's "quirks mode" is defined as "standards mode, except for <a href="http://developer.mozilla.org/en/docs/Mozilla_Quirks_Mode_Behavior">a fixed set of documented 'quirk' behaviours</a>". This means that almost all bug fixes apply to both standards mode and quirks mode. Quirks mode is actually getting more consistent and more standards-compliant all the time! (Of course it can never be 100% standards compliant.) Every new feature we add is available in both modes. The code we need to implement quirks mode behaviours is basically fixed and does not grow significantly over time.<br/><p>IE's compatibility modes are defined as "whatever IE version X did". They are not supposed to change over time so the code required to implement all of them grows substantially with every IE release. Bugs in them are never fixed (except for crash and security bugs, I guess). I'm not sure if new features will be added to modes other than the very latest mode, but since it would be a lot of extra work and potentially destabilize compatibility, I'm guessing not.<br/><p>Everyone has their reasons and I don't need to debate which way is better. But the philosophy, implementation and consequences of these approaches are very different.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Adriano</div>
+<div class='content'>Ah, the penny just dropped.<br>Chris wilson stated in a reply post... &quot;In the end, we believe our highest priority is the user...  If they install a new browser and their sites are broken, they uninstall the new browser.&quot;<br>Think about it, what hasn&#39;t been discussed here is which Operating System IE8 will support. I&#39;ll hazard a guess and say it will be Vista only and maybe Windows Seven (or whatever the next version of Windows is named).<br>And here is the rub, Micro$oft only make their money from selling Operating Systems and not web browsers.<br>This means that Micro$oft don&#39;t want paying customers to purchase a new OS (e.g. Vista or Windows Seven) only for them to find some old, crappy web-sites don&#39;t work and then return the OS or decide not to upgrade on a recommendation from one of their friends or a tech review.<br>So by releasing IE8 only on Vista, Micro$oft will try and force users to upgrade to their latest OS, thereby increasing revenue and profits along the way. You can see the marketing brochure now: &quot;It&#39;s safe to upgrade to Vista and IE8 because all your old, crappy web-sites work too&quot;.<br>The way to think of this decision is that it is a Product Marketing decision (i.e. make money) rather than a Software Development (i.e. provide standards compliance) or User-centric decision (i.e. build a better web).<br>At the end of the day, the fact that web browsers are &quot;free&quot; (in the not having to pay money sense) means that Micro$oft will try and recoup their costs in other areas. This time, through the Operating system.<br>It&#39;s a sad decision for the Web but one motivated by money and, as usual, corporate greed.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>alex.r.</div>
+<div class='content'>But then again, by not making new elements and features available to the old compatibility modes, they force anyone who wants to use those to fix their own bugs in their pages first... which may not be all that bad for the web in general.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Christian Schmidt</div>
+<div class='content'>&gt;So quirks mode is not stagnating and rotting the<br>&gt;way Internet Explorer&#39;s compatibility modes will.<br>Is that necessarily a good thing? If the various browsers&#39; quirks modes keep improving, there appears to be even less reason for authors to fix their documents to follow an official standard.<br>Of course, if most other browsers supports canvas in their quirks mode, Firefox should probably do this as well. But if IE&#39;s quirks mode doesn&#39;t support canvas (and its edge mode does), I don&#39;t see the point in trying to raise the bar for quirks mode.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Quirks mode is becoming more standards-compliant because we have bugs in our code that make us violate standards, and when we fix those bugs, both modes get closer to correct implementation of the standards.<br>We do occasionally remove quirk behaviours, too, but not often, and I&#39;m not hopeful that we&#39;ll ever be able to remove all of them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel</div>
+<div class='content'>&quot;except for a fixed set of documented &#39;quirk&#39; behaviours&quot;.<br>Well, they are at least not well documented. But I do not care that much about this. I try to use the full standards mode whenever possible.<br>When saying quirks mode comes closer to the standards, do you mean you&#39;re actually removing some quirk from time to time?<br>Anyway. Since HTML 5 is bound to Full standards mode it will probably be the only mode that&#39;s going to be used in 10-15 years. Isn&#39;t that good news? I think MS will reduce the amount of their modes as well then.<br>The meta-solution is just a short-term solution.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Yuhong Bao</div>
+<div class='content'>Agreed. I&#39;d compare it to it&#39;s almost standard mode instead.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>timfry</div>
+<div class='content'>Daniel, if I understand the rationale of MS for this new switch, I would not be optimistic that in ten years that there are less of these engines.  It seems that they have heard that they are breaking too many internal company intranet sites.  While, hopefully, new sites are getting written in more standard friendly code, I don&#39;t see how the old sites holding us back today are not still important to some companies in 10 years.  I am not sure that this will ever change.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>Adriano, Microsoft wasn&#39;t always a evil monopoly - one of the ways they succeeded past their peers, ignoring for now the more morally suspect ones, was an almost religious adherence to backwards compatibility - Raymond Chen&#39;s blog has some of the best stories on the extreme lengths Microsoft&#39;s engineering team has gone to to achieve this.<br>Their philosophy is, simply put, a program that used to work on Operating System X should continue to work on Operating System X+1. Even if its doing something illegal or undocumented. Even if the engineers have to detect a specific version of the bad program and special case a work-around when it calls some API incorrectly.<br>Microsoft is continuing this philosophy to Web Browsers as well - if a web site used to work on Browser Y, then it will continue to work on Browser Y+1. Even if the website is doing non-standards compliant stuff. Even if they have to keep the old web browser engine around to do it.<br>To say it&#39;s a bad engineering decision is completely valid. You could argue that it is indeed a sad decision for the Web. ROC is arguing that it&#39;s going to be a huge development and security problem, in a very credible fashion.<br>But to argue that it&#39;s not a user-centric decision (i.e. all the users websites continue to work) is wrong on every level I can think of.<br>It helps, say, my mother, to have a website she uses no longer work after getting an updated browser? She will be a much happier user because she can&#39;t use a favorite site?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Justin Harrell</div>
+<div class='content'>Somebody else recently also mentioned this, and gave a good example of the canvas element. The canvas element is supported in quirks mode just like in standards mode. Same for SVG, the video element, CSS3, etc. So quirks mode is not stagnating and rotting the way Internet Explorer&#39;s compatibility modes will.<br></div>
+</div>
+
+</div>

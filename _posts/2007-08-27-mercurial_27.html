@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "Mercurial"
+date: "2007-08-27 11:57:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/08/mercurial_27.html"
+---
+<div class="columns"><p>I've started using Mercurial, and it's been mostly good. I've run into a few issues that we should address:<br/><ul><br/><li>Mercurial has its own diff.exe and patch.exe tools. I accidentally had them on my path before the MSYS tools and this seemed to cause problems (like 'patch' converted line endings to CRLF in every file it touched). It would be nice if bsmedberg or someone else rolled Mercurial into the Windows build tools package so that other people don't get the opportunity to make this mistake.<br/><li><tt>hg diff</tt> doesn't seem to offer a way to change the number of lines of context. So I had to enable and configure the <tt>extdiff</tt> Mercurial extension. That was a bit annoying.<br/><li>http://hg.mozilla.org/cvs-trunk-mirror has a nice mirror of CVS into Mercurial, updated frequently, with history back to March. This is a nice place to pull from. Unfortunately it doesn't include everything you need to build Firefox; in particular NSPR and NSS must still be pulled from CVS, and extensions/xmlextras was not imported so you need to --disable-xmlextras in .mozconfig (which used to break libxul builds, although I managed to land a fix for that today). There's a client.py script in http://hg.mozilla.org/mozilla-central that can do the CVS pulls of NSS and NSPR, but mozilla-central is not a good place to pull from (it's not updated regularly) so you need to get that script seperately, and then that script has Tamarin stuff in it so I didn't like the look of it... I ended up just pulling NSS and NSPR with manual CVS commands. We need to make it easier to use Mercurial to get a working build. Perhaps someone could embed Mercurial knowlege directly into client.mk so "make -f client.mk pull_all" works with a Mercurial repository just as well as it does with CVS?<br/></ul><br/><p>On the bright side, Mercurial is fast, even on Windows: whole-tree diffs take me just 5-10 seconds, whole-tree revert is even faster, pulls are fast, and all the basic functionality seems to work fine (I haven't done any merging or branching yet, nor have I used MQ). Best of all the underlying model seems quite simple and I think I understand it having read a few chapters of <a href="http://hgbook.red-bean.com/hgbook.html">hgbook</a>. I used git with cairo without ever really understanding what git was doing.<br/><p>It seems to me that if cvs-trunk-mirror (or another Mercurial repository) was set up to make it easier to work with for regular trunk builds, developers could move over right now, except for actually checking in patches. Then we could have a flag day where instead of checking into CVS and having the changes propagated to a Mercurial mirror, we check into a Mercurial repository and the changes get propagated to a CVS mirror. LXR, Bonsai, Tinderbox and other tools could work off the CVS mirror so the switch would be pretty easy. There must be something wrong with this picture because smarter people than me have already said it's harder than that :-).</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Prahalad</div>
+<div class='content'>FYI. Personal rant about the format. Feel free to ignore.<br>Just a general comment. When your blog entry is more than 1 screen long then it is really annoying to read a 3 column content since this makes you scroll up and down 3 times for the same article. I really like your content but the annoying format (atleast for me) makes me a less frequent visitor which is really sad because the content is really good.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Vladimir Vukicevic</div>
+<div class='content'>I had the same idea for the transition -- keep the infrastructure going on CVS until we have time to move over.  But there&#39;s some unspecified other problems with that approach, and I&#39;m not quite sure what those are.  :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brandon J. Van Every</div>
+<div class='content'>Thanks for the explanation of where hg builds are really at.  I was beginning to wonder why I was finding really trivial build errors in mozilla-central code.  Now I know; it&#39;s the update lag and lack of integration.  Tinderbox of mercurial builds would be nice.<br></div>
+</div>
+
+</div>

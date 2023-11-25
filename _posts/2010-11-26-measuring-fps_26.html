@@ -1,0 +1,55 @@
+---
+layout: "post"
+title: "Measuring FPS"
+date: "2010-11-26 09:54:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/11/measuring-fps_26.html"
+---
+<div class="columns"><p>It seems standard practice for Web authors to measure performance in FPS (frames per second). There are two large problems with this.<br/><p>First, FPS is meaningless above 60 or so, because you normally can't get more frames than that onto the screen. A well-designed software stack will actually <b>prevent</b> FPS from rising above 60 --- those extra frames are wasting power. More than 60 FPS means you have a bug (or you are doing very specialized full-screen gaming --- i.e. not a Web browser). I discussed this in more detail <a href="/2010/08/the_mozrequesta.html">here</a>.<br/><p>Second, Web authors normally measure FPS as "how many times did my event handler run per second". But what they actually should be measuring is how many different frames the browser was able to paint to the screen per second, and that's a very different thing, since a setTimeout handler (for example) can run multiple times between browser repaints. It's understandable that Web authors would make such a mistake, since browsers haven't provided a way to measure the real FPS. However, in Firefox 4 we have added an API for this: <a href="https://developer.mozilla.org/en/DOM/window.mozPaintCount">mozPaintCount</a>. Use it!<br/><p>I think authors need to get into the habit of measuring FPS using mozPaintCount or something similar on other browsers and determining first whether their app is able to reach 50-60FPS. If it can, then further performance improvements can only be measured by increasing the complexity of the scene until FPS starts dropping off. Microsoft's <a href="http://ie.microsoft.com/testdrive/Performance/FishIETank/Default.html">FishIE Tank</a> is the right approach. (I don't know how they try to measure FPS though; they're probably not using mozPaintCount, so it's probably not very accurate.)</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Anthony: that&#39;s a good idea.<br>I don&#39;t know if they have anything equivalent.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anthony Ricaud</div>
+<div class='content'>Maybe mozPaintCount could be proposed to the Web Performance Working Group http://www.w3.org/2010/webperf/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kl</div>
+<div class='content'>Ok, so once I see that my mozPaintCount is lousy, can I have mozNeedlessReflowsCount to fix it? ;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kangax</div>
+<div class='content'>It might make sense to propose something similar to mozPaintCount to WebKit folks (under webkit-prefixed name). I would think it shouldn&#39;t be hard to hook internal repaint event to a DOM one. By the way, why is it called &quot;paintCount&quot; and not &quot;onpaint&quot; or &quot;onrepaint&quot; (for consistency; similar to, say, recently introduced &quot;onbeforescriptexecute&quot;/&quot;onafterscriptexecute&quot;)?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>tom</div>
+<div class='content'>but what is equivalent to mozPaint for other browsers? i couldn&#39;t find anything similar..<br></div>
+</div>
+<div class='comment'>
+<div class='author'>louisremi</div>
+<div class='content'>I would also like to point out that the number of js runs per second is still an important stat, especially if it is lower than the number of paints per second, &quot;since a repaint can happen multiple times between setInterval handler&quot;. Isn&#39;t it?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That&#39;s a good point. We have no direct way of measuring that right now.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>kangax: because it&#39;s not an event.<br>Actually I was wrong in my response to sysKin. If you check mozPaintCount every time your animation script runs, you can tell if there was a repaint since the last time your script ran. Ideally paintCount would increase by exactly 1 every time your animation script runs. You won&#39;t actually get that on Firefox trunk today, for various reasons, but that&#39;s the goal.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>sysKin</div>
+<div class='content'>Once you get anywhere close to 60 fps, the most interesting aspect is not fps but number of screen refreshes for which there was no update.<br>If you have any kind of fluid motion (say, scroll) and you skip a frame, it looks jerky. This is not clearly visible in fps counts.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>louisremi</div>
+<div class='content'>I&#39;ve created a bug in Chrome bug tracker to ask for window.webkitPaintCount<br>http://crbug.com/65348<br></div>
+</div>
+<div class='comment'>
+<div class='author'>louisremi</div>
+<div class='content'>Once again, I&#39;d like to point you out to my jquery interval bookmarklet http://lrbabe.github.com/jquery-interval-bookmarklet/<br>The demo scene is comparable to the IE fish tank, as it stresses the browser enough to go below 60fps. The main difference is that you are seeing pure DOM animations instead of canvas based ones.<br>You&#39;ll be able to see the number of JS runs per second (fps) as well as the number of paints per second (pps, Mozilla only).<br>Moreover you&#39;ll be able to switch the animation logic to use a &quot;mozRequestAnimationFrame&quot; based one, and see how it affects performances (turn on your system monitor and watch what happens when you switch to another tab).<br>This bookmarklet can be used on any website using jQuery 1.4.3+<br></div>
+</div>
+
+</div>

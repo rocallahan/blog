@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "Thinking About Performance"
+date: "2006-10-23 18:45:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/10/thinking-about-performance_23.html"
+---
+<div class="columns">I'm amused to read <a href="http://scobleizer.wordpress.com/2006/10/19/firefox-vs-ie-7-ie7-having-trouble-with-google-sites/">Scoble</a> and others (via Asa) complaining about IE being slower than Firefox on tests they care about. All I ever hear about is testcases where Gecko is slower than other browsers. This is not surprising, when you think about it, but it can be discouraging, so thanks to Scoble and others for reminding me it's not a one-way street.<br/><p>This also highlights an interesting network effect. When a browser has high market share --- especially among Web developers --- developers will optimize for that browser, working around areas where it's slow and taking advantage of features which are fast. Browsers that are trying to break into the market don't get that benefit so they have to try to be faster in all areas where the dominant browser(s) are fast. This is a considerable burden. Hats off to Opera and Safari for doing such a great job.<br/><p>Of course, even if developers are working around a performance problem in Firefox, we still need to address the problem ... not just to keep up with the competition, but to make life easier for Web developers. And sometimes our performance problems just stop people from using a feature of the Web platform, and we definitely need to avoid that.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>RichB</div>
+<div class='content'>I wrote a slider control recently. As the slider &quot;thumb&quot; is dragged along the slider, a table of financial calculations is updated. Firefox performance was perfect from the start. I had to string concatenate the tabular financial calculations and innerHTML in IE to get something that was barely usable. Both IE6 and 7 are really slow in this scenario.<br></div>
+</div>
+
+</div>

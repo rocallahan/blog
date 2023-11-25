@@ -1,0 +1,19 @@
+---
+layout: "post"
+title: "rr Performance Update"
+date: "2015-05-22 23:45:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/05/rr-performance-update.html"
+---
+<p>It's been a while (<a href="2014/03/introducing-rr.html">March 2014</a> to be precise) since I gathered meaningful rr performance numbers. I'm preparing a talk for the <a href="http://tce.technion.ac.il/events/the-5th-annual-henry-taub-international-tce-conference/">TCE 2015 conference</a> and as part of that I ran some new benchmarks with mozilla-central Firefox. It turned out that numbers had regressed --- unsurprisingly, since we don't have continuous performance tests for rr, and a lot has changed since March 2014. In particular, Firefox has evolved a lot, our tests have changed, we're using x86-64 now instead of x86-32, and rr has changed a lot. Over the last few days I studied the regressions and fixed a number of issues: in particular, during the transition to x86-64 some of the optimizations related to syscall-buffering were lost because we weren't patching some important syscall callsites and we weren't handling the <tt>recvfrom</tt> syscall, which is common in 64-bit Firefox. I also realized that in some cases we were flushing much more data from the syscallbuf to the trace file than we'd actually recorded in the buffer, massively bloating the traces, and fixed that.
+<p><img src="/assets/images/rr-perf-chart-may-2015.png" width="849" height="506" title="rr performance on selected Firefox test suites">
+<p>There are still some regressions evident since last March. Octane overhead has increased significantly. Forcing Octane to run on a single core without rr shows a similar overhead; in particular that alone causes one test (Mandreel) to regress by a factor of 10! My guess is that Spidermonkey is using multiple cores much more aggressively that it did last year and because it's carefully tuned for Octane, going back to a single core really hurts performance. Replay overhead on the HTML mochitests has also increased significantly; I think this is partly because we changed rr to disable syscall buffering on writes to standard output. This improves the debugging experience but it results in a lot more overhead during replay.
+<p>Overall though, I remain very happy with rr performance, especially recording performance, which is critical when you're trying to capture a test failure under rr. Replay performance is becoming more important since it impacts the debugging experience, especially reverse execution; but doing a lot of work to improve raw replay performance is low priority since I think there are projects that could provide a better improvement in the debugging experience for less work (e.g. the ability to take a checkpoint during a recording and start debugging from there, and implement support for gdb's evaluate-in-target conditional breakpoints).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>FWIW, I&#39;ve recently used rr to do some debugging, and while things like reverse-continue were relatively slow, having to wait for those was totally worth it if you look at the pain you&#39;d have had to go through if you hadn&#39;t been able to reverse-continue in the first place.
+My only complaint about rr is that it didn&#39;t exist earlier!</div>
+</div>
+
+</div>

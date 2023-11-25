@@ -1,0 +1,115 @@
+---
+layout: "post"
+title: "Platform Tilt"
+date: "2008-02-29 09:40:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/02/platform-tilt_29.html"
+---
+<div class="columns"><p>Vlad <a href="http://blog.vlad1.com/2008/02/28/finding-the-os-x-turbo-button/">blogged about his work on Mac performance</a> and how in the process he (re)discovered <a href="http://trac.webkit.org/projects/webkit/browser/trunk/WebKitLibraries/WebKitSystemInterface.h">Webkit's back door to undocumented Apple framework APIs</a>. This sucks.<br/><p>Disassembly shows these WK functions are mostly just wrappers around undocumented framework functions. The source to the WK wrappers is not available; the implementations are in a binary blob library that you download with the Webkit sources. It appears the sole purpose of closing the source to this library is to conceal the signatures of the undocumented framework APIs used by Webkit, presumably so that ISVs like us can't use them.<br/><p>These look like important APIs, especially to browser developers like us. For example, Vlad already blogged about <tt>WKDisableCGDeferredUpdates</tt>; we can work around the issue for Firefox, but if we had <tt>WKDisableCGDeferredUpdates</tt> we could avoid having to modify the plist of every application that embeds Gecko. I presume <tt>WKDrawFocusRing</tt> is used to draw 'outline:auto' in Webkit; we can't implement that feature without that API. <tt>WKCGContextIsBitmapContext</tt> would clean up some of our cairo code. There are a whole lot of font and text APIs; it's hard to know whether there's a performance benefit to using them or why else they're needed. A lot of the other APIs look like they could be useful but without documentation it's hard to be sure. Presumably in each case, these APIs were added because the Webkit developers found something they couldn't do (fast enough?) with the regular APIs, so of course we're likely to need them too. (With the exception of Apple frameworks we don't use at all, such as the HTTP stack.)<br/><p>The worry is that the Mac playing field is tilted against us. Linking in the WK library is a losing proposition. We can reverse engineer the hidden APIs but that's painful and fragile. The best we can do is file feature requests with Apple to get hidden APIs exposed, or new functionality that we need exposed. We need to start doing that aggressively. It's hard though, because without knowledge of framework internals, we don't necessarily know when there's functionality we could use if only it was exposed (e.g. a fast path for a particular special case, or a special hidden feature that we can otherwise emulate in a less convenient way). It might not be productive to file requests for every bit of functionality we could possibly use in the hope that some of it's in there. This is where Apple's Webkit team has a permanent leg up on us.<br/><p>Another implication is that a key part of Webkit on Mac is kept deliberately closed source by Apple. That's unfortunate. Instead of hiding the source, a much more friendly policy for Apple would be to make these APIs public as a matter of course. They may argue that there are unfrozen APIs that they don't want exposed, but there are ways around that, such as by tying symbol names to specific OS versions (<tt>CGContextFooBar_10_4</tt>?) and promising they'll just not be there in future versions.<br/><p>It's worth reflecting that if Microsoft was doing this, they'd likely be hauled before a judge, in the EU if not the US. In fact I can't recall Microsoft ever pulling off an undocumented-API-fest of this magnitude.<br/><p>Of course we will continue to do our best to make Firefox rock on Mac, and version 3 is excellent, even if we have to work harder to make up for lack of access to key APIs. We should be open to reducing our dependence on Apple frameworks where that make sense, although in key cases (graphics, window system) it's not possible. We need to push on Apple to make APIs public instead of concealing them. And we need to pray for open source platforms such as Linux to succeed, so one day we won't have to worry about this anymore.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Ian Hickson</div>
+<div class='content'>The difference between Microsoft doing it and Apple doing it is about 80% of the market. Apple can do it without abusing a monopoly position. Microsoft doing it would mean they were abusing one monopoly (their OS) to gain another (the browser, or whatever).<br>Not that I&#39;m defending Apple at all; I am a big advocate of free and open source software precisely because it gets rid of this kind of silliness and lets everyone help everyone equally.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t think anyone&#39;s arguing that it&#39;s immoral to have hidden symbols and APIs. It&#39;s a practical necessity. I&#39;m concerned about a level playing field where APIs are exposed to everyone or not at all.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mecki78</div>
+<div class='content'>Nope, actually this has nothing to do with Apple, but the fact that the repainting in Fx is broken by design. It&#39;s moronic to tell the system &quot;I want to paint more frames than the user ever will see on his display&quot;, it&#39;s plain waste of CPU resources. Right now Fx works like this:<br>1) WHILE moreToDo<br>2) doIt()<br>3) repaint()<br>4) END WHILE<br>But that is wrong. Repaint could &quot;hang&quot; because it&#39;s waiting for a screen refresh. Correct would be<br>1) WHILE moreToDo<br>2) WHILE notRepaintNecessary AND moreToDo<br>3) doIt();<br>4) END WHILE<br>5) repaint();<br>6) END WHILE<br>That way you would only repaint if it makes sense to repaint and the fact that the maximum number of repaints a second is limited does not limit the execution speed of doIt();<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>Has Microsoft not done massive secret API fests? How would we know, without open source? Rumors abound going back to the Lotus-123 days.<br>Don&#39;t throw the book at Apple yet. If the WebKit leads mean what they say about being open, they have a chance to prove it here, even if it hurts dealing with the framework teams. It must suck, since AFAICT few ISVs matter to Apple -- how much less might we, who are standing in the way of duopoly junior partner status[*]?<br>/be<br>[*] http://farm2.static.flickr.com/1118/549353792_ef59efe867_o.png<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>I responded to Ian McKellar saying something like what Alex wrote here, over in<br>http://blog.mozilla.com/rob-sayre/2008/02/28/internal-structures-that-can%E2%80%99t-be-depended-on/#comment-7701<br>Roc made the same point more concisely here, but there&#39;s a further element to think about. Whoever has the source, has the power. Yes, we can disassemble, but source code states invariants and intentions (including &quot;this may change, brace yourselves&quot;) that aren&#39;t in the machine code. With Mozilla, you have all the sources.<br>We don&#39;t expect any project to open up and freeze all internal APIs. Just opening some risks a de-facto freeze. This is all beside the point. Even open source purism is not the point, since we not only use undocumented Mac OS X APIs, we sometimes use unfrozen and under-documented APIs on all platforms.<br>What&#39;s missing is access to critical information, source or doc, however taped over with warning labels, that lets us operate on a level playing field. It&#39;s not our &quot;right&quot;, but it would be nice. And it would complete the open source intentions of WebKit not to have its Mac build depend on a binary blob.<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Maciej Stachowiak</div>
+<div class='content'>Hi Robert, as I mentioned privately, if you file requests for private API to be made public and let me know, I will do my best expedite them. The relevant teams at Apple give higher priority to these requests when they come from third-party developers rather than from the WebKit team.<br>Brendan, Apple considers Mozilla to be an important ISV. Mozilla Firefox is on a fairly short list of critical third-party apps.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alex Graveley</div>
+<div class='content'>So when can we expect Mozilla&#39;s internal APIs to be exposed with release-versioning? It would have made developing Pyro possible, without petitioning all the way up to Brendan in order to get APIs I needed.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>Firefox uses undocumented OS X APIs, too.  See https://bugzilla.mozilla.org/show_bug.cgi?id=366009 for an example.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mecki78</div>
+<div class='content'>@AlexR:<br>The problem is not complex, the solution neither, the Fx code is the complex thing here.<br>I&#39;m a Mac programmer for years. I&#39;m writing Mac applications for years. Every App that does some heavy painting is designed to work as shown in my second loop right from scratch. If you have that already in mind when you start planing the app, you will never have any problem with the repaint refresh interval. The system just tries to avoid unecessary repaints, which really makes a lot of sense. Every 3D game works like that.<br>However Fx is not a native Mac app. It has not been planned that way right from scratch. Though I would argue that the current implemtation is as ironic for any other platform (on Linux and Windows having a higher repaint rate than the screen refresh rate makes so absolutely no sense), these platforms seem to not limit it by default and that&#39;s why Fx is running better on them.<br>Now, having this &quot;beast&quot; of thousands of line of code, fixing mistakes that have probably been done when the first release of Mozilla Browser was planed years ago is definitely complex.<br>I guess that&#39;s the same reason Apple is doing it wrong in Safari, too. Safari could easily do it right, no problem. But Webkit is nothing more than the Linux KHTML engine ported to Mac and this engine is doing it wrong and Apple probably thought it&#39;s way too complex to fix this that late in the development process.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>she</div>
+<div class='content'>Another difference also is that Microsoft is a lot bigger than Apple on the pc market, and thus is scrutinized more carefully.<br>But I dont think you should worry too much, if Apple abuses its positions it will not be able to get away easily either. Its not only undocumented APIs, I mean the lock-in to their iTunes could already be the stepping stone for them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colm Sean Murdoch Ó Cinnéide</div>
+<div class='content'>i think mozilla should lower the &quot;knowledge bar&quot; the more people that can more easily &#39;grok&#39; the source code the better.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jonno</div>
+<div class='content'>Why not link to WK?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>alex.r.</div>
+<div class='content'>Wow Mecki78! You should submit that second loop as a patch or something...<br>And there I was, thinking the problem was somehow complex.<br>Bielawski, it&#39;s also important to make the distinction between the kind of undocumented APIs. You have the low level ones which, even if you wanted to, you couldn&#39;t reproduce unless you used some undocumented methods. There&#39;s also the higher level toolkits that are built from these low-level APIs which do provide a competitive advantage on their own but they do not *prevent* any competition.<br>You can always write those higher level ones yourself (at a cost of course) but there&#39;s nothing you can do about the low level ones.<br>As for the two examples you mention... if everyone is making their own little changes to the APIs before deployment, it might be that they are not quite ready for general consumption yet...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>For a long time now, WINE has been able to run Office, IE etc. They&#39;re pretty well aware of what secret APIs those apps need to run.<br>Going back to the DOS days there was less awareness of these issues, so maybe yeah. Although APIs were narrower then and easier to reverse engineer and implement.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Jesse: sure do --- carefully and painfully reverse engineered, by others if not by us. I mentioned that as an option, but it&#39;s not a good one for us (or for Apple, for that matter). We&#39;re certainly not abusing any special privileges by doing so :-).<br>Jonno: linking in the WK library is not a good idea for a few reasons:<br>-- it&#39;s not clear what the license is, so we don&#39;t know if we can redistribute it as part of Gecko<br>-- the functions are undocumented<br>-- the functions are specialized for use by Webkit and may not fit our needs. Many of them wrap more general APIs that might be more generally useful.<br>-- the library is unstable and could change at any time as Webkit evolves<br>Ian, she: I&#39;m well aware Microsoft is very different from Apple. Apple faces no actual anti-trust issues here, but it&#39;s still a sobering thought that they&#39;d be abusing a monopoly if they had one.<br>Maciej: As I mentioned, it&#39;s still tough to know from the outside what it makes sense to ask for. I think it would be sensible to assume that APIs needed by Webkit are likely to be needed by other ISVs. I&#39;m sure we could send someone to explain this to the other Apple teams if that helps :-). Anyway I appreciate your offer and hopefully we&#39;ll take advantage of it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ross</div>
+<div class='content'>Rob,<br>Not relevant to this post, but I&#39;d be interested to hear your thoughts on the IE8 announcement, and in particular webslices ;)<br>http://www.microsoft.com/windows/products/winfamily/ie/ie8/readiness/DevelopersNew.htm<br></div>
+</div>
+<div class='comment'>
+<div class='author'>verec</div>
+<div class='content'>NO FREE LUNCH!<br>It bugs me when I see this kind of blog! Grow up people!! Someone (Apple) is OFFERING you a piece of code (WebKit) at NOT CHARGE!<br>Use what you can and don&#39;t forget to say: &quot;Thank you&quot;. For what they don&#39;t offer you, guess what, you MIGHT have to do YOUR OWN work!!!<br>How shocking!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>Ian, I think you&#39;re wrong about that (and actually that seems pretty obvious to me). Apple can&#39;t do this without abusing a monopoly position.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Alex, since our source is *fully* open, at least you could exactly see what we have and know precisely what to ask for to be exposed.<br>And if we didn&#39;t listen to you, you could make your own Gecko builds exposing whatever you like.<br>And there&#39;s no possibility you&#39;ll have to compete with Mozilla PyroFox which has access to internal APIs you don&#39;t even know about.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bielawski</div>
+<div class='content'>Umm, Microsoft has tons of them (undocumented APIs), mostly in milcore and DirectUI, though one can argue that because the MS apps that use them actually distribute slightly modified versions and then use them from their own directory, it&#39;s not an API.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alex Graveley</div>
+<div class='content'>Roc, the point that open source is important because otherwise I simply can&#39;t do what I want is certainly true, from experience.<br>But if you&#39;re saying that internal APIs are fine in Mozilla because I can always fork Mozilla, then that&#39;s a little absurdist.<br>There are overwhelming benefits to being able to work within a piece of software without forking, in ways unimagined by the original authors.  As I&#39;m sure you and all the extension developers out there would agree :-)<br>It&#39;s a tough cost/benefit ratio ATM, but I can imagine an automated symbol version scheme for release binaries that could allow all symbols to be public.  That would be pretty interesting -- I&#39;m not aware of any platform that&#39;s tried it yet.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colm Sean Murdoch Ó Cinnéide</div>
+<div class='content'>Mark:<br>As Godel said to Bertrand Russell:<br>&quot;I am going to *rip up* your syntax and turn it into semantics.&quot;<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colin Walters</div>
+<div class='content'>&quot;And we need to pray for open source platforms such as Linux to succeed, so one day we won&#39;t have to worry about this anymore.&quot;<br>/me shakes pom-pons<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Maciej Stachowiak</div>
+<div class='content'>Robert, we&#39;re independently trying to get WebKit to use strictly public API (both by dropping unnecessary internal API use, and by getting more things publicized). However, we don&#39;t have much more info on these things than what you can tell through decompilation, so for many of these, if you can&#39;t tell if you need it from the name and the way it is used in WebKit code, there&#39;s not much more we can do to help you make that determination.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sebastian Redl</div>
+<div class='content'>Microsoft *has* had legal problems due to undisclosed secret APIs. A few years ago, there was a large documentation dump as part of the anti-trust ruling of the EU. It concerned functions that Office used when they were not documented.<br>So there&#39;s definite precedent.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bill Barry</div>
+<div class='content'>If you are looking for undocumented APIs in windows, just look at stuff they don&#39;t expect people to use.<br>Examples:<br>the shell apis (for custom windows shells like LiteStep or bb4win)<br>in the .NET framework System.Web.Compilation namespace (though that isn&#39;t completely undocumented)<br></div>
+</div>
+
+</div>

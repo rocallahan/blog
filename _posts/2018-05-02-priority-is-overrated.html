@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "Priority Is Overrated"
+date: "2018-05-02 01:02:00 +0000"
+permalink: "/2018/05/priority-is-overrated.html"
+---
+<p>We give scientists great credit for <em>priority</em>, i.e. being the first to discover something important &mdash; often far too much, because priority is often a matter of happenstance and does not reflect the ability of the discoverer.
+<p>Let me use my own work as an example (neatly projecting false humility while being self-promoting). Probably my most influential paper was <a href="https://www.cs.columbia.edu/~junfeng/10fa-e6998/papers/hybrid.pdf">the PPoPP '03 paper</a> I wrote with Jong-Deok Choi on hybrid dynamic data race detection &mdash; 400+ citations so far. (Incidentally that paper was rejected by PLDI, a good reminder that publication reviews are a bit of a lottery.) The key idea was to combine two different existing dynamic race detection methods, lockset and happens-before, applying the expensive happens-before detection to a "synchronizing" subset of memory accesses. AFAIK we were the first to publish that idea, and it has been used by most practical race detectors since. Our paper is the top hit when I search for "hybrid race detection". Does describing it first imply that Jong and I were especially talented? Absolutely not.
+<p>For one thing, a very similar approach combining happens-before checks with lock-based analysis was present in the paper "Detecting Access Anomalies In Programs With Critical Sections" by Dinning and Schonberg in 1991 (which we cited). Our work was new and good, but it wasn't unprecedented.
+<p>More importantly, the whole field of dynamic data race detection was picking up steam. Both dynamic happens-before and lockset algorithms were prominent and it was only a matter of time before someone combined them. If we hadn't published our work, others would certainly soon have published something similar. We happened to be in the right place at the right time.
+<p>One could argue that "being in the right place at the right time" is a very important skill, and that our paper is evidence Jong and I were good at selecting timely problems that would let us write influential papers. That's a useful skill if your goal is to write papers and don't particularly care what they're about. It's less useful if you have a specific problem to solve.
+<p>This matters when you need to evaluate the ability of researchers. When making hiring or funding decisions with some specific problem in mind, be careful not to overweight "first to discover X" facts as a predictor of future success. Ditto if you're looking for teaching or advice.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>mlhaufe</div>
+<div class='content'>If we look at the history of discoveries we&#39;d notice that many happen around the same time period: 
+
+Calculus - Leibniz (~1684) and Newton (~1687)
+
+Curry–Howard correspondence (~1956) (~1969)
+
+Church-Turing Thesis (~1936)
+
+Discovery of Oxygen - Carl Scheele (~1770),  Joseph Priestley (~1774), Antoine Laurent Lavoisier (&lt;1774?)
+
+Natural Selection -  Darwin and Wallace (19th Century)
+
+And others 
+
+This implies that the prerequisite knowledge and tools are &quot;in the air&quot; so to speak. In these cases I would agree that priority would be overrated. 
+
+&quot;Heroic Discovery&quot; on the other hand, such as Einstein&#39;s Theory of Relativity or Archimede&#39;s Screw should be treated different. I would argue that these instances would not necessarily be repeatable in the same time-frame if someone else competent was pursuing it then. These types of discoveries also don&#39;t have independent, simultaneous discoveries. Recognizing these heroes would be justified yes?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes, I agree completely.</div>
+</div>
+</div>
+
+</div>

@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "Lizard Time"
+date: "2005-02-10 17:46:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/02/lizard-time_10.html"
+---
+<div class="columns"><br/>Over the last few weeks I've mainly been catching up on bugmail and resolving as many of the bugs as I can, especially layout and crashing regressions. I've also been in touch with other Novell people who have Mozilla issues and I've been doing some work on those bugs. And I've done some work on security fixes. I thought I was about done with that early this week, and ready to move on to more interesting stuff, but then my new hardware arrived.<br/><br/>My primary box will be a dual Xeon. To my pleasant surprise it turned out to be x86-64 capable, so I just spent hours tracking down, burning and installing a SUSE 9.2 x86-64 image (actually it's still going...) I do wonder whether x86-64 is a wise move for a primary box, at this stage, but I just can't resist that sexy instruction set ... sixteen delicious general purpose registers. Mmmm mmm. Anyway I guess this means I'll be in charge of tracking down whatever 64-bit and x86-64 specific bugs are in Mozilla.<br/><br/>Anyway, after I've got this thing running --- and the other server that I haven't even unboxed yet, which I plan to dedicate to continuous performance and regression tests --- I'll be focusing on fixing some serious issues with floats breaking across column boundaries, with the goal of a really solid columns implementation for Gecko 1.8/FF 1.1. Then I hope to be digging into some really interesting stuff: Cairo graphics, and Mono integration. I'll blog more about these later.<br/></div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>I was just thinking, is it the intention that -moz-outline causing reflow is still activated in the actual 1.8 release?<br>It seems to me that it can quite easily be turned off, not?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>Thanks for the answer.<br>I was almost thinking your comment system was broken, though. ;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>If it&#39;s turned off, it will break the rendering of outlines.<br></div>
+</div>
+
+</div>

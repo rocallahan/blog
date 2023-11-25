@@ -1,0 +1,78 @@
+---
+layout: "post"
+title: "Research Needed: A Meta (Dis) Assembler"
+date: "2016-06-04 06:58:00 +0000"
+permalink: "/2016/06/research-needed-meta-dis-assembler.html"
+---
+<p>I'm working on a binary rewriting engine. A core component of such engines is a disassembler to parse machine code and extract necessary information about each instruction: its length, operands, and effects. For x86-64 models this is challenging because they have a vast number of instructions, the list <a href="https://en.wikipedia.org/wiki/AVX-512">keeps growing</a>, and the semantics and encodings are complicated.
+<p>I'm standing on the shoulders of giants by using the <a href="http://dynamorio.org/">DynamoRio</a> standalone disassembler/assembler library. It's wonderful, but any general-purpose library for this must wrestle with a difficult tradeoff between generality and performance/footprint. I want to know for each instruction whether it belongs to one of a few narrow classes (e.g. direct control transfer, indirect control transfer, conditional branch, system call), but I don't otherwise care what the opcode is. I want to know for each instruction whether it reads or writes R8-R11, and I want to know whether it reads or writes a RIP-relative memory location, but I don't otherwise care what the operands are. I want to know whether it reads or writes certain flags, and unlike other DynamoRio clients, I want to distinguish "undefined" flag effects from flag writes. So when building a disassembler to serve multiple clients (which you do want to, because it's expensive to build and maintain), you have to produce a lot of information that any given client isn't going to use. This is a problem because disassembly is a critical component of the overhead for a high-performance binary rewriting engine.
+<p>DR mitigates this problem somewhat by giving you options to control how much information is produced and producing some information lazily. But I guess that that doesn't get close to the performance of a disassembler optimized for my particular client. For example, DR contains large tables containing opcodes and operand information for a vast number of SSE/AVX instructions, most of which information I don't care about. An optimized disassembler for my client could use much smaller tables.
+<p>So here's a goal: design a disassembler framework that can generate disassemblers highly optimized for specific clients.
+<p>Here's how I think this could work:
+<ul>
+<li>Design a rich AST for instructions containing all the information any client wants. A disassembler is a function from a string of bytes plus some state bits (e.g. CPU mode) to an Instruction object in this AST.
+<li>Create a domain-specific purely-functional language to express such functions. Make it look as much like vendor CPU documentation as possible. Make it as easy as possible to add new instructions. (DR is not bad but it's <a href="https://codereview.appspot.com/299230043">not quite as easy</a> as it could perhaps be).
+<li>Actually write an x86-64 disassembler in this language.
+<li>For each client, write a function from Instruction objects to some client-specific data type containing just the information the client needs. Write this function in a tightly constrained DSL that focuses on simple projections --- dropping certain fields, mapping constants onto smaller sets of values, etc.
+<li>The disassembler you want is then the composition of the base disassembler with the per-client projection. Build an optimizing compiler for these composed functions.
+</ul>
+<p>I think this is tractable because the domain is very constrained. The input to the composed function is a string of a relatively small (bounded) number of bits. The x86-64 instruction set is baroque but it does have exploitable structure. Going crazy with solver-powered program synthesis should be very feasible.
+<p>Like any new disassembler, you'd want to test by generating output in standard text formats and comparing to existing disassemblers.
+<p>For a stretch goal, try generating an <em>assembler</em> from the disassembler description. There are actually two kinds of assembly needed by binary rewriting engines. They need to tweak disassembled instructions (e.g. replace one operand with another) and emit the results. They also need to assemble from scratch new instructions with a limited set of specific opcodes and operands. In the latter case, a function call to assemble an instruction can usually be reduced to a a very short sequence of bit-manipulation and store instructions. For both cases, in principle assembly is just the problem of finding a string of bits which disassembles to an Instruction object satisfying certain constraints. Often multiple encodings are possible, in which case you usually want the shortest instruction but hints might be needed to select the optimal form. My intuition is that generating efficient assemblers from the disassembler DSL should be feasible.
+<p>This seems like the sort of problem that researchers might have tackled before. The closest thing I can find is Ramsey and Fernández's <em>SLED</em> language in the <a href="http://www.cs.tufts.edu/~nr/toolkit/">New Jersey Machine-Code Toolkit</a> from the mid-90s, which doesn't consider the composition and optimization problem.
+<p>Anyway, this seems like a pretty cool project. There's scope for doing cutting-edge program synthesis work, and the results would be incredibly useful. Unfortunately I don't have time to do it :-).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Peter Goodman</div>
+<div class='content'>Hi Robert,
+
+For X86, XED is by far the best encoder and decoder; it has tonnes of built-in info, and performs no dynamic memory allocation. I&#39;ve used DynamoRIO&#39;s decoded in a similar way to your use case, though in a kernel-space DBT. One annoyance with it was its use of dynamic allocations and needed to hack in a fake drcontext. My final result was to have a bump-pointer allocator for instructions that only supported allocate, and free all.
+
+Another good disassembler for x86 is https://github.com/Vector35/asmx86. It has a similar property to XED where it does no allocations.
+
+Another thing worth looking at is GDSL: https://github.com/gdslang/gdsl-toolkit. This might be closer to what you actually want.
+
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;ve heard XED is good, and it looks good, but I prefer something open-source.
+
+With DynamoRIO&#39;s standalone assembler/disassembler, you just pass in GLOBAL_DCONTEXT everywhere so the &quot;fake drcontext&quot; isn&#39;t a problem.
+
+asmx86 seems quite incomplete, no support for VEX for example.
+
+GDSL looks interesting but a semantics-preserving transformation to IR is heavier-weight than I&#39;m looking for. Though, if you could optimize the translation to and from IR to the point where unmodified instructions are efficiently copied through without unnecessary decoding/encoding, that would be perfect.
+
+Thanks for all those references!</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>aquynh</div>
+<div class='content'>hi Robert. just found your blog, this is so cool!
+
+this is the author of Capstone/Keystone engines. what do you mean by &quot;specific clients&quot;? any example for a client you are talking about?
+
+thanks.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>My system is a fully transparent dynamic code-rewriting engine like DynamoRio. I&#39;m not using DR&#39;s code-cache infrastructure directly because I need to integrate with rr in ways that I&#39;m not ready to talk about yet, but I am using the DR (dis)assembler.
+
+I described my specific needs in the second paragraph. My design is very simple. In the simplest configuration, I only need to make major changes to control flow transfer instructions. I&#39;m reserving R8-R11 as scratch registers so I need to identify instructions that read/write those registers and save and restore them to scratch memory. I need to modify instructions that use RIP-relative addressing, so that they reference the correct locations after I&#39;ve moved them to my output buffer. Of course, like almost any client, I need to know the length of each instruction. I want some information about EFLAGS reads/writes so I can insert &quot;inc&quot; instructions in some places to update an in-memory counter without having to save/restore flags --- but it really only matters for some common arithmetic instructions, I don&#39;t care about getting accurate flags information for rare instructions.
+
+I think this means that a custom disassembler designed just for me could be more efficient than using the existing APIs provided by DR or Capstone. For most instructions, I don&#39;t care what the instruction does or exactly what the operands are. Almost all VEX-encoded or ModRM-using instructions can be treated exactly the same way. If there&#39;s no REX prefix we know it&#39;s not using R8-R11.
+
+Naturally it&#39;s far too expensive to actually write a new disassembler just for me, which is why I suggested the design I did, to write the disassembler once and generate customized implementations automatically.
+
+Richard Johnson pointed out on Twitter that it might not actually make much performance difference to use a specialized disassembler, in practice. That&#39;s true. The only way to find out is to actually try it, which is why I&#39;m suggesting this as a research project. A lot of research has been done on solver-powered program synthesis and extremely fancy compiler optimizations for functional languages, and a lot of it has not had much practical impact. Here there could be some very practical impact.
+
+Let me know if anything&#39;s still not clear.</div>
+</div>
+<div class='comment'>
+<div class='author'>nharding</div>
+<div class='content'>I wrote a 68000 to C converter, it was hand written assembly so I couldn&#39;t rely on any standard code paths emitted. I needed efficient C, so I kept track for each instruction which flags were set by which instruction, but only generated code if that was later used by another instruction (so if you do addq #5, d6 it would keep track of the source, and if a later instruction was beq then it would convert that into an if (!d6).
+
+The problem is generating readable code, I did that with a Java to C++ converter since I used debug mode to compile the Java and had symbolic information, but that is not generally available when working with assembly.</div>
+</div>
+</div>
+
+</div>

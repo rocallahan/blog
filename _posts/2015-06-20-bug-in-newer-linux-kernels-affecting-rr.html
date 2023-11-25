@@ -1,0 +1,9 @@
+---
+layout: "post"
+title: "Bug In Newer Linux Kernels Affecting rr"
+date: "2015-06-19 13:36:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/06/bug-in-newer-linux-kernels-affecting-rr.html"
+---
+<p>As of kernel 4.0.4 (and probably earlier), writing to <tt>/proc/.../mem</tt> at a page which is mapped <tt>PROT_NONE</tt> causes a <tt>kernel BUG at mm/memory.c</tt>, which kills the writing process. This breaks rr, although I have a workaround which I'm about to land; the workaround temporarily makes the <tt>PROT_NONE</tt> regions we're writing to <tt>PROT_WRITE</tt>.
+<p>Trevor reported this in the <a href="https://bugzilla.kernel.org/show_bug.cgi?id=99101">kernel bugzilla</a> already, though I was able to come up with a nice small test program.

@@ -1,0 +1,51 @@
+---
+layout: "post"
+title: "BlinkOn 4"
+date: "2015-05-22 04:25:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/05/blinkon-4.html"
+---
+<p>Last week I went to BlinkOn 4 in Sydney, having been invited by a Google developer. It was a lot of fun and I'm glad I was able to go. A few impressions:
+<p>It was good to hear talk about acting responsibly for the Web platform. My <a href="/2014/08/choose-firefox-now-or-later-you-wont.html">views about Google</a> are a matter of public record, but the Blink developers I talked to have good intentions.
+<p>The talks were generally good, but there wasn't as much audience interaction as I'd expected. In my experience interaction makes most talks a lot better, and the BlinkOn environment is well-suited to interaction, so I'd encourage BlinkOn speakers and audiences to be a bit more interactive next time. I admit I didn't ask as many questions during talks as I usually do, because I felt the time belonged to actual Blink developers.
+<p>Blink project leaders felt that there wasn't enough long-term code ownership, so they formed subteams to own specific areas. It's a tricky balance between strong ownership, agile migration to areas of need, and giving people the flexibility to work on what excites them. I think Mozilla has a good balance right now.
+<p>The Blink event scheduling work is probably the only engine work I saw at BlinkOn that I thought was really important and that we're not currently working on in Gecko. We need to get going on that.
+<p>Another nice thing that Blink has that Gecko needs is the ability to do A/B performance testing on users in the field, i.e. switch on a new code path for N% of users and see how that affects performance telemetry.
+<p>On the other hand, we're doing some cool stuff that Blink doesn't have people working on --- e.g. image downscaling during decode, and compositor-driven video frame selection.
+<p>I spent a lot of time talking to Google staff working on the Blink "slimming paint" project. Their design is similar to some of what Gecko does, so I had information for them, but I also learned a fair bit by talking to their people. I think their design can be improved on, but we'll have to see about that.
+<p>Perhaps the best part of the conference was swapping war stories, realizing that we all struggle with basically the same set of problems, and remembering that the grass is definitely not all green on anyone's side of the fence. For example, Blink struggles with flaky tests just as we do, and deals with them the same way (by disabling them!).
+<p>It would be cool to have a browser implementors' workshop after some TPAC; a venue to swap war stories and share knowledge about how to implement all the specs we agreed on at TPAC :-).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Caspy7</div>
+<div class='content'>I&#39;m interested to hear more about this event scheduling work, what it is and how it benefits the browser.</div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Kasting</div>
+<div class='content'>Image downscaling during decode is something we&#39;re actively looking at.
+
+I&#39;m glad you came to the conference.  I really think the atmosphere between browser developers sometimes is more hostile than it needs to be, and we&#39;re on the same side more than some people realize or assume.  More interaction would help convey that.</div>
+</div>
+<div class='comment'>
+<div class='author'>mayankleoboy1</div>
+<div class='content'>
+Did you get any new ideas to improve gecko , which you would be working on?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Kaiser</div>
+<div class='content'>We actually do have a Telemetry Experiments Infrastructure (thanks to bsmedberg&#39;s team). Things you want to test in experiments should be available through prefs, though, as it&#39;s technically add-ons that trigger the different settings and you should make it easy for those. The active experiment will be reported in Telemetry data and even in crash reports.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>OK! That sounds great! I guess we just need to use it more.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>A get-together for browser developers post TPAC is a very interesting idea in my mind.  Usually I don’t have time, energy, or ability (pick three) to meet with anyone except those of my own working group.  The vast majority of people at TPAC are also not directly involved in implementation.</div>
+</div>
+
+</div>

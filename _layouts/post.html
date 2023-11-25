@@ -1,0 +1,11 @@
+---
+layout: default
+---
+{% include preamble.html myparam="hooha" open_date=page.date %}
+
+<div class="post">
+  <p class="date">{{ page.date | date: '%A %e %B %Y' }}</p>
+  <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
+  {{ content }}
+</div>
+

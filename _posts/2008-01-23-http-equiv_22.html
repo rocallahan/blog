@@ -1,0 +1,215 @@
+---
+layout: "post"
+title: "&amp;lt;META HTTP-EQUIV=&quot;X-BALL-CHAIN&quot;&amp;gt;"
+date: "2008-01-22 23:33:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/01/http-equiv_22.html"
+---
+<div class="columns"><p>The IEBlog predictably <a href="http://blogs.msdn.com/ie/archive/2008/01/21/compatibility-and-ie8.aspx">announces</a> that Web developers will have to use a &lt;meta&gt; tag or HTTP header to get IE to treat a page with post-IE7 standards compliance. Obviously a lot of people are going to be upset about this. I'm actually just puzzled. I see the business argument for taking this approach in the short term, but in the long term, it seems to impose a crippling burden on IE development.<br/><p>The logical way to use this tag is to ship multiple engines and use the tag to control which engine is used to render each document. You "freeze" each engine after its release, avoiding making any changes to it because each change is potentially going to regress some site. Sounds simple and appealing, but there are huge problems:<br/><ul><br/><li><strong>Footprint.</strong> You're shipping a lot more code, and it grows a lot with each release. If the user browses a mix of pages, you'll actually execute a lot more code too. Good luck competing in the mobile space when you ship half a dozen engines and your competitors only need one.<br/><li><strong>Cross-version interactions.</strong> These engines have to talk to each other. I can have a document in one mode with IFRAMEs in other modes. These documents can even touch each other's DOMs, including layout-related DOM APIs. Architecture changes in a new engine might be constrained by, or impact on, the design of earlier engine releases. This raises the question of whether the DOM implementation, JS engine and other components are actually duplicated. If they are, problems multiply, but if they aren't, you can't guarantee compatibility.<br/><li><strong>Maintenance burden.</strong> The truth is that you can't ever actually freeze those old versions completely. If a security bug or crasher bug is found in any one of those engines, it must be fixed in each engine it occurs in. Those fixes can create compatibility problems, so your "compatibility guarantee" turns out to be a mirage. But you have successfully multiplied the cost of security fixes and testing those fixes by the number of engines you're supporting.<br/><li><strong>Attack surface.</strong> Each engine represents exposed attack surface. Sure, there's overlap in the code so you can't just add up the vulnerabilities, but each engine adds to your attack surface.<br/></ul><br/><p>So does Microsoft have some magic technology that alleviates these problems? Beats me. I can imagine a tool that could find common code and merge it automatically, avoiding accidental behaviour changes, but that doesn't really help much. It'll be interesting to see how it plays out.<br/><p>One Aaron Gustafson <a href="http://alistapart.com/articles/beyonddoctype">says</a> "I, for one, hope other browser vendors join Microsoft in implementing this functionality." For the reasons above, and other reasons, I seriously doubt Firefox will be interested. I'll talk more about this in a follow-up post.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>steve</div>
+<div class='content'>As a web developer, my one-word summary of Microsoft&#39;s progress from IE6, to IE7, to IE8 as per this announcement: CLUSTERFUCK.<br>Truly, the IE dev team should be the first ones against the wall when the revolution comes.  Morans.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brian P.</div>
+<div class='content'>This is how we are finally paying for MS&#39;s stupid idea of putting the browser in the OS.  If they didn&#39;t do that then if your old unsupported intranet app requires IE6 then you can still have IE6 or any other version of IE you need on your system.  But the rest of us can move on.<br>If in a hypothetical situation your app only worked in FF 1.0.x, you could still use the app because you don&#39;t have to remove FF1 to use FF2 or FF3 etc.  Just be sure to use separate profiles. :)  And that would have no effect on the progression of the web.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>cuz84d</div>
+<div class='content'>The main reason we still see people running IE6 is:<br>A) its on an old Machine.<br>B) Businesses&#39;s don&#39;t allow updating IE6 to something newer<br>C) average user doesn&#39;t know how to update IE<br>I&#39;ve never seen anyone say this but several companies created webbased tools or programs that only work on IE6.  And until those companies fix those programs, Businesses are forced to stick with IE6.  Even though sometimes were allowed to run FF3 side by side.  We cannot allow all corporate users update IE because of support problems.  This has nothing to do with the top 200 pages out there.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jonadab the Unsightly One</div>
+<div class='content'>Fortunately, they include the option to say IE=edge and always get the latest available rendering.  They don&#39;t recommend this, and they _shouldn&#39;t_ recommend it, because too many web developers who do what Microsoft recommends would use it and still code to IE&#39;s bugs and expect backward compatibility, kind of like what happened with DOCTYPE-switched standards mode.  But for web developers who actually code to standards and then test in IE, who only work around IE&#39;s bugs in ways that don&#39;t break other browsers -- web developers like me, in other words -- the edge option is the only thing that makes any sense.  Because when IE9 comes out, I don&#39;t want to have to dork around updating the meta tags in my pages in order to be able to take advantage of the things it gets right that IE8 got wrong.  In other words, the edge option will hopefully be what the doctype was supposed to be (and would have been if people who code to IE&#39;s bugs hadn&#39;t started specifying doctypes).<br>I wish I didn&#39;t have to mess around inserting a meta tag now, going from IE7 to IE8.  But of course if I didn&#39;t have to insert the meta tag, then all the people who coded to IE6&#39;s bugs (and updated for IE7) would also be getting the IE8 rendering, and their pages would be as broken in IE as they are in other browsers, horrors.  The good news is, with Microsoft *having* the edge option but strongly *NOT* recommending it (unlike the doctype, which they did start recommending, which is why it no longer really implies that the webmaster understands web standards), hopefully we will only have to go through this once.   Microsoft will encourage everyone to say IE=8 and get the IE8 rendering, and then when IE9 comes out they will encourage everyone to say IE=9 and get the IE9 rendering, and so on, and those of us who code to standards and check IE compatibility as an afterthought can blissfully continue using the same IE=edge option, hopefully indefinitely, and always get the latest rendering engine available.<br>If they hadn&#39;t included it, it would have been tempting to say something like IE=65535 in an attempt to get the same effect.  But that&#39;s ugly and bug-prone.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>PENIX</div>
+<div class='content'>Robert O&#39;Callahan said...<br>&quot;A lot of developers and their customers care about Firefox.&quot;<br>They care about being compatible with Firefox. Being compatible doesn&#39;t mean being standards compliance at all. People like us who care about standards are a vast minority. I&#39;m talking about the majority.<br>Some developers care about standards, but how many care enough to practice it? Very few. This is why it&#39;s so hard to find a page that will pass W3C validation. Developers just care that their customer is happy.<br>Customers want compatibility. Customers don&#39;t care about standards compliance and most don&#39;t know anything about it. They just want their site to be viewable by as big an audience as possible, and they want it done as cheap as possible.<br>This falls back on the developers shoulders. Cheap means fast. Fast means WYSIWYG editors, like Frontpage and Dreamweaver. Those types of editors produce compatible code, but rarely compliant code.<br>I&#39;m not advocating that we abandon standards. I&#39;m all for standards. The majority of sites I develop will pass W3C validation, but no one cares but me.  This is why I believe there needs to be a benefit to being standards compliant, or a penalty for not being.<br>There is an unfortunate cycle that isn&#39;t going to break anytime soon. Removing backwards compatibility would make most of the pages on the internet break. This would cause people to move away from the browser, and this is why it will not be removed. If it doesn&#39;t get removed, then there is no penalty for not being compliant, so why put in the effort? Without a direct incentive, this codependency will continue until browsers and tools are both compliant. We could be waiting a long time.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael</div>
+<div class='content'>Horse, cart, people. Write code that is flexible by following the standards. If a web browser can&#39;t display that, then that&#39;s *their* fault, and you have an excellent reason to stop using it. Making it comfortable for people to leave their non-standard code all over the web is not a Good Thing. Making it comfortable for people to continue using IE-specific code is only good for Microsoft, so no wonder they&#39;re for it: duh!<br>Why are we all trying to figure out how to make Microsoft&#39;s past mistakes seem more acceptable? Seriously, if anyone wrote a lot of code that only works in IE-6 then they deserve the full force of the pain they get when IE-not6 becomes the new fad. Do I feel an ounce of pity? Um....<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Eddie: that won&#39;t work, their DOM implementation has all kinds of insane bugs. They can&#39;t make big changes to it without risking breaking bug-compatibility.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>This is rediculous. Sure there might be quirks in older sites, but it&#39;s time to cut and run. We&#39;re not talking about mission-critical stuff. It&#39;s time for Microsoft to admit to the world that IE6 was LONG overdue for update and that is the reason we now have this problem. Denounce the evils of your old crappy browser and move on to standards compliance - the last thing we need is another variable to control how our pages are rendered. Mozilla can get it right. Opera can get it right. Safari can get it right. KHTML can get it right. Time for Microsoft to finally join the club.<br>Enough is enough Microsoft. Stop trying to change the rules and start following them. I don&#39;t want to loose the rest of my hair trying to debug IE8.....<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Marcelo Wolfgang</div>
+<div class='content'>Their &quot;don&#39;t break the web&quot; should be read &quot;don&#39;t FIX the web&quot;.<br>What they didn&#39;t get is that by making people fixes the problems of old website they generate better coders, and more employment options for people.<br>I can say for sure that I will not download the 90gig that internet explorer 15 will be ... and probably everyone<br>I just hope I win the lottery before IE8 is out so I can retire early and do stuff for fun that only works in FF :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Justin Harrell</div>
+<div class='content'>It&#39;ll be funny when Internet Explorer 8 fails Acid 2, and Microsoft is trying to explain that it&#39;s WaSP&#39;s fault for not opting in enough to standards compliance.<br>I hear that in Internet Explorer 9, to get the most standardest standardy standards mode, you have to include a paragraph at the beginning of every file describing how awesome Microsoft is and how much you love them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kL</div>
+<div class='content'>My guess is that they&#39;re not adding more engines, but just bloat code with stuff like this:<br>getWidth()<br>{<br>switch(bugmode)<br>{<br>case 5: return x;<br>case 6: return y;<br>case 7: return z;<br>case 8: return width;<br>}<br>}<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robin</div>
+<div class='content'>Wow, I hadn&#39;t even considered any of these implications. The whole idea&#39;s sounding worse by the hour...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sebastian Redl</div>
+<div class='content'>Way to go, troll.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>alucinor</div>
+<div class='content'>Full standards compliance is a pipedream, but full compatibility is one as well. Unless they&#39;re indeed shipping multiple engines, there could very well be bugs in future IE browsers that cause the different rendering modes to render differently across versions. That is, IE=8 rendering mode in IE 9 might contain some new quirk that IE=8 in IE 8 doesn&#39;t have. Wonderful.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Naylor</div>
+<div class='content'>Some *very* good points there.<br>I just wish the IE team would stop repeating their compatibility mantra and just rip the bandaid off already. In one motion, &quot;right off!&quot; as Seinfeld says.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t know for sure what IE does, but I know what Firefox does. Hacking multiple modes into the same engine, and continuing to evolve that engine, would be extremely complex and doesn&#39;t provide bug-for-bug compatibility guarantees, which is what Microsoft seems to be aiming for.<br>For example, the behaviour of Firefox &quot;quirks mode&quot; actually changes from release to release, hopefully becoming less buggy over time. Our &quot;quirks mode&quot; is actually just a fairly small number of specified behaviour differences from &quot;standards mode&quot;, NOT &quot;exactly what Firefox 1.0 did&quot; or anything like that. That is a lot less compatibility than what Microsoft says they&#39;re aiming for.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>ficus: IE supports a whole lot of non-standard stuff that we don&#39;t, so their overall attack surface vs ours is hard to judge.<br>You&#39;re right that when you implement new features, including standards-based features, you create more attack surface. Some attack surface is worth having. You want to reduce the unnecessary attack surface, however.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>the purpose is to allow MS to implement non-standard features in IE, nothing else. then they can leverage that old reliable &quot;embrace and extend&quot; policy that has delivered so much control in the past.  if they can get people to accept &quot;&quot; (which is standardards compliant), then add feature &quot;wizzy&quot; there will be all these fuckwits implementing &quot;wizzy&quot; from their MS desktop and we&#39;ll all be stuck playing catch-up again. it&#39;s so transparent it&#39;s pathetic.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Accettura</div>
+<div class='content'>It really makes this more complex for the web developer as well.<br>So I want standards mode in Firefox, Opera, Safari, so I use the correct doctype.  Now which IE engine do I want to use?<br>So already making those choices.  Now what happens when IE9 makes changes, bugs are found in both?  I want 1 rendering engine for this page, another for that page.... this is going to be amazingly complex.<br>It&#39;s hard enough TODAY to follow all the rendering quirks in IE, Firefox, Safari which are tier 1 browsers in most companies in terms of support.  We have Firefox 2.0, and soon 3.0, same with Safari, and IE6, IE7, and soon IE8 added to that.<br>And we&#39;re not even talking about JS or DOM implementation, canvas support, xslt support, etc. etc.  Just html rendering.<br>There&#39;s a reason for standards.  To avoid this very problem.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dinoboff</div>
+<div class='content'>@roc: Would it be more complicated than having a quirk and standard mode like all browser have today?<br>It will just allow to have more than two mode (for the same engine). Also, the browser won&#39;t have to guess which one to use like they do now.<br>If you screw up some css3 or html5 implementation, you might need it.<br>@alex: It doesn&#39;t mean that you are targeting IE8, it just mean that it is compatible with IE up to IE8 (which mean that your site work for Safari3/FF3/Opera9.5/IE8 + fixes for IE7 and maybe IE6 if you still bother).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Wayne</div>
+<div class='content'>This entire blog post misses the point entirely.  Backwards compatibility has always been a high priority for Microsoft; XP still runs software written for DOS 2 decades ago.<br>Even right now, both Internet Explorer and Firefox (and Safari, and Opera) all render non-standard tag soup.  They all include backwards compatibility modes.  What was written for the web 13 years ago will still render in modern browsers.  The fact is that every browser is *already* filled with this code.<br>There is no reason to assume that a browser needs to have each and every rendering engine build it.  It&#39;s been done the same way for 13 years, it doesn&#39;t need to change now.  But in order for Microsoft to improve IE while maintaining backwards compatibility (which they *need* to do) this seems like the *only* solution.<br>Everybody is perfectly happy with DOCTYPE switching, why complain about this?  It&#39;s basically the same idea but instead of merely 2 levels (standard and non-standard) you can actually target the current state of the web.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>SneakyWho_am_i</div>
+<div class='content'>Robert: DAMN RIGHT!!!!<br>If the page doesn&#39;t display properly for just one BAD BROWSER then let that browser&#39;s user get a browser than CAN display it properly.<br>&quot;This page is 100% standards compliant, but YOU broke it by using a BAD browser! [with standards support from ten years ago]&quot;<br>If the user is using a browser with 200 bugs that present it from displaying a page properly that looks fine in all other browsers then they obviously shouldn&#39;t be using that browser. Don&#39;t waste your time adding yet more cruft to your page to support the browser in question. Make a point of writing clean, efficient, valid code.<br>I realise that this is not generally possible on Commercial projects, but you certainly should code to this standard for personal projects. Now that all graphical http/html browsers support a good part of CSS level 1 and 2, javascript and DOM, most kinds of images (with appropriate gamma and alpha support), you have to reason to not use them. Your code will be displayed acceptably (often identically) in all these browsers, yes, often even on mobile with the advent of Opera Mini and such.<br>There is just one browser which will not display valid code properly, and you shouldn&#39;t soil your code to make allowances for this unacceptable software.<br>If your users have a problem with the way your stuff is displayed, they should upgrade to a proper browser (not just the cheap toy that comes as a part of a larger software package, to get you off the ground ;-))<br>Hey I love Microsoft, they make some excellent software, but their repertoire of excellent software certainly doesn&#39;t include a browser.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Nowhere in this post (or the followup post) have I argued that &quot;Microsoft is evil&quot;.<br>We have copied a number of IE features that Web developers needed, for example XMLHttpRequest, innerHTML and getClientRects.<br>Someone&#39;s being childish here but I don&#39;t think it&#39;s me.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>sapphirecat</div>
+<div class='content'>What worries me about this is what happens if other browsers *do* implement this feature. IE has had, what, 8-10 years to implement the standards, and they still haven&#39;t even managed that much. What makes anybody think that IE N is would render an &quot;Opera 9.5&quot; or &quot;Firefox 2&quot; page correctly, several years from now?<br>And I personally won&#39;t be marking my own pages as IE Super Compatible For Now(TM) because *I can&#39;t test IE* because I&#39;m not paying good money for Windows, just to add extra frustration to creating my personal pages.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yes. Our quirks mode is nothing like what IE is proposing. Basically we have &quot;standards mode&quot;, and &quot;quirks mode&quot; is just &quot;standards mode&quot; plus a fixed set of well-defined quirk behaviours. That means that almost every bug fix --- and new feature --- applies to *both* standards mode and quirks mode. Our quirks mode is actually becoming gradually more standards-compliant over time (although obviously it can never be 100% standards compliant). This approach means that the extra Gecko code required to support quirks mode is quite small and is not increasing over time. It also means we could actually write a spec for our &quot;quirks mode&quot; is --- &quot;the standards, except for the following exceptions: ...&quot;<br>In contrast, bug fixes (and probably new layout features) in IE8 will only apply to IE8-mode. The other modes will simply never change. IE&#39;s modes are each defined as &quot;whatever IE version X happened to do&quot;. There is not, and can never be, a spec for them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>adric, I guess you don&#39;t develop public-facing sites then, or you target one of the dwindling number of countries where non-IE share is low, or your clients are strangely myopic. But that&#39;s fine I guess.<br>&gt; People actually suggest Microsoft should just<br>&gt; break all the sites and move forward.<br>Yes, I agree that&#39;s misguided. I think there might have been better ways to address their issues; for example I&#39;ve argued in the past that Microsoft should have separate browsers for the public Internet and the private intranet. This would be a lot better than having multiple engines in the same browser, because for example hostile Internet pages could not request an old rendering mode in order to trigger some security bug, and you wouldn&#39;t have interacting pages that required different modes.<br>The problem with IE=edge is that if a lot of people use it and Microsoft fears compatibility problems with those sites in IE9, they&#39;ll make &#39;edge&#39; mean &#39;IE8&#39; and introduce IE=really-edge or a new META switch. We&#39;ll see.<br>But yeah, they&#39;ll do what they do and we&#39;ll do what we do and we&#39;ll see who wins.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>kL: that doesn&#39;t really help much. you still have multiple engines, they&#39;re just woven together in the same source code. Arguably it&#39;s even worse. And the first time you try to redesign your code in major ways, you&#39;ll find that doesn&#39;t work anymore.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Robert: indeed.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>DigDug</div>
+<div class='content'>Isn&#39;t this the same problem that Mozilla was having with XULRunner versioning. If I remember right (and I probably don&#39;t) the problem was that it would be easy to have multiple applications installed which all required a different version of the runtime. The solution (although it was never implemented) was to keep all versions of the runtime around, and launch different ones depending on the app&#39;s compatibility level.<br>I think calling something &quot;standards mode&quot; and then being upset when it renders standards correctly is a bit retarded of web devs, but I don&#39;t really blame MS for trying to do something to make their lives easier.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>someone</div>
+<div class='content'>I suspect this is MS hoping to leverage the tendency (as they see it: see the Halloween documents) for open source to &quot;follow the tail-lights&quot; of proprietary software. That is, they get Mozilla and/or Opera to imitate them in this foolhardy endeavor, thus killing the web-browser as a platform. It&#39;s clear they want to do that by the neglect of IE6 and the refusal to implement SVG, amongst other things.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jerome</div>
+<div class='content'>I guess they added the &quot;edge&quot; variable (which means &quot;pick the latest engine you have&quot;) for the people that wanted to just be forward compatible and expect browsers to meet the standards on their own time... without making compromises themselves.<br>I&#39;m ok with HTML 4.0 defaulting to &quot;IE7 version&quot; but I&#39;d really like HTML5 and &quot;XHTML 1.0 Strict&quot; to default to &quot;Edge version&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>PENIX</div>
+<div class='content'>I understand both sides of the story, both for and against this method. Unfortunately, this is a situation where you are arguing for the lesser evil. Neither solution is good.<br>The majority of developers do not care about standards compliance, and neither do their customers. If there was more incentive to be compliant, there would be more change. If Google was to give a slight ranking boost for standards compliant pages, you would see half the internet become compliant overnight.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>minimal design</div>
+<div class='content'>From a web designer perspective, that whole meta tag thing seemed like a ridiculous idea to me, but from a browser developer angle, it seems to make even less sense... Great points there. Thanks...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>virtualblackfox</div>
+<div class='content'>Funny feature, now what happens if &quot;other browser vendors join Microsoft in implementing this functionality&quot;...<br>---------------------------- all other vendors ?<br>To webdesigner who think this is great :<br>What the PSP/PS3 browser do the same and a version N+1 goes out? Will you buy a psp just to check if you should put PSBrowser=N+1 or ignore it (And if they do as microsoft you will have the old, buggy, version N rendering engine)<br>What about all versions of opera (mobile, wii, ...) ? about all the webkit builds/versions ? about the GTK html rendering code ? about IE-mobile ? about the Nokia browser ? The blackberry one ?<br>Their solution is broken and is tolerable by them only because they have a VERY big market share. I&#39;m waiting for them to do the same with IE Mobile just to laugh.<br>---------------------------- A small tale<br>Today i create a website and test it fully with all the biggest browser and it&#39;s perfect. I&#39;m using feature X but they all implement it correctly.<br>Tomorrow browser Y appears : it&#39;s a small engine but not used well, for my new websites i include it in my test suites, it doesn&#39;t support feature X correctly (Say X is the box model and it&#39;s implemented as old IE implementations) but it&#39;s ok : few people use it.<br>Browser Y implements &quot;X-UA-Compatible&quot; as recommended by microsoft.<br>A few years latter browser Y is the browser everyone want to use : It&#39;s sexy, it redefine the web, yada yada yada... And it fixed this annoying bug in the X feature long ago. But as some customers of browser Y  still use the old implementation of Y, you need to specify a X-UA-Compatible info for Y to treat it correctly.<br>And in this immaginary future, all web sites programmed to web standards, are now either totally broken (Because everyone use Y) or need to be changed to include the correct &quot;X-UA-Compatible&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alex</div>
+<div class='content'>I dont get all the complaining.. This is a very small price to pay to Get IE 100% on board with a truly complaint browser on the next version!!<br>How is this complicated?? If you are building a page today, and you have tested it and are happy with the way it displays in the browsers you used to test the tag you would use is<br>Assuming that IE8 and FF3 where the browsers you tested with.. Simple.<br>Why is that complicated or confusing?? How can we possibly know what cool new system IE50 or FF50 will have?? Will HTML even exist then?? If there is not a way to preserve OLD pages that are not updates, then we will loose this content for ever..<br>but if IE50 or FF50 can load the page build 30 years earlier, and say &quot;Oh crap! This is a really old page!! I need to render it the way we used to 30 years ago&quot; how can that be a bad thing??<br>Without a solution like this, how realistic is it that a browser in 30 years from now would be able to render a page we built today (even in standards mode! - what will be standard 30 years from now?? )<br>The only real negative I can see in this is that browser developers would need to include different versions of rendering engines in future browsers.. could lead to (more) bloated code...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Drew Thaler</div>
+<div class='content'>Your reasons above are short, brutal, and definitive — it&#39;s a bad idea and the compatibility is an illusion.<br>This strikes me as a decision made by a non-programmer, perhaps a well-meaning project manager. &quot;We&#39;ll be backward compatible forever!&quot; Um, no, you won&#39;t. You&#39;re just signing up for a boatload of complexity and problems with almost no tangible benefit.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RiTarDid</div>
+<div class='content'>I for one will be ignoring any &quot;standards&quot; that M$ tries to implement in IE. I would ignore any similar proposal by Mozilla, Apple or anyone else who suggested such rubbish.<br>The standards exist, so do the validators and the compliant html editors.  Code your sites to comply, it is up to the browser to render it correctly. The meta hack proposes just the opposite....the developers have to change the way they do things just so this browser will work.  No argument will outweigh the fact that IE is still promoting non-compliant garbage code instead of forcing developers to comply. It&#39;s like peeing on the W3C.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>A lot of developers and their customers care about Firefox. As the standards get tighter and we fix our standards-compliance bugs, we&#39;ll see sites gradually become more standards-compliant whether they like it or not.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gareth Adams</div>
+<div class='content'>This is a great idea, and a perfect solution to all of our web development woes.<br>All we need is a META tag like the following:<br>&lt;meta http-equiv=”X-UA-Compatible” content=”FF=3” /&gt;<br>and IE will know to switch to its Firefox 3 rendering mode!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bridget Stewart</div>
+<div class='content'>&gt;How is this complicated?? If you are building a page today, and you have tested it and are happy with the way it displays in the browsers you used to test the tag you would use is<br>&gt;Assuming that IE8 and FF3 where the browsers you tested with.. Simple.<br>But, not really that simple.  What about the people who do NOT upgrade to IE8 and are still using IE6 as their browser.  Just because your browser target is 8, that means the viewers of your site who are still using IE6 to render those pages require you to continue to add your &quot;work-arounds&quot; to allow them to see it properly.<br>Is there any plan in the works by Microsoft to declare to no longer &quot;support&quot; the IE6 browser so that general folks who surf the web finally drop it and move up to a newer version?<br>Unless that is the case, the solution isn&#39;t quite THAT simple.  Until IE6, the browser, has far less of the market than in currently does (less than 1-2%), you either have to target IE6 as the rendering mode in your documents -- or target IE8, with the addition of your hacks, conditional comments, and other odd workarounds to get the page to display properly in IE6, too.<br>Am I wrong about this issue?  If so, please correct me.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>adric</div>
+<div class='content'>So your entire argument boils down to this: its a difficult problem and you don&#39;t think Microsoft (or Firefox) can pull it off? I think we can all agree that if it doesn&#39;t work as advertised it will not be beneficial. Is there any real criticism to this?<br>No one is forced to use this. The ability to have your pages render using the most current IE=edge makes this completely optional. I personally can&#39;t wait to target my pages to the same browser I use to test them. That goes double for my clients.<br>What this does is allows Microsoft to pursue greater compliance with standards without breaking backwards compatibility. There are many comments here and on other sites that don&#39;t see Microsoft&#39;s commitment to backwards compatibility as important. People actually suggest Microsoft should just break all the sites and move forward. It is somewhat depressing, and fundamentally disconnected from reality.<br>Ultimately, I don&#39;t care if Firefox supports this specific standard. The impetus of backwards compatibility now firmly belongs to the browser. Firefox can pursue an entirely different solution. The reality is, Firefox breaking backwards compatibility doesn&#39;t cost me money, because the client never cares. They care if the next major version of IE breaks the site.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Synonymous</div>
+<div class='content'>The &quot;Don’t Break the Web&quot; argument they use is just silly, as every release up to now did it already, mostly due to new bugs...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ficus</div>
+<div class='content'>attack surface is bigger in firefox than IE7/8, because firefox supports more standards.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Danny</div>
+<div class='content'>I really don&#39;t see the problem: IE8 will function like the crappy IE7 we&#39;re already coding for (and will be long after IE8 comes out), just don&#39;t add the stupid meta tag and you&#39;ll never even have to test on IE8 compatibility ;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>You&#39;re right.<br>But because people care about staying compatible with Firefox, we make them build more standards-compliant sites by making Firefox more standards-compliant --- and by standardizing any Firefox-specific extensions that they like to use.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>&quot;So I want standards mode in Firefox, Opera, Safari, so I use the correct doctype. Now which IE engine do I want to use?&quot;<br>Take your pick!<br>Surely it&#39;s better to have the choice?<br>I&#39;d rather have the choice of IE6, 7 or 8&#39;s standards implementations than still be stuck with IE6&#39;s so-called &#39;standards&#39; implementation.<br>I agree with other issues raised about browser development bloat and attack vectors etc. However this is only for IE to worry about. There&#39;s no reason to suggest - AFAIK - that non-IE browsers have to worry about adopting this meta tag, triple+ engine/modes support.<br>This is merely MS trying to move forward without sacrificing their huge customers like Oracle/BEA and their shithouse IE6-centric software like Web/AquaLogic or Plumbtree - whatever the hell that crapware is called.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Schend</div>
+<div class='content'>Big surprise! Firefox not implementing some that IE does implement! Stop the presses!<br>How about Mozilla throw us web developers a bone by, once, just once EVER, being compatible with something IE does? Or at least not arbitrarily incompatible, as it has been since day 1. Even if you don&#39;t like the idea, just suck it up and try it for a few years and see how it works out instead of just dismissing it out-of-hand because &quot;Microsoft is teh evil!!!&quot; Seriously, it&#39;s childish, and it&#39;s sabotaging the IE team&#39;s willingness and attempt to make up for past mistakes.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eddie Welker</div>
+<div class='content'>It may be naive, but couldn&#39;t Microsoft just ship one DOM, which is extensible enough to turn off certain elements (if HTMLVers ? If they make their core flexible, they won&#39;t have any cross-version mess, and they&#39;ll be able to patch security holes while keeping additional footprint to a minimum.<br>Of course, I think this whole mess is a TERRIBLE idea, but I think they could program around your holes.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ellis</div>
+<div class='content'>This is a terrible idea. Horrible. Microsoft cock it up again. Takes me back to the browser sniffing days in the &#39;90s! Oh the horror of it.<br>By the way, your columns are too narrow. Having to keep jumping to the next line all the time makes reading too staggered.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>James, what exactly do you want Mozilla to be compatible with in this case?<br>Note, by the way that there are plenty of IE-compatibility things in Gecko.  document.all comes to mind, as does the handling of various aspects of form control rendering, innerHTML, offset* properties, etc, etc.<br>Also, I don&#39;t see Robert &quot;dismissing it out of hand.&quot;  He&#39;s just citing the reasons why Gecko is not likely to do such a versioning scheme.  Some of these may apply to IE, some may not.  I doubt IE cares about its download size, say.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>virtualblackfox</div>
+<div class='content'>Just to clarify my &quot;is tolerable by them only because they have a VERY big market share&quot; sentence isn&#39;t exactly right.<br>They could do it mainly because most of the web is IE-Compliant before being Standard-Compliant AND want to be IE-Compliant before anything else.<br>But as said in my post except Trident and maybe Gecko it&#39;s impossible to do for any other rendering engine : No one will bother to test all their old websites again each time you do a new version.<br></div>
+</div>
+
+</div>

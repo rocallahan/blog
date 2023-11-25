@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "Stormy Conditions, Outlook Fair"
+date: "2006-01-27 15:17:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/01/stormy-conditions-outlook-fair_27.html"
+---
+<div class="columns">Right now I'm swamped. I landed frame display lists yesterday (woohoo) and I've been fixing a few regressions today. Unfortunately there was a small size and space hit, and I have more work to do to analyze where the growth came from and cut it back. I'm hoping that stopping certain functions from being inlined will help a lot. Also there is view system code that is no longer used that we can remove.<br/><br/>Now that frame display lists have landed, we can move quickly to finish the caret work so carets will use the normal paint path --- killing the infamous "caret disappears when over IFRAME etc" bug. This will also enable caret in SVG-transformed HTML. Which reminds me that another thing I plan to do very soon, based on frame display lists, is reenable SVG &lt;foreignobject&gt; on trunk, for cairo builds at least. Painting and event targeting to transformed HTML should work, but invalidation will not work immediately, so dynamic effects in the transformed HTML won't look right yet. Getting invalidation to work will happen during view system removal, and I've decided to delay that until after widgets get removed, which depends on plugin widgets being hoisted to the top level --- so that's an upcoming major project. Before that though, I'm working on getting native GTK themes working with cairo as well as they can. This will let us turn on GTK theming for HTML content, which will be cool --- we haven't done that before because we could never print them. With my new code, we will be able to.<br/><br/>Apart from all that, I'm also supposed to be judging extension contest entries over the next week. I've done a few, and so far I'm impressed.<br/><br/>I'm going offline for most of next week. Friends from the USA are visiting and I'll be spending as much time with them as possible, climbing volcanoes, getting sunburned, that sort of thing. So don't be surprised if blog comments don't show up, email doesn't get answered, and trunk regressions take a while to be fixed :-).</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>christian biesinger</div>
+<div class='content'>&quot;is reenable SVG  on trunk&quot;<br>that should be &quot;SVG foreignObject&quot; I assume? :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Victor</div>
+<div class='content'>roc, you rock! :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joseph</div>
+<div class='content'>Yay for gtk+ themeing in html!<br></div>
+</div>
+
+</div>

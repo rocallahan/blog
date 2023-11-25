@@ -1,0 +1,128 @@
+---
+layout: "post"
+title: "Building On Rock, Not Sand"
+date: "2017-10-06 00:55:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/10/building-on-rock-not-sand.html"
+---
+<p><a href="https://lwn.net/Articles/735453/">This quote</a> is telling:
+<blockquote>Billions of devices run dnsmasq, and it had been through multiple
+security audits before now. Simon had done the best job possible, I
+think. He got beat. No human and no amount of budget would have found
+these problems before now, and now we face the worldwide costs, yet
+again, of something ubiquitous now, vulnerable.</blockquote>
+<p>Some of this is quite accurate. Human beings can't write safe C code. Bug-finding tools and security audits catch some problems but miss a lot of others. But on the other hand, this message and <a href="https://www.mail-archive.com/cerowrt-devel@lists.bufferbloat.net/msg05470.html">its followup</a> betray mistaken assumptions. There are languages running on commodity hardware that provide much better security properties than C. In particular, <a href="https://security.googleblog.com/2017/10/behind-masq-yet-more-dns-and-dhcp.html">all three remote code execution vulnerabilities</a> would have been prevented by Rust, Go or even Java. Those languages would have also made the other bugs much more unlikely. Contrary to the quote, given a finite "amount of budget", <tt>dnsmasq</tt> could have been Rewritten In Rust and these problems avoided.
+<p>I understand that for legacy code like <tt>dnsmasq</tt>, even that amount of budget might not be available. My sincere hope is that people will at least stop choosing C for new projects. At this point, doing so is professional negligence.
+<p>What about C++? In my circle I seldom see enthusiasm for C, yet there is still great enthusiasm for C++, which inherits C's core security weaknesses. Are the C++ projects of today going to be the vulnerability-ridden legacy codebases of tomorrow? (In some cases, e.g. browsers, they already are...) C++ proponents seem to believe that C++ libraries and analysis tools, including efforts such as <a href="https://github.com/isocpp/CppCoreGuidelines/blob/master/docs/Lifetimes%20I%20and%20II%20-%20v0.9.1.pdf">C++ Core Guidelines: Lifetimes</a>, plus mitigations such as control-flow integrity, will be "good enough". Personally, I'm pessimistic. C++ is a fantastically complex language and that complexity is growing steadily. Much more effort is going into increasing its complexity than addressing safety issues. It's now nearly two years since the Lifetimes document had any sort of update, and at CppCon 2017 just one of 99 talks focused on improving C++ safety.
+<p>Those of us building code to last owe it to the world to build on rock, not sand. C is sand. C++ is better, but it's far from a solid foundation.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Rob Lang</div>
+<div class='content'>Interesting stuff. Out of interest, how do you rate C# and .NET from a security/stability/difficulty-to-introduce-holes standpoint?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Decent --- as good as Java.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>ClassicHasClass</div>
+<div class='content'>Or, portability. Half the systems here don&#39;t have a Rust compiler and probably never will. Rust has a long way to being as portable as C/C++, particularly for those kinda-legacy systems which may still be relevant to new projects.
+
+The answer may be, &quot;well, we don&#39;t care about those systems that don&#39;t have a Rust compiler&quot; (which is a sucky, albeit valid, answer), but that&#39;s not strictly a budgetary computation. I have a feeling what you&#39;re going to say, though. :)</div>
+<div class='comment'>
+<div class='author'>ClassicHasClass</div>
+<div class='content'>Sure there&#39;s technical reasons. For example, there was that issue with the standard library on Snow Leopard because there was no thread local storage support (not introduced until 10.7). That&#39;s not a trivial platform change. And for some architectures, the bring up is still incredibly onerous, especially on a new platform triple where precompiled stage 0 doesn&#39;t exist. In fairness this has gotten a bit better but I&#39;d argue this is largely because the platform list has widened thanks to the brave souls who slogged through that work, not because the process is substantially simpler.
+
+The reply I&#39;m expecting is &quot;10.6 is not a modern platform.&quot; True, it&#39;s not, but I can still run C on it and there are people who still care about it.
+
+For all its advances, which I&#39;m not arguing, I think personally the generally claimed level of Rust&#39;s ubiquity is greatly overstated.</div>
+</div>
+<div class='comment'>
+<div class='author'>Jon Nordby</div>
+<div class='content'>You can compile Rust to WebAssembly (probably also JavaScript) using Emscripten. Since a couple of months back support is in mainline versions of all relevant components.
+Here is a tutorial: https://medium.com/@ianjsikes/get-started-with-rust-webassembly-and-webpack-58d28e219635
+
+Support for bare-metal in Rust is also actively worked on. Redox OS is a whole operating system, including graphics support and some applications, written in Rust: https://www.redox-os.org
+Their developer blog has good posts on the low-level technical bits.
+ARM Cortex M-x microcontrollers are pretty OK supported, see http://blog.japaric.io/quickstart/
+AVR microcontroller support in LLVM was recently merged, and it is possible to use Rust there, though not production ready just yet.
+Don&#39;t forget that Rust has good interoperability with C, so you can mix-and-match if it suits your needs.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&gt; Half the systems here don&#39;t have a Rust compiler and probably never will.
+
+That&#39;s a bit ambiguous. Do you mean half of all architectures? Half of currently installed hardware units? Half of all units being sold right now? Half of all hardware units that will ever be sold?
+
+Whatever. Part of being responsible developers and vendors is ensuring our chosen hardware platforms support modern toolchains. There&#39;s certainly no technical reason why a platform that runs vanilla C code can&#39;t run Rust.
+
+(Rust&#39;s hardware support is already pretty broad: https://forge.rust-lang.org/platform-support.html)</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I was replying to &quot;notsgnik&quot;</div>
+</div>
+<div class='comment'>
+<div class='author'>notsgnik</div>
+<div class='content'>@tadas, if i need to disassemble somme functions, it&#39;s also because some function ( strncp for example ) are now assembly instructions and because you know what your program is doing so you know what are the assembly equivalent of what you are trying to do.
+
+  Anyway, now that i think about it, it&#39;s seams that you are right and like some java programs that optimize themselves after couple of runs.
+it would be more likely that a machine learning algorithm compiler would do a better job than me at optimizing and securing code.
+
+@robert, i haven&#39;t checked for rust you are right, but it&#39;s because i dislike mozilla fundation as mutch as apple, the main reason would be a stupid &quot;mere-exposure effect&quot;.
+
+@all, I belive that good program are writend when you put your heart in it ( don&#39;t be stupid i&#39;m talking about hormones ) and your heart is in when you have been exposed a lot to a language so... @robert, if you really want people tu use more rust and go, make it more visible and learn about &quot;mere-effect exposure&quot; ;)
+
+for my part, i&#39;ll not follow the hype and will be using Go maybe in 10 years ;D</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>This is so wrong on many levels. 
+
+I wouldn&#39;t normally reply to such non-sense, but I just want to let others know that they are not alone when they think &quot;this is rubbish&quot;.
+
+First of all, you don&#39;t know what you want to do (&quot;what if that&quot;, &quot;what if another&quot;). Do not start projects at all, if you don&#39;t know what are they for. This unnecessary generalisation of the project leads to broken design that&#39;s hard to maintain for no purpose/benefit.
+
+Regarding the speed. IT DOESN&#39;T MATTER. If you app completes in 1us or 2us, it doesn&#39;t matter. In most cases, you are going to be I/O bound anyways.
+
+What&#39;s even more bizzare, that quite often you can find Java programs that are faster than C. C doesn&#39;t give you good performance just because you use it. How you use it, matter more.
+
+Finally, this premature optimisation is evil and I thought everyone knows it.
+
+But hey, if you want to masturbate doing C so you can boast to your pals, while trying to fix obscure memory corruption errors, be my guest.
+
+
+
+</div>
+</div>
+<div class='comment'>
+<div class='author'>notsgnik</div>
+<div class='content'>  I&#39;ll stick mostly to C and here is why:
+
+  I personaly wanted to build a personal lib in GO then I thougth... what if it&#39;s not runing as fast as I wanted and needed to run it without OS or on a special hardware? there is no UEFI go/rust...
+  Or what if i needed it to run on the client side using EMSCRIPEN ? ... still no GO or RUST
+  A last one, what if i think the compiler is doing a poor job optimizing my code? looking at Go generated assembly hurt my eyes...
+
+I think i&#39;ll stick with C for now, but if i&#39;ll make a program that is sure to run only on a recent computer and don&#39;t need all the juicy stuff or even is going to run on a TPU, i&#39;ll probably use Go :)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Rust + UEFI: https://www.reddit.com/r/rust/comments/5oupdq/modern_rust_uefi_programming/
+
+Rust + Emscripten: https://hackernoon.com/compiling-rust-to-webassembly-guide-411066a69fde
+
+Check your facts.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Sounds to me like an, i am used to this;
+
+It works better because, i am used to this...</div>
+<div class='comment'>
+<div class='author'>notsgnik</div>
+<div class='content'>&quot;mere-exposure effect&quot; :)</div>
+</div>
+</div>
+
+</div>

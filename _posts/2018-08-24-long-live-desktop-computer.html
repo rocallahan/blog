@@ -1,0 +1,36 @@
+---
+layout: "post"
+title: "Long Live The Desktop Computer"
+date: "2018-08-24 03:47:00 +0000"
+permalink: "/2018/08/long-live-desktop-computer.html"
+---
+<p>Eight years ago I bought a Dell Studio XPS 8100 desktop for a home computer at a moderate price (NZD 3,100). I've just replaced a failing 1TB hard drive with a 500GB SSD, but other than that I've done no upgrades. What's interesting to me is that it's still a perfectly good machine: quad-core i7, 12GB RAM, NVIDIA GPU with 2GB VRAM. Everything I do, this machine could still do well, including software development for work. I guess if I wanted to play the latest AAA game titles or use a 4K monitor on it, I'd be unhappy, but I can't think of anything else I'd even consider doing that would be a problem, and those could be addressed by upgrading the video card. If this machine doesn't fail catastrophically I can see us continuing to use it for many more years. (I run Linux on it; the situation might be different if it was Windows.)
+<p>This is interesting because up until 2010 I'd been in the habit of upgrading computers at least every five years because they would improve dramatically over that time in ways that mattered to me. That stopped happening. It hasn't entirely stopped for everyone &mdash; Mozilla developers are getting new desktops with double-digit numbers of cores to speed up Firefox builds &mdash; but I run my heavy-duty workloads in the cloud now, because really big machines aren't efficiently utilized by a single developer. I guess the economics of utilization and colocation will making cloud-based heavy lifting (not necessarily public clouds) increasingly prevalent over time.
+<p>One of the implications is that declining desktop sales don't necessarily mean declining desktop usage. I think they must at least partly reflect longer upgrade cycles.
+<p>Another implication is that component reliability for desktops is becoming more important. It doesn't really matter if parts wear out after five years, if you're going to replace the whole machine before then anyway. If the expected lifespan of a machine is fifteen years, it's worth buying more reliable parts.
+<p>Another implication is longevity bottlenecks might shift to relatively minor features like what types of USB ports your machine has. I guess some of this can be alleviated by upgrades and dongles but it's worth thinking about.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Subir</div>
+<div class='content'>Couldn&#39;t agree more. My primary workstation still uses the 5y+ old Sandy Bridge 2700k and I don&#39;t see a big reason to upgrade. All I have been doing is adding more RAM (maxed out to 32GB).
+For mobility, I lug around a 2015 MBP 13. However, I don&#39;t get this recent trend of non-upgrade-able laptops. I want to be able to take things apart, repair, replace and upgrade. Apparently, it is too much of an ask in 2018. Where did it all go wrong?
+
+&gt; run my heavy-duty workloads in the cloud now
+
+Been thinking of this for quite a while now. Didn&#39;t find any cost-effective solutions. Would like to know what you use.
+
+At the very least, I need 16GB RAM, 4-core proc, 30GB SSD. Even if I roll up my own VNC server on DigitalOcean, it would cost about $1000/year. Compare this to buying/building a new system for ~$2k, using it for a year and selling it for about half the price or more; MBPs have excellent resale value.
+
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t think cloud can beat running your own system if it has to be always up, and you&#39;re the sole user.
+
+For work we rent a bare-metal m1.xlarge.x86 from packet.net: https://www.packet.net/bare-metal/servers/m1-xlarge/
+USD 1265 a month, which is pricey, but we share it between two developers and also run CI and some server stuff on it. It&#39;s a great machine: 24 cores, 256GB RAM, 3TB SSD, and it routinely gets 20MB/s downloads from public Web sites. We could probably do something more cost-effective; we&#39;ve had it for a couple of years and haven&#39;t shopped around recently.
+
+We&#39;re also doing work on AWS. The great thing there is you can spin up a c5d.18xlarge (36 cores, 144GB RAM, 1.8TB SSD) for an hour to get results for a really big job in a hurry, then shut it down. Costs USD 0.70 for a spot instance.</div>
+</div>
+</div>
+
+</div>

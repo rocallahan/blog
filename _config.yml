@@ -1,0 +1,4 @@
+paginate: 5
+permalink: /:year/:month/:title:output_ext
+incremental: true
+

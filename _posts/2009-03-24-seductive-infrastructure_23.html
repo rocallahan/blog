@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "Seductive Infrastructure"
+date: "2009-03-23 21:31:00 +0000"
+categories: "Mozilla"
+permalink: "/2009/03/seductive-infrastructure_23.html"
+---
+<div class="columns"><p>I've finally started using <a href="http://hgbook.red-bean.com/hgbookch12.html">mq (Mercurial Queues)</a> routinely. It fits the way I work very well. When I have several bugs on the boil I can now easily track the individual patches. I can also easily work with big changes that are factored into multiple patches. When one piece of work depends on other pieces whose patches haven't landed yet, it's so easy to put the prerequisite patches in the queue and keep making progress without getting into patch management hell (or branch merge hell). This is increasing my productivity, and it's fun too.<br/><p>Another great development is <a href="http://crashopensource.blogspot.com/2009/03/tryserver-now-has-unittests-on-all-3.html">tests on the try-servers</a>. Now you can upload a patch to the try-server farm and it will build the patch on all three tier-1 platforms, produce installation packages, <em>and</em> run all our automated tests on the tier-1 platforms!<br/><p>What makes it all really seductive is <a href="http://blog.mozilla.com/jorendorff/2008/08/18/push-to-try/">"push-to-try"</a>. If you've already got your tree patched with some mq patches, all you have to do is <code>hg push -f ssh://hg.mozilla.org/try/</code> and eventually all the builds and test results <a href="http://tinderbox.mozilla.org/showbuilds.cgi?tree=MozillaTry">will appear</a> automatically! It couldn't be easier.<br/><p>The only problem is that the try-servers are now so convenient and useful, they're constantly swamped with developers taking advantage of them :-). That's a good problem to have. As Jonas noted the other day, we don't need a server <em>pool</em>, now we need a server <em>ocean</em>. A success disaster in the making! :-)</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>My biggest problem with mq (and rebase module as well) is that it &quot;forgets&quot; relations between files. So if you rename a file and push that patch out of the repository with mq (or when rebasing), when that patch is added back you will have a removed and an added file, without any relationship between them. Great way to make a mess out of your repository.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Arpad Borsos</div>
+<div class='content'>I wonder what you have been using instead of mq till now.<br>Can&#39;t wait until Ubuntu offers Mercurial 1.2, which can simply rebase a mq patch queue instead of manually merging it, which causes problems quite often.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Marco Diego</div>
+<div class='content'>Hi, I know its not the best place to ask it, but...<br>How is going chronicle recorder development?<br></div>
+</div>
+
+</div>

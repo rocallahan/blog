@@ -1,0 +1,24 @@
+---
+layout: "post"
+title: "Intel CPU Bug Affecting rr Watchpoints"
+date: "2018-05-24 22:54:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2018/05/intel-cpu-bug-affecting-rr-watchpoints.html"
+---
+<p>I investigated an <a href="https://github.com/mozilla/rr/issues/2186">rr bug report</a> and discovered an annoying Intel CPU bug that affects rr replay using data watchpoints. It doesn't seem to be hit very often in practice, which is good because I don't know any way to work around it. It turns out that the bug is probably covered by an <a href="http://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/desktop-6th-gen-core-family-spec-update.pdf">existing Intel erratum</a> for Skylake and Kaby Lake (and probably later generations, but I'm not sure), which I even <a href="/2016/04/skylake-erratum-affecting-rr.html">blogged about previously</a>! However, the erratum does not mention watchpoints and the bug I've found definitely depends on data watchpoints being set.
+<p>I was able to write a <a href="https://gist.github.com/rocallahan/32561514df847ec3b54370fe7553500d">stand-alone testcase</a> to characterize the bug. The issue seems to be that if a <tt>rep stos</tt> (and probably <tt>rep movs</tt>) instruction writes between 1 and 64 bytes (inclusive), and you have a read or write watchpoint in the range [64, 128) bytes from the start of the writes (i.e., not triggered by the instruction), then one spurious retired conditional branch is (usually) counted. The alignment of the writes does not matter, and it's not related to speculative execution.
+<p>If you find rr failing during replay with watchpoints set, and the failures go away if you remove the watchpoints, it could well be this bug. Broadwell and earlier don't seem to have the bug.
+<p>A possible workaround would be to disable "fast-string optimization" in the kernel at boot time. I don't think there's any way for users to force this to happen in Linux, currently, but someone could write a kernel patch adding a command-line option for that and send it upstream. It would be great if they did!
+<p>Fortunately this sort of bug does not affect <a href="/2018/05/update-pernosco.html">Pernosco</a>.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Gerald</div>
+<div class='content'>&quot;Fortunately this sort of bug does not affect Pernosco.&quot;
+Expanding (dreaming?) from that, is it possible that one day you could create a Pernosco-friendly recorder on non-Linux and/or non-Intel systems?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Anything&#39;s possible if you have enough time and money.</div>
+</div>
+</div>
+
+</div>

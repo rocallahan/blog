@@ -1,0 +1,17 @@
+---
+layout: "post"
+title: "Too Many DWARF Packaging Options"
+date: "2018-03-20 01:37:00 +0000"
+permalink: "/2018/03/too-many-dwarf-packaging-options.html"
+---
+<p>There are too many ways in which DWARF debuginfo can be packaged, and it makes building DWARF-consuming tools a nightmare.
+<p>Debuginfo can be packaged into the executable file, or into a separate external debuginfo file This debuginfo file can be referenced by a build id stored in the <tt>.note.gnu-build-id</tt> section, or via a filename stored in the <tt>.gnu_debuglink</tt> section.
+<p>Either of those kinds of debuginfo file can use "split DWARF". With "split DWARF", most of the debuginfo is not present in the file itself. Instead most of the debuginfo is left in the in object files that were input to the linker, and the debuginfo binary references those files. Unfortunately there are two flavours of this scheme: the DWARF5 standard "DWO" and the GNU variant "DWZ", and they are different. You can merge the debuginfo from multiple DWO/DWZ files into a single file, although I don't think that adds to the complexity of debuginfo-consuming tools.
+<p>On top of that, there is also "multi-file DWZ". This lets you extract DWARF data that's common to multiple binaries into a single "alternative debuginfo" file referenced by multiple binaries via a <tt>.gnu_debugaltlink</tt> section. This has been standardized as "supplementary object files". Fedora is using the GNU variant in its debuginfo packages already.
+<p>You can optionally gzip-compress individual ELF sections in any of those files.
+<p>These techniques could, in theory, be combined. Fedora uses external debuginfo files with multi-file DWZ. I think you could have a binary that uses both "supplementary object files" and "split DWARF". I think the DWARF spec rules out a "supplementary object file" itself using "split DWARF", or vice versa, but it's a bit vague.
+<p>It's unfortunate that "supplementary object files" and "split DWARF" are different.
+<p>It's also very unfortunate that many new DWARF features exist in a GNU flavour and a standard flavour. In practice DWARF-consuming tools need to support both, which is extra work. The DWARF community could learn from the painfully-won wisdom of the Web standards community.
+<p>I apologise if I got any of the above wrong. It's complicated and confusing, and documentation is scattered or in some cases nonexistent.
+<p><strong>Update</strong> Turns out that the ELF per-section compression is more complex than I knew. Any section may be compressed with SHF_COMPRESSED, in which case it starts with a <tt>Elf32_External_Chdr</tt> or <tt>Elf64_External_Chdr</tt>. Some Fedora packages use this. However, you can also have compressed sections containing a different sort of header, "ZLIB" followed by an 8-byte big-endian uncompressed size.
+<p>Also, it appears the GNU tools will accept <tt>.zdebug</tt> variants of every <tt>.debug</tt>. The "z" is supposed to indicate compression, but nothing seems to require that <tt>.zdebug</tt> be compressed or <tt>.debug</tt> uncompressed.

@@ -1,0 +1,371 @@
+---
+layout: "post"
+title: "Confession Of A C/C++ Programmer"
+date: "2017-07-17 04:30:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/07/confession-of-cc-programmer.html"
+---
+<p>I've been programming in C and C++ for over 25 years. I have a PhD in Computer Science from a top-ranked program, and I was a Distinguished Engineer at Mozilla where for over ten years my main job was developing and reviewing C++ code. <strong>I cannot consistently write safe C/C++ code.</strong> I'm not ashamed of that; I don't know anyone else who can. I've heard maybe Daniel J. Bernstein can, but I'm convinced that, even at the elite level, such people are few and far between.
+<p>I see a lot of people assert that safety issues (leading to exploitable bugs) with C and C++ only afflict "incompetent" or "mediocre" programmers, and one need only hire "skilled" programmers (such as, presumably, the asserters) and the problems go away. I suspect such assertions are examples of the <a href="https://en.wikipedia.org/wiki/Dunning%E2%80%93Kruger_effect">Dunning-Kruger effect</a>, since I have never heard them made by someone I know to be a highly skilled programmer.
+<p>I imagine that many developers successfully create C/C++ programs that work for a given task, and no-one ever fuzzes or otherwise tries to find exploitable bugs in those programs, so those developers naturally assume their programs are robust and free of exploitable bugs, creating false optimism about their own abilities. Maybe it would be useful to have an online coding exercise where you are given some apparently-simple task, you write a C/C++ program to solve it, and then your solution is rigorously fuzzed for exploitable bugs. If any such bugs are found then you are demoted to the rank of "incompetent C/C++ programmer".
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>steiny</div>
+<div class='content'>I think that the recent C++ standards (C++11, C++14) really made some progress in this regard. But as C++ is designed to be backwards-compatible to a large extend, you would need to restrict yourself to (not) do certain things, e.g.,
+* do not use explicit allocation/deallocation, but smart pointers instead,
+* do not store or pass pointers around, but pass everything by-copy/by-reference or by a smart pointer (which technically is one of the former),
+* use STL-containers (and not classic C arrays) and use the for-each loop to iterate over them, and
+* follow the Rule of zero.
+
+This certainly does not get you around all obstacles but improves the overall situation a lot. Maybe compilers should implement warnings to restrict you to a &quot;safer&quot; subset of the language?</div>
+<div class='comment'>
+<div class='author'>Patrick Walton</div>
+<div class='content'>This does nothing to solve use-after-free problems, which are the exploitable ones. References can easily become dangling.
+
+The fact that people *think* references are safe when they aren&#39;t is one of the reasons why modern C++ is less safe than C.</div>
+</div>
+<div class='comment'>
+<div class='author'>Azi Hassan</div>
+<div class='content'>&gt;and not classic C arrays
+
+An alternative to vanilla C arrays (whose size is known at compile-time) is std::array, which is available as of C++11.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>You say not to pass pointers around, but Herb Sutter says you should:
+https://herbsutter.com/2013/06/05/gotw-91-solution-smart-pointer-parameters/
+
+This is part of the problem with the &quot;the problems go away if you use the right subset of C++&quot; approach. People don&#39;t agree on exactly what that subset is, so each project or module has to decide it for themselves, and those decisions are never the same.</div>
+</div>
+<div class='comment'>
+<div class='author'>jto</div>
+<div class='content'>You also have to make no mistakes when
+
+* accessing vector elements by index,
+* adding signed integers,
+* using `this`, which is always a plain pointer
+* modifying data that you (or other code) might be iterating over, or
+* sharing any kind of data across threads.
+
+because all of these have pitfalls too.
+
+I don&#39;t think roc would disagree that knowing the classic pitfalls &quot;improves the overall situation a lot&quot;. It definitely does. But there is no end to that road, because the ways to trigger undefined behavior in C++ are too numerous and too tricky.</div>
+</div>
+<div class='comment'>
+<div class='author'>pip010</div>
+<div class='content'>smart pointers, YES THEY DO!</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>If you&#39;ve been programming for 25 years and have a degree, yet can&#39;t write safe code with c++, it&#39;s time to retire.</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>*whoosh!*
+
+You should be contestant #1 for the challenge suggested by Mr. O&#39;Callahan.  Care to risk yourself being demoted to incompetent?</div>
+</div>
+<div class='comment'>
+<div class='author'>pip010</div>
+<div class='content'>show me any code ... :D</div>
+</div>
+<div class='comment'>
+<div class='author'>Matthias Hauswirth</div>
+<div class='content'>Dear &quot;unknown&quot;,
+
+I find your comment about retirement inappropriate. It&#39;s fine to disagree with O&#39;Callahan&#39;s position or to doubt his skills, but you could have formulated your view in a mature and constructive way.
+
+I think that practicing programmers with O&#39;Callahan&#39;s profound understanding of programming, programming languages, and runtime systems are very rare. I don&#39;t really know him well, but I met him at IBM Research over a decade ago. To me, his work and his expertise was impressive already then.
+
+IMHO, a comment like yours would be inappropriate even if it came from Bjarne Stroustrup himself.
+
+-Matthias Hauswirth</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Show me your C++ source code, and I will find unsafe code in it. Guaranteed.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Максим</div>
+<div class='content'>My experience with other languages shows that it&#39;s not only about C or C++.</div>
+</div>
+<div class='comment'>
+<div class='author'>craiganslow</div>
+<div class='content'>Rob, if you could use another language what would you use instead?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Depends on the task, but mostly if I get to choose the language I&#39;d choose Rust over C++.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Jim Stuttard</div>
+<div class='content'>In the &#39;80s the UK MoD decided formal methods were too expensive. They went with strongly-typed Ada.
+
+Wikipedia lists what still has to be checked: 
+
+&quot;Ada also supports run-time checks to protect against access to unallocated memory, buffer overflow errors, range violations, off-by-one errors, array access errors, and other detectable bugs. These checks can be disabled in the interest of runtime efficiency, but can often be compiled efficiently.&quot;
+
+Functional programmers know why the NSA&#39;s Trusted Systems Research Group had their cryptography design software https://github.com/GaloisInc/cryptol written in Haskell: pure and can therefore use SMT solvers, such as Yices, Z3, or CVC4, to prove predicates for all possible inputs.</div>
+</div>
+<div class='comment'>
+<div class='author'>Lucretia9</div>
+<div class='content'>Yup, when I&#39;ve pointed out the problems with these languages to people, I&#39;ve had people commenting saying they don&#39;t make those mistakes in a very arrogant way, my immediate thought is that they&#39;re idiots.
+
+Try Ada 2012.</div>
+</div>
+<div class='comment'>
+<div class='author'>FDominicus</div>
+<div class='content'>My time frame from C Programming is  a bit larger. I do not like and try to avoid C++ wherever I can. But I&#39;m quite a big fan of Objective-C. Anyway the problems with C is built-in. The good thing there do exist a lot of tools to help with it, but the problems still persist. I think there is not practical way around it and as long as there  is void *, you are simple lost. Anyway the history of  C is over all a success story never ever reached again in programming. Every Unix-like OS uses it. Any Windows like OS uses. Every serious relational database uses it, how many liberaries are there for it. Nearly unmeasurable. And yes C is also a story of failure, but they can not stop C in any way.
+
+C-Compilers are among the best and they simply do not loose any benchmark with a large margin. </div>
+<div class='comment'>
+<div class='author'>FDominicus</div>
+<div class='content'>That&#39;s what I meant with tools. There are zillion of malloc replacements, there are type annotation and there is also valgind, and tons of other stuff. It can improve on the problem but they simply do not vanish. Anyway if you look around and see computers running for years or maybe decaded, I&#39;d say C stand pretty well with quite reliable software. And I guess if we just dropped C for any Database development, 90 % of them were gone even the biggest ones. So yes C is great and C is dangerous ;-)</div>
+</div>
+<div class='comment'>
+<div class='author'>Arr</div>
+<div class='content'>libtalloc partially solves the void * issue as it adds a very basic typing system for heap allocated memory.  There&#39;s no concept of inheritance, which can be a major issue, and it does nothing for static/stack allocated memory.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Pente</div>
+<div class='content'>Safety is relative. I question if any language is safe? For me, C would be the safest due to my experience with it. I know it&#39;s weaknesses and strengths.</div>
+<div class='comment'>
+<div class='author'>Alex Elsayed</div>
+<div class='content'>Yes; some languages are _actually_ safe. This generally requires being based on a well-defined formalism, rather than grown organically.
+
+As an example, consider _any_ prover language (such as Coq, or Lean, etc) - if they were _not_ safe, then one could construct invalid proofs, making them quite useless.
+
+More generally, any language with a sufficiently strong type system and which enforces type-safety and memory-safety has a _very_ strong claim to being _actually_ safe.</div>
+</div>
+<div class='comment'>
+<div class='author'>FDominicus</div>
+<div class='content'>I know C quite well but it&#39;s not &quot;safe&quot; thing. It&#39;s to some extend always a beast in disguis and sooner or later you&#39;ll be bitten. And Alex is right some language simply are built up to be safer. But you build bugs with any language ;-)</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Nigel Heffernan</div>
+<div class='content'>Am I the only person here who noticed that half the replies miss a key point in Robert&#39;s post: he knows the bugs are there because he runs a fuzz-test on his code. 
+
+I cannot see a single one of those confident assertions about Rust and D (and other respondents&#39; answers about their own careful coding) backed up with &quot;I am confident that I am right because I always fuzzed it / subjected it to an internal security review / put it up online with a hundred-dollar bug bounty&quot;. 
+
+You&#39;re probably not that good. And you will only ever know that you are, for real, unless and until you are constantly and consistently and thoroughly checking that you are. 
+
+Robert&#39;s doing the testing and he knows exactly how good he is: step up to the plate, ladies, gentlemen and others, and tell us how good you *know* yourself and your toolkit to be. 
+
+I will start the ball rolling: I have never written any nontrivial code that passed a fuzz-test without one or more nontrivial errors. More than one of them has caused consternation among colleagues who admitted, quite freely, that they would not have picked them up in peer review. </div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;m not the one who did the fuzzing, but basically you&#39;re 100% right. Until your code has been attacked, you don&#39;t know how good it is/how good you are.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>100% my thoughts regarding C++. In last couple of years I haven&#39;t seen one person who really knows C++ and really understands what&#39;s going &quot;under the hood&quot; as even if they did (in terms of language), there is next layers of compiler implementation &quot;specifics&quot;, library implementation, etc, which are adding and adding to this complexity.
+
+So, yes, sadly, but You&#39;re 110% right on this one.
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Siddharth Kannan</div>
+<div class='content'>Do you think this is perhaps why we should NOT write security stuff like TLS in C? (to avoid things like Heartbleed and the recent Cloudfare overflow vuln + data breach)</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>brilliant, well said...</div>
+</div>
+<div class='comment'>
+<div class='author'>David Leunen</div>
+<div class='content'>I think everybody who claim here they can write safe C++ or C code should provide links to all their tremendous code. We&#39;ll have fun with it.
+
+Thank you roc for your insight.</div>
+</div>
+<div class='comment'>
+<div class='author'>Germán Diago</div>
+<div class='content'>My personal opinion, as a person using C++ nonstop since 2002 when I entered university is that it is far easier to write safe C++ following things such as the Core C++ guidelines than writing C. That said, I am not sure if you can achieve 100% safety, strict safety, which is what the article is talking about. I think writing safe C++ is reasonably easy but there are still things such as dangling pointers that can appear in non-obviuos ways. So if you do not stick to smart pointers, you are increasing the chances for unsafety. Anyway, if you use standard containers, smart pointers, span for things such as array + size in C and follow the guidelines, I am sure you must be there 98%. The other 2% is what Rust provides, and you earn other good things on the way, but you lose some generic programming, constexpr and others on the way, besides having a bit more rigid borrow-checker (for the good, in theory). Anyway, I do not think that borrowing is a very strange concept for a modern c++ programmer, can be learnt fast, but did not try myself rust so I cannot talk.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Rust goes beyond that though. I can, for example, provide compiler information for state machines to ensure correct API usage and eliminate a number of would-be logic errors. That&#39;s not something you can get from C++, regardless of whatever guidelines you follow.
+
+Even then, Rust is more than safety. Safety doesn&#39;t even register among the top reasons that people choose Rust. It&#39;s more of a nice bonus side effect.</div>
+</div>
+<div class='comment'>
+<div class='author'>Germán Diago</div>
+<div class='content'>Rust safety is the *top* feature. It is the thing that defines it as doing better than C++ in an objective way. You have pattern matching many other things, but nothing that cannot get close in C++ with variants and other stuff. Pattern matching alone will not sell a language, even if it is very nice. On the systems side: constexpr and generic programming are strictly more powerful in C++. I was disappointed about the generic programming in Rust. Yes, it has traits, they are nice. And type checking. But still, there are the variadics problem as of now, which leads to code explosion. I also recall there was no partial specialization but not sure if they fixed it, there was some discussion some time ago.</div>
+</div>
+<div class='comment'>
+<div class='author'>pip010</div>
+<div class='content'>Rust is a C competitor, as is C++ :D</div>
+</div>
+<div class='comment'>
+<div class='author'>FDominicus</div>
+<div class='content'>Strange enough I do like D but have a special dislike for C++. I simply do not like to read code in it. I probably get along but I&#39;ve learned OO with a better simpler OO Language and yes D is but one C with Classes. Objective-C is IMHO wonderful, look into GTK and you have a OO in &quot;plain&quot; C with all the strange things. And of course C# and Java are all influenced (syntacitcal ) by C. 
+
+Despiete all the shortcomings I do think any programmer should know C. YMMV that&#39;s clear</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Literally (and no, I don&#39;t mean figuratively) everyone that I have talked to, who switched to Rust, lists safety as their biggest reason for doing so.  Safety is Rust&#39;s biggest selling point, and, in my experience, its most prominent advertising campaign.</div>
+</div>
+<div class='comment'>
+<div class='author'>Andy</div>
+<div class='content'>I agree with tkcandyh</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I think that one can consistently create reasonably safe C programs, meaning only a few CVEs over a multi-year period despite wide (&gt; 100 mln users) deployment, given that a) the task is relatively small (roughly &lt; 50 kloc) and b) well-defined, and c) the developers are both highly skilled and highly experienced and d) one expends <a href="https://www.ietf.org/proceedings/82/slides/codec-4.pdf" rel="nofollow">quite a lot of effort</a> ensuring that safety using all of the tools available.
+
+I make no such claims about C++ because I&#39;m not smart enough to understand C++.</div>
+<div class='comment'>
+<div class='author'>Germán Diago</div>
+<div class='content'>C++ is more difficult to learn. But easier to understand most of the time. I have experience in both. :)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Tim, I&#39;ll give you that. But I claim those conditions very rarely hold, and in most cases where they do hold and safety is important, another language would be a better fit.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>To make them seem even more unlikely, I should probably add an e) the schedule is not rushed (a superset of (d)).
+
+All of those conditions basically translate into expense. Developing software this way is very, very expensive, which is why people don&#39;t do it.
+
+To be clear to the other commenters, I&#39;ve been programming in C++ since roughly 1995.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Highly skilled C++ programmers are not all that easy to find, and having it used by less skilled programmers is like using a chainsaw without safety covers, safety glasses, or steel toed boots.
+Coding in C++ is my day job, and I see the safety equivalent of amputated limbs all the time.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Not a C/C++ guy, but wouldn&#39;t tools like the ones made by coverity.com help in these cases?</div>
+</div>
+<div class='comment'>
+<div class='author'>pip010</div>
+<div class='content'>More than 90% of c++ code is C with classes. So pls dont blame it on C++ unless it is truly C++. Also you can replace C/C++ with anything else Java/Go/Delphi and the statement still holds true in face of a fuzzer or half competent hacker. Modern software is hard PERIOD. As rule of thumb breaking is way easier than making.</div>
+<div class='comment'>
+<div class='author'>pip010</div>
+<div class='content'>same hold for C++ (as Java/Go) if you avoid the C part :D
+
+also no CVE for Java :D
+write once debug everywhere :D
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Alex Elsayed</div>
+<div class='content'>Returning a reference to a local variable, and then using it, is perfectly valid C++ without the &quot;C part&quot;, and is just as wildly unsafe.</div>
+</div>
+<div class='comment'>
+<div class='author'>jto</div>
+<div class='content'>This is a One True Scotsman sort of argument. There is no &quot;truly C++&quot;. Herb Sutter proposed something called a &quot;safe profile&quot; back in 2015, but I don&#39;t think it went anywhere.
+
+&quot;Safer&quot; C++ is a thing (and all C++ programmers should learn it); &quot;safe&quot; C++ is not.</div>
+</div>
+<div class='comment'>
+<div class='author'>Natanji</div>
+<div class='content'>Your claim about Java and Go is incorrect. In neither of those you allocate memory by yourself like you do in C/C++. Java catches all buffer overflow that a user could write with an exception. You do not get direct memory access either. You can&#39;t smash your stack and interpret data as code, like you can in C.
+
+* I know with native code this is theoretically possible even in Java. But typical Java software doesn&#39;t use that. It abstracts enough away that you simply can&#39;t make all these errors. The bugs in Java software are usually due to bugs in the JVM, NOT in Java code. And it&#39;s much more reasonable to only have to secure the JVM, because those who implement it can use static and dynamic analysis on it, you can proove that some parts are 100% correct and error-free, etc. - and that already protects all users of Java at the same time. Fixing a bug in the JVM fixes it in all software without having to change a single line of code in that software.
+
+It&#39;s just a much better approach if you want SAFE software to use Java, period.
+</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>George3d6</div>
+<div class='content'>What exactly is this &#39;C/C++&#39; language you are talking about ?</div>
+<div class='comment'>
+<div class='author'>Jean-Michaël Celerier</div>
+<div class='content'>Well look at this code: https://github.com/mozilla/rr/blob/master/src/CompressedReader.cc
+
+this is clearly C++-flavored C. I mean why would you use pthread, pointers as arrays, etc. in 2017 is beyond me, when there are so much safe abstraction tools built on top of it.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>+PatrickWalton &quot;use after free is so easy with smart pointers&quot; No, it is actually the exact opposite.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s very easy with smart pointers, really. E.g.:
+
+#include 
+#include 
+using namespace std;
+int main(void) {
+  unique_ptr p = make_unique(3);
+  const int&amp; v = *p;
+  p = nullptr;
+  cout &lt;&lt; v;
+  return 0;
+}
+
+Obviously the problem is references. But avoiding the use of references in &quot;modern C++&quot; isn&#39;t really an option.</div>
+</div>
+<div class='comment'>
+<div class='author'>Jean-Michaël Celerier</div>
+<div class='content'>Pointers per se are ok (though you should prefer references). Using pointers to pass arrays is *not*. You should always use something like gsl::span which can check the size.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I haven&#39;t presented &quot;evidence&quot; here; you&#39;ll just have to take my word for it that I&#39;ve written code with a lot of safety bugs. Sorry if you find that difficult to believe.
+
+By &quot;C/C++&quot; I mean the totality of the features you can use in modern C++, which includes almost everything in C.
+
+It&#39;s easy to say &quot;oh, by &#39;C++&#39; I mean *my* preferred subset of C++ (which I will not define for you); if you stick to that, then you won&#39;t have problems&quot;. But that is particularly difficult to prove (and ultimately not true), and you can&#39;t then also claim advantages for C++ like &quot;everyone already knows it&quot; or &quot;lots of code is already written in it&quot;.
+
+&gt; I mean why would you use pthread, pointers as arrays, etc. in 2017
+
+Because it wasn&#39;t written in 2017?</div>
+</div>
+<div class='comment'>
+<div class='author'>fnl</div>
+<div class='content'>+1 - I could not agree more. Throwing C++ and C into the same bucket is no better than throwing any two programming languages into the same bucket.
+
+This post is just a plain rant without evidences. If might be true for C - if it had some substantiated arguments - maybe. But I would rant (equally unsubstantiated :-) that this opinion is 100% wrong for modern versions of C++.</div>
+</div>
+<div class='comment'>
+<div class='author'>Patrick Walton</div>
+<div class='content'>I actually believe that modern C++ is less safe than C, because (among other reasons) use after free is so easy with smart pointers, and the problems that modern C++ solves are not really the important security problems (anymore).</div>
+</div>
+<div class='comment'>
+<div class='author'>pip010</div>
+<div class='content'>+KevinDoyon
+
+this is the actual Gotw91:
+
+&quot;
+Guideline: Use a non-const shared_ptr&amp; parameter only to modify the shared_ptr. Use a const shared_ptr&amp; as a parameter only if you’re not sure whether or not you’ll take a copy and share ownership; otherwise use widget* instead (or if not nullable, a widget&amp;).
+&quot;
+
+so I rather say prefer smart pointers and only when performance matter use point/ref</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>What is wrong with pointers? Herb Sutter has this to say:
+
+Guideline: Prefer passing objects by value, *, or &amp;, not by smart pointer.
+
+
+https://herbsutter.com/2013/06/05/gotw-91-solution-smart-pointer-parameters/</div>
+</div>
+<div class='comment'>
+<div class='author'>Jean-Michaël Celerier</div>
+<div class='content'>&gt; I mean why would you use pthread, pointers as arrays, etc. in 2017
+
+I could have said 2010 or 2003 for what it&#39;s worth. At this time boost already had boost::thread and boost::shared_ptr / boost::intrusive_ptr.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>pip010</div>
+<div class='content'>basically neither Rust nor Ada add much on top of C++&amp;static analyzer IMHO</div>
+<div class='comment'>
+<div class='author'>Alex Elsayed</div>
+<div class='content'>John Regehr has a _very_ detailed rebuttal of this kind of thinking: https://blog.regehr.org/archives/1520</div>
+</div>
+</div>
+
+</div>

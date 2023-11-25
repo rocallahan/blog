@@ -1,0 +1,9 @@
+---
+layout: "post"
+title: "ASAN And LSAN Work In rr"
+date: "2018-08-17 11:43:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2018/08/asan-and-lsan-work-in-rr.html"
+---
+<p>AddressSanitizer has worked in rr for a while. I just found that LeakSanitizer wasn't working and landed <a href="https://github.com/mozilla/rr/commit/74456e2e6e531385b0cb15054f9b6abe21f8a8e5">a fix</a> for that. This means you can record an ASAN build and if there's an ASAN error, or LSAN finds a leak, you can replay it in rr knowing the exact addresses of the data that leaked &mdash; along with the usual rr goodness of reverse execution, watchpoints, etc. Well, hopefully. <a href="https://github.com/mozilla/rr/issues/">Report an issue</a> if you find more problems.
+<p>Interestingly, LSAN <a href="https://github.com/llvm-mirror/compiler-rt/blob/8a93d692d2bad9453c8b511bcb8855838cbb87c9/lib/lsan/lsan_common.cc#L595">doesn't work under gdb</a>, but it does work under rr! LSAN uses the <tt>ptrace()</tt> API to examine threads when it looks for leaks, and it can't ptrace a thread that gdb is already ptracing (the ptrace design deeply relies on there being only one ptracer per thread). rr uses ptrace too, but when one rr tracee thread tries to ptrace another rr tracee thread, rr <a href="/2016/04/using-rr-to-debug-rr.html">emulates the ptrace calls</a> so that they work as if rr wasn't present.

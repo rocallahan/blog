@@ -1,0 +1,23 @@
+---
+layout: "post"
+title: "How I Found A 20-Year-Old Linux Kernel Bug"
+date: "2017-06-14 12:06:00 +0000"
+permalink: "/2017/06/how-i-found-20-year-old-linux-kernel-bug.html"
+---
+<p>Recently I <a href="https://github.com/mozilla/rr/commit/5f0f8b0c6155a92134ecfaa25fc1f9fff9080b26">improved the rr tests</a> to test that the kernel doesn't write more memory than we expect during system calls. We place syscall output buffers at the ends of pages so that the end of the buffer is immediately followed by an unmapped page. If the kernel reads or writes too much memory then the system call will fail with EFAULT (or something worse will happen).
+<p>This found a few bugs in rr's assumptions about how much memory the kernel reads and writes. Interestingly, it also exposed a very old kernel bug: certain wireless ioctls are supposed to take a 32-byte memory parameter but the kernel actually fails with EFAULT if less than 40 bytes are available. (The extra bytes are not modified.) I tried to be a good citizen by <a href="https://bugzilla.kernel.org/show_bug.cgi?id=195869">reporting the bug</a> and I'm pleased to say that it's actually being fixed!
+<p>The bug was apparently introduced in Linux 2.1.15, released December 12, 1996. It's interesting that it wasn't found and fixed until now. I guess not many programs use these ioctls, and those that do probably use buffers that are always followed by at least eight more bytes of data, e.g. any buffer on the stack. Then again, if you wrote a program that allocated those buffers using "malloc", I guess once in a while it would fail if your allocator happens to land one at the end of a page.
+<p>This class of bugs --- "small overrunning read that doesn't get used" --- could also be a problem in user-space. I don't recall seeing other bugs in this class, though.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>thank you</div>
+</div>
+<div class='comment'>
+<div class='author'>Dj Flow</div>
+<div class='content'>Got often crashes in a game that used malloc (Arma3) hopefully this fixed it.
+
+Thanks anyways for doing such an great job for the Linux users</div>
+</div>
+
+</div>

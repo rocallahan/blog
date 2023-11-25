@@ -1,0 +1,19 @@
+---
+layout: "post"
+title: "WebRTC And People-Oriented Communications"
+date: "2013-12-06 01:53:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/12/webrtc-and-people-oriented.html"
+---
+<p>Tantek had an <a href="http://tantek.com/2013/338/b1/people-focused-mobile-communication-experience">interesting blog post</a> about making people rather than protocols the organizing principle of communication apps. I like his vision quite a lot. One neat extension of his post would be to introduce WebRTC. With WebRTC it would be relatively easy to have the "Robert O'Callahan" app check if I'm currently logged into the appropriate receiver app, at any WebRTC-capable endpoint, and if I am, establish a voice or voice+video session with me (with peer-to-peer transmission, naturally). If I'm not logged in, WebRTC lets you record a message for later delivery. This would be very cool.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Ben Werdmuller</div>
+<div class='content'>I&#39;m interested in building exactly this into http://idno.co, for all kinds of reasons. There are some interesting prerequisites for WebRTC recording, which I think is an important piece; right now it sounds like you need to record audio and video separately, and then transcode them together on the server. It&#39;d be great if that was available as a unified browser API, but still, we&#39;re almost at a point where this can happen. And of course, because it&#39;s the web, and a web standard, it can happen on any device, in any modern browser. Neat.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>MediaRecorder, as specced, should record audio and video together, muxed into a single container. Our implementation does this, though it&#39;s not in nightly yet.</div>
+</div>
+</div>
+
+</div>

@@ -1,0 +1,47 @@
+---
+layout: "post"
+title: "Speeding Up Mkdepend"
+date: "2007-05-20 09:45:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/05/speeding-up-mkdepend_20.html"
+---
+<div class="columns"><p>I did a little bit of research into the problem of mkdepend.exe being slow under VMWare with sources in VMWare's shared file system.<br/><p>The first thing to do was to measure the problem. This was pretty easy: running mkdepend on nsPresShell.cpp consistently takes 32 seconds. Actually compiling the file takes only a few seconds. So clearly something is very wrong.<br/><p>Poor-man's profiling in the debugger shows that mkdepend is spending all its time in stat() calls. These stat calls are just checking to see whether a file exists; on a hunch I wondered if there's a faster way to check for file existence than stat(). Some Web searches suggested that GetFileAttributesEx is a good fast way. So I refactored the code to use a does_file_exist function which calls GetFileAttributesEx on Windows. Ta da! Now mkdepend on nsPresShell.cpp takes 1.5 seconds. GAME OVER. Patch submitted.<br/><p>I conjecture that stat() is so slow because it fills in a bunch of information about devices, inode numbers, and access permissions, and on Windows that may require several filesystem operations to get that information. Perhaps VMWare's file system is particularly slow at some of those extra operations.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Neil</div>
+<div class='content'>Unsurprisingly nsLocalFileWin::Exists already uses GetFileAttributesEx().<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Shawn Wilsher</div>
+<div class='content'>what bug was that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>schrep: might help a bit but I think those builds have the sources on a local filesystem, so we won&#39;t see the huge penalty.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>Oh, I was misremembering http://benjamin.smedbergs.us/blog/2006-11-22/depths-of-the-mozilla-build-system/ -- amazing the lengths we go to for always-fresh dependencies.<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gijs</div>
+<div class='content'>I&#39;m going to ask a naive question (given I don&#39;t know the material at all) for a bit - did you check if similar timesaving stuff exists on Mac or Linux? This sounds like a boon which will be good to have on any platform, really!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>schrep</div>
+<div class='content'>Can&#39;t wait to see what this does for windows build times for the release team since we use VMWare tehre as well...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Diego Calleja</div>
+<div class='content'>Amazing. How much it speeds up the whole compilation of firefox?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>Yay! But the same argument applies to Unix: access(2) is faster than stat(2). Care to test?<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Shawn: 381247<br>Brendan, Gijs: on Mac and Linux I believe we don&#39;t use mkdepend normally, we generate the information with gcc -MD as a byproduct of normal compilation.<br></div>
+</div>
+
+</div>

@@ -1,0 +1,22 @@
+---
+layout: "post"
+title: "rr 4.1.0 Released"
+date: "2016-02-03 12:20:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/02/rr-410-released.html"
+---
+<p><a href="https://github.com/mozilla/rr/releases/tag/4.1.0">This release</a> mainly improves replay performance dramatically, as I <a href="/2015/11/even-more-rr-replay-performance.html">documented</a> in November. It took a while to stabilize for release, partly because we ran into a kernel bug that caused rr tests (and sometimes real rr usage) to totally lock up machines. This release contains a workaround for that kernel bug. It also contains support for the gdb <tt>find</tt> command, and fixes for a number of other bugs.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Steve Fink</div>
+<div class='content'>Unrelated to this release, but another thing that rr is really handy for: I needed to debug a gcc plugin. But &#39;gcc&#39; is just a driver script. I was previously hacking this in by renaming cc1plus to cc1plus.real, then making a shell script named cc1plus that runs cc1plus.real under gdb.
+
+With rr, I can just rr record the toplevel invocation, then use rr ps and find the program I&#39;m looking for. Not really a big deal compared to the core rr functionality, but it&#39;s really handy.
+</div>
+<div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>It&#39;s true that debugging multiple processes with gdb is a nightmare.</div>
+</div>
+</div>
+
+</div>

@@ -1,0 +1,30 @@
+---
+layout: "post"
+title: "What If C++ Abandoned Backward Compatibility?"
+date: "2020-03-27 10:51:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2020/03/what-if-c-abandoned-backward.html"
+---
+<p>Some C++ luminaries have submitted an <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2137r0.html">intriguing paper</a> to the C++ standards committee. The paper presents an ambitious vision to evolve C++ in the direction of safety and simplicity. To achieve this, the authors believe it is worthwhile to give up backwards source and binary compatibility, and focus on reducing the cost of migration (e.g. by investing in tool support), while accepting that the cost of each migration will be nonzero. They're also willing to give up the standard linking model and require whole-toolchain upgrades for each new version of C++.
+<p>I think this paper reveals a split in the C++ community. I think the proposal makes very good sense for organizations like Google with large legacy C++ codebases that they intend to continue investing in heavily for a long period of time. (I would include Mozilla in that set of organizations.) The long-term gains from improving C++ incompatibly will eventually outweigh the ongoing migration costs, especially because they're already adept at large-scale systematic changes to their code (e.g. thanks to gargantuan monorepo, massive-scale static and dynamic checking, and risk-mitigating deployment systems). Lots of existing C++ software really needs those safety improvements.
+<p>I think it also makes sense for C++ developers whose projects are relatively short-lived, e.g. some games. They don't need to worry about migration costs and will reap the benefits of C++ improvement.
+<p>For mature, long-lived projects that are poorly resourced, such as <a href="https://rr-project.org">rr</a>, it doesn't feel like a good fit. I don't foresee adding a lot of new code to rr, so we won't reap much benefit from improvements in C++. On the other hand it would hurt to pay an ongoing migration tax. (Of course rr already needs ongoing maintenance due to kernel changes etc, but every extra bit hurts.)
+<p>I wonder what compatibility properties toolchains would have if this proposal carries the day. I suspect the intent is the latest version of a compiler implements only the latest version of C++, but it's not clear. An aggressive policy like that would increase the pain for projects like rr (and, I guess, every other C++ project packaged by Linux distros) because we'd be dragged along more relentlessly.
+<p>It'll be interesting to see how this goes. I would not be completely surprised if it ends with a fork in the language.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Another pile of committee manure which will be summarily ignored by everyone actually writing code.</div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Kasting</div>
+<div class='content'>The fact that the paper opens by saying the authors are aware their needs are not universal and they&#39;re not looking to build consensus sounds like &quot;fork&quot; to me.
+
+Perhaps C++ could use one.  It&#39;s been a bit too jack-of-all-trades for awhile and the committee send unable to agree on which priorities they are willing to discard.</div>
+</div>
+<div class='comment'>
+<div class='author'>Zar</div>
+<div class='content'>C++ will either evolve or be overtaken by Rust or similar languages.</div>
+</div>
+
+</div>

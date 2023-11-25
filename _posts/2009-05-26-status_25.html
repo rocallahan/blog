@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "Status"
+date: "2009-05-25 16:25:00 +0000"
+categories: "New Zealand Mozilla"
+permalink: "/2009/05/status_25.html"
+---
+<div class="columns"><p>Since the MoCo all-hands at the beginning of the month, I've been mostly focused on getting 3.5 out the door. And that has mostly meant triaging and fixing a variety of video/audio bugs. I'm glad to report that that has gone very well! Over a couple of weeks we fixed a large number of bugs, a lot more than I expected we'd be able to get done for 3.5. Some highlights:<br/><ul><br/><li>We've put video/audio decoding and playback into their own threads, so decoding keyframes for very large videos (which can take hundreds of milliseconds) does not cause any skipping<br/><li>We fixed A/V sync to follow the hardware clock on Mac and Linux, fixing sync issues on those platforms<br/><li>By default we stop loading a video after we've got enough data to display the first frame, unless overridden by 'autoplay', 'autobuffer' or script requests; we also fire the 'suspend' event when appropriate<br/><li>We implemented support for Theora's non-square pixel aspect ratios<br/><li>We implemented support for Theora's clipping of the video display area<br/><li>We made the time scale for an Ogg stream always appear to start at 0 as far as scripts are concerned, even if the stream's internal timestamps start at a nonzero time<br/><li>We made seeking within data ranges already downloaded in the <a href="/2009/04/media_cache.html">media cache</a> pretty much instantaneous (seeking into unbuffered data is still slow unfortunately)<br/><li>We implemented <a href="http://pearce.org.nz/2009/05/video-seeking-improvements.html">seeking to any intermediate frame without visual artifacts</a><br/></ul><br/><p>As well as all that, we also fixed a bunch of other stability and spec-compliance bugs. We seem to be in pretty good shape for open video in 3.5.<br/><p>I took the weekend off (strange phrase, that) and our family took the train down to Wellington on Saturday and flew back today (Monday) morning. The trip down was great, saw a bit of snow in the volcanic plateau and lots of great countryside. Wellington's weather forecast was "cold southerly gales" and that's exactly what we got! It was exciting to experience Wellington at its Wellingtonest, especially when we took the bus to Lyall Bay and got blown away by the wild wind and waves there. It was a great trip.<br/><p>This week I should be back working on compositor stuff. I've done a lot of work to change the way native widgets are handled and now I'm working on widget-less IFRAMes. Hopefully some stuff will be ready for checkin soon --- I'll talk more about it then.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Marco Diego</div>
+<div class='content'>Hi!<br>Will chronicle recorder development continue?<br></div>
+</div>
+
+</div>

@@ -1,0 +1,26 @@
+---
+layout: "post"
+title: "Rust Optimizations That C++ Can't Do"
+date: "2017-04-05 01:22:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/04/rust-optimizations-that-c-cant-do.html"
+---
+<p><strong>Update</strong> <a href="https://www.reddit.com/r/rust/comments/63ijkw/rust_optimizations_that_c_cant_do/dfuh30c/">dbaupp on Reddit</a> pointed out that this particular example does not support the point I'm trying to make. I'll explain why below. I followed up with <a href="/2017/04/rust-optimizations-that-c-cant-do_5.html">a new post</a> with a better example.
+<hr>
+<p>Consider the Rust code
+<pre>pub struct Foo {
+    v1: u64,
+    v2: u64,
+}
+pub fn foo(t: &Foo) -> u64 {
+    t.v1 + t.v2
+}</pre>
+<p>The stable Rust compiler, in Release mode, generates
+<pre>_ZN8rust_out3foo17h154ee47e2fd80a9eE:
+ leaq (%rdi,%rsi), %rax
+ retq</pre>
+<p>Hang on! <tt>foo</tt> is supposed to take a reference, so shouldn't it take a pointer as its parameter and do two loads to get the values of <tt>v1</tt> and <tt>v2</tt>? Instead it receives the values of <tt>v1</tt> and <tt>v2</tt> in <tt>%rdi</tt>/<tt>%rsi</tt> and adds them using <tt>leaq</tt> as a three-operand "add" instruction. The Rust compiler has decided (correctly) that even though you wrote a reference, in this case it's more efficient to just pass the parameter by value. <strike>This is good to know as a Rust developer; I can use references freely without worrying about whether it would be more efficient to pass the value directly.</strike>
+<p>C++ compilers can't do this optimization, for a couple of reasons. One reason is that C++ has a standard ABI that dictates how parameters are passed; it requires that references are always passed as pointers. A more interesting reason is that in general this optimization is not safe in C++. An immutable Rust reference promises that the referenced value does not change (except for some special cases involving <tt>UnsafeCell</tt> which are easily detected by the compiler), but not so for C++ const references; a "const" value <em>can</em> be modified through other mutable references, so copies induced by pass-by-value could change program behavior. For a simple case like this a C++ compiler could do some analysis to show that can't happen, but those analyses don't scale (e.g. if <tt>foo</tt> called, and was called by, unknown code, all bets are off).
+<p><strike>Here Rust's strong control over aliasing is enabling improved optimization, not just improved safety.</strike> <strong>Update</strong> Actually as <a href="https://www.reddit.com/r/rust/comments/63ijkw/rust_optimizations_that_c_cant_do/dfuh30c/">dbaupp</a> points out, this optimization example is not specific to Rust. In fact, LLVM is doing it via local analysis (the sort I mentioned above), and clang++ produces the same results for the equivalent C++ code. In fact Rust in general would need to preserve references because you can convert a reference to a raw pointer and compare them for equality.
+<p>It's easy to find other examples, such as improved code motion and common subexpression elimination. I think with more study of large Rust programs, more investment in the Rust compiler, and tighter control over unsafe Rust, we will probably discover that Rust enables many more interesting optimizations.
+<p>One of the promises of hair-shirt functional languages was that referential transparency and other strong semantic guarantees would enable extremely aggressive optimizations, which would recover the performance lost by moving away from the stateful semantics of hardware. That didn't really work out, but with Rust we might get the aggressive optimizations on top of semantics that are already very efficient.

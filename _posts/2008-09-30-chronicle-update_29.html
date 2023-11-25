@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "Chronicle Update"
+date: "2008-09-29 21:20:00 +0000"
+categories: "Chronicle"
+permalink: "/2008/09/chronicle-update_29.html"
+---
+<div class="columns"><p>I don't have any big-ticket items rushing the beta 1 freeze on Tuesday PDT, and I'm temporarily not slammed with reviews for other people's big-ticket items, so I'm investing a little time in <a href="http://code.google.com/p/chronicle-recorder">Chronicle</a> and <a href="http://code.google.com/p/chronomancer">Chronomancer</a>, partly because other people keep trying to use them.<br/><p>Today I updated Chronicle to Valgrind 3.3.1. This makes it work on more recent Linux distributions and fixes a few bugs. I also changed the Chronicle build system and file layout so that all the Chronicle support programs are built as part of Valgrind's build system. This simplifies the build and means that "make install" will now install Chronicle's programs somewhere useful. The <a href="http://code.google.com/p/chronicle-recorder/wiki/BuildNotes">steps for building and running Chronicle</a> are now simpler and hopefully more robust.<br/><p>Another thing I'd like to do is to make it easier to get started with Chronomancer. There are two main usage scenarios I want to address:<br/><ol><br/><li>User has no existing Eclipse project and wants to debug from a saved database<br/><li>User has no existing Eclipse project and wants to run their app under Chronicle and debug the results<br/></ol><br/>For the first case I need a discoverable command to browse to a database file in the file system and spawn chronicle-query on it automatically. For the second case I need a discoverable command that prompts for a command line. The latter is tricky though since applications that interact with the console would get stuck unless I implement some kind of Eclipse console. It might be better supported by setting up a proper Eclipse run-target, or even having the user use CDT to set one up and then piggybacking that. Hmm. For now I think I should focus on the first situation since it's the one I care about the most and it's the most broadly applicable.<br/><p>I'm also hoping to write some Gecko-specific debugging extensions. It would be interesting to visualize frame trees and find a way to somehow integrate their history at the same time.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>RichB</div>
+<div class='content'>It seems instruction recorders will become a hot topic.<br>Visual Studio 2010:<br>&quot;New features include the ability to eliminate non-reproducible bugs by providing a TiVo-like recording capability for reproducing bugs&quot;<br></div>
+</div>
+
+</div>

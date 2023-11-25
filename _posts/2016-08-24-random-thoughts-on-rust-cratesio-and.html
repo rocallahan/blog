@@ -1,0 +1,38 @@
+---
+layout: "post"
+title: "Random Thoughts On Rust: crates.io And IDEs"
+date: "2016-08-23 22:04:00 +0000"
+categories: "Mozilla"
+permalink: "/2016/08/random-thoughts-on-rust-cratesio-and.html"
+---
+<p>I've always liked the <em>idea</em> of Rust, but to tell the truth until recently I hadn't written much Rust code. Now I've written several thousand lines of Rust code and I have some more informed comments :-). In summary: Rust delivers, with no major surprises, but of course some aspects of Rust are better than I expected, and others worse.
+<h3><tt>cargo</tt> and <a href="https://crates.io">crates.io</a></h3>
+<p><tt>cargo</tt> and <a href="https://crates.io">crates.io</a> are awesome. They're probably no big deal if you've already worked with a platform that has similar infrastructure for distributing and building libraries, but I'm mainly a systems programmer which until now meant C and C++. (This is one note in a Rust theme: <strong>systems programmers can have nice things</strong>.) Easy packaging and version management encourages modularising and publishing code. Knowing that publishing to crates.io gives you some protection against language/compiler breakage is also a good incentive.
+<p>There's been some debate about whether Rust should have a larger standard library ("batteries included"). IMHO that's unnecessary; my main issue with crates.io is discovery. Anyone can claim any unclaimed name and it's sometimes not obvious what the "best" library is for any given task. An "official" directory matching common tasks to blessed libraries would go a very long way. I know from browser development that an ever-growing centrally-supported API surface is a huge burden, so I like the idea of keeping the standard library small and keeping library development decentralised and reasonably independent of language/compiler updates. It's really important to be able to stop supporting an unwanted library, letting its existing users carry on using it without imposing a burden on anyone else. However, it seems likely that in the long term crates.io will accumulate a lot of these orphaned crates, which will make searches increasingly difficult until the discovery problem is addressed.
+<h3>IDEs</h3>
+<p>So far I've been using Eclipse RustDT. It's better than nothing, and good enough to get my work done, but unfortunately not all that good. I've heard that others are better but none are fantastic yet. It's a bit frustrating because in principle Rust's design enables the creation of extraordinarily good IDE support! Unlike C/C++, Rust projects have a standard, sane build system and module structure. Rust is relatively easy to parse and is a lot simpler than C++. Strong static typing means you can do code completion without arcane heuristics. A Rust IDE could generate code for you in many situations, e.g.: generate a skeleton <tt>match</tt> body covering all cases of a sum type; generate a skeleton trait implementation; one-click <tt>#[derive]</tt> annotation; automatically add <tt>use</tt> statements and update <tt>Cargo.toml</tt>; automatically insert conversion trait calls and type coercions; etc. Rust has quite comprehensive style and naming guidelines that an IDE can enforce and assist with. (I don't like a couple of the standard style decisions --- the way <tt>rustfmt</tt> sometimes breaks <tt>very().long().method().call().chains()</tt> into one call per line is galling --- but it's much better to have them than a free-for-all.) Rust is really good at warning about unused cruft up to crate boundaries --- a sane module system at work! --- and one-click support for deleting it all would be great. IDEs should assist with semantic versioning --- letting you know if you've changed stable API but haven't revved the major version. All the usual refactorings are possible, but unlike mainstream languages you can potentially do aggressive code motion without breaking semantics, by leveraging Rust's tight grip on side effects. (More about this in another blog post.)
+<p>I guess one Rust feature that makes an IDE's job difficult is type inference. For C and C++ an IDE can get adequate information for code-completion etc by just parsing up to the user's cursor and ignoring the rest of the containing scope (which will often be invalid or non-existent). That approach would not work so well in Rust, because in many cases the types of variables depend on code later in the same function. The IDE will need to deal with partially-known types and try very hard to quickly recover from parse errors so later code in the same function can be parsed. It might be a good idea to track text changes and reuse previous parses of unchanged text instead of trying to reparse it with invalid context. On the other hand, IDEs and type inference have some synergy because the IDE can display inferred types.
+
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>admiyo</div>
+<div class='content'>I kindof don&#39;t like type inference for that very reason:  The type of the variable is documentation.  Not making it explicit makes it much harder to find out what that type is, and confirming it is the right type.  Its not just hard on IDEs. </div>
+<div class='comment'>
+<div class='author'>Jonas Finnemann Jensen</div>
+<div class='content'>You can easily declare types for all your variables.
+
+But why would you? We should have IDEs that will show you the type using a tooltip. Anyways, I&#39;m sure those things will happen.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Seo Sanghyeon</div>
+<div class='content'>I think it is wrong to blame type inference. C and C++ have forward declarations. If your language declares types everywhere but functions can refer to types later in the code (or mutually recursive), you need parser recovery. My understanding is Clang&#39;s completion critically depends on forward declarations and can&#39;t be applied to other languages.</div>
+</div>
+<div class='comment'>
+<div class='author'>Till Schneidereit</div>
+<div class='content'>I agree that good IDE support is important. Luckily, so does the Rust team: https://forge.rust-lang.org/ides.html
+
+While it&#39;s far from complete, intellij-rust has at least some of the features you&#39;re talking about, such as impl scaffolding: https://intellij-rust.github.io/features/</div>
+</div>
+
+</div>

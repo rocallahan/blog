@@ -1,0 +1,56 @@
+---
+layout: "post"
+title: "Text Text Text"
+date: "2007-03-25 00:14:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/03/text-text-text_24.html"
+---
+<div class="columns"><p>I'm well aware I haven't blogged for a while. Things have been extremely busy. After I checked in code to implement the new textrun abstraction on Mac and Windows, there were some performance and correctness regressions. Bad me! I've fixed the Mac performance regressions and we have a fix in hand for the Windows regressions ... thanks to some heroic wrestling of VTune by Chris Double. Another thing I broke was the display of "missing-glyph boxes" when the user has no font with glyphs for a given character. To fix that I've done a cross-platform implementation of Pango-style "hexboxes" --- when glyphs are missing, we draw a box and inscribe inside it tiny hex characters with the character index we're missing glyphs for. It should be very useful for debugging complex scripts (and for users who've memorized the Unicode character table).<br/><p>With those fires waning I've spent time working on the new textframe code. The gfx side is working pretty well for now and apart from the outstanding regression fixes, what's on trunk is adequate to support the new textframe. First I polished off a number of bugs triggered by our pageload performance test suite, so I could get some performance data. Then today I fixed a bunch of bugs triggered by our "reftest" layout test suite. All these tests work correctly now as far as I know. All these new-textframe fixes have been landed on trunk so it is now possible to build and test the new-textframe code and expect to be able to actually browse. This just requires you to set MOZ_NEW_TEXTFRAME=1 in layout/generic/Makefile.in. There are still lots of bugs, I'm sure; I know there are serious bugs in caret movement. There are also areas I've barely tested yet such as complex script handling and preformatted tabs.<br/><p>Performance of new-textframe is interesting. Right now it's a slight slowdown in my Mac tests. However almost all the text-related performance cost is in textrun construction, and I've looked carefully at the textruns that are being created in our test suite. The current trunk code usually creates one textrun per word and caches them; the new textframe creates one textrun per run of text with a uniform font, but doesn't use a cache. The current code creates 28K textruns while the new code creates 21K textruns, but the textruns in the new code are much longer on average. The good news is that 8K of those 21K consist of a single space! Optimizing that will be easy. Furthermore if we cache textruns for use with the new text frame (which can be done quite efficiently), then we should get a 30% hit rate which will further reduce the textrun construction cost. So I think we can quite easily turn new-textframe into a significant net performance win.<br/><p>Tim Rowley is working on integrating textruns into SVG text. He already has prototype code that works reasonably well. Transitioning SVG from the cairo toy text API to gfxTextRun has immediate benefits --- in particular gfxTextRuns implement font substitution, so non-complex international scripts (e.g., Chinese) will be displayed properly as we fall back to Chinese fonts when the default font does not contain glyphs for Chinese characters. It will take more work to support complex scripts with clusters, though.<br/><p>One problem we've noticed is that SVG text requires bidi reordering. This means that when you have mixed-direction text (e.g. Hebrew and English in the same line) it's possible for SVG &lt;tspan&gt; and other elements to require "splitting" because a single &lt;tspan&gt; may be rendered as multiple discontiguous pieces. This is really tricky stuff. We've already implemented it for HTML+CSS and I'm not looking forward to implementing it again. According to SVG people it's "OK" for SVG to duplicate this functionality because it's done in a "compatible way" so in theory we can share code. But in practice we already have our bidi code tied into the HTML/XML/CSS code and extracting it for reuse with SVG would not be at all easy, especially given that we must avoid slowing down the existing code paths. There is another way that might work, though: have SVG create hidden HTML-style layouts of its text content, applying the HTML text layout engine including bidi processing. Then SVG could take apart the resulting HTML layout and massage it for display SVG-fashion, even including drawing text along a path. Not easy, but perhaps the best way forward. We'll see.<br/><p>There are other exciting things going on. Offline apps are moving ahead; we've landed significant offline app support on the trunk so a number of interesting demos are possible with Firefox nightly builds. I think other people are blogging about that. There's good discussion going on regarding a first-class &lt;video&gt; element for HTML, and we are preparing to implement it. I spent quite a bit of time reviewing some cool new drag-and-drop code --- download a Firefox nightly build and try selecting content and then dragging it. And a new contractor started work in our Auckland office on Monday.<br/><p>Looking forward, OOPSLA submissions closed on Monday so I'll have to spend 2-3 of the next six weeks doing OOPSLA reviews, which will be challenging but fun. There are a lot of really interesting-looking submissions. I'm also working on preparing the Amber debugger code for release. Unfortunately I have to rename everything because there's some BIOS debugging tool already called Amber ... I've chosen the name "Continuum" instead. And in just over two weeks I'll be in Mountain View for nearly a week, for a Mozilla Corporation all-hands meeting. When I get the chance I'll be driving the new textframe forward and fixing textrun-related regressions. It's all on!<br/><p><strong>Update</strong> I'm thinking maybe "Chronicle" for the debugger instead. If anyone knows of a project that's using that name, let me know! There's is some blog-related project with that name, but it looks pretty dead (and pretty far away in subject, anyway).</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>jens.b</div>
+<div class='content'>&quot;Continuum&quot; is also the name of a continuous integration server by the Apache project. I don&#39;t know whether that will cause problems, but I guess it&#39;s popular enough that you want to avoid using the same name.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eyal</div>
+<div class='content'>Hi,<br>Any news about continuum/chronicle? It sounds like a handy tool...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;m aware of it, but there are so many projects out there, I&#39;m not confident I can find a good name that doesn&#39;t clash with *some* project. As long as it&#39;s not in the same area...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>Well, according to the bug ( https://bugzilla.mozilla.org/show_bug.cgi?id=178513 ) it was fixed for Mac. But you probably would know better, since you reviewed the patch in question.<br>The bug that handles this for Windows, https://bugzilla.mozilla.org/show_bug.cgi?id=374593 , isn&#39;t fixed yet.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Oh, you&#39;re absolutely right of course. Sorry, it&#39;s fixed on Mac and Linux but not yet on Windows.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Nightlies are not being built with MOZ_NEW_TEXTFRAME. You&#39;ll need to build your own.<br>Dao: not sure what you mean. The new drag code should be working on Windows.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Manoj</div>
+<div class='content'>Pardon my naivete but what was the core motivation behind the TextFrame changes?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dao</div>
+<div class='content'>&quot;download a Firefox nightly build and try selecting content and then dragging it&quot; -- doesn&#39;t make a difference on Windows, does it?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jmdesp</div>
+<div class='content'>Nice info, roc.<br>On the trunk nightlies, I don&#39;t see MOZ_NEW_TEXTFRAME on in about:buildconfig, but I see bug 372629 (&quot;missing-glyph boxes&quot;).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>are there any nightlies with MOZ_NEW_TEXTFRAME=1?<br>thanks<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Elizabeth J. Neal</div>
+<div class='content'>It&#39;s not necessarily too late to rekindle the love with your ex, but don&#39;t get rash ... “Try sending a sweet text,   <a href="http://www.textyourexback1.us" rel="nofollow">text your ex back</a>
+</div>
+</div>
+
+</div>

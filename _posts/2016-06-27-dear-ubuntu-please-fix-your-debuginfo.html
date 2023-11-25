@@ -1,0 +1,31 @@
+---
+layout: "post"
+title: "Dear Ubuntu, Please Fix Your Debuginfo Packaging"
+date: "2016-06-26 21:51:00 +0000"
+categories: "rr"
+permalink: "/2016/06/dear-ubuntu-please-fix-your-debuginfo.html"
+---
+<p>Fedora has a delightfully simple approach to supplying debuginfo for its packages: you run <tt>sudo dnf debuginfo-install &lt;original-package-name&gt;</tt> and everything you need to debug that code is installed (including sources). It also installs debuginfo for dependent packages.
+<p>Ubuntu does not. With Ubuntu, you first have to figure out the name of the debuginfo package to install. This is <a href="http://stackoverflow.com/a/14421056">not easy</a>. Once you've figured that out. you install the package and find that it's mostly useless because it doesn't contain sources. So you try to install sources using <tt>sudo apt source ...</tt>, but that fails because "You must put some 'source' URIs in your sources.list". Then you look at <tt>/etc/apt/sources.list</tt> and discover that all the necessary <tt>deb-src</tt> URLs are there, but commented out by default. (Why? Because otherwise it would make things too easy?) Then you uncomment those URLs and try again, but get the same error. Then you wail and gnash your teeth a bit and figure out you need to run <tt>sudo apt-get update</tt> before retrying. Finally you've got the source package installed, then you run <a href="http://rr-project.org/">rr replay</a> (or gdb if you must) and discover that it's not finding those sources. Then, unless you're more stubborn than I am (or just have more time to burn), you give up in despair.
+<p>Seriously Ubuntu (or Debian), just copy Red Hat here. Please.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>dannas</div>
+<div class='content'>Agreed, symbol management on Ubuntu/Debian is somewhat deficient.
+
+Some pointers to resources related to Ubuntu/Debian symbol management:
+
+You can use gdb&#39;s directory command for specifying where to find source files. If the debug symbols has absolute paths, you can use the substitute-path command.
+https://blogs.oracle.com/ksplice/entry/8_gdb_tricks_you_should
+
+Bruce Dawson has a good series of articles on debug symbol management on Linux (and their shortcomings):
+https://randomascii.wordpress.com/2013/01/08/symbols-on-linux-part-one-g-library-symbols/
+
+There is a shell script floating around on the Internet for downloading all debug-symbols and sources for a specific deb packet (including those of the packages it depends on) but I can&#39;t seem to find it right now.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Well, it is almost ten years ago when (enforced by laziness) I switched from Debian to Fedora/RHEL, but I still feel that shocking experience of gdb just working.</div>
+</div>
+
+</div>

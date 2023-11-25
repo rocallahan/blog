@@ -1,0 +1,17 @@
+---
+layout: "post"
+title: "Even More rr Replay Performance Improvements!"
+date: "2015-11-29 20:33:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2015/11/even-more-rr-replay-performance.html"
+---
+<p>While writing my last blog post I realized I should try to eliminate no-op reschedule events from rr traces. The patch turned out to be <a href="https://github.com/mozilla/rr/commit/02f9d479871e9910e674a0235a7866503602ce7a">very easy</a>, and the results are impressive:
+<p><img src="/assets/images/rr-perf2.png" width="863" height="495" title="rr Overheads">
+<p>Now replay is faster than recording in all the benchmarks, and for Mochitest is about as fast as normal execution. (As discussed in my previous post, this is probably because the replay excludes some code that runs during normal execution: the test harness and the HTTP server.) Hopefully this turns into real productivity gains for rr users.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Impressive!</div>
+</div>
+
+</div>

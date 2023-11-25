@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "The Future Is Now"
+date: "2006-06-20 12:06:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/06/future-is-now_20.html"
+---
+<div class="columns">I've recently done some work to modify Gecko's paint invalidation architecture to work with SVG foreignobject. I've also brought SVG foreignobject up to date with SVG changes and fixed some related bugs. The result is that the foreignobject demo I did at XTech last year is now fully functional on trunk cairo builds! In fact, it's more functional than last year since, thanks to Blake Kaplan's hard work, the caret is now painted correctly in transformed content.<br/><br/>There are still many bugs related to transformed content. Among them:<br/><ul><br/><li>Popups (e.g. SELECT comboboxes) --- actually it's not 100% clear how these should work<br/><li>Some theme problems<br/><li>Scrolling<br/><li>Some painting problems on Windows (apparently)<br/><li>incredibly SLOW performance; some for reasons we understand and can fix, some for reasons that are fundamental (rotating images is slower than just drawing them normally), and probably some for reasons we don't understand yet<br/><li>Seams between rotated rectangular areas (e.g. visible in the Google logo in the screenshot below). These are fundamental with cairo's coverage-based antialiasing strategy, and we may have to move to FSAA to get rid of them.<br/></ul><br/><br/>At least now we are at the point where we can test and fix some of these issues.<br/><br/>Download a trunk nightly (warning: these can be very unstable!) built with cairo (Windows should be), and try <a href="https://bugzilla.mozilla.org/attachment.cgi?id=224965">this testcase</a>.<br/><br/>Obligatory screenshot:</div><br/><div class="image"><img alt="Rotated All Blacks haka" src="/assets/images/images/new-future.png" width="978" height="778"/></div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Ted Mielczarek</div>
+<div class='content'>You can also try out my ridiculous rotating Google Maps demo: http://ted.mielczarek.org/code/gmaps/fun.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>Does bug 328241 cover the border problems visible in this screenshot?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I think it&#39;s OK to file bugs now. Please make them block tracking bug https://bugzilla.mozilla.org/show_bug.cgi?id=342107<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>Robert, this is indeed very cool (but I probably said this already).<br>There are indeed quite some painting bugs in windows at least, but nothing too serious as far as I can see.<br>Ted, that is really cool, that rotating Google Maps demo.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>dolphinling</div>
+<div class='content'>Very nice! Should we file bugs on this yet (and where?), or is it still at a point where that&#39;s not useful?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philip Withnall</div>
+<div class='content'>Schweet! :-D<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>No. That bug is specifically about the edges between different pieces of a single CSS border. The problem visible in the screenshot is seams between the border and the image inside the border.<br></div>
+</div>
+
+</div>

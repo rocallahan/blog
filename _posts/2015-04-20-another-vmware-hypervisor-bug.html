@@ -1,0 +1,28 @@
+---
+layout: "post"
+title: "Another VMWare Hypervisor Bug"
+date: "2015-04-20 09:30:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/04/another-vmware-hypervisor-bug.html"
+---
+<p>Single-stepping through instructions in VMWare (6.0.4 build-2249910 in my case) with a 32-bit x86 guest doesn't trigger hardware watchpoints.
+<p>Steps to reproduce:
+<ol>
+<li>Configure a VMWare virtual machine (6.0.4 build-2249910 in my case) booting 32-bit Linux (Ubuntu 14.04 in my case).
+<li>Compile this program with <tt>gcc -g -O0</tt> and run it in <tt>gdb</tt>:
+<pre>int main(int argc, char** argv) {
+  char buf[100];
+  buf[0] = 99;
+  return buf[0];
+}</pre>
+<li>In <tt>gdb</tt>, do
+  <ol>
+  <li><tt>break main</tt>
+  <li><tt>run</tt>
+  <li><tt>watchpoint -l buf[0]</tt>
+  <li><tt>stepi</tt> until <tt>main</tt> returns
+  </ol>
+<li>This should trigger the watchpoint. It doesn't :-(.
+</ol>
+<p>Doing the same thing in a KVM virtual machine works as expected.
+<p>Sigh.

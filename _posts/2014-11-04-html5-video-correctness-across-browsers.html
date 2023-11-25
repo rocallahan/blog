@@ -1,0 +1,49 @@
+---
+layout: "post"
+title: "HTML5 Video Correctness Across Browsers"
+date: "2014-11-03 23:20:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/11/html5-video-correctness-across-browsers.html"
+---
+<p><a href="http://www.ronpub.com/publications/OJWT-v1i2n01_Hoernig.pdf">A paper</a> presents some results of cross-browser testing of HTML5 video. This sort of work is very helpful since it draws attention away from browser vendor PR efforts and towards the sort of issues that really impact Web developers, with actionable data.
+<p>Having said that, it's also very interesting to compare how browsers fare on correctness benchmarks designed without a browser-vendor axe to grind. Gecko usually does very well on such benchmarks and this one is no exception. If you read through the paper, we get almost everything right except a few event-firing issues (that I don't understand yet), more so than the other browsers.
+<p>Of course no test suite is perfect, and this one misses the massive <a href="https://code.google.com/p/chromium/issues/detail?id=73609">Chrome canplaythrough bug</a>: Chrome doesn't really implement <a href="https://html.spec.whatwg.org/multipage/embedded-content.html#event-media-canplaythrough">canplaythrough</a> at all. It simply fires canplaythrough immediately after canplay in all circumstances. That's still causing problems for other browsers which implement canplaythrough properly, since some Web sites have been written to depend on canplaythrough always firing immediately.
+<p>Still, this is good work and I'd like to see more like it.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>...on Windows XP?!</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Running Aurora on Windows XP, I&#39;ve the open h264 codec installed. However the YouTube HTML5 page indicates there&#39;s no support for h264 available. 
+
+It&#39;s openh264 in use for WebRTC but not the HTML5 video tag?</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>openh264 doesn&#39;t support all of h.264 yet - IIRC it&#39;s lacking the high profile bits. Right now it&#39;s good enough to do WebRTC though.</div>
+</div>
+<div class='comment'>
+<div class='author'>kuranes</div>
+<div class='content'>And what about mobile preventing multiple load, and load until user touch a video ? Is that in the spec or just an implementor *decision* ?
+Chrome *supports* seek on desktop but not on mobile too (setting current time doesn&#39;t do anything.)
+It&#39;s really hell a Dev cannot simply decide to preload entire video/sound on every platform. 
+Hell, I would even go for a &quot;ask permission&quot; thing a la fullscreen/camera/pointerlock to get that functionality !</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That&#39;s an implementor decision --- and one I don&#39;t agree with! Mobile Firefox doesn&#39;t do that.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Brett Gaylor</div>
+<div class='content'>Roc, if you&#39;re interested in seeing what it feels like to be a video producer/publisher relying on browser implementation of video, the folks at POV/PBS have done an exhaustive three part review here
+
+http://www.pbs.org/pov/blog/povdocs/2014/09/awesome-but-broken-the-state-of-web-video-part-1/</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Thanks Brett. That was an interesting read. My take-away impression is that Firefox is doing pretty well but other browsers need to catch up :-).</div>
+</div>
+</div>
+
+</div>

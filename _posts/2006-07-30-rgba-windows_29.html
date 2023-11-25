@@ -1,0 +1,51 @@
+---
+layout: "post"
+title: "RGBA Windows"
+date: "2006-07-29 12:52:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/07/rgba-windows_29.html"
+---
+<div class="columns">Today we had a sort of mini-hackfest at the office. Earlier in the week Larry Ewing had shown how to use Xgl+compiz's support for RGBA windows to implement window translucency in <a href="http://f-spot.org/Main_Page">F-Spot</a> in a very nice way, so I thought I'd extend Mozilla's translucent window support to use this mechanism. Up till now, on X we've only used the Shape extension, which only provides 1-bit transparency.<br/><br/>In a cairo build, it is almost no effort to implement. Basically you just need to call gdk_screen_get_rgba_colormap and make that the colormap for the toplevel GTK widget. A general patch for Mozilla will be a little more complicated because we need to set the colormap before "realizing" the widget, at which point we don't actually know whether the window will need translucency or not. I'm not quite sure what to do about this, but it might be OK to just always use RGBA windows all the time when Xgl and compiz are active (which we can detect).<br/><br/>Obligatory eye candy follows. The example is a standalone HTML document with a transparent background, containing HTML form widgets, script, and SVG.</div><br/><br/><div class="image"><img src="/assets/images/images/rgba_window.png" width="692" height="599"/></div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>PV: Yeah I was doing it on trunk with cairo. cairo understands alpha translucency, gdk&#39;s drawing API doesn&#39;t.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Jens: on Windows this has worked for a while, with some limitations. Things should get better in Gecko 1.9. Nothing really changed in FF2 in this area.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>HeroreV</div>
+<div class='content'>It might be nice to provide this for XULRunner and Firefox extensions, but I would never want to allow any random old webpage to do this.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>db48x</div>
+<div class='content'>Well, I suppose there are possibly some uses then. I guess whenever I hear the words &quot;translucent windows&quot; I think of unreadable term windows with the background showing through.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>PV</div>
+<div class='content'>Hmm..<br>You were using thebes gfx? In this version that I&#39;m hacking gtk gfx is used, i.e. no cairo_push_group used. And mozilla is used via libgtkmozembed...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>PV: you set up an RGBA visual for the window in nsWindow.cpp and make sure you create COLOR_ALPHA surface when you do cairo_push_group to double-buffer Mozilla&#39;s painting.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>HeroreV: That goes without saying.<br>db48x: This example is a bit over the top, but I have seen examples that make sense. For example F-Spot has a magnification lens window that floats over your photo and is an odd shape, part of which is a translucent overlay over the photo. It&#39;s hard to describe but I can&#39;t find a screenshot. Also people apparently like to use this stuff for OSX Dashboard widgets and the like, for shadow effects etc.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jens</div>
+<div class='content'>groovy ... could u please post some sample code ?<br>I just read that translucent window support made it into &quot;Bon Echo 2&quot; but i can&#39;t find any code on how to use/set it (newbie here ^_^).<br>Cheers,<br>Jens<br></div>
+</div>
+<div class='comment'>
+<div class='author'>PV</div>
+<div class='content'>Hi,<br>I&#39;m trying to achieve something similar with mozilla and GTK2. How did you manage to get the window translucent exactly? Any pointers or diffs to original code would be greatly appreciated. Thanks.<br>BR,<br>PV<br></div>
+</div>
+<div class='comment'>
+<div class='author'>db48x</div>
+<div class='content'>That&#39;s pretty crazy. Does anyone actually find transparent/translucent windows usable?<br></div>
+</div>
+
+</div>

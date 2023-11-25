@@ -1,0 +1,326 @@
+---
+layout: "post"
+title: "And Then There Were Three"
+date: "2013-02-13 10:05:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/02/and-then-there-were-three.html"
+---
+<p>The news about Opera switching to Webkit is disappointing. It's a sad day for the Web, since I thought highly of their Presto engine and their Web standards work. Their impact on Web standards will be dramatically reduced, especially where they want to do something differently to Apple and Google. The big loss for the Web is a further decrease in the diversity of browser engines, especially on mobile devices. This means that our work at Mozilla simultaneously becomes more important --- we now have one of the three viable browser engines, instead of one of the four, and engine diversity is already critically endangered --- and more difficult, because this will strengthen the Webkit mobile monoculture and make it even harder for us to promote Web standards over "coding to Webkit".
+<p>Some people are wondering whether engine diversity really matters. "Webkit is open source so if everyone worked together on it and shipped it, would that be so bad?" Yes. Web standards would lose all significance and standards processes would be superceded by Webkit project decisions and politics. Webkit bugs would become the standard: there would be no way for developers to test on multiple engines to determine whether an unexpected behavior is a bug or intended. It wouldn't be the worst possible outcome --- victory of a closed-source engine would be worse --- but it would be a far cry from the open Web goals we've been striving for.
+<p>So, back to work!
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>FlameWolf</div>
+<div class='content'>I really wish they had at least made the effort to make Presto open-source before deciding to ditch it in favour of WebKit. Now it is not going to happen ... . As a long term Opera fan, this makes me sad.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;m sort of glad they didn&#39;t, because an abandoned but open-source Presto wouldn&#39;t have had a real chance but could have been a distraction.
+
+OTOH it would have been nice to see how they did certain things, I guess, as a historical artifact.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>albertkinng</div>
+<div class='content'>Oh please, you are just being a real hater this time. Bugs? That means Mozilla doesn&#39;t have any bugs right? Mozilla is perfect and Webkit is a beta like open source web source? Webkit has been better since day one. Explorer is switching too. Remember this: Mobile is the new web hang out and webkit is the best ticket to join the party.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I bet you said the same thing ten years ago about internet explorer 6.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>David Knowles</div>
+<div class='content'>Lets be honest, Opera’s market share was so poor that it wasn&#39;t being taken seriously—it wasn&#39;t seen as a contender—and consequently wasn&#39;t getting the same level of developer support. We only spent time testing in Opera when a client had the budget to pay for the extra development costs, or their target audience used the Opera, which invariably wasn&#39;t the case.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Actually, even on mobile where its market share was substantial it was being ignored. Opera just couldn&#39;t win.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>While I do agree that diversity is a good thing in principle, as a web programmer I tentatively welcome this move, provided it doesn&#39;t lead to yet another fork. If we want browsers to ever become a viable platform for web applications browsers as a programming environment need to be as undiverse and unforked as possible. Diversity as fragmentation is increasingly forcing web programmers to create dedicated apps where they can be sure of a solid platform to build on. We WANT a monoculture so that we can stop worrying about the different ego-trips and intentional and unintentional stumbling-blocks dreamed up by individual browser programmers and get on with the work of producing good web apps. 
+
+I know that it&#39;s an intractable problem: If there really was an ideal monoculture providing a single browser programming environment you would have stagnation. But at the moment, particularly in the mobile space, we have chaos that is forcing programmers away from HTML and towards dedicated apps.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I think the issue is the crappy state of many Webkit forks/ports than it is fundamental to the Web platform. We need to use competition from mobile Chrome and mobile Firefox to force them to raise their game or get out of the way.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Yeah, I do get that. As I wrote, it&#39;s an intractable problem. One way or another, the situation is that browsers are not a viable platform for anything except lowest common denominator apps at the moment, and it doesn&#39;t look like improving any time soon. Developing and maintaining for all browser platforms and engines means major, major overheads. </div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Actually, it&#39;s a world of pain on Windows and OSX. The code we have to write get maximum performance on both Windows 7 and Windows XP uses totally different frameworks and APIs in many places. Ditto for Mac although we don&#39;t support such old OSX versions (because Apple doesn&#39;t). So what you cite as hypothetical is actually fact, except the different APIs and frameworks come from the same vendor.
+
+I&#39;m sympathetic to what you&#39;re saying, but I see it as a challenge to be solved rather than an invitation to despair. And it certainly isn&#39;t going to be solved by more crappy Webkit forks!</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Although on Android Dolphin is actually more solid than either mobile Chrome or mobile Firefox at the moment. But look at it from another perspective: Who would develop for Windows or OS X if there were multiple different flavors from different vendors with APIs and frameworks that worked and failed differently in every version? Browsers as a platform are currently more like a Keystone Cops comedy than something you can take seriously.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Tim, that chaos is occurring *even though* the mobile space is dominated by Webkit forks. You&#39;re getting the downside of fragmentation without the benefit of independent implementations competing on standards compliance.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I wonder if it would have been &quot;a sad day for the web&quot; if they&#39;d adopted Gecko...</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>This is the good illustration that the dogma: opensource = the only right way, is complete mistake, and for now - false (also lie, propaganda). Opensource is neighter good nor evil, just one of the model of development with its pluses and minuses. And it can&#39;t defend from the locking for example. &quot;everybody&quot; can&#39;t make his webshit fork\adaptations\patchesonly because he sees code. Even skilled Presto programmers will need relearn yourself for longtime for being capable make something noteworthy there because this completely new huge heap of code... Instead of polishing that they have created by their hands for so long time, now only their &quot;innovations&quot; will be learning webkit codebase and painful attempts to screw (glue) other parts of their browser with the new layout engine. Only in stallman&#39;s speeches &quot;everybody can&quot;.
+But certainly, opensource will allways have noisy not thinking fans, for which none arguments exist they just know &quot;opensource&quot;-dogma argument.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&quot;The big loss for the Web is a further decrease in the diversity of browser engines.&quot;
+
+As a web developer, who wants to support more browser engines? Not I.
+
+If it was up to me, there would be one single browser engine. Of course, I want innovation but at this point in my web development career (16 years and counting) I want write once-work everywhere and I&#39;m still not getting that.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Opera were able to do amazing things with Presto. On a single core they managed to keep the UI fluid even during heavy load, which Firefox cant do as well.</div>
+</div>
+<div class='comment'>
+<div class='author'>Jürgen</div>
+<div class='content'>what&#39;s the matter? If they really want to do something thats not supported - or even worse prevented by the WebKit community - then just fork that state WebKit is in, and create a slightly new version like LibreOffice and OpenOffice did it.
+I think it&#39;s a good step ahead to standardization and more end-user-friendly. And as Opera already said, if someone invents a cool new feature it is available to multiple browsers at the same time (remember waiting till IE implements html5?)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>(Unless it&#39;s preffed off by default, which is a strategy we and Chrome are increasingly using for experimental features.)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Forking Webkit is difficult in the long term. The Webkit community frowns upon forks that make changes affecting Web compatibility (which is reasonable), and alienating the Webkit community isn&#39;t a viable long-term strategy.
+
+Making that &quot;cool new feature&quot; available to all Webkit browsers at the same time is actually a bad thing, if it&#39;s not standardized (yet). The other Webkit browser vendors have an incentive to just ship it in whatever state it&#39;s in (means they have to do less work), so that first implementation will lock in and it will be difficult for competing and possibly better proposals (from either within or outside the Webkit community) to be seriously considered.
+
+Something like that already happened with Web Audio, which landed in Webkit and shipped in Chrome and Safari while the spec was still in an awful state --- the Safari developers just didn&#39;t care about that.</div>
+</div>
+<div class='comment'>
+<div class='author'>Stomme poes</div>
+<div class='content'>They wouldn&#39;t fork if the reason for doing this in the first place was to free up time to work on other things... http://my.opera.com/haavard/blog/2013/02/13/webkit</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&quot;Making that &quot;cool new feature&quot; available to all Webkit browsers at the same time is actually a bad thing, if it&#39;s not standardized (yet).&quot;
+
+Well, that&#39;s how we got Canvas ans CSS transitions etc.
+
+We also similarly got AJAX from MS.
+
+If we waited for &quot;standards&quot; we wouldn&#39;t have a modern web...</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Making an experimental feature available in one browser is good.
+
+Making it available in all browsers simultaneously is not so good.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Vestimir</div>
+<div class='content'>Dude relax, it&#39;s Webkit and Mozilla who has pushed __together__ the modern web forward. Plus Opera&#39;s focus is on mobile, and there webkit is the king. It&#39;s a total win for the open source, because the guys from Opera are very talented and driven. They will bring tons of ideas and velocity to the community. </div>
+</div>
+<div class='comment'>
+<div class='author'>Stomme poes</div>
+<div class='content'>I suppose this means we&#39;ll lose all those places Opera went ahead and alone: Keyboard navigation by headings; titles giving names to accesskeys; zooming in enough triggering a switch to the mobile stylesheet if there is one... all that innovation and more, poof?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I tried to explain that in this post and my next one.</div>
+</div>
+<div class='comment'>
+<div class='author'>Stomme poes</div>
+<div class='content'>I hope the Opera team can fix that horrid, horrible, old, smelly and makes-keyboarders-fly-into-rage bug https://bugs.webkit.org/show_bug.cgi?id=17450 please please.  Webkit was the only one with this issue, though IE9 has something kinda similar sometimes.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Much of that will still be doable on top of Webkit.
+
+But the open Web depends on diversity at the platform level, and that&#39;s going to be reduced.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>@Robert
+
+Why does the open web depend on diversity at the platform level? Wouldn&#39;t one open-source rendering engine with diverse contributors be better for everyone at this stage of the game?</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>If only I could have put more humour into #840928, but its just not funny anymore :|
+Sad times.</div>
+</div>
+<div class='comment'>
+<div class='author'>Ryoga</div>
+<div class='content'>This is a very sad day indeed.. Opera switching to Webkit is totally against of what they preached for years, Webkit is becoming the new trident and they jumped into that train, hell I&#39;m already seeing sites that don&#39;t run properly on anything else than Chrome, and this is just the beginning </div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>It isn&#39;t actually against what they preached for years. They preached open standards, and they&#39;re going to keep supporting open standards.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Would you feel the same way if they had decided to go with Gecko? What if Microsoft decided to go with Gecko?</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Opera is being ignored on mobile despite being one of the biggest browsers (globally). So sorry, but it isn&#39;t really competition as far as clueless web developers are concerned.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Going with Gecko would have been different because Gecko doesn&#39;t dominate anywhere. It would definitely have been less bad for the open Web had they done that.
+
+At this point, Microsoft deciding to go with Gecko would be pretty bad IMHO. Three engines are much better than two. That isn&#39;t something to worry about though :-).</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I thought I had made myself clear enough. Opera switching to Gecko: bad. Opera switching to Webkit: worse. Mainly because on mobile, Opera is Webkit&#39;s major competition currently, so Webkit&#39;s monoculture there is strengthened. Gecko doesn&#39;t have a monoculture anywhere to strengthen.</div>
+</div>
+<div class='comment'>
+<div class='author'>Harry Wyckoff</div>
+<div class='content'>Confused by Robert&#39;s response.
+
+Going with open engine A is bad for the open web. going with engine B is different and good because it&#39;s not been adopted by so many.
+
+Above his reply he states 3 engines is bad, but here he states that three engines is OK if they choose HIS engine.
+
+Erm... sour grapes?</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Peter</div>
+<div class='content'>Good move. Now Opera on iOS can match Safari for instability.</div>
+<div class='comment'>
+<div class='author'>Paul Eccles</div>
+<div class='content'>Opera mini on iOS did not use WebKit. Then again it wasn&#39;t a full browser, technically. But I&#39;m splitting hairs here. </div>
+</div>
+<div class='comment'>
+<div class='author'>bernstein</div>
+<div class='content'>seriously... on ios there has only ever been apple&#39;s webkit.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Instability? Safari? Are you serious? Chrome and Safari are both great browsers on iOS and very stable. In the other hand, the actual Opera can&#39;t say the same.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Kendall Helmstetter Gelner</div>
+<div class='content'>I think that the overall gain for Webkit is much higher by having a group of people who deeply understand the existing standards joining forces in improving the codebase.  Perhaps later at some point it might be better to have more diverse web engines but at the moment this improves so many more lives directly for all sorts of real-world platforms based on Webkit.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>The biggest benefit to Opera is that by using the Webkit engine, the are allowed to have an app for ipad and iphone.  Apple blocks any browser that does not use Webkit.  Market share for Opera on iphones (already forced to use Webkit) was growing much faster than laptop share of Opera, so it was nearly inevitable that Opera would give up their engine.  The ultimate blame is with Apple, and their walled garden.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Read up on how Opera Mini works. You&#39;d be surprised how it&#39;s not dependent on Webkit.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Yes he is...</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>daGUY</div>
+<div class='content'>I&#39;m not following this argument at all. First, I think Opera&#39;s impact on web standards will be dramatically *improved*, if anything, because any contributions they make directly to WebKit will be much more likely to trickle back to other WebKit-based browsers.
+
+I think people are afraid of a &quot;monoculture&quot; because of what happened with IE6 – but IE6 was closed source and completely controlled by one company. When Microsoft decided it wasn&#39;t worth their time to invest in Trident any further after shipping IE6, there was nothing anyone could do, and so nothing improved for 5 years until IE7 shipped.
+
+But a monoculture around an *open source* rendering engine would be a very good thing: everyone would get to make improvements, but developers wouldn&#39;t have to worry about supporting widely disparate implementations of the same feature for years while every vendor is off doing their own thing. The more people that pool their resources together into improving the same one rendering engine, the faster the improvements will be made.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>You can&#39;t advocate a Webkit monoculture and talk about Web standards in the same breath. You can have one or the other. If everyone embraces a Webkit monoculture then we may as well shut down all Web-related standards activity and move all discussion to webkit-dev.
+
+Some people are arguing that would be a good thing. For why it would be bad for the Web even in the short term see my next post, http://robert.ocallahan.org/2013/02/a-small-example-of-value-of-browser.html. And in the long run I think it&#39;s incredibly dangerous to say &quot;there can never be a Web browsing engine other than this particular chunk of C++&quot;.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Let me quote Maciej Stachowiak (if you&#39;re a Webkit fan, you&#39;ll know who he is):
+
+ I think Opera’s choice is reasonable under the circumstances though it’s regrettable to have fewer serious browser engines
+
+http://krijnhoetmer.nl/irc-logs/whatwg/20130214#l-990</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I completely agree with you. I couldn&#39;t have said it better.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>but you have to keep in mind Webkit internal politics, and the prevailing general mindset of the major contributors , which might veto on suggested changes by new devs.
+OpenSource can be as bad as closed source for chnages. Example :Gnome 3.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I don&#39;t like losing presto either, but you can&#39;t be too hard on opera. They ARE a very small browser backed by an even smaller company. Firefox and IE can get away with building their own engines, They&#39;re.big browsers supported by big  companies. Opera was probably struggling to keep it&#39;s engine updated and semi-competitive with the browsers. If Opera switches to webkit then they can get the features that other browsers have now. I liked presto too, but a switch to webkit might benefit Opera in the long haul.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>My Anonymous friend started the discussion of relative size by incorrectly describing Opera as smaller than Mozilla. That&#39;s a common misperception that I didn&#39;t want to let slide, but indeed it&#39;s not very relevant to this discussion.
+
+On the video element, you have misread the situation, so let me correct you :-). The &quot;draft&quot; status of the HTML5 spec is part of that standards-body bureaucracy that you decry, and in reality the APIs in that draft, including &lt;video&gt;, are used in production all over the Web. Having said that, IMHO Opera&#39;s contribution to &lt;video&gt; was less significant than a lot of their CSS and DOM work.</div>
+</div>
+<div class='comment'>
+<div class='author'>Walt French</div>
+<div class='content'>Umm, I think he said that to judge Opera&#39;s choices of how to stay in business was immoral. And if you&#39;re not second-guessing their decisions, why do you care how many employees, your relative tax status, etc?
+
+Look, <b>everybody</b> is in favor of standards—in principle. The trouble arises in that it&#39;s almost inevitable that new features are advanced by parties who have a different mind-set than the sometimes mind-numbing complexities and  convoluted politics of standards bodies.
+
+Please correct me if I&#39;ve misread the history in Wikipedia, but none other than Opera first proposed the {video} tag in 2007, and in 2013 it is only a <b>draft standard</b>, bogged down by politicking over patents, etc. It is hard to imagine how Opera could have <b>less</b> influence on standards bodies than to propose a fabulously useful and widespread scheme that has not been ratified in six years. If people gave more than lip service to standards, they wouldn&#39;t make it impossible to get work done with them.
+
+You want the “open web” to prosper? Try upping its ratio of responsiveness to religion.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>@Robert
+
+You shouldn&#39;t see the number of employees, you should see the budget.
+
+- Mozilla has every year safely hundreds of millions of dollars at the expense of his godfather Google, +receive donations and free worker (volunteers), and all without taxes or accountable to anyone.
+- Opera instead is a company without godfather, that should sought and win its budget,  accountable to investors, paying a larger number of employees, paying tax, etc.
+
+Opera is a bigger company with small budget, Mozilla is a small company with bigger budget.
+
+With all the difficulties Opera held a modern browser, innovative and advanced, compared to the rest.
+If Mozilla were in the same situation of Opera, Firefox would be fall behind, even more than now.
+
+Judge Opera is immoral, when you are in a more comfortable situation. Besides being a trap (intentionally or not) say that they were better off.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>In Q3 2012, Opera had 905 employees. That&#39;s more than Mozilla has now. Opera is a bigger company than Mozilla.
+
+I agree that a switch to Webkit might benefit Opera. It&#39;s just not going to benefit the open Web.</div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>There are, of course, non-employee developers, but in the end the bulk of the work ends up being done by the people doing it full-time, simply because they have more time to spend on it.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Your facts are wrong:
+
+-- Mozilla Corporation, which receives almost all the revenue, pays corporate income tax on it like any other company.
+
+-- Google pays Mozilla for search traffic, just like they pay Opera and Apple and anyone else who sends them search traffic. From http://media.opera.com/media/finance/2012/3Q12.pdf: 
+&quot;Opera’s monetization strategy for its desktop browser revolves predominantly around search. Google is Opera’s global search partner and provides the majority of desktop monetization.&quot; Very similar deal to Mozilla.
+
+I don&#39;t see Opera as immoral. They&#39;re doing what they have to do to survive as a company. It&#39;s not good for the open Web though.</div>
+</div>
+<div class='comment'>
+<div class='author'>fff</div>
+<div class='content'>Opera is smaller in terms of actual resources to do browser stuff.
+
+First they have far more products.
+
+Then they are spending far more time on compatibility than Mozilla. It&#39;s hard to find a site that isn&#39;t tested in Firefox, but it&#39;s nearly impossible to find a site that&#39;s tested in Opera.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>True, but since Mozilla creates open source products, I&#39;d guess that many of its developers weren&#39;t employees.</div>
+</div>
+</div>
+
+</div>

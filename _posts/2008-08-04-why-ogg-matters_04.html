@@ -1,0 +1,175 @@
+---
+layout: "post"
+title: "Why Ogg Matters"
+date: "2008-08-04 10:43:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/08/why-ogg-matters_04.html"
+---
+<div class="columns"><p><a href="http://news.cnet.com/8301-13505_3-10005304-16.html">Matt Asay</a> doesn't understand why shipping Ogg Vorbis and Theora in Firefox is important. The answer is simple. Our goal is to enable unencumbered, royalty-free, open-source friendly audio and video playback on the Web. Shipping Vorbis and Theora will achieve that for over 100M Firefox users --- not everyone yet, but a good start! To reach the rest, we will keep turning people into Firefox users, and pressure Apple, Microsoft and other vendors to support Vorbis and Theora. Vendor pressure must come from content providers dedicated to making compelling content available in free formats (coupled with a superior playback experience in Firefox). Wikimedia has stepped up and hopefully others will follow.<br/><p>In fact, we'd love to be able to ship open-source codecs for H.264 and VC-1, but that can't happen until the MPEG LA's patents expire, or MPEG LA decides to give up its patent licensing fees, or software patents are struck down by the US Supreme Court (and possibly other jurisdictions). It would be unwise to wait.<br/><p>Let me provide a mini-FAQ covering some of the other questions that have been asked:<br/><p><strong>Isn't Theora inferior to H.264, so no-one will use it?</strong> Theora isn't bad on an absolute scale --- look at <a href="http://www.double.co.nz/video_test/">some demos</a> to see for yourself. There is <a href="http://web.mit.edu/xiphmont/Public/theora/demo5.html">ongoing work</a> to improve the encoder so it's even better. Even if it's slightly lower quality than H.264 at some bit rates, it's still going to be very useful to people who favour free formats on principle, or who need an open-source solution, or who want a solution that Just Works across platforms without plugins, or who just want a solution without licensing fees --- for example, if you just want a convenient way to use a video clip in a Web app. Look at modern bank ATM interfaces, for example, to get an idea of what people could be doing in Web apps.<br/><p><strong>Since people can already play Vorbis and Theora in the browser by downloading a plugin, why is having them in Firefox important?</strong> Because the value to content providers and the pressure on other vendors depend entirely on these codecs being available to a lot of users --- and most users don't download codec plugins.<br/><p>This is a great example of why Mozilla and Firefox are important. The Web needs a high-market-share browser vendor committed to free software and open standards across the board.<br/><p><strong>Will you get your pants sued off?</strong> We've taken legal advice. I don't know if we will talk about the results, but our actions speak loudly enough. Cutting Ogg support remains as a last-resort option.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Ajay</div>
+<div class='content'>Will mobile phones need ogg playback at hardware level for better battery life if this becomes a standard?<br>Mozilla leads the way in ensuring a free and open standard internet. Thank you Mozilla team<br></div>
+</div>
+<div class='comment'>
+<div class='author'>cpach</div>
+<div class='content'>Jeff Schiller: Have a look at http://blip.tv<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>Ben Hayes: sorry, MNG with its diagonal gradients and other excesses does not compare to Theora as decoded by liboggplay. But I will point out one thing apart from the apples and oranges you try to compare that has changed since 2003: Firefox&#39;s (then Phoenix&#39;s) market share.<br>I&#39;ve been clear on MNG and other such marginal causes celebre: it makes no sense to take code footprint and attack surface on something that we alone probably can&#39;t cause to rise from insignificance to prominence on the web. Theora has Mozilla, Opera, and Wikimedia among others backing it.<br>Since Firefox has gained market share, and is still gaining share, we should think about other unencumbered and open formats that we could help. We are supporting application/xml+xhtml at higher q now. We&#39;re investing in SVG, as roc&#39;s blog shows. But MNG still doesn&#39;t make the list.<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jayjay2</div>
+<div class='content'>Just a question - why would you get your pants sued off? Isn&#39;t it a free format, or did I miss something?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Aaron</div>
+<div class='content'>I don&#39;t understand why the &quot;pants sued off&quot; Q &amp; A was included. Obviously, there are always submarine patent issues that can crop up - but that is the case with any technology. Are there specific cases where companies have threatened to sue, or something along those lines?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Sousa</div>
+<div class='content'>Robert, thanks so much for writing this little piece.  I&#39;ve had a hard time explaining my friends why Mozilla&#39;s move was so important for the future of the Web -- now I can simply direct them here.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>All: please don&#39;t feed the Opera trolls (as my Norwegian pal Lars Thomas Hansen, formerly of Opera, says -- speaking as a Norwegian -- &quot;we invented them&quot;).<br>Maian: do your homework before vaguely recalling and spouting off about MNG, or at least read what I wrote carefully. 2008 is not 2003. Firefox market share now is not Phoenix share then. And MNG is not comparable to Theora.<br>Of course the MNG patch has rotted many times, but that is beside the point. MNG is not going to emerge as a dark horse alternative to some or all of GIF, APNG, Canvas, SVG, and CSS animations.<br>Hypocrisy may be &quot;the tribute that vice pays to virtue&quot; (La Rochefoucauld), but there is nothing virtuous in demanding that MNG support be added to Gecko. It looks more like vice at this point (wrath, envy, pride, and sloth, to be specific).<br>And there&#39;s no vice in our support for Theora. It represents a lot of hard work by cdouble and others, a calculated risk on our part at Mozilla, and a move in favor of open formats that people actually use, and may yet use more.<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Donovan</div>
+<div class='content'>VLC supports decoding Dirac video via the schroedinger library as of 29th June 2008.<br>http://diracvideo.org/wiki/index.php/Schroedinger_and_VLC<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Actually, if someone did the work to get Dirac integrated into liboggplay, we could probably take the code into our tree immediately. But we wouldn&#39;t be able to enable it and ship it until we&#39;ve had time to do more analysis.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Are you KIDDING us?   First of Firefox is a horrible browser that requires us to waste countless hours clubbing it to work.   Secondly you don&#39;t have 100m users.  100 million downloads does not = users.    When was the last time you saw ANYONE use Ogg Video?   Never!  That&#39;s when.   FF upgrades break sites.   Adopt mp4 and be DONE with it!</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Dirac is less mature and its legal situation would require more analysis --- Theora seems like a safer choice at the moment. However, adding support for Dirac is definitely something we&#39;ll consider in the future.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ben Hayes</div>
+<div class='content'>This is great news.  But philosophically it&#39;s 180% from the MNG decision. The arguments against including MNG were:<br>* it&#39;s not Mozilla&#39;s job to evangelise<br>* it&#39;s not a standard<br>* it&#39;s not significantly used on the net<br>* its codesize is too big<br>* other stuff is good enough<br>all of which can be said, in spades, for Theora.<br>So what&#39;s changed?  Has, since 2003, Mozilla become a free-format-evangelising, standard-leading project (which is, done smartly, a very good thing), and not just a sheepish IE follower?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>FWIW: I say congratulations on choosing the appropriate option. I queried why Dirac was not chosen merely because I was interested. It&#39;s great to see that there is some thought towards Dirac being implemented in the future.<br>My understanding is that the video tag will support whatever codecs are already on a user&#39;s system anyway, or at least those codecs shoehorned into GStreamer, DirectShow or the crApple multimedia layer (don&#39;t care/can&#39;t remember the name atm). Is this still going to be the case? Perhaps this point is getting lost?<br>Sure distributing a codec with Firefox gives that codec more support than codecs the user must install however it&#39;s only a leg-up, it&#39;s not the be-all and end-all. User&#39;s can still install (GStreamer, DirectShow) codecs of their choice that will be supported by Firefox, can&#39;t they?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Josh Cogliati</div>
+<div class='content'>MPEG-1 Video with Layer 1 or 2 Audio is patent unencumbered so far as I know. At least, I have not been able to find any place online that lists any unexpired patents required to implement it (including the ISO patent database).  Since the near complete draft standard was published in 1991, if there are any patents they should be close to expiring.  Click my name for more details.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>an0n1 m0us</div>
+<div class='content'>What&#39;s wrong with the BBC&#39;s Dirac?<br>http://en.wikipedia.org/wiki/Dirac_(codec)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Maik Merten</div>
+<div class='content'>The reason why Mozilla (and Opera) would have an interest in evangelizing free media formats is that if they don&#39;t do that others will happily push media formats into the web which are incompatible with open source software (e.g. codecs that need patent licensing - like all MPEG codecs (H.264 being the current incarnation)).<br>If non-free codecs happen to become an important part of the browsing-experience, Mozilla would be either left out in the cold (won&#39;t decode that content) or would have to ship with binary components, leaving those building from source out in the cold (and Mozilla would even have to pay for the privilege of getting screwed).<br>So let&#39;s push free formats now to avoid getting in trouble later on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nicolas Mailhot</div>
+<div class='content'>Is there a reason FLAC is not included too? Unlike Dirac, it&#39;s pretty mature. And it compares well to other lossless audio formats.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>dragonbite</div>
+<div class='content'>Go Mozilla, Go!  It&#39;s about time companies start standing up for higher standards around here, and sticking to a moral compass unlike the suspected greed that caused the economy into its current situation.<br>I just read about it and think that now is the best time for Mozilla to go for it. Firefox has a large enough userbase to make a difference and while some will decide to switch to Chrome or something else there is still time for them to be educated as to what they are moving from and moving to.<br>Especially with the world going more web (cloud) focus, openness needs to be pushed NOW!<br>I applaud Mozilla.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>People are working on GStreamer/DirectShow/Quicktime integration but it&#39;s lower priority than the Ogg work and may or may not be enabled for Firefox 3.1.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Tristan: yes. Sometimes I&#39;m a bit conservative :-).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Simetrical</div>
+<div class='content'>&quot;(I know Wikipedia hosts their own video files in that format, but I was talking about user-contributed files)&quot;<br>Just to nitpick: all files on Wikipedia are user-contributed.  It&#39;s just that if you upload something not deemed to be of educational value, or otherwise helpful in achieving the goals of the Wikimedia Foundation, it will be deleted.  So it&#39;s not comparable to YouTube, true.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>MeToo</div>
+<div class='content'>Yes, Ogg/Theora are already being pushed by Opera, as kL said. I&#39;m pretty sure these formats are specifically mentioned in the HTML5 standard as examples, but I may be wrong (<br>It is interesting, though, how the Firefox contingent always ignores (at best) or ridicules (at worst) the Opera team&#39;s efforts, but when Firefox finally starts to catch up to them it&#39;s called &quot;innovation&quot; and &quot;important for the web.&quot;<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kL</div>
+<div class='content'>You&#39;re not alone - Opera pushes Ogg too (and in Europe they have significant market share, not to mention mobile market)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Hannes</div>
+<div class='content'>Thank you so much for this. I was afraid some &quot;bad&quot; codec would become the  standard. Thanks!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Schiller</div>
+<div class='content'>Out of curiosity, does anyone know of any web services that do video file hosting for Ogg Theora format a la YouTube?  (I know Wikipedia hosts their own video files in that format, but I was talking about user-contributed files)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>bvk-chaitanya</div>
+<div class='content'>Thank you for your effors Mozilla :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Toe</div>
+<div class='content'>MeToo: You&#39;ve apparently missed that whole WHATWG business, which was co-founded by Mozilla, Opera, and Apple.<br>The inclusion of the Ogg family stemmed from WHATWG&#39;s plans for a  element in HTML5.  Mozilla never ignored or ridiculed Opera&#39;s plans to include Ogg, to the contrary, the two groups have been working together on it from the beginning!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>How come you chose Theora over Dirac?<br>AFAIK Dirac is supposed to be higher quality and patent free, but was there some question about that?  Or did you just go with Theora because it&#39;s currently in wider use?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tristan</div>
+<div class='content'>Robert: you wrote<br>&gt; Shipping Vorbis and Theora will achieve that for over 100M Firefox users<br>The last official number I have is 180 million active users per month, but I&#39;m pretty sure we&#39;ve passed the 200 million mark, even if it&#39;s not yet official.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ant</div>
+<div class='content'>@Matt: Dirac has enormous processing requirements. Most users wouldn&#39;t be able to watch a youtube-sized video without problems.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Drinkwater</div>
+<div class='content'>I’m fully behind Mozilla’s decision to include Ogg, Theora and Vorbis support. I also expect from Monty’s work to have near-H.264 quality encoding by the end of the year. Perfect timing for 3.1!<br>And here’s the important thing: nothing needs to change in the decoders for improvements in the encoder, the binary format is already set.<br>Please don’t let a few pundits put you off…<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Wallace Jackson</div>
+<div class='content'>YES! Now if we can just get momentum behind OGG MNG we will have open source new media that Mind Taffy Design can deliver via HTML5 to our internetional brand clientele. Will OGG support i3D as well? Will FireFox 3.6 include native O3D rendering pipelines? WJ.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Maian</div>
+<div class='content'>I don&#39;t care about MNG, but now that someone pointed it out, it does seem rather hypocritical for Mozilla to support Theora, yet not support MNG. I vaguely recall that MNG support is available with a patch that&#39;s been constantly synced with the trunk for years.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>skierpage</div>
+<div class='content'>I never understood the obsessive angry demeanor of MNG fans until I realized it&#39;s the file format for MAME video game captures.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sebastian Redl</div>
+<div class='content'>Lossless audio has a much lower demand in internet streams than video. Having a video codec is definitely more important than having a lossless audio codec, when a very good lossy codec is supported.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael G.R.</div>
+<div class='content'>Glad they&#39;re doing it. Ogg Vorbis is pretty great for audio. Never really used theora for video much, but maybe now because of this I will.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Diracinfo</div>
+<div class='content'>@AjitK: Actually Dirac doesn&#39;t have enormous processing requirements as will be seen with its forthcoming inclusion in VLC Player.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>AjitK</div>
+<div class='content'>With faster and better internet its imperative that we use open technology on the web. Its time for multimedia(-zilla) to roam freely and wildly on the web.<br>Noble effort coming from Mozilla. Thank You!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan</div>
+<div class='content'>I only just heard about this, brilliant news, I was getting concerned the future was going to be owned by Adobe Air/Flash or Microsoft Sliverlight, with Ogg support we can push the boundaries of the web further, in an open (competitive) way. Much like we&#39;ve gone so far.<br>There&#39;s much to be done in this area though, I&#39;m wondering whether JavaFX will have ogg/theora support included. I&#39;m really hoping it does. Has anyone given thought to a standards based way off accessing the users webcam/mic... I predicting (wildly) that it might be important going forward.<br>If JavaFx is opensource (is it?) could it be included in Firefox or bundled?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Dowdell</div>
+<div class='content'>re: Dirac, Erik Huggers of BBC had some mention of it today:<br>&quot;Some people may ask: why are you not using your own Dirac codec? I am fully committed to the development and success of Dirac, but for now those efforts are focused on high-end broadcast applications. This autumn, we intend to show the world what can be achieved with these technologies.&quot;<br>http://www.bbc.co.uk/blogs/bbcinternet/2008/08/open_industry_standards_for_au.html<br>jd/adobe<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I neither ignore nor ridicule Opera&#39;s efforts. I consistently praise their work.<br>However, Chris has been working on Ogg support at least as long as they have, he published experimental builds before Opera did, and we&#39;ve announced plans to ship Vorbis and Theora while they haven&#39;t yet. By no means is it a case of &quot;finally catching up&quot; to Opera.<br></div>
+</div>
+
+</div>

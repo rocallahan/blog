@@ -1,0 +1,79 @@
+---
+layout: "post"
+title: "Offline Web Applications"
+date: "2007-02-14 15:42:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/02/offline-web-applications_14.html"
+---
+<div class="columns"><p>Chris has been working on adding offline support to Zimbra using Firefox's nascent offline capabilities. The goal is to test our APIs in the context of a large complex AJAX application, to make sure they work and are a good fit for the task He's made considerable progress and just posted <a href="http://www.bluishcoder.co.nz/2007/02/offline-zimbra-with-firefox.html">a nice demo of reading email offline in Zimbra</a>.<br/><p>Ironically I think it works so well that the demo is not very exciting. You go offline, everything continues to work --- ho hum, move along, nothing to see here. Boring perhaps, but it's exactly the right user experience.<br/><p>As Chris mentioned, there are four pieces to our offline puzzle:<br/><ul><br/><li><a href="http://www.whatwg.org/specs/web-apps/current-work/#storage">WHATWG client-side storage</a><br/><li>&lt;link rel="offline-resource"&gt; to put resources into the browser's offline cache<br/><li>The <a href="http://docs.sun.com/source/819-0913/author/jar.html#jarprotocol">jar: URI scheme</a><br/><li>The <a href="http://www.whatwg.org/specs/web-apps/current-work/#offline">WHATWG online/offline events and status property</a><br/></ul><br/><p>Note that two of the pieces already have WHATWG specs, and the jar: URI scheme is already a de facto standard used in a variety of products. The only really new part is using &lt;link rel="offline-resource"&gt; to put resources in a persistent "offline cache" that won't accidentally evict your application. That is quite simple and once we're confident we have the right semantics for it, we'll definitely try to get it standardized somewhere. We're about pushing the Web forward, not just Firefox, and I hope other browsers support these APIs ASAP if they prove popular.<br/><p>Putting these pieces together, Web application authors can add offline support to their applications in a very incremental way. The first thing you do is collect all static resources deployed to the Web server that you'll need offline and arrange for them to be loaded into the user's offline cache. For performance and consistency reasons, and also to minimize the number of <link> tags required, your best bet is to roll them all into a single JAR file and make that the offline resource. (The "start page" also needs to link to itself as an offline-resource to ensure it will be available offline.) Now, when the user visits your page and signals that they want the application to be available offline, the resources will be automatically downloaded and stored. (The exact UI for this is yet to be determined; I've proposed having "bookmark the page" be that signal.) On each subsequent visit to the start page, Firefox will revalidate the cached resources and update them if they've changed on the server. This should be enough to ensure your application can at least get started while the user is offline.<br/><p>Most Web apps need to talk to some server. When the browser is offline, they can't. It's up to the application developer to detect offline status using the provided APIs and decide how to behave while offline. Some functionality, such as instant messages, should just be disabled. In other cases, where the app would normally retrieve data from the server, it instead might grab some previously preloaded data. This would work well for email, calendar, CMS, and other applications. Of course the data has to be stored somewhere, and cookies won't cut it, which is where WHATWG client-side storage comes in (or another client-side storage solution, such as Flash's, if you prefer). Similarly, instead of sending data to the server, it will have to be queued and sent later when the user gets back online.<br/><p>This approach to offline Web apps has some major advantages. The user isn't required to download and install anything. In fact, no trust decision is required; the application remains sandboxed exactly as if online. In fact, there's potentially no new UI required at all. The footprint requirements are small. The offline user experience is very smooth; the address in the URL bar remains the same, and the same bookmarks or shortcuts will access the application. Dynamic online/offline switching is supported. It's very incremental; there's no new tier you have to suddenly add, and no new programming model. AJAX applications tend to move logic from the server to the client and this fits right in with offline support.<br/><p>Of course, this approach is also not perfect. The main issue that I see right now is that some server-based functionality, such as full-text search, may just not perform well in the browser. (However, there may be ways around that, such as uploading an index to the client, or doing the computation in a Java applet loaded from the offline cache.) I'm glad to see other approaches growing up, such as the <a href="http://www.sitepen.com/blog/2007/01/02/the-dojo-offline-toolkit/">Dojo Offline Toolkit</a>; hopefully we'll have a range of solutions to fit all needs.<br/><p>There are some things we're deliberately not doing. People have asked for richer client-side data models such as SQL or some sort of automatic synchronization. I think it's premature to expose APIs for that sort of thing (even though it would be easy for us to expose SQL, since we already embed SQLLite). I'm skeptical that we can choose a synchronization model, or even a SQL dialect, that suits everyone. SQL also has the problem that exposing SQL to untrusted code could have all kinds of difficult-to-forsee consequences. I think if we try to choose a solution too early, we'll choose something inappropriate for most applications and it will become dead weight that everyone works around. For now I think we need to watch and wait and see if application needs start to converge. Of course, Javascript libraries are also an option.<br/><p>One API that we are thinking about adding is support for script-controlled loading of resources into the offline cache. This needs to be designed in conjunction with a policy for deleting resources from the offline cache, something we haven't settled on yet.<br/><p>I'm really excited about seeing this taking shape. Thanks to Chris and Dave Camp, who's doing the offline cache work on the Gecko side.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Sam Hasler</div>
+<div class='content'>Maybe you should have to put in your master password to access some offline storage, and offline content could signal how sensitive it is.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gerv</div>
+<div class='content'>What is to prevent website owners who have no intention of making offline apps using  as a way of saying &quot;Yes, I&#39;d like my website to load much faster in the user&#39;s browser next time. Please store all of my images and JS for an indefinite amount of time, rather than getting evicted by normal cache eviction mechanisms&quot;?<br>Also, are there per-site limits on the amount of cache they can use?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Gerv: hence &quot;when the user visits your page and signals that they want the application to be available offline ...&quot;<br>There are currently no per-site limits on the amount of cache they can use, but I think we should add some.<br>Diego: the reality is that we&#39;re far away from that. And in many situations where they *could* be connected, people will choose not to be because of cost or inconvenience. It varies depending on the kind of user.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>funTomas</div>
+<div class='content'>On the UI side, I think adding some off-line capabiligy sign is worth of considering to promote that feature at least.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>SimonG</div>
+<div class='content'>I really like the idea of static content delivered by JAR - but then why not make it available as a mechanism for online content as well? In the web application space (ie Zimbra class) theres a helluva lot of http handshaking to bring down all the static content - all the images, htm docs, js, css. This is before the app can even be used.<br>If zimbra could package up their entire app as a versioned jar, theres one version check and one (big) download.<br>This would really help those class of apps (again Zimbra) that are mainly static htm/css/js web clients, with dynamic data-only calls (eg soap/json with the client binding the data itself).<br>Thats what I want!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Applications could provide some simple access control. However, if you want to be able to read email offline, then it has to be stored on your computer. If you give someone access to your user account on your computer, they&#39;ll be able to read the data one way or another (or do something worse, like plant a keyboard listener). My advice is: don&#39;t do that :-)<br>Think of it another way: how is this different from a regular desktop email client like Outlook that stores email locally?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jayavardhan</div>
+<div class='content'>how we can create a web page like yahoo in the manner of checking the password.What software we have to use for it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Ballinger</div>
+<div class='content'>Hi Robert,<br>I am trying to find you contact details but it doesnt seem that straight forward.  Is it possible you could email me back?<br>My partner is a journalist at computerworld (.co.nz) and she would like to write an article about firefox and I said that you we meet at Baacamp and she should contact you if that was ok.  Can you email or somethings so I can get her to contact you?<br>Cheers, John Ballinger<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Diego</div>
+<div class='content'>I don&#39;t understand how &quot;offline web applications&quot; can be so important - the computer world is evolving to an &quot;always connected&quot; principle, isn&#39;t it?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>Diego: I wanted to note that we&#39;re far from the always-connected SciFi dreamworld. Even with pretty good coverage, and without getting into a car, one experiences intermittent connectivity. Offline can be a short-lived state!<br>Mikael: if someone wants to build this stuff into Minimo, and has the chunky phone to run Minimo, it should all work. No one is focusing on that at the moment, but a volunteer or three could run with it. Minimo is not something Mozilla is investing in, because of &quot;structural&quot; problems to do with phones (basically, carriers control software, users don&#39;t download in big numbers; screen&#39;s too small; phone speed and memory size are too small for most users to run Minimo). But someone could push on the idea.<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Silvestri</div>
+<div class='content'>It&#39;s no different (except in the eyes of regular users) - I think I failed to make my point clear.  With Gmail, you have a choice when you log in - to save your password, or not to.  If you opt not to save your password (the default), then when you close your browser, your session cookie is killed, and upon return, you cannot see the e-mail - you are presented with a login screen.<br>The question I&#39;m posing is this: How does Gmail, or some similar app, know that you are offline and to let you in, as opposed to making it easy to dig through resources without network authentication?<br>I should suppose that closing the browser would kill the cookie, and Gmail&#39;s fancy offline JS would know not to permit access - but I expect that it would require storing something to say what cookie to permit.  The simpler answer is probably that not checking &#39;remember my password&#39; would disable the offline mode.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mikael Bergkvist</div>
+<div class='content'>One question that immidiatly pops up is whether you will support a mobile version of this?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; why not make it available as a mechanism for<br>&gt; online content as well?<br>It is. In fact, it has been for years (in Firefox). However Chris tells me that jar: performance is pretty bad in Firefox 2, much better on trunk/FF3.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>SimonG</div>
+<div class='content'>Ok - I didn&#39;t know that. Thats something I would like to start playing around with. Although I can see if performance wasn&#39;t up to par pre FF3 trunk builds, there wouldn&#39;t have been much point. But if thats now sorted, it does create new options :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Apostolos Tsakpinis</div>
+<div class='content'>It may be tempting to add support for SQL or another  data retrieval mechanism, but I totally agree with you on your decision to not include one. This should be the job of javascript libraries, period.<br>I also think that creating an API to add/remove resources from the offline cache is a must.  and JARs may be enough for an application like Zimbra, where assets like images don&#39;t change regularly, but when you go to other classes of applications not having an API will become a great issue. Having to include tons of link tags or having to create 100 different jar files will be a great hassle. Imagine having an application like phpMyAdmin which supports infinite amount of UI themes.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Silvestri</div>
+<div class='content'>One thing I&#39;m curious about - I trust this won&#39;t maintain per session cookies, and will somehow be up to the application to determine whether or not to allow access to the application? (Maybe via a trick of DOM storage?)<br>i.e. It would be quite undesirable to have Gmail show all of your e-mail if you closed out of the browser, and later, whilst offline, someone went there without authenticating.<br>And to the question about &#39;why do we need this?&#39; - I&#39;m pretty sure the answer is &#39;software as a service.&#39; The big downside that /everyone/ said about things like Google Docs, Gmail, et. al, is that &quot;it&#39;s useless if you&#39;re offline.&quot;<br>Personally, I think this would be fantastic for certain resources like Google Maps - let&#39;s say that you looked at all the roads you&#39;ll be taking (i.e. panned &amp; loaded the map tiles), and you hit the road...you might want to refer to the map again, but are offline. I know I&#39;ve printed more than a few pages that I could have done without, simply because I didn&#39;t want to get lost. ;)<br>*lightbulb goes on*<br>Offline Web Applications will save the planet! :D<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; The simpler answer is probably that not checking<br>&gt; &#39;remember my password&#39; would disable the offline<br>&gt; mode.<br>I think that&#39;s a great idea.<br></div>
+</div>
+
+</div>

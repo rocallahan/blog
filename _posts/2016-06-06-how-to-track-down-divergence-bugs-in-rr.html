@@ -1,0 +1,55 @@
+---
+layout: "post"
+title: "How To Track Down Divergence Bugs In rr"
+date: "2016-06-06 07:57:00 +0000"
+categories: "rr"
+permalink: "/2016/06/how-to-track-down-divergence-bugs-in-rr.html"
+---
+<p>Brendan Dolan-Gavitt <a href="https://twitter.com/moyix/status/739594209276133376">asked</a> me to write about how I debug <a href="http://rr-project.org">rr</a> itself. That's an interesting topic because it's a challenging problem; as I <a href="http://robert.ocallahan.org/2016/04/using-rr-to-debug-rr.html">wrote a while ago</a>, you sometimes feel you're in debugging hell so that others can go to heaven.
+<p>Brendan was talking about <em>divergence bugs</em>, i.e. bugs where replaying a recorded execution goes "off the rails" because there's some source of nondeterminism that differs between recording and replay. These can be further divided into recording bugs, where nondeterminism wasn't recorded correctly, and replay bugs, where there's enough information in the trace to replay but we replayed incorrectly.
+<p>rr saves the values of all general-purpose registers, the program counter, and the conditional branch counter, at most trace events, i.e. signals, context switches, and system calls that don't take the syscall-buffering fast path. We typically detect divergence bugs when replay reaches the execution point of the next event but the replay register/counter state doesn't match the recorded state. This includes cases where a different system call is performed, and most cases where behavior changes during replay produce writes to stdout/stderr that differ from those during recording. <a href="https://github.com/mozilla/rr/issues/1708#issue-156120609">Here</a>'s an example:
+<pre>[ERROR /home/kfischer/rr-vanilla/src/Registers.cc:303:maybe_print_reg_mismatch() errno: SUCCESS] rdx 0 != 0xff (replaying vs. recorded)
+[FATAL /home/kfischer/rr-vanilla/src/Registers.cc:423:compare_register_files() errno: SUCCESS]
+ (task 24036 (rec:24003) at time 1132365)
+ -> Assertion `!bail_error || match' failed to hold. Fatal register mismatch (ticks/rec:4473519809/4473519809)
+Launch gdb with
+  gdb /home/kfischer/.local/share/rr/latest-trace/mmap_hardlink_23_wine64
+and attach to the rr debug server with:
+  target remote :24036</pre>
+<p>In rr, most divergences are detected pretty soon after they are caused. In practice almost any change in control flow causes the conditional-branch counter to diverge. So the first thing I do is look for clues that something unusual happened just before the divergence was detected. One way to do that is to look at the trace leading up to the current point. If a rare system call or signal happened just before we diverged, it's worth looking closely at our handling of that! Another way is to use the emergency debugger mentioned above. This provides a gdbserver interface so you can inspect the state of the diverged process with gdb. Looking at the call stack can show that the process was doing something unusual that needs to be checked, especially if you have application source. Surprisingly often, with this data, I'm able to make some inspired guesses and write a standalone testcase that reproduces the problem, and from there it's usually easy.
+<p>When we have a divergence in one or a few register values, such as the issue linked above, that almost always means control flow did not diverge and we can make progress by reasoning backwards to figure out where that bad value must have come from. As you'd hope, rr itself is very useful for this; you can replay right up to the divergence point and <tt>reverse-stepi</tt> to see where the bad value is set. If reverse-execution is busted for some reason, we can tell rr to singlestep over some region of the trace and dump all register values at each step --- slow, but usually gives you the information you need. These techniques don't work if control flow diverged.
+<p>For harder bugs we generally need to be able to reproduce the bug by re-recording instead of just working off a single recorded trace, if we're going to make any progress. Re-recording with the system-call buffering optimization disabled is very helpful; it's a lot slower, but we'll check registers/counters at every single system call and catch divergences earlier. If the bug disappears entirely, we can safely bet it's in the syscall-buffering logic itself and we can easily narrow down which syscall wrapper is responsible. A similar but more aggressive approach which I've used in some desperate situations is to set the scheduler to context-switch every small number of conditional branches, and suppress noop-reschedule elision, so the trace records the register state very frequently ... effective, but often impractically slow.
+<p>Another tool in our toolbox is memory checksumming. To catch bugs where a memory location diverges and we don't catch the divergence until much later, rr has command-line options to periodically checksum memory regions and include those checksums in the trace. During replay we check the checksums to see if memory has diverged. For when you're close to the target, you can also dump actual memory contents and compare them. I don't use this facility very much, but when you need it, you <em>really</em> need it.
+<p>For bugs where we know we've recorded the correct data but replay goes wrong, we have the ability to <a href="http://robert.ocallahan.org/2016/04/using-rr-to-debug-rr.html">record rr replay under rr</a> (and, obviously, replay it), so we can actually use reverse-execution debugging to debug rr's replay code. I haven't used this a lot yet, since I got it working relatively recently, and sometimes it falls over ("and then you have two problems"), but when it works you get the feeling of lightning shooting out of your fingertips.
+<p>One general rule that I learned at Mozilla is to be very aggressive about using assertions to check invariants. This helps detect bugs closer to the root cause. Generally rr has assertions enabled all the time; the performance impact is not usually an issue since rr's efficiency (apart from the syscallbuf code) mostly comes down to switching from the application to rr as infrequently as possible. If we're running rr code, we're already losing.
+<p>Some of the hardest divergence bugs we've had in rr have been misbehavior in the hardware conditional-branch counter, either induced by OS/VM issues or by actual hardware bugs. These are agony. Definitely study Intel's errata sheets, read kernel source, and test carefully across different CPU/VM configurations.
+<p>I hope this helps! I'm always glad to answer questions about rr :-).
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Brendan Dolan-Gavitt</div>
+<div class='content'>Thanks very much for sharing your debugging strategies! It tracks pretty well with what I&#39;ve done to debug PANDA issues, with some twists because we&#39;re recording at the hardware interface rather than the system call layer. In particular, we implemented a debug mode that adds a log entry before every basic block, so that (hopefully) divergence can be detected as soon as possible. Then it&#39;s a matter of looking into the application or OS code that was running and seeing if it dealt with any exotic hardware (most recently, we discovered that QEMU supports VMWare&#39;s mouse integration but doesn&#39;t use the standard interface for modifying memory). This is perhaps more difficult than in the case of PANDA because the code we&#39;re looking at ends up being closed source.
+
+I agree that the worst ones seem to be instruction miscounting bugs (we use instruction count rather than retired branches)! I think we had one recently that was due to an instruction being double-counted when QEMU encountered self-modifying code (which happens often in Windows 64-bit, due to PatchGuard).
+
+Anyway, thanks for sharing your experiences. I have only seen a small amount of academic attention given to the issue of how to reliably develop record/replay systems (usually just a paragraph in some larger paper). I admit I&#39;m a little disappointed there&#39;s no clever solution I just hadn&#39;t thought of though! :)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Have you tried debugging QEMU/PANDA with rr? I&#39;ve heard QEMU does work if you stay away from KVM, which as I understand it PANDA does.
+
+If QEMU could run rr with record-and-replay support that would be pretty useful to me, but AFAIK performance counters aren&#39;t supported unless you use KVM.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>In general yes that would be very difficult, but emulating just the conditional branch counter would not be very difficult. The behavior rr expects, and usually gets, is exactly what you&#39;d expect: it increments once for each jcc, loop(e,ne) and jcxz instruction retired.
+
+I think having two practical, orthogonally-implemented record-and-replay systems and debugging each one with the other could be really great!</div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Dolan-Gavitt</div>
+<div class='content'>Yes, I didn&#39;t know about rr last time I had to debug PANDA, but I&#39;m currently staring down ~500 failed replays (replaying 50,000 malware samples will do that...) and planning on giving it a try.
+
+Unfortunately you&#39;re correct that QEMU doesn&#39;t emulate performance counters with the fidelity you&#39;re looking for. I think it would not be too hard to add support for retired branches, but matching the behavior of the real hardware performance counters bug-for-bug sounds difficult.</div>
+</div>
+</div>
+
+</div>

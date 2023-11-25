@@ -1,0 +1,43 @@
+---
+layout: "post"
+title: "Tips For Getting Patches Landed"
+date: "2009-01-19 22:53:00 +0000"
+categories: "Mozilla"
+permalink: "/2009/01/tips-for-getting-patches-landed_19.html"
+---
+<div class="columns"><p>The checkin-needed queue is quite large these days. Here are a few tips for getting your checkin-needed patches landed quickly:<br/><ul><br/><li>Produce your patch using "hg export" so it includes a commit message and your user identification. This not only makes the committer's job easier, it also means you're more likely to get the right attribution.<br/><li>Make sure it's clear in the bug which patch(es) need to be committed.<br/><li>Periodically check that it applies cleanly to the trunk and update the patch if it doesn't. If the patch is rotting because it's been stuck at checkin-needed too long, yell at someone.<br/><li>If you've <a href="https://developer.mozilla.org/En/Running_automated_tests">run tests</a> locally (reftests, crashtests, mochitests, etc), and you say so in the bug, people are more likely to check your patch in quickly. You don't have to have run them all (few people can run them on all platforms anyway) but more tests -> better. This is especially important if previous versions of the patch have been backed out due to test failures.<br/><li>Work on giant patches that fix huge problems --- I try to check those in quickly because they rot fast. And I'll love you for it.<br/></ul><br/><p>Now, having said all that, it is our (Mozilla's) responsibility to be diligent about helping people get their patches landed. After all, it's their hard work just to get to the point of having a reviewed patch and we should respect that and be willing to clean up their patches and work around little mistakes or inefficiencies.<br/><p>I'm enjoying hg's ability to bundle up a large set of patches to be committed as a unit. I often commit at night NZ time, which is very late US time, so I often get a set of build slaves of my very own and reasonably quick turnaround on builds and test runs for the whole bundle of patches. By being careful not to commit similar patches in the same bundle, it's usually quite easy to tell what's guilty if something goes wrong.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>RyanVM</div>
+<div class='content'>There are lots of free text editors that can convert Windows line endings to Unix ones too.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel</div>
+<div class='content'>Hm, I though so. I wrote some reftests (and there are more to come) for bugs that I triaged. And those bugs are mostly closed now.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel</div>
+<div class='content'>roc, I wonder wether patches that need checkin but are in closed bugs (e. g. an additional reftest) get less attention than patches that are in bug&#39;s that are still open?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Hmm, maybe it does, but &quot;hg import&quot; should still consume that correctly, I hope.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Arpad Borsos</div>
+<div class='content'>Good write up, I will try hg export next time I attach a patch.<br>But is it really a good idea to include the commit message right away? Updating r+ flags comes to my mind there.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Arpad: often people attach a &quot;final patch for checkin&quot; that addresses final review comments after review has been granted, so then it&#39;s fine to add the review flags.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yeah, probably, since a quicksearch for &quot;checkin-needed&quot; wouldn&#39;t find them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Siddharth Agarwal</div>
+<div class='content'>Doesn&#39;t hg export produce a diff with CRLF line endings on Windows? That&#39;s the main reason I don&#39;t use it.<br></div>
+</div>
+
+</div>

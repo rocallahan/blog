@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "More About Amber"
+date: "2006-12-30 01:00:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/12/more-about-amber_29.html"
+---
+<div class="columns">I have uploaded <a href="/assets/images/Amber.pdf">a document describing Amber in some detail</a>. It focuses on the back end: the instrumentation, indexing, and compression. I also motivate Amber by discussing the debugging problem and related attempts to solve it. There are a few important ideas here:<br/><ul><br/><li>A conceptual framework for classifying debuggers and execution recorders.<br/><li>Treating instruction execution and memory writes as two instances of a common concept --- "memory effects" --- and providing a single implementation and API for recording, indexing, compressing, storing and querying them.<br/><li>The "bunching" optimization for memory effects.<br/><li>The principle that repetitious program behaviour should produce repetitious input to the compressor in order to maximise the benefits of compression, and how to tweak the formatting of trace data to follow that principle.<br/></ul><br/><p>The document also contains screenshots of the prototype XULRunner-based debugger based on Amber, to motivate Amber's design by illustrating what is possible when you go beyond just reverse execution. I assure you that those screenshots are not faked in any way; it really works :-).</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Philip Withnall</div>
+<div class='content'>Hmmm...OK.<br>There&#39;s probably some obvious reason I&#39;m missing (still relatively new to programming and the like), but why put in the memory addresses of variables in the debugger interface? Or is this just temporary, waiting for something else to be implemented, like hyperlinked queries to when that variable was last modified, or its source?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Philip: I never display timestamps in the interface.<br>There&#39;s a lot that could be done to improve performance. But now it&#39;s more important to build a useful debugger that can use this data.<br>Chris: I can&#39;t change the MIME type unfortunately, the site is hosted by Google Pages.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Cunningham</div>
+<div class='content'>That pdf is being sent as application/octet-stream by the looks of things.<br>- Chris<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan Amelang</div>
+<div class='content'>Very exciting stuff! FYI, there is another little-known PIN-based Deterministic Replay Debugging tool that you might want to look into (if you haven&#39;t already) called BugNet.<br>The software implementation is described here:<br>http://www.cse.ucsd.edu/~skumar/papers/sw-bugnet.pdf<br>The hardware implementation is described here:<br>http://www-cse.ucsd.edu/~calder/papers/ISCA-05-BugNet.pdf<br>Some slides from a talk about BugNet are here:<br>http://www.cs.ucsd.edu/~skumar/bugnet.ppt<br>BugNet uses some interesting heuristics for both keeping the log size down and reducing the performance overhead. From the first paper: &quot;...on average we require less than 10MB of BugNet checkpoint logs to have the ability to replay 100 million instructions...&quot; and &quot;...on average the performance overhead of the logger is 86x&quot;<br>Of course, they don&#39;t log as much as you do, so YMMV, but you might still get some good ideas.<br>Once again, nice work! It will be fun to play around with it once you&#39;re ready to release it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I know a little bit about Bugnet. Thanks for the pointers.<br>Bugnet seems less interesting than the alternatives. Their overhead isn&#39;t much lower than Amber, even though they&#39;re logging a lot less and don&#39;t support efficient state reconstruction. Compared to other replay systems like Nirvana, they seem to have sacrificed logging overhead in order to get smaller log sizes. But this doesn&#39;t seem like a good tradeoff to me, because disk space is so cheap. Average PCs have 200GB disks these days, so spending 5GB to store a log actually isn&#39;t a big deal. You just need to make sure that the log is small enough that reading or writing the log is not a bottleneck.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philip Withnall</div>
+<div class='content'>Having read through the PDF, and developed a headache, I&#39;ve got a few comments:<br>The timestamps could get very large; as you said, a simple Firefox test run executes over 4.8 billion instructions. Do you have any plans to make them easier to read in the interface? How about displaying them as differences from the current timestamp, when applicable?<br>I suppose you&#39;ve already explored this, but as you suspect most of the CPU time is being spent in zlib, how about changing to use a different compression library (one which has been designed for ridiculously fast compression) such as lzop?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael</div>
+<div class='content'>Green Hills TimeMachine:<br>PC Instrumentation: 1MB ~ 5 Million Instructions. Typical slowdown is 2-10x.<br>Full Data Instrumentation: 1MB ~ 1 Million Instructions. Typical slowdown is 5 to 30x.<br>Hardware Trace Data Collection: Instructions downloaded depends on hardware. Slowdown: None. Hardware does the instrumentation, so there is no slowdown to the process. (Only supported on some ARM chips, Coldfire, and PPC chips).<br>All products  scale to gigabytes of data.<br></div>
+</div>
+
+</div>

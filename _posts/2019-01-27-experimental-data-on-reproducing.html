@@ -1,0 +1,40 @@
+---
+layout: "post"
+title: "Experimental Data On Reproducing Intermittent MongoDB Test Failures With rr Chaos Mode"
+date: "2019-01-26 12:39:00 +0000"
+categories: "rr"
+permalink: "/2019/01/experimental-data-on-reproducing.html"
+---
+<p>Max Hirschhorn from MongoDB has released some <a href="https://github.com/visemet/mongodb-rr-experiment">very interesting results</a> from an experiment reproducing intermittent MongoDB test failures using <a href="https://robert.ocallahan.org/2016/02/introducing-rr-chaos-mode.html">rr chaos mode</a>.
+<p>He collected 18 intermittent test failure issues and tried running them 1000 times under the test harness and rr with and without chaos mode. He noted that for 13 of these failures, MongoDB developers were able to make them reproducible on demand with manual study of the failure and trial-and-error insertion of "sleep" calls at relevant points in the code.
+<p>Unfortunately rr didn't reproduce any of his 5 not-manually-reproducible failures. However, it did reproduce 9 of the 13 manually reproduced failures. Doing many test runs under rr chaos mode is a lot less developer effort than the manual method, so it's probably a good idea to try running under rr first.
+<p>Of the 9 failures reproducible under rr, 3 also reproduced at least once in a 1000 runs without rr (with frequencies 1, 3 and 54). Of course with such low reproduction rates those failures would still be pretty hard to debug with a regular debugger or logging.
+<p>The data also shows that rr chaos mode is really effective: in almost all cases where he measured chaos mode vs rr non-chaos or running without rr, rr chaos mode dramatically increased the failure reproduction rate.
+<p>The data has some gaps but I think it's particularly valuable because it's been gathered on real-world test failures on an important real-world system, in an application domain where I think rr hasn't been used before. Max has no reason to favour rr, and I had no interaction with him between the start of the experiment and the end. As far as I know there's been no tweaking of rr and no cherry-picking of test cases.
+<p>I plan to look into the failures that rr was unable to reproduce to see if we can improve chaos mode to catch them and others like them in the future. He hit at least one rr bug as well.
+<p>I've collated the data for easier analysis here:
+<table style="border:1px solid black; border-collapse: collapse">
+<col style="border:1px solid black"></col>
+<thead style="border:1px solid black">
+<tr><td>Failure<td>Reproduced manually<td>rr-chaos reproductions<td>regular rr reproductions<td>no-rr reproductions
+</thead>
+<tbody style="white-space:pre">
+<tr><td>BF-9810<td>--<td>0 /1000<td>?<td>?</td>
+<tr><td>BF-9958<td>Yes<td>71 /1000<td>2 /1000<td>0 /1000</td>
+<tr><td>BF-10932<td>Yes<td>191 /1000<td>0 /1000<td>0 /1000</td>
+<tr><td>BF-10742<td>Yes<td>97 /1000<td>0 /1000<td>0 /1000</td>
+<tr><td>BF-6346<td>Yes<td>0 /1000<td>0 /1000<td>0 /1000</td>
+<tr><td>BF-8424<td>Yes<td>1 /232<td>1 /973<td>0 /1000</td>
+<tr><td>BF-7114<td>Yes<td>0 /48<td>?<td>?</td>
+<tr><td>BF-7588<td>Yes<td>193 /1000<td>96 /1000<td>54 /1000</td>
+<tr><td>BF-7888<td>Yes<td>0 /1000<td>?<td>?</td>
+<tr><td>BF-8258<td>--<td>0 /636<td>?<td>?</td>
+<tr><td>BF-8642<td>Yes<td>3 /1000<td>?<td>0 /1000</td>
+<tr><td>BF-9248<td>Yes<td>0 /1000<td>?<td>?</td>
+<tr><td>BF-9426<td>--<td>0 /1000<td>?<td>?</td>
+<tr><td>BF-9552<td>Yes<td>5 /563<td>?<td>?</td>
+<tr><td>BF-9864<td>--<td>0 /687<td>?<td>?</td>
+<tr><td>BF-10729<td>Yes<td>2 /1000<td>?<td>1 /1000</td>
+<tr><td>BF-11054<td>Yes<td>7 /1000<td>?<td>3 /1000</td>
+</tbody>
+</table>

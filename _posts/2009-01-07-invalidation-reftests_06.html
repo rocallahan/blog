@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "Invalidation Reftests"
+date: "2009-01-06 14:31:00 +0000"
+categories: "Mozilla"
+permalink: "/2009/01/invalidation-reftests_06.html"
+---
+<div class="columns"><p>I've <a href="/2008/12/reftests.html">written before</a> about how awesome reftests are. Now they're even more awesome! Until now reftests have always worked by taking a snapshot of the entire window at the end of the test and comparing that to a snapshot of the reference page. However, there's a fairly large class of bugs which we call "invalidation bugs" --- they only show up when you redraw part of a page, and when you draw the whole page everything's fine. These are usually either bugs in figuring out which part of the page needs to be redrawn after some dynamic change, or bugs in the optimizations that try to skip drawing elements that don't intersect the area being redrawn. We had no way to write automated tests for these bugs. Now we do!<br/><p>Reftests have long supported a feature called "reftest-wait". Tests whose root element has class "reftest-wait" do not finish when their load event fires. Instead, the reftest system waits for the "reftest-wait" class to be removed from the root element, then it takes the snapshot and moves to the next test. This lets a test finish loading and then change something dynamically to see if the layout and rendering after the incremental change is correct. I've extended "reftest-wait" so that we take a snapshot after the load event has fired and then as further incremental changes happen, areas of the snapshot are updated corresponding to the areas actually repainted in the window. (This is implemented in the reftest harness using <a href="https://developer.mozilla.org/web-tech/2008/10/13/mozafterpaint/">MozAfterPaint</a>.) Implementing this actually exposed a few invalidation bugs just using the reftest-wait tests in our existing test suite.<br/><p>There's some subtlety around the timing of incremental changes. Invalidation and repainting can happen asynchronously, so it's possible that the load event causes a pending repaint of the entire window and a test script running after the load event might make an incremental change that is not really tested because a full repaint of the window happens anyway. To make sure incremental updates are reliably tested, the reftest harness takes responsibility for making sure invalidation and repainting are completely flushed out after the load event has fired. Then reftest fires a "MozReftestInvalidate" event at the test document's root element; this is the cue for the test to perform its dynamic updates to be sure their repainting will be properly tested.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Ted Mielczarek</div>
+<div class='content'>Great work! It&#39;s always wonderful to reduce the space of things we can&#39;t test.<br></div>
+</div>
+
+</div>

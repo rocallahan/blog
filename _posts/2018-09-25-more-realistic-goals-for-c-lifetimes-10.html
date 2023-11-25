@@ -1,0 +1,56 @@
+---
+layout: "post"
+title: "More Realistic Goals For C++ Lifetimes 1.0"
+date: "2018-09-24 23:59:00 +0000"
+categories: "Mozilla"
+permalink: "/2018/09/more-realistic-goals-for-c-lifetimes-10.html"
+---
+<p>Over two years ago <a href="https://robert.ocallahan.org/2016/06/safe-c-subset-is-vapourware.html">I wrote</a> about the C++ Lifetimes proposal and some of my concerns about it. Just recently, <a href="https://github.com/isocpp/CppCoreGuidelines/blob/master/docs/Lifetime.pdf">version 1.0 was released</a> with a <a href="https://herbsutter.com/2018/09/20/lifetime-profile-v1-0-posted/">blog post</a> by Herb Sutter.
+<p>Comparing the two versions shows many important changes. The new version is much clearer and more worked-out, but there are also significant material changes. In particular the <em>goal</em> has changed dramatically. Consider the "Goal" section of <a href="https://github.com/isocpp/CppCoreGuidelines/blob/ecfd61c8d87e1127768afd7cf78ddd96e21a5f1f/docs/Lifetimes%20I%20and%20II%20-%20v0.9.1.pdf">version 0.9.1.2</a>: (emphasis original)
+<blockquote><strong>Goal: Eliminate leaks and dangling for */&/iterators/views/ranges</strong><br>
+We want freedom from leaks and dangling – not only for raw pointers and references, but all generalized Pointers such as iterators—while staying true to C++ and being adoptable:<br>
+1. We cannot tolerate leaks (failure to free) or dangling (use-after-free). For example, a safe std:: library must prevent dangling uses such as auto& bad = vec[0]; vec.push_back(); bad = 42;.</blockquote>
+Version 1.0 doesn't have a "Goal" section, but its introduction says
+<blockquote>This paper defines the Lifetime profile of the C++ Core Guidelines. It shows how to efficiently diagnose many
+common cases of dangling (use-after-free) in C++ code, using only local analysis to report them as deterministic
+readable errors at compile time.</blockquote>
+The new goal is much more modest, I think much more reasonable, and highly desirable! (Partly because "modern C++" has introduced some <a href="https://github.com/isocpp/CppCoreGuidelines/issues/1038">extremely dangerous</a> <a href="https://blogs.msdn.microsoft.com/nativeconcurrency/2012/01/29/perils-of-lambda-capture/">new idioms</a>.)
+<p>The limited scope of this proposal becomes concrete when you consider its definition of "Owner". An Owner can own at most one type of data and it has to behave much like a container or smart pointer. For example, consider <a href="https://godbolt.org/z/efcDAY">a data structure owning two types of data</a>:
+<blockquote><pre>class X {
+public:
+    X() : a(new int(0)), b(new char(0)) {}
+    int* get_a() { return &*a; }
+    char* get_b() { return &*b; }
+private:
+    unique_ptr&lt;int&gt; a;
+    unique_ptr&lt;char&gt; b;
+};</pre></blockquote>
+This structure cannot be an Owner. It is also not an Aggregate (a struct/class with public fields whose fields are treated as separate variables for the purposes of analysis). It has to be a Value. The analysis has no way to refer to data owned by Values; as far as I can tell, there is no way to specify or infer accurate lifetimes for the return values of <tt>get_a</tt> and <tt>get_b</tt>, and apparently in this case the analysis defaults to conservative assumptions that do not warn. (The full example linked above has a trivial dangling pointer with no warnings.) I think this is the right approach, given the goal is to catch some common errors involving misuse of pointers, references and standard library features. However, <strong>people need to understand that code free of C++ Lifetime warnings can still <em>easily</em> cause memory corruption</strong>. (This vindicates the title of my previous blog post to some extent; insofar as C++ Lifetimes was intended to create a safe subset of C++, that promise has not eventuated.)
+<p>The new version has much more emphasis on annotation. The old version barely mentioned the existence of a <tt>[[lifetime]]</tt> annotation; the new version describes it and shows more examples. It's now clear you can use <tt>[[lifetime]]</tt> to group function parameters and into lifetime-equivalence classes, and you can also annotate return values and output parameters.
+<p>The new version comes with a partial Clang implementation, available on godbolt.org. Unfortunately that implementation seems to be <em>very</em> partial. For example <a href="https://godbolt.org/z/v7Lj2p">the following buggy program</a> is accepted without warnings:
+<blockquote><pre>int& f(int& a) {
+    return a;
+}
+int& hello() {
+    int x = 0;
+    return f(x);
+}</pre></blockquote>
+It's pretty clear from the spec that this should report a warning, and the corresponding program using pointers does produce a warning. OTOH there are some <a href="https://godbolt.org/z/DFW-Rd">trivial false positives</a> I don't understand:
+<blockquote><pre>int* hello(int*& a) {
+    return a;
+}</pre></blockquote>
+<pre><source>:2:5: warning: returning a dangling Pointer [-Wlifetime]
+    return a;
+    ^
+<source>:1:12: note: it was never initialized here
+int* hello(int*& a) {
+           ^</pre>
+The state of this implementation makes it unreliable as a guide to how this proposal will work in practice, IMHO.
+
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Noel Grandin</div>
+<div class='content'>this is why a std::view_ptr would be useful, which would say &quot;thou dost not own this pointer, it is merely a temporary forbearance I give to you&quot;</div>
+</div>
+
+</div>

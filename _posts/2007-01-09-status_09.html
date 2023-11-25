@@ -1,0 +1,31 @@
+---
+layout: "post"
+title: "Status"
+date: "2007-01-09 09:22:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/01/status_09.html"
+---
+<div class="columns">I've been working for the Mozilla Corporation for nearly a week now. I'm working from home because I'm still working on finding office space. Unfortunately I'm stuck on my home computer for now, a 2-year old iMac with OS X 10.3.9, which is absymally slow. Worse still, my Firefox builds don't actually work --- they never show the main browser window. I've been trying to find out if there's any way to build a working Firefox on 10.3.9, but no-one seems to know. Upgrading to 10.4 would probably help, but it costs 260 NZD, which makes me want to exhaust my 10.3.9 options before I splash out for a .1 upgrade that I mostly won't use --- it builds very slowly anyway and I hope to get a shiny new machine soon.<br/><br/>So I've spent my time coding up a really big patch. We have a nexus of problems that tie into a number of important bugs, including:<br/><ul><br/><li>Bug 298889: Transparent windows break when they contain IFRAMEs<br/><li>Bug 343430: Fixed-position elements flicker when scrolling<br/><li>Smooth scrolling can be annoyingly slow<br/><li>Bug 316992: onscroll events aren't dispatched in a timely manner<br/><li>Bug 130078: Chrome UI overlaid on content windows (e.g., the phishing UI) doesn't work<br/><li>Scrolling and IFRAMEs inside SVG foreignobject being very slow or completely broken<br/><li>The mechanisms for suppressing and batching visual updates that we currently use are somewhat broken; they tend to suppress update for an entire hierarchy of documents even when we only intend to affect one document<br/><li>Other flickering problems in certain kinds of scrolled content<br/><li>Unable to draw some kinds of HTML content over windowed plugins<br/></ul><br/>Furthermore, soon we'll want to introduce browser-driven animation (e.g., SMIL). That demands infrastructure for refreshing windows at a fixed rate, coordinated with other kinds of window updates.<br/><br/>A sketch of a solution to all these problems, and more, is <a href="http://wiki.mozilla.org/Gecko:Compositor">written up in the wiki</a>, and I'm taking a stab at implementing it. The basic idea is that there are three kinds of window updates: repainting window contents, scrolling, and changes to the geometry of windowed plugins. We batch requests for those changes together and periodically execute them all at once in a unified "window update". By carefully structuring the code in the window update, we can minimize or eliminate the delay between the different kinds of operations to ameliorate flicker. At the start of the window update we can also ask animations to update their state to the current time.<br/><br/>To make this work properly we have to eliminate the use of child widgets for display other than for windowed plugins. But actually we don't need to fully remove those widgets, which is hard for many reasons; we can give all child widgets size (0,0) and they won't interfere with rendering. The widget hierarchy will still be around so we won't break accessibility or other things that depend on it. (Although eventually those widgets should be removed.)<br/><br/>One nice thing about working at home is that yesterday, when I was thinking about some of these problems, I was able to take a short walk to the top of <a href="http://flickr.com/photos/leahinnz/223476952/">Mt Eden</a> and stare at the ocean for a while, free from the distractions of my computer. Very nice, very productive.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Ian Thomas</div>
+<div class='content'>Don&#39;t upgrade to 10.4, it needs significantly more resources and if your Mac is slow on 10.3 it will probably be unusable with 10.4. Get a nice shiny new one instead ;) (although its probably worth waiting for 10.5 in feb/march)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Napolitano</div>
+<div class='content'>Sounds neat.  Thanks for posting these updates on your work; they&#39;re great to read.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dainis Jonitis</div>
+<div class='content'>Robert, it is great to hear that you are planning significant code changes. I always follow them with excitement :)<br>BTW I&#39;ve noticed that translucency tests are broken on Windows for some time. I can&#39;t tell the exact time frame when they broke, but I guess after Cairo update. Now all text is transparent (instead of black) and titlebar for some reason allows to mouse clicks reach the desktop. Is it Win32 only regression or same problem on Linux?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I haven&#39;t been keeping track. It may be broken on Linux currently. Translucent widgets will change again with the compositor so I&#39;ll fix them up after that.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colin Coghill</div>
+<div class='content'>I ended up installing Linux on my old iMac just so I could Get Stuff Done.<br>I love OSX in many ways, but it&#39;s really not good for doing cross-platform development.<br>Unfortunately 10.4 seems to have killed MOL too so I can&#39;t even run OSX under Linux (to get at Safari and Keynote).<br>Yay for the dual-booting lifestyle.<br>- Colin<br></div>
+</div>
+
+</div>

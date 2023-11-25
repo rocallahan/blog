@@ -1,0 +1,27 @@
+---
+layout: "post"
+title: "Kindling Enthusiasm"
+date: "2008-04-02 23:43:00 +0000"
+categories: "New Zealand Mozilla"
+permalink: "/2008/04/kindling-enthusiasm_02.html"
+---
+<div class="columns"><p>The last two weeks have been lots of fun. The family time in Melbourne and Sydney was very refreshing and I still managed to get a few days work in.<br/><p>On Monday I gave my pitch at the University of Queensland. Not a huge audience but not embarrassing. Today I had a pretty big crowd at the University of Sydney, 120-odd probably. They seemed pretty enthusiastic. Or maybe it's just me, because I get really enthusiastic when I get to talk about Mozilla to a lot of people. I wonder how it comes across...<br/><p>I've been talking to my university hosts about student quality, enrollment numbers and curriculum. Like most places, UQ and Sydney saw a big drop in student numbers and quality after the dot-com boom ended, and only now are things turning around. And as I've complained before, supply and demand forces are driving students and schools away from fundamental computer science and low-on-the-stack software development, towards framework consumption and short-term "job skills". Today I met some sharp students though, so the well isn't completely dry!<br/><p>I've heard complaints that partly due to the media, software development is viewed as deadly boring and students turn away to become lawyers and accountants instead (!). I understand that at some level, but at another level I don't. The basic rule of software is <em>if you can dream it, you can build it</em>. What can be more intoxicating than that? Is the problem that beautiful code doesn't look good on TV?<br/><p>True, the "IT" jobs a lot of students are looking at probably are boring as dust. So in my talk I try to communicate a little bit of the excitement I feel. I talk about the importance of the open Web, I talk about security, about serving 150M users, about the challenge of low-in-the-stack programming, about making the rules and shaping the future. I talk about how open source participation can open doors and how the industry worldwide is starved of genuine talent for this kind of work. (Yesterday one of my friends pointed out that the multicore world is going to make our work even harder and put an even tighter squeeze on the market of people who can do it.)<br/><p>The irony is that for a long time, the industry was desperate to achieve "software reuse". In a sense, our success at that has contributed to these problems I'm complaining about.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>bp</div>
+<div class='content'>Way to skip UTS :(<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Shawn Wilsher</div>
+<div class='content'>I don&#39;t agree with the sentiment that multicore will make our work harder.  Sure, we may have to think about things a bit more to make sure they are correct, but you can still write serial code.<br>Then, with the emergence of libraries like Intel&#39;s Threading Building Blocks [1], AME [2], and other libraries, programmers can think less and less about concurrency, and more about the problem (and the concurrency just happens where appropriate).<br>[1] http://threadingbuildingblocks.org<br>[2] http://research.microsoft.com/research/sv/ame/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff</div>
+<div class='content'>I am wondering if pure functional languages (like haskell) are the answer to achieving ubiquitous parallelism.  Does referential transparency of code mean that the compiler has a chance of figuring out what functions can run in parallel???<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Sorry, but 5 universities in 10 days was enough for one trip.<br>Shawn: sure you can write serial code. It just won&#39;t be fast. If your competitors are parallel and getting 10X speedup on 100 cores, and you&#39;re running on one core, you&#39;re not really in the game. And just parallelizing some hot part of your code is unlikely to work because of Amdahl&#39;s law.<br>The libraries and frameworks and languages we have today are no panacea. Trust me on this, I know many of the people who are doing this work.<br></div>
+</div>
+
+</div>

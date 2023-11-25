@@ -1,0 +1,26 @@
+---
+layout: "post"
+title: "Managing Vast, Sparse Memory On Linux"
+date: "2016-06-16 21:37:00 +0000"
+permalink: "/2016/06/managing-vast-sparse-memory-on-linux.html"
+---
+<p>For a problem I'm working on, an efficient solution is to use a 32GB array, most of whose entries are unused. Fortunately this is no problem at all on 64-bit Linux using a couple of simple tricks.
+<p>The first trick is to allocate the array using the little-known (to me) <tt>MAP_NORESERVE</tt> option:
+<pre>p = mmap(nullptr, 32 * 1024 * 1024 * 1024, PROT_READ | PROT_WRITE,
+              MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0));</pre>
+(I thought this was the default on Linux, so I'm not sure why it's needed, but it is with <tt>4.5.5-201.fc23.x86_64</tt> at least. Oddly enough, if I omit that flag and just do two 16GB mmaps, that works too.) Now you can write to that region and only the pages you write to will actually be allocated. Good times.
+<p>Now, once in a while I want to clear that memory or just some subsections of it. <tt>memset(array, 0, size)</tt> is out of the question since it would take a very long time and would also probably cause all those pages to be allocated, killing my process if I'm lucky and the entire system if I'm less lucky.
+<p>Fortunately we have <a href="http://man7.org/linux/man-pages/man2/madvise.2.html"><tt>madvise(array, size, MADV_DONTNEED)</tt></a>! For a <tt>MAP_ANONYMOUS</tt> mapping like ours, this delightful system call simply frees all the pages in the range and instructs the kernel to use fresh zero pages next time the memory is read or written. Not only is it theoretically efficient, it's fast in practice. I can touch 10,000 scattered pages in my 32GB array and then zero the entire array with one <tt>MADV_DONTNEED</tt> in 12ms total.
+<p>It would be nice if tricks like these worked for pages with values other than just zeroes. For example, Firefox sometimes needs large allocations filled with 0xFF000000 for graphics buffers, or special bit patterns representing "poisoned" memory for security purposes. I think you could implement something like that using <tt>userfaultfd</tt> or mapping a file from a custom FUSE filesystem, but they would probably be significantly slower.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Bruce Hoult</div>
+<div class='content'>A colleague and I implemented something similar for on-demand paged decompression of large files (OAT and ART) on Android. After doing DONTNEED we mprotect()&#39;d the same page range to no access, and then used the segfault handler to create the desired page contents and change the page protections. In our case that was reading a compressed page into a fixed bufer and decompressing it to the desired place. In your case, just fill it with 0xFF000000 of 0xDEADBEEF or whatever you want.
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Zan Lynx</div>
+<div class='content'>Linux defaults to heuristic overcommit, which means that when it sees a mmap that is obviously far too big, it refuses to do it. That&#39;s sysctl vm.overcommit_memory mode 0. You probably want mode 1, always overcommit. Then you could do your 32 GB mmap in one step.</div>
+</div>
+
+</div>

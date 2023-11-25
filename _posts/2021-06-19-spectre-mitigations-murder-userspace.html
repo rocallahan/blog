@@ -1,0 +1,31 @@
+---
+layout: "post"
+title: "Spectre Mitigations Murder *Userspace* Performance In The Presence Of Frequent Syscalls"
+date: "2021-06-19 03:47:00 +0000"
+permalink: "/2021/06/spectre-mitigations-murder-userspace.html"
+---
+<p>I just made <a href="https://github.com/rr-debugger/rr/commit/99d3d4173badf63071eb05259e113dd3a398c5cb">a performance improvement</a> to the (single-threaded) <tt>rr sources</tt> command to cache the results of <tt>access</tt> system calls checking for directory existence. It's a simple and very effective optimization on my Skylake, Linux 5.12 laptop:
+<pre>Before:
+[roc@localhost code]$ time rr sources ~/pernosco/main/test-tmp/basics-demo >& ~/tmp/output2
+real	3m19.648s
+user	1m9.157s
+sys	2m9.416s
+
+After:
+[roc@localhost code]$ time rr sources  ~/pernosco/main/test-tmp/basics-demo >& ~/tmp/output2
+real	0m36.160s
+user	0m36.009s
+sys	0m0.053s</pre>
+<p>One interesting thing is that we cut the userspace execution time in half even though we're executing <em>more</em> userspace instructions than before. Frequent system calls actually slow down code execution in userspace. I assumed this was at least partly due to Spectre mitigations so I turned those off (with <tt>mitigations=off</tt>) and reran the test:
+<pre>Before:
+[roc@localhost code]$ time rr sources ~/pernosco/main/test-tmp/basics-demo >& ~/tmp/output2
+real	2m5.776s
+user	0m33.052s
+sys	1m32.280s
+
+After:
+[roc@localhost code]$ time rr sources  ~/pernosco/main/test-tmp/basics-demo >& ~/tmp/output2
+real	0m33.422s
+user	0m32.934s
+sys	0m0.110s</pre>
+So those Spectre mitigations make pre-optimization userspace run <string>2x slower</string> (due to cache and TLB flushes I guess) and the whole workload overall 1.6x slower! Before Spectre mitigations, those system calls hardly slowed down userspace execution at all.

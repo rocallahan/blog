@@ -1,0 +1,55 @@
+---
+layout: "post"
+title: "SVG Filter Performance Improvements In Gecko 1.9.1"
+date: "2008-07-23 17:11:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/07/svg-filter-performance-improvements-in_23.html"
+---
+<div class="columns"><p>The first batch of work from my bling-branch to land on trunk is improvements to SVG filter performance. I didn't want to make filters apply to HTML content but totally suck performance-wise.<br/><p>I chose to focus on testcases that use filters to make drop shadows, since that's a very <a href="http://upload.wikimedia.org/wikipedia/commons/c/ca/Video_Standards.svg">common</a> usage pattern. In particular I wanted to test scrolling of those pages, since people tend to notice slow update on scrolling more than an initial slow paint. I created <a href="https://bugzilla.mozilla.org/attachment.cgi?id=325218">a simple benchmark</a> for this.<br/><p>The first major piece of work was to micro-optimize the Gaussian blur inner loop. I tried a lot of experiments, some of which paid off and others which didn't. I ended up speeding it up by about 10%, not as much as I'd hoped, but I did eliminate the use of a huge lookup table which should save memory.<br/><p>The next approach was to optimize Gaussian blur so that when the input surface only has an alpha channel (i.e. the color channels are all 0), we don't do any work for the color channels. This happens when the source is "sourceAlpha", as it is for typical shadow effects. First I did some major refactoring of the filters code so that various bits of metadata can be propagated around the SSA-converted filter primitive graph, instead of having a dynamic "image dictionary". Then the actual optimization was easy. This made us another 25% faster.<br/><p>As part of the refactoring I reduced the usage of intermediate surfaces --- we free a filter primitive output image as soon as we finish processing the last filter primitive that uses it as an input. This wasn't intended to improve performance but it did, by about 5%.<br/><p>The next idea was to only run filter computation over the minimum area needed to correctly repaint the damage area, when only part of the window needs to be repainted --- important for scrolling, since when scrolling typically only a small sliver of the window is repainted. This is a bit tricky since filter primitives may need to consume a larger area of their input than their output, e.g., a blur may require the output area to be inflated by the blur radius to find the input area required. But <a href="/2008/02/the_best_of_int.html">I'd already implemented this knowledge</a> for Firefox 3, to limit the size of the temporary surfaces we were allocating when a poor filter region was given by the author. It was just a matter of introducing damage area information into the mix. This gave us a 140% speedup! (By "speedup" here I mean the increase in the number of iterations of the test you can run in a given time limit.) In general this is a really good optimization because it means, for most filters, the time required to draw the filter is proportional to the size of the visible part of the filter, not proportional to the size of the filtered SVG objects. At this point I declared victory on the initial use case...<br/><p>The final idea was to address <a href="https://bugzilla.mozilla.org/attachment.cgi?id=329644">a slightly different testcase</a>. When only a small part of an image changes, but there's a filter applying to the whole image, we'd like to only have to recompute a small part of the filter. This is similar to the previous paragraph, and requires forward propagation along the filter primitive graph of bounding boxes of changed pixels. My fix here improved performance on that testcase by 70%.<br/><p>There's still a lot more that could be done to improve filter performance. There are three obvious approaches:<br/><ul><br/><li>Use CPU vector instructions such as SSE2<br/><li>Perform run-time code generation to generate optimized code for particular filter instances<br/><li>Use the GPU<br/></ul><br/><p>You really want to support all three. You definitely need some sort of RTCG to perform loop fusion, so that instead of doing each filter primitive as a separate pass, you can minimize the number of passes over memory. If your code generator supports vector types and intrinsics, then it's easy to give it vector code as input and generate de-vectorized code if the CPU doesn't have the right vector instructions. And if you're super-cool you would allow the code generator to target the GPU for filter fragments where that makes sense.<br/><p>However, at least as far as Gecko is concerned, this additional work will have to wait until filter performance rises in priority. (At that point hopefully we'll be able to reuse the JIT infrastructure being developed for JS.)</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>ant</div>
+<div class='content'>I think OpenVG was invented as a silver bullet for this sort of thing. Now if only some graphics driver people would actually implement it...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Arpad: I found the bug and fixed it quite easily. The patch is in bug https://bugzilla.mozilla.org/show_bug.cgi?id=447739<br>Thanks for noticing it!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Apple&#39;s Core Image work on top of LLVM is not open source as far as I know. LLVM looks like good technology but for various reasons you probably won&#39;t see it in Gecko.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>schrep</div>
+<div class='content'>Your test runs 3.77x faster on today&#39;s trunk v.s. 3 and is very very noticeable.  This is great stuff Roc!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Arpad Borsos</div>
+<div class='content'>Impressive! Times are cut to one third!<br>However, I notice a problem with the scrolling testcase: It is only fast, when the whole iframe is visible in the browser window.<br>Resize the browser window so only a part of the iframe is visible and the testcase is as slow as with gecko 1.9<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James</div>
+<div class='content'>Apple&#39;s done a lot of that already, nfi if it&#39;s open source: http://arstechnica.com/reviews/os/mac-os-x-10-5.ars/11#llvm<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alex Trujillo</div>
+<div class='content'>It&#39;s really great all the work you&#39;re doing for this. I&#39;m looking forward to the release, and in using it in my SVG web app. The browsers are really getting there, and I really appreciate it. A couple years down the line, and we should have a good deal of people browsing with decent SVG support.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Arpad: that is surprising. I&#39;ll look into it. What platform?<br>Nico: the main use for JIT compilation in Gecko is for JS execution, and we&#39;re developing a custom JIT for that (based on Adobe code, so this isn&#39;t a case of &quot;not invented here&quot;!). JS compilation is a rather different problem from compiling C. And we don&#39;t want to ship *two* JITs so we&#39;d try to reuse the JS JIT as much as possible (and for filters I think it should be possible).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nico</div>
+<div class='content'>Great work.<br>Can you explain some of the reasons that prevent LLVM from being used by Gecko?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John</div>
+<div class='content'>http://upload.wikimedia.org/wikipedia/commons/c/ca/Video_Standards.svg does indeed run much faster on the alphas, but while testing it I was reminded of how mediocre middle-click diagonal scrolling is, as it forces a full redraw of the entire viewport.<br>I think it&#39;s a common use case and something should really be done about it (that is, repaint just two rectangles without wasting any pixels).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike</div>
+<div class='content'>Hi,<br>any chance Firefox supports vector filter, like the non-scaling stroke?<br>http://www.w3.org/TR/SVGMobile12/painting.html#NonScalingStroke<br></div>
+</div>
+
+</div>

@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "More On Patch Division"
+date: "2010-01-15 09:51:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/01/more-on-patch-division_15.html"
+---
+<div class="columns"><p>Kyle Huey asked me to comment on my approach to breaking up work into a large number of small patches.<br/><p>First a big disclaimer: I've only been doing this for a short time, but I know other communities have been doing it for a long time. I bet Linux kernel developers know far more about this than I do. Probably many Mozilla developers do too.<br/><p>As I always have, I try to plan out the work into incremental steps in my head before I actually start writing code. This plan always needs modification after contact with the enemy but it generally works. Each step is of course a new mq patch.<br/><p>Sometimes I find that additional steps are needed. If I need to add new steps after the point I'm currently up to, there's nothing to do. If I need to add new steps before the point I'm currently up to, it's easy to pop off mq patches and do the work in the right place.<br/><p>When I think I've completed a step, I often (but not always) do a build to make sure it compiles. However, I rarely test my changes until I've finished the work. Perhaps this makes me a bad person, but I find that test effort before that point is often wasted since I frequently go back and change previous patches as I learn things from writing later patches.<br/><p>When I'm testing and fixing bugs, I accumulate many fixes as a diff in my working copy. Periodically (once a day?) I take the changes in that diff and distribute them to the patches that each change logically belongs to. I.e., if I fix a bug in new code that was added by a patch, I apply the fix to that patch.<br/><p>Once the code works, I then reread the patches (a sort of self-review). One thing I look for is large patches that could be broken up into smaller ones consisting of logically independent changes. (I especially focus on the largest patches, to try to minimize the maximum patch size.) Wherever breakup is easy to do (e.g. because the smaller patches don't overlap), I'll do it. If it's hard because patches overlap, I generally won't do it unless the gain in clarity seems large.<br/>When patches can be broken up into really tiny fragments, I'm not sure what the correct minimum patch size is ... a patch consisting solely of many instances of the same mechanical change probably isn't worth breaking up, unless different reviewers are going to review each piece.<br/><p>It's important for bisection searches that at each stage in the patch queue, the project at least builds. To verify this for large patch queues I just run a script overnight that does a loop of <tt>hg qpush ; make</tt>.<br/><p>When the code is ready to submit, I upload all the patches to the bug, numbering them with "Part NNN" to make it easier to refer to a particular patch. For large projects it's also helpful to publish the patches as a Mercurial repository using <tt>qcommit</tt>.<br/><p>If reviews take a while, as they often do for large projects, every so often (once a week to once a month) I'll refresh the patches to trunk (see below) and push the results to tryserver to make sure nothing's broken.<br/><p>One tip: at least with Mercurial 1.1, DO NOT refresh to trunk using rebasing (e.g. <tt>hg pull --rebase</tt>) while you have mq patches applied. Instead, <tt>hg qpop -a</tt>, <tt>hg pull -u</tt>, and then <tt>hg qpush -a</tt>. For me, rebasing screws up my patches in various ways. Also I find that fixing conflicts during rebasing is far more tedious than fixing conflicts during qpush, partly because I have no idea what rebasing is actually doing, but mostly because as of 1.1 rebasing with mq seems to force me to fix the same conflicts over and over again.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Benjamin Smedberg</div>
+<div class='content'>Yeah, I strongly recommend pull --rebase with hg 1.3.1 or later. It does still suffer a little bit from the &quot;which patch am I rebasing right now&quot; problem, but you certainly shouldn&#39;t have problems with repeatedly having to merge the same thing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yeah, I should update. Part of the problem is that I&#39;m not used to using a version control system that actually gets regular enhancements :-).<br>(Don&#39;t get me wrong --- I love Mercurial!)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Blair McBride</div>
+<div class='content'>FWIW, rebasing is a lot less buggy in recent versions of Mercurial. These days, I always pull/rebase with a patch queue. Of course, a decent merge program certainly helps a lot.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Axel Hecht</div>
+<div class='content'>I&#39;d love some details on how to actually fragment a patch in your working copy onto the patch queue.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ted Mielczarek</div>
+<div class='content'>Yeah, I find &quot;hg pull --rebase&quot; much more useful than manually fixing up patch rejects. I&#39;ve been using hg 1.3 and recently moved to 1.4.1 and haven&#39;t noticed any problems with it. I also have KDiff3 configured as my merge program, which I&#39;m fairly fond of.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dirkjan Ochtman</div>
+<div class='content'>Even in general, Mercurial 1.1 is pretty old; the latest version is 1.4.2 and has a bunch of performance improvements and sleeker features.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>My approach is very simple and primitive...<br>hg diff &gt; ~/tmp/patch<br>hg revert --all<br>... open ~/tmp/patch in editor ...<br>... repeatedly cut out hunks and paste them into &quot;patch -lp1&quot; ...<br>... when I&#39;ve accumulated all the hunks for a patch into my working copy, &quot;hg qnew -f ...&quot; ...<br>... repeat until all the hunks have been removed from ~/tmp/patch ...<br></div>
+</div>
+
+</div>

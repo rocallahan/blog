@@ -1,0 +1,43 @@
+---
+layout: "post"
+title: "Additional Austral Peregrinations"
+date: "2008-04-11 18:38:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/04/additional-austral-peregrinations_11.html"
+---
+<div class="columns"><p>On Friday April 4 I visited Australian National University in Canberra to give my Mozilla talk. My host there was Steve Blackburn, who does PL/VM research, so I caught up on the gossip in that field and we talked about GC issues in Web browsers and the potential for implementing a browser in managed code. I also visited IBM OzLabs where Andrew Tridgell, Paul Mackerras and other semi-famous Linux/Samba hackers hang out. I showed them Chronicle and they were more interested in that than Web stuff :-).<br/><p>I visited Monash University in Melbourne on Monday and Wednesday. I spent Monday talking to <a href="http://www.csse.monash.edu.au/~marriott/">Kim Marriott</a> and his group of staff and students, who do research on automatic document layout. Their work is very interesting since it gives some insight into what might be possible in an ideal world where CSS was "done right", or at least if we spent energy on making documents look great instead of wrangling the other issues that bedevil us. I want to get a reading list from him of research papers that people involved in CSS specification and implementation could read to get some ideas. In some of those discussions we were also joined by Michael Day, who leads the development of the <a href="http://www.princexml.com/">Prince</a> Web-to-PDF tool. We had lots of fun comparing notes on our CSS layout implementations.<br/><p>One of Kim's grad students is Cameron McCormack, who maintains the Batik SVG viewer on the side. He was really interesting to talk to --- we had a good discussion about SVG, CSS, HTML and other matters of mutual interest.<br/><p>A couple of other grad students in the group --- Tim Dwyer and Michael Wybrow --- are doing <a href="http://www.csse.monash.edu.au/~mwybrow/dunnart/">amazing work</a> on interactive graph layout. Basically they take standard force-directed layout and add constraints like "these 3 nodes must be horizontally aligned". They can also add interactivity so that the user can change the topology of the graph but the automatic layout cannot, it can only optimize within the selected topology. They can also do local layout and navigation of huge graphs. Not really Web related, but brilliant technology :-). I asked them what it would take to do that as a Web app and basically the problem there is JS performance limitations running numeric optimizers and solvers for big nonlinear constraint programs.<br/><p>The actual Monash talk went OK although it was mostly people I had already talked to in groups or one-on-one.<br/><p>On April 8 I visited the University of Melbourne. More than 50 people turned up for the talk. The best part of that visit was talking to <a href="http://www.cs.mu.oz.au/~njn/">Nick Nethercote</a>, who works at a local research institute (NICTA) but is one of the core Valgrind people on the side. He was really interested in Chronicle of course and we talked quite a bit about Valgrind and related issues. We complained to each other about Apple not releasing their Valgrind port :-).<br/><p>I tried to spread a general message that open source in general, and Mozilla in particular, is far more interesting, important, fun and rewarding than the enterprise IT options most students are faced with in this part of the world --- something that faculty can pass on to their brighter students. We'll see how effective that is. There was quite a lot of interest in Chronicle, which has stiffened my resolve to do another release with more convenient packaging and some UI improvements.</div><br/><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Indeed.<br>Implementing a browser in a managed language would be a wonderful experiment, and potentially a very good thing. But it would also be incredibly risky, so it doesn&#39;t make sense for the existing browser vendors to have a go.<br>It would a brilliant project for a startup company, but unfortunately venture capitalists are more interested in funding &quot;me too&quot; projects.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>Icesoft had a memory-safe browser, almost all Java. Igor Bukanov worked on it. Was it fast enough or web-compatible or extensible enough? Not then (~2000, IIRC). It used Rhino for its JS engine. But Igor believes it was the safest browser on the planet at the time.<br>I don&#39;t think we need VCs and big manual rewrites to get incrementally more VM-hosted in Mozilla, and the tools Taras, Dave, and Benjamin are bringing up will (not as first priority) help us rewrite some of our quasi-JS C++ as JS2.<br>Adobe already has a gcc/llvm port targeting Tamarin. They demo&#39;ed Quake running in the Flash player. This is a more direct route, although I believe it&#39;s an all-or-nothing proposition out to some standard libraries boundary -- the hosted C memory is modeled as an ActionScript byte array, e.g. Not good for incremental migration in the Mozilla fun happy malloc heap!<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The same one that sustains Mozilla would do. Or you get device manufacturers to buy licenses. Or, you get banks to buy it for their customers to reduce losses from Internet fraud.<br>Or, you realize that VCs are more interested in eyeballs than business models.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan Amelang</div>
+<div class='content'>&gt; It would a brilliant project for a startup company,<br>I&#39;m curious, what might the business model be?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I think the real challenge is implementing the DOM and layout in a managed language without sacrificing anything. We could leave gfx as native code without incurring much safety exposure.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>maks</div>
+<div class='content'>Hi Robert,<br>Would you be willing to elaborate on &quot;..the potential for implementing a browser in managed code&quot; ?<br>I&#39;ve been thinking for quite some time that a browser in something other then c/c++ would be a good idea but it seems like netscapes original failure with a java port has put everyone off for almost the last decade...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff</div>
+<div class='content'>What do you mean by enterprise IT?<br>If it&#39;s the stuff that my microsoft certfied mate who worked for infosys did, then yes I agree with you.  That sort of work always seemed terribly boring.  :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yeah, that&#39;s the sort of thing I mean.<br></div>
+</div>
+
+</div>

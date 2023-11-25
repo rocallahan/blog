@@ -1,0 +1,48 @@
+---
+layout: "post"
+title: "SVG-In-OpenType Progress Update"
+date: "2013-08-20 02:55:00 +0000"
+categories: "Mozilla"
+permalink: "/2013/08/svg-in-opentype-progress-update.html"
+---
+<p>TypeCon is coming up and there's going to be a discussion there about competing proposals for advanced glyph rendering, especially coloured glyphs. That was an incentive for me to knuckle down over the last couple of days and fix some issues in our implementation of <a href="http://lists.w3.org/Archives/Public/public-svgopentype/2013Jul/0003.html">the Mozilla-Adobe proposal</a> that adds an "SVG" OpenType table to render glyphs in SVG format.
+<p>I had to update our implementation from our original prototype to use the format defined by the merged Adobe-Mozilla proposal. Then I had to track down a bug in the calculation of glyph extents for SVG glyphs --- this turned out to be a generic bug affecting any font with egregious glyph extents, so I'm glad we've caught it. The last and most interesting part of the Gecko work was to enable animation in SVG glyphs. This is tricky because we need to map from a font whose glyphs have changed back to all documents and text that using that font, so we can ensure the text is properly repainted, and we've never needed this mapping before. gfxFont.cpp is gnarly but the code worked out OK.
+<p>Creating fonts with SVG glyphs has required hacky scripts so far, and I was getting tired of that, so before I did the Gecko changes I wrote a small Web app to help: <a href="https://github.com/rocallahan/svg-opentype-workshop">SVG OpenType Workshop</a>. You can open an existing OTF/TTF font file (sorry, no WOFF support yet), create/edit an SVG table document, see the results on (editable) sample text live as you type (generating a new font file at every keystroke), and save the generated font. I found it very useful, and it shows that you can have live font editing in Web apps without an SVG font DOM or other dedicated browser APIs. To render the fonts, the application requires browser support for the SVG-OT draft mentioned above, so for now only <a href="http://ftp.mozilla.org/pub/mozilla.org/firefox/try-builds/rocallahan@mozilla.com-3354d4190694">experimental Firefox builds</a> will work.
+<p>Check out this <a href="http://people.mozilla.com/~roc/animated-SVG-glyphs.webm">screencast</a> of animated glyphs in action.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Hi! 
+
+Really great tool! I&#39;m trying to use it for a Masters project I&#39;m working on and I was just wondering how do you know the glyph ID? I&#39;m also getting a problem where the SVG Glyph sits directly below the Opentype Glyph?
+
+If you could drop me an email to talk about this that would be fantastic! hello[@]thombaker.co</div>
+</div>
+<div class='comment'>
+<div class='author'>mdonatas</div>
+<div class='content'>The screencast made me think of recent news `Mozilla kills the  tag` :)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I assume you meant the &lt;blink&gt; tag.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Impressive!</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Why OTF and not WOFF?
+
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Cool :)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>All this stuff works in WOFF, because it&#39;s easy to convert between OTF and WOFF. My app doesn&#39;t handle WOFF directly because I haven&#39;t had time to write that conversion code yet.</div>
+</div>
+</div>
+
+</div>

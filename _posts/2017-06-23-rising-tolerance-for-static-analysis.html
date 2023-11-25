@@ -1,0 +1,20 @@
+---
+layout: "post"
+title: "Rising Tolerance For Static Analysis False Positives?"
+date: "2017-06-23 04:35:00 +0000"
+permalink: "/2017/06/rising-tolerance-for-static-analysis.html"
+---
+<p>When I was a young graduate student working on static analysis tools, conventional wisdom was that a static analysis tool needed to have a low false-positive rate or no-one would use it. Minimizing false-positives was a large chunk of the effort in every static analysis project.
+<p>It seems that times have changed and there are now communities of developers willing to tolerate high false positive rates, at least in some domains. For <a href="https://lwn.net/Articles/726212/">example</a>:
+<blockquote>It will also miss really obvious bugs apparently at random, and flag non-bugs equally randomly. The price of the tool is astronomical, but it's still worthwhile if it catches bugs that human developers miss.</blockquote>
+Indeed, I've noticed people in various projects ploughing through reams of false positives in case there are any real issues.
+<p>I'm not sure what changed here. Perhaps people have just become more appreciative of the value of subtle bugs caught by static analysis tools. Maybe it's a good time to be a developer of such tools.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Mark Erikson</div>
+<div class='content'>I would venture a guess that the name of the tool starts with &quot;F&quot; and ends with &quot;ortify&quot;, in which case I can completely agree with the assessment of its behavior and capabilities.
+
+As for the cost/benefit tradeoff... well, let&#39;s just say it&#39;s &quot;the bane of my existence&quot; and leave it at that.</div>
+</div>
+
+</div>

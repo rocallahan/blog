@@ -1,0 +1,116 @@
+---
+layout: "post"
+title: "Maintaining An Independent Browser Is Incredibly Expensive"
+date: "2017-12-02 03:28:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/12/maintaining-independent-browser-is.html"
+---
+<p>Mozilla's revenue increased to over $500M in 2016. Good for them! Some people have asked why all that money, and Mozilla's 1,200-ish staff, are needed just to build Firefox.
+<p>In practice building and maintaining a truly independent browser is incredibly expensive. (By truly independent, I mean a browser with its own implementation of HTML, CSS, JS, etc; this kind of independence is <a href="/2017/10/microsoft-using-chromium-on-android-is.html">critically important to the open Web, and the world</a>, and hence Mozilla's mission.)
+<p>Why is it so expensive? First you have to do the obvious stuff: implement the client browser engine and interface. Web standards are vast and complicated and ever-evolving, so this is a vast and complicated task. For this kind of security-critical, long-lived software in an intensely competitive mass market, you have do a very high-quality job, paying attention to all the various "ilities" &mdash; security, compatibility, performance, portability, accessibility, internationalization, maintainability, and so on. But also these days a large server-side investment is needed: downloads, updates, addons, crash collection, telemetry, push notifications, sync, and so on. Then you have to support all your developers with CI, massive test infrastructure, analysis and viewing of crash and telemetry data, etc. You also support your developers by writing custom tools and improving open-source tools; for example the rr project was born at Mozilla to improve life for Mozilla's C++ developers.
+<p>If you care about the open Web standards you're implementing, then your people need to spend time doing standards work. Since you have an independent engine you need to constantly evangelise Web developers and manage other external relationships.
+<p>If you want to stay competitive for the long term you need something like Mozilla Research, building stuff like Rust and Servo to explore technology that may give you a competitive edge in years to come.
+<p>Your product needs to be in the hands of users to be relevant, so you need marketing, distribution, events and other kinds of user outreach.
+<p>Then of course you have all the people needed to let the above people do their work effectively &mdash; HR, PR, lawyers, accountants, logistics, office managers, personnel managers, executives, and so on.
+<p>I worked at Mozilla for a long time. Over the last five years headcount was at about the quoted level, even during the FirefoxOS years. We were constantly butting up against headcount limits, having more work than we had people to do it. 1,200 people is barely enough. In the future it might not be enough.
+<p>Of course if you're willing to give up on engine independence you can save a lot of those expenses by adopting another vendor's engine, probably Chromium, and drafting off Google's investment. It's no surprise that for-profit companies would take that path, and that only Apple and Microsoft, companies with deep pockets and deep fear of Google, have declined to do so (though even Microsoft has caved on Android). Of course, using the same engine as Chrome limits your options for competing against Chrome, but it's tough to argue that those extra options are worth more than the cost. This is one reason among many why Mozilla is so important: it's Mozilla's mission that justifies the costs of maintaining an independent browser engine.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Kevin Seelbach</div>
+<div class='content'>Hundreds of tabs :) 
+
+There should be a support group for people like us. </div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Ab</div>
+<div class='content'>I checked in official documents.
+https://assets.mozilla.net/annualreport/2016/2016_Mozilla_Audited_Financial_Statement.pdf
+ (page 4) states that approx. $220M/y are spend on software dept (salaries). Administrative support expenses (servers, building and other support) are separate figure ($60K) from software development; cost of office rent for example was &lt;$10M (page 20).
+
+So the cost of offices seems not that high.
+
+In terms of salaries: it looks like $220M/y is spend on personnel cost in software dept (including salaries, benefits). It seems that this table is showing the number of employees in software department (545): https://static.mozilla.com/moco/en-US/pdf/2016_Mozilla_EEO-1.png
+
+Thus, the cost of employees in software dept (programmers and their managers) seems to be the major one for Mozilla (on avarage $404K/y/employee).</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>What good is all that money and team of engineers when DRM ended up being standardized anyway? We&#39;ve lost the battle and should give up now on HTTP &amp; DNS protocols which have centralization built into their architecture.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The existence of DRM/EME by no means makes the open Web worthless.
+
+With Firefox on Linux I have an implementation of the open Web that can run all kinds of amazing applications --- GMail, Netflix, Google Maps, Facebook, Google Docs, Wikipedia, appear.in, and on and on and on. That implementation is fully open source *except* for the DRM module, which is confined to a very restrictive sandbox so can&#39;t really touch my system. People who claim that DRM/EME make the open Web worthless are basically saying that because of DRM we should chuck all this away --- presumably to either stop using all those applications, or to switch to some closed-source platform with *worse* DRM.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Kevin Seelbach</div>
+<div class='content'>Try vimium for chrome. </div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>The core Chromium project is licensed with MIT and has excellent quality, why don&#39;t these companies invest that MIT licensed open-source project to make it better? It&#39;s really hard to build a better engine from scratch, Firefox is pushing hard but not close yet.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>And FWIW Gecko has pulled ahead in some areas, in ways that could not have been done in Chromium. Google would not have accepted major component rewrites in Rust.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;ve written before about the importance of engine diversity to the open Web. There&#39;s a link in this very article.</div>
+</div>
+<div class='comment'>
+<div class='author'>Kevin Seelbach</div>
+<div class='content'>Thanks Robert. Too bad certain people among us did not read past the first paragraph.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>forsyth</div>
+<div class='content'>The Mozilla pages documenting HTML5, CSS, DOM, etc including tracking browser variants and implementation levels, are very good, and would have required a big effort; not cheap, as you say.</div>
+</div>
+<div class='comment'>
+<div class='author'>irvin</div>
+<div class='content'>And because the resource is always far from enough, volunteer are especially critical for Mozilla when fighting with that wealth giant.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>You nailed it: diversity is essential to the internet. I for instance only use Chrome on Google docs. FF elsewhere. And this helps keep everyone honest and avoid the dangers of monoculture: https://en.wikipedia.org/wiki/Monoculture#Disease
+
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>As an end-user my experience has been that Firefox was standing still for many, many years.  The UI changes that was rolled out a year ago was a step-back, and I promptly found an add-on to remove the visual bloat.  The forced tile popups for the mozilla blog, or whatever, was really annoying to me and it&#39;s really difficult to find how to disable those (ads).  The new performance improvements are very welcome, user facing change (I assume) and a great step in the right direction, but it appears to be at the cost of throwing away the whole add-on eco system.  I wonder how much the eco system is worth if Mozille had to develop all those ad-ons.  1, 10 or 100b?  I deadly serious, Mozilla had little skin in that game, so it was easy to throw away.  Vimperator, i.e. extremely keyboard friendly bindings, was the only reason why I didn&#39;t switch to Chrome along with the fact that Chrome had horrible performance for my use case of 100s of tabs open at times.  Google, obviously, is suspect given their business relies on selling ads, and I hate ads. Building an OS, a new language to me is a clear sign of over funding for the task at hand.  Only companies with money to burn, i.e. Apple and Google, can make that investment to lock in a developer community but it makes little sense for an Open Source project.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I think you&#39;ll still find that Firefox outperforms Chrome with hundreds of tabs.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Ab</div>
+<div class='content'>If $360M was spent in 2016, that means $300K/year/employee....</div>
+<div class='comment'>
+<div class='author'>irvin</div>
+<div class='content'>You need to also calculate those infra including on cloud and in real world, and Mozilla is also investing in many projects (such as grant and fellowship) and community efforts (at lease a thousand global contributors). </div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Gilad</div>
+<div class='content'>Mozilla disrespect its users. 
+Every time a large update is released most of the add-ons become obsolete and many new bugs are introduced. Also, Mozilla pushes unwanted services (pocket) to the browser without asking the user at all.
+
+Sadly, I switched to Chrome after FF quantum was released. It seems that you lost your focus over there.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That&#39;s an odd thing to say since one of the major changes in FF Quantum is switching to WebExtensions so that addons stop breaking in new Firefox versions.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Danyal</div>
+<div class='content'>Microsoft has also used WebKit in Edge for iOS. </div>
+<div class='comment'>
+<div class='author'>Biohazard707</div>
+<div class='content'>Cause on iOS, there is no other option</div>
+</div>
+</div>
+
+</div>

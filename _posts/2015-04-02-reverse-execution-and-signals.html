@@ -1,0 +1,48 @@
+---
+layout: "post"
+title: "Reverse Execution And Signals"
+date: "2015-04-01 13:36:00 +0000"
+categories: "Mozilla"
+permalink: "/2015/04/reverse-execution-and-signals.html"
+---
+<p>gdb's reverse execution interface interacts with signals in counter-intuitive ways. If you're using <a href="https://rr-project.org">rr</a> and gdb reverse execution to debug situations involving signals, e.g. a <tt>SIGSEGV</tt>, read on...
+<p>Consider the following program <tt>test.c</tt>:
+<pre>int main(int argc, char **argv) {
+  __asm__ __volatile__("jmp 0x42");
+}</pre>
+<p>We can debug this with rr as follows:
+<pre>[roc@eternity test]$ <strong>rr ./test</strong>
+rr: Saving the execution of `/home/roc/tmp/test' to trace directory `/home/roc/.rr/test-6'.
+[rr.170] Warning: task 14677 (process 14677) dying from fatal signal SIGSEGV.
+[roc@eternity test]$ <strong>rr replay</strong>
+GNU gdb (GDB) 7.9
+...
+0x00002aaaaaaaf6f6 in _dl_start () from /lib64/ld-linux-x86-64.so.2
+(gdb) <strong>cont</strong>
+Continuing.
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000000042 in ?? ()
+(gdb) <strong>where</strong>
+#0  0x0000000000000042 in ?? ()
+#1  0x0000000000000000 in ?? ()</pre>
+<p>At this point you get that awful sinking feeling... But wait!
+<pre>(gdb) <strong>reverse-stepi</strong>
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000000042 in ?? ()
+(gdb) <strong>reverse-stepi</strong>
+main (argc=1, argv=0x7fffffffdf38) at /home/roc/tmp/test.c:28
+28   __asm__ __volatile__("jmp 0x42");</pre>
+<p>Hurrah!
+<p>The obvious questions are: <em>why did we have to <strong>reverse-stepi</strong> twice to get back to the <tt>jmp</tt>, and why did the first <strong>reverse-stepi</strong> trigger SIGSEGV again?</em>
+<p>If you singlestep forwards through the program using gdb normally, starting at the <tt>jmp</tt> instruction, you actually see two separate events:
+<pre>(gdb) <strong>run</strong>
+Starting program: /home/roc/tmp/test 
+Breakpoint 1, main (argc=1, argv=0x7fffffffdfd8) at /home/roc/tmp/test.c:28
+28   __asm__ __volatile__("jmp 0x42");
+(gdb) <strong>stepi</strong>
+0x0000000000000042 in ?? ()
+(gdb) <strong>stepi</strong>
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000000042 in ?? ()</pre>
+What's happening is that the first <strong>stepi</strong> runs the <tt>jmp</tt> and arrives at the invalid location. The second <strong>stepi</strong> tries to run the instruction at that location and triggers SIGSEGV instead. Now, in the original session we first ran all the way past the SIGSEGV. Then our first <strong>reverse-stepi</strong> makes us reverse-execute one step: in this case, we reverse-execute the triggering of the SIGSEGV. (In gdb, reverse-executing the triggering of a signal prints the signal just as forward-executing does.) The next <strong>reverse-stepi</strong> reverse-executes the actual jump.
+<p>It feels a little weird, though it makes some amount of sense. It's even weirder when you reverse-singlestep through the execution of a signal handler, but it still all makes sense. I've been pleasantly surprised by gdb's robustness at handling that sort of thing. I've been unpleasantly unsurprised by the number of rr bugs I've had to iron out to make this work properly at scale for Gecko debugging!

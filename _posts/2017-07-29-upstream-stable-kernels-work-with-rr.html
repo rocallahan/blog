@@ -1,0 +1,25 @@
+---
+layout: "post"
+title: "Upstream Stable Kernels Work With rr Again"
+date: "2017-07-28 23:19:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2017/07/upstream-stable-kernels-work-with-rr.html"
+---
+<p>Greg K-H has released stable Linux kernels 3.18.63, 4.4.79, 4.9.40, and 4.12.4, containing a (backout) fix for the <a href="/2017/06/patch-on-linux-kernel-stable-branches.html">regression that broke rr</a>. 4.13-rc2 also contains the fix. 4.11 was just declared end-of-life so it will not ever be officially fixed.
+<p>Obviously distros still have to produce kernel updates containing the fix, so we're not quite out of the woods yet, but that should be soon.
+<p>I'm holding off doing the rr 4.6.0 release until distro updates that work with rr have been out for a little while. To the (limited) extent possible I'd like to avoid people trying rr while it doesn't work on their kernel.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>dx</div>
+<div class='content'>Yay!
+
+Will you add some startup warnings when replaying with affected kernels?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That would be nice but it&#39;s not easy to detect the bug :-(.
+
+I guess we could parse the kernel version but the kernel version format varies across distros. For example one version of Ubuntu says &quot;4.4.0-78&quot;, but what is that?</div>
+</div>
+</div>
+
+</div>

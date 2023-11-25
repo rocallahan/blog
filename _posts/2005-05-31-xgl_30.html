@@ -1,0 +1,63 @@
+---
+layout: "post"
+title: "Xgl"
+date: "2005-05-30 22:05:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/05/xgl_30.html"
+---
+<div class="columns">David Reveman just demoed his latest Xgl work (an X server based on Glitz). It's incredibly impressive. He has virtual desktops as the faces of a cube, so you can switch desktops by rotating the cube. Then he played a movie in a translucent window, crossing a virtual desktop boundary so it wraps around the cube. Of course it keeps playing while he rotates the cube. All very smooth and pretty. Amazing.<br/><br/>It looks like on Linux the preferred hardware acceleration story for rich apps like Mozilla/Firefox will be to run the Xgl X server, and have Cairo talk to Xgl via Xrender. Xgl implements the Xrender calls using GL so we get the same sort of hardware acceleration we'd get if we used Glitz directly. With only Xgl talking to the GL drivers, we avoid the problem that the vendor GL drivers aren't very good at handling multiple processes banging on them simultaneously. The only downside is that Xrender doesn't support some of the operations we need accelerated --- e.g., gradients, non-affine transformations, and SVG-style filters. We'll just have to fix that :-).<br/><br/>The story on Windows remains a bit less clear...</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Cool! That&#39;s great news about gradients. And Owen Taylor informed me that Xrender already supports warping (non-affine) picture transformations (albeit non-accelerated). Two down, one to go!<br>Jed: Hopefully at some point soon, Linux users will be able to install Xgl and get accelerated rendering of cairo-using applications such as Firefox. But that obviously won&#39;t work for Windows. We can have an OpenGL or Direct3D backend for cairo but on non-Longhorn systems, we&#39;ll run into the issue that D3D and OpenGL drivers probably won&#39;t behave well when multiple applications are trying to use them at the same time. If Firefox is the only application running that&#39;s using the drivers, that might be OK, but suppose the user starts Firefox and Thunderbird... I can imagine we might want to special &quot;cairo acceleration server&quot; that runs on Windows, accepts Xrender-like commands over a pipe and sends the results back to the applications via DIBs in shared memory.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joey</div>
+<div class='content'>Google?<br>I think this is a really cool advancment. I wonder if Longhorn will jump at the last moment and try to mimic this effect...<br>Hah- Imagine having a two-moniter system and being able to have eight possible screens... or for web development, have html editing on one side, css editing on another, photoshop or the gimp in another, and the page you are preiviewing all on diffrent sides. And being able to look at angle so you could edit the html and then refresh the page and see both the code and screen in full screen... that&#39;d be awesome.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>There&#39;s also the question of how Avalon on Windows XP is going to work, which could affect what we should do when that is present on the user&#39;s machine. Of course we will run on Win2K and other places where Avalon won&#39;t be.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Caleb</div>
+<div class='content'>Robert, why should there be a problem with two applications using hardware-accelerated OpenGL ?<br>Shouldn&#39;t the drivers handle requests from multiple applications? Because if what you say is true, this means that I cannot run two 3d rendering applications at once (if they both use opengl).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Da Scritch</div>
+<div class='content'>I hope we have Enlightenment DR17 in a near future... I mean, before MS-Longhorn...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philippe</div>
+<div class='content'>Is there some online demo of this ?<br>And how&#39;d you implement this on OS X?<br>On 10.4 at least, I guess you could rely on the  CoreImages stuff that is build in.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I think on OSX we&#39;re going to use Quartz as much as possible and hope Apple does the right thing.<br>I don&#39;t know if there&#39;s any Xgl demo screenshots online.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Caleb: you can run 2 3D apps, but it doesn&#39;t work well. On my Linux machine one app will run for one second while the others are blocked, then the other will run for a second, etc. Apparently it&#39;s similar on Windows.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jed</div>
+<div class='content'>Roc: Could you go into more details on what issues are coming up for windows?<br>While I use Linux, I&#39;m also on Windows a fair share of my time.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ernst Persson</div>
+<div class='content'>&quot;The only downside is that Xrender doesn&#39;t support some of the operations we need accelerated --- e.g., gradients, non-affine transformations, and SVG-style filters. We&#39;ll just have to fix that :-).&quot;<br>http://lists.freedesktop.org/pipermail/xorg/2005-May/008105.html<br>lol, that&#39;s the best turnaround time for a request I have ever seen! :-) 17 minutes!?!?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Soap</div>
+<div class='content'>Lars Knoll just implemented gradients to Xrender, hasn&#39;t been applied though.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>brain</div>
+<div class='content'>I didnt see any mention about Guadec on here or on any xorg related sites.<br>I was really surprised to see both you and David Reveman in the Guadec &quot;Lightning Talks&quot;.  You should link people to it. :)<br>http://stream.fluendo.com/archive/6uadec/Lightning_Talks.ogg<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Josh</div>
+<div class='content'>The XGL demo shown at Novell Brainshare is available for streaming.<br>http://osnews.com/story.php?news_id=10108<br>Its near the end. :)<br></div>
+</div>
+
+</div>

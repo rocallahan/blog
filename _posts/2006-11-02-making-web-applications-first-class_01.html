@@ -1,0 +1,71 @@
+---
+layout: "post"
+title: "Making Web Applications First Class Desktop Citizens"
+date: "2006-11-01 16:29:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/11/making-web-applications-first-class_01.html"
+---
+<div class="columns">I was reading <a href="http://joshua.schachter.org/">Joshua Schachter's blog</a> and noticed he's commented about something I've been thinking about: we need to make Web apps fit better in the world of desktop applications:<br/><blockquote>Since web applications aren't first-class desktop citizens they therefore are missing several interfaces that normal applications have: you cannot Alt-Tab to them, you cannot launch them separately, they don't "install" and stick around on your desktop, and notably, they cannot control what happens when you close them.</blockquote><br/><p>Not "installing" and "sticking around on your desktop" are actually nice features of Web applications, in most cases, but we could certainly improve the situation here, perhaps by making it easier to create desktop links, and by treating launches from desktop links as instantiating a new application instead of just another browser window or tab.<br/><p>Another thing that Web apps should be able to do is register to handle certain file types.<br/></div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Zach Lipton</div>
+<div class='content'>Roc -- You may want to take a look at a blog entry I wrote on the same topic a little while back: http://weblogs.mozillazine.org/zach/archives/017065.html<br>I feel like WHATWG is doing a good job of taking care of the web apps themselves, but I&#39;d love to see us do more on the client side to make these apps more integrated into the desktop environment.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Schiller</div>
+<div class='content'>As you mention, not installing is a key feature of a web app (as is auto-upgrade).<br>I equate bookmarks with desktop shortcuts.<br>I equate ctrl-tab in the browser with alt-tab.<br>If you think of the browser as an extension to the OS, then I don&#39;t any issue.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jay Pullur</div>
+<div class='content'>I agree about your point on better desktop integration of web apps into the user&#39;s desktop. But, more important will be participation of desktop resources in your web apps and experience. Next generation platforms, including RIA on desktop, will bring this.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mark Finkle</div>
+<div class='content'>XULRunner seems to be a perfect way to create a desktop &quot;wrapper&quot; for web applications.<br>If you&#39;re going to make web apps fit better into the desktop, perhaps the &quot;chrome&quot; should be less browser-ish and more specific to the application.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mikx</div>
+<div class='content'>HTA&#39;s are great - at least for Intranet apps or anything needing more rights or the ability to use ActiveX.<br>Maybe Firefox could adopt something similar, some special level (like chrome) plus the power of XPCom.<br>http://msdn.microsoft.com/library/default.asp?url=/workshop/author/hta/overview/htaoverview.asp<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Steve K</div>
+<div class='content'>I suggested a new profile per app just so the webapp would look more like a separate app to the OS -- do multiple windows of the same app show up separately on OSX?  But maybe there are other ways to do this, as having access to your cookies/passwords/etc is certainly more important.<br>This is very close to what I have in mind:<br>http://chip.cuccio.us/projects/gcal/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Stuart Ballard</div>
+<div class='content'>It boggles my mind, actually, that with Firefox 2 it&#39;s *still* not possible to make mailto: links open in gmail (or any of the other webmail services). It integrates with Google Reader or Bloglines out of the box to allow subscription to RSS feeds - why not do the same thing for mail?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Purvis</div>
+<div class='content'>Handling file types is really important, but also stuff like drag-n-drop, proper clipboard access, etc. Unfortunately a lot of these raise some pretty serious privacy/security concerns, but they&#39;re major reasons to hang onto desktop apps for certain kinds of tasks.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Whao... That would be a killer feature for FF3 !<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Zach: great! Clearly this is an idea whose time has come :-)<br>Mark: It&#39;s debatable ... I think it would be good to keep the UI close to the browser UI, to ensure that the user experience stays consistent.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Katzer</div>
+<div class='content'>It looks like this is what Adobe is trying to do with their Apollo project.<br>http://labs.adobe.com/wiki/index.php/Apollo<br>It looks like it will allow you to deploy applications to the desktop using html / javascript and / or flash (uses webkit to render the html ;(  )<br>j<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Steve K</div>
+<div class='content'>Yes, I&#39;ve been thinking about the same thing -- an extension that would provide the hooks for a webapp to &quot;install&quot; itself as a desktop app.  Each application would get its own profile and launch its own instance of Firefox with a window that has no other chrome besides a browser -- or perhaps there could be hooks to add a native menu bar as well as other other standard desktop app stuff (application icon, drag and drop, etc...)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Drag and drop and clipboard can be handled reasonably safely. The WHATWG Web Apps 1.0 spec covers them. We should implement this just as a standard Web apps feature.<br>Steve: It seems to me we do want some integration with the browser. I think we probably want to use the user&#39;s regular profile, because there we have cookies, passwords and other settings that users probably want to share.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;d want to separate the trust and application issues, so that you can have untrusted applications that act more like desktop apps.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>SimonG</div>
+<div class='content'>Here here - launch from a desktop link please ...<br></div>
+</div>
+
+</div>

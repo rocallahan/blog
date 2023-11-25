@@ -1,0 +1,135 @@
+---
+layout: "post"
+title: "Implementing A High-Performance Emulator In Javascript Using Run-Time Code Generation"
+date: "2010-11-02 03:29:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/11/implementing-high-performance-emulator_01.html"
+---
+<div class="columns"><p>For a while I've been thinking about exploiting fast browser JITs and JS "eval()" to build really fast emulators and other language runtimes. Tonight I was feeling jumpy so I went ahead and <a href="http://people.mozilla.org/~roc/js-compiler.html">hacked something up</a>.<br/><p>I started by defining a really simple imaginary CPU instruction set, writing a simple program for that instruction set, and implementing a trivial interpreter to execute it. It executes 100M instructions in about 7.5 seconds (Firefox opt trunk on my laptop), which is already pretty good! But we can do a lot better.<br/><p>My idea is to write a trace compiler <em>in Javascript</em> for the emulated CPU. It's actually very easy. When we need to execute CPU instructions starting at a given PC address, we build up a string containing the Javascript code that needs to be executed for each instruction starting at the given address. I terminate the trace after any branch instruction. I then wrap the code string up into a function and call eval() on it to get a real Javascript function I can execute to get the effect of the trace. From there the browser JIT will compile my function into real native machine code, which I can call over and over again, every time control reaches that address. We're effectively translating from the emulated CPU all the way down to bare-metal x86, and in just a couple of hundred lines of JS! (Ok, plus the JS engine :-).) This very hacked-together compiler runs 100M instructions in about 1.2 seconds. That's a 6x speedup over the interpreter, but more importantly it means I'm getting over 80MIPS of performance, in the browser! Insane!!!<br/><p>The compiler is super-simple and it could probably be improved in many ways to get even better performance. The key optimization I implemented was to deal with the "cycle counter" my imaginary CPU has --- essentially an emulated interrupt timer that counts down once per instruction executed. I generate two versions of each trace --- one with cycle counter checks at each instruction, and another with all the checks removed and a simple guard at the top of the trace to ensure that the cycle counter won't fire before we reach the end of the trace; if the guard fails, we take the slow check-on-every-instruction path. The demo page shows the Javascript code that the compiler emits to do this.<br/><p>Of course, there isn't anything special about JS here, you could do the same thing with Java or .NET bytecodes, or in other languages with "eval". Still, since there are a lot of browser-based emulators out there, it would be cool to see people try this technique. It's hard to predict how well it would do in a real emulator, but I have hopes. Real CPU instruction sets involve more complex instruction decoding than my toy, and the trace compiler is able to hide that.<br/><p><strong>Update</strong> I thought of a couple more simple optimizations overnight, plus Jesse suggested one, so I implemented them all in about 15 minutes. Developing compilers with an edit/reload cycle is fun!<br/><ul><br/><li>Jesse suggested using "new Function(code)" instead of eval(). Total time now 1.05 seconds.<br/><li>I wrapped the body of each function in "while (true)". Then, wherever the trace sets the new PC to the PC at the start of the trace (i.e., it's a simple loop), we can replace that with "continue;" to actually loop inside our trace function without returning to the trace dispatch loop. Total time now 0.8 seconds.<br/><li>I turned the "memory" and "regs" arrays into JS typed arrays (using feature detection to fall back for older browsers). Total time now 0.65 seconds.<br/></ul><br/>So performance about doubled, now we're at 150MIPS. That's enough for one day!<br/><p>(For perspective, the maximum clock of my laptop CPU is about 3GHz, so we're executing one emulated instruction every 20 native processor cycles.That's amazing!)<br/><p>Oh, and just for kicks, totally unscientific benchmarks of other browsers. IE9 beta 1: interpreter 7.3 seconds, trace compiler 2.8 seconds. Chrome 7.0.517.41: interpreter 6.7 seconds, trace compiler 1.6 seconds. Neither of those browsers support typed arrays. I should note that typed arrays sped up the interpreter a lot in Firefox, now about 3.3 seconds.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>I bet using typed arrays instead of normal JS arrays effectively worked around bug 608733 and made us trace the main interpreter loop....  Hence the speedup on the interpreter part.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That&#39;s an option, sure. There&#39;s a huge range of strategies you could use for trace generation and optimization. I&#39;m not claiming mine&#39;s the best, this was just an experiment and demo.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rüdiger Plantiko</div>
+<div class='content'>I would love to test your example. But in Google Chrome and Firefox, I get &quot;ReferenceError: ArrayBuffer is not defined&quot;. In MSIE 8 and MSIE 7, I get an &quot;Object Error&quot;.<br>A little hint: Your test would work if you wrote  self.ArrayBuffer.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kanenas</div>
+<div class='content'>Why not break the trace only on &quot;back&quot; jumps?. In this way you preclude infinite loops from happening (only &quot;forward&quot; motion is allowed in traces), and you&#39;ll be able to trace through unconditional jumps.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jim B</div>
+<div class='content'>This is very cool, but the working set of the program is minuscule.  I&#39;ve written a few emulators in C and the programs that are being executed can be 8-20K instructions.  Of course only a small number of instruction sequences will be in play at a time, but it might be a few hundred.  Would the hot-spot cache keep this many routines alive at a time?<br>For instance, emulating a processor which itself is running a BASIC interpreter, the loop might be to look up a few variables by name, fetch their contents, perform a math op (say floating point add), store the result, increment a counter, test the counter, and loop.  Each piece would require dozens of instruction sequences to be executed.<br>If a few hundred sequences overwhelms the js generated code cache, then the speedup would be limited to whatever hotspots could be produced in a much smaller window, eg, the loop where the floating point mantissa is shifted and aligned, or the loop where the search is done to find the variable &quot;I&quot; in the symbol table.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Witold Baryluk</div>
+<div class='content'>I am using exactly same method in my Erlang to JS converter :)<br>I&#39;m using new Function(code), where code is some fragment of Erlang bytecode (BEAM) translated into JS, and which do not contain any branches. Quite easy and gives huge performance boost over simple switch over every opcode.<br>Could you please also benchmark your code in Opera 10.70 or 11?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Thanks for the tip Jesse!<br>Chris: fixed link.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>lobster</div>
+<div class='content'>It would be great to use typed arrays to write to the canvas.<br>Currently, writing a pixel to the canvas requires 4 array accesses, in order to write each sub-pixel value.<br>Writing the 32-bit color in 1 array access via typed array view of the canvas would be a great improvement.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Sounds cool!!!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>I&#39;d use &quot;new Function(s)&quot; rather than &quot;eval(s)&quot;.  eval&#39;s scoping rules hurt the JS engine.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>OK, I just tried &gt;&gt;&gt; 0 over &amp; 0xFFFFFFFF, and it&#39;s a significant perf hit for some reason.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Opera 11: the interpreter doesn&#39;t seem to work, the compiler gets 3.8 seconds.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yeah, typed arrays sped up the interpreter. I&#39;ll update the post.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris</div>
+<div class='content'>Hey the link is broken :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Oliver</div>
+<div class='content'>Typed Arrays sounds like an interesting feature to use.<br>But how to do feature detection of typed arrays in Javascript to avoid breaking the script with respect to other browser vendors?<br>Do you have a snippet of that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>phi2x</div>
+<div class='content'>I filed Bug 609965 because typed array access to 2D Canvas doesn&#39;t seem to work on Firefox nightly.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Oliver: It&#39;s there in the demo --- &quot;if (ArrayBuffer)&quot;<br>lobster: yes!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mark Thomson</div>
+<div class='content'>Or you could try sleeping. But thanks :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gregor Richards</div>
+<div class='content'>A year ago or so I wrote something similar, for MIPS: http://codu.org/projects/jsmips/ . I haven&#39;t measured the, err, MIPS of my JSMIPS emulator, but it uses the same basic technique of JITting to JavaScript code and eval&#39;ing that. Plus JSMIPS can run a substantial subset of UNIX (the original idea was to run vim in a browser; I can in fact run vim in a browser now, but it&#39;s pretty darn slow :( )<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Grant Galitz</div>
+<div class='content'>Thanks for demonstrating that this kind of optimization can be done. Now I&#39;ll work on fast-tracking some fixes to my js gameboy color emulator, so that I can start work on optimizing the instruction execution.<br>Thanks<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Grant Galitz</div>
+<div class='content'>ROC: I&#39;m trying to see how I&#39;d JIT the GameBoy Color CPU op codes, since there&#39;s very very tight synchronization between certain LCD status flags and the sub-scan line rendering, which complicates a simple JIT implementation. Anyways, the GameBoy Color emulation is way faster than before, even though it&#39;s still interpreter all the way, due to crazy and liberal application of typed arrays (Video code too now). Anyhow, I timed my emulator against other js gameboy emulators, and so far it wins. I&#39;m wondering if JIT would still apply here since the bit-state flags could be branchy for the JIT.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ben</div>
+<div class='content'>Strange... Here I get 1247ms for trace compile but just 4555ms for interpreter — a 3.65x speedup. (1.6GHz Merom)<br>Did a lot of retires (stable results) and tested sanity using external clock.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>It&#39;s a simple way of controlling trace length. If you trace through unconditional branches, then you have to do something to ensure tracing stops when it encounters an infinite loop.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>You want (x &gt;&gt;&gt; 0) instead of (x &amp; 0xffffffff), just for source brevity, but it should also win some perf too.<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Grant Galitz</div>
+<div class='content'>Yeah, though as an example, the GameBoy / GameBoy Color contains somewhere under 512 op codes (Main + CB).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Screwtape</div>
+<div class='content'>Out of curiosity, why do you stop tracing after every branch, rather than just after conditional branches? It seems like that wouldn&#39;t be much harder, and would generate more useful traces (ISTR that&#39;s what TraceMonkey did originally, too)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Grant Galitz</div>
+<div class='content'>ROC: I&#39;m wondering if this method is still good for the js gameboy color emulator. hmm. First though, I&#39;m working on optimizing the interpreter (interpreter core should come before the tracer, from my understanding). Traditional optimizations like compiling the conditional memory banking to anonymous after their types have been detected seems to work for me (20% CPU win).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>azakai</div>
+<div class='content'>Cool stuff!<br>The plan is for Emscripten, an LLVM-to-JS compiler, to use the same technique. The compiler is written in JS, and it already takes advantage of that by being able to run the same JS code during compilation and during running. Later on this will include generating JS code at runtime in an optimized way, and then exactly as in your demo here, eval() will let the JS engine JIT turn that into native code.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>It&#39;s certainly true that the JS JIT&#39;s code cache could be an issue.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>http://www.gtoal.com/sbt/</div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>&gt; OK, I just tried &gt;&gt;&gt; 0 over &amp; 0xFFFFFFFF, and it&#39;s a significant perf hit for some reason.<br>Bug on file? Link for your fans to follow...<br>/be<br></div>
+</div>
+
+</div>

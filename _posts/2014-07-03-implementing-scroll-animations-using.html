@@ -1,0 +1,40 @@
+---
+layout: "post"
+title: "Implementing Scroll Animations Using Web Animations"
+date: "2014-07-02 21:10:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/07/implementing-scroll-animations-using.html"
+---
+<p>It's fashionable for apps to perform fancy animations during scrolling. Some examples:
+<ul>
+<li><a href="http://www.creativebloq.com/web-design/parallax-scrolling-1131762">Parallax scrolling</a>
+<li>Sticky headers that scroll normally until they would scroll out of view and then stop moving
+<li>Panels that slide laterally as you scroll vertically
+<li>Elements that shrink as their available space decreases instead of scrolling out of view
+<li>Scrollable panels that resist scrolling as you get near the end
+</ul>
+<p>Obviously we need to support these behaviors well on the Web. Also obviously, we don't want to create a CSS property for each of them. Normally we'd handle this diversity by exposing a DOM API which lets developers implement their desired behavior in arbitrary Javascript. That's tricky in this case because script normally runs on the HTML5 event loop which is shared with a lot of other page activities, but for smooth touch tracking these scrolling animation calculations need to be performed reliably at the screen refresh rate, typically 60Hz. Even for skilled developers, it's easy to have a bug where once in a while some page activity (e.g. an event handler working through some unexpected large data set) blows the 16ms budget to make touch dragging less than perfect, especially on low-end mobile devices.
+<p>There are a few possible approaches to fixing this. One is to not provide any new API, hope that skilled developers can avoid blowing the latency budget, and carefully engineer the browser to minimize its overhead. We took this approach to implementing homescreen panning in FirefoxOS. This approach sounds fragile to me. We could make it less fragile by changing event dispatch policy during a touch-drag, e.g. to suppress the firing of "non-essential" event handlers such as setTimeouts, but that would add platform complexity and possibly create compatibility issues.
+<p>Another approach would be to move scroll animation calculations to a Worker script, per <a href="https://github.com/ianvollick/animation-proxy/blob/master/Explainer.md">an old high-level proposal from Google</a> (which AFAIK they are not currently pursuing). This would be more robust than main-thread calculations. It would probably be a bit clumsy.
+<p>Another suggestion is to leverage the Web's existing <a href="http://dev.w3.org/fxtf/web-animations/">and proposed</a> animation support. Basically we would allow an animation on an element to be use another element's scroll position instead of time as the input to the animation function. Tab Atkins proposed this with declarative CSS syntax a while ago, though it now seems to make more sense as part of Web Animations. This approach is appealing because this animation data can be processed off the main thread, so these animations can happen at 60Hz regardless of what the main thread is doing. It's also very flexible; versions of all of the above examples can be implemented using it.
+<p>One important question is how much of the problem space is covered by the Web Animations approach. There are two sub-issues:
+<ul>
+<li>What scrolling effects depend on more than just the scroll position, e.g. scroll velocity? (There certainly are some, such as headers that appear when you scroll down but disappear when you scroll up.)
+<li>For effects that depend on just the scroll position, which ones can't be expressed just by animating CSS transforms and/or opacity as a function of the scroll position?
+</ul>
+If people are aware of scrolling effects in either of those two categories, it would be very useful to hear about them.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>kats</div>
+<div class='content'>I was just talking to Miller today about this scrolling effect he wanted to do in the Gaia calendar app. It&#39;s basically position:fixed along a single axis (so the element is stuck at the top of the viewport, but scrolls horizontally with content). It didn&#39;t seem like it was possible to do with existing CSS but it might be possible with this web animations stuff? I haven&#39;t looked into the spec to figure out if it&#39;s doable or not.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>You can pretty much do that with position:sticky.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Hi, I believe the animations of the Google+ cards (as seen for example on the android app, but not on the web application I believe) depend on velocity/acceleration, as they have an accelerating/breaking effect which depends on the scroll speed.</div>
+</div>
+
+</div>

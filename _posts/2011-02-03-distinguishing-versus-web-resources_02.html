@@ -1,0 +1,52 @@
+---
+layout: "post"
+title: "Distinguishing &quot;Embeddable&quot; Versus &quot;Readable&quot; Web Resources Considered Harmful"
+date: "2011-02-02 15:26:00 +0000"
+categories: "Mozilla"
+permalink: "/2011/02/distinguishing-versus-web-resources_02.html"
+---
+<p><em>Sorry for the "<a href="http://meyerweb.com/eric/comment/chech.html">considered harmful</a>" title, but I haven't had time to think of a better one!</em>
+<p>The Web platform distinguishes between "embeddable" and "readable" resources. Traditionally cross-origin subresource loads, such as image loads, produce a resource that is "embeddable" (e.g. rendered) but not "readable" (i.e. exposing the conents of the resource to the containing page).
+<p>However, the distinction between "embedding" and "reading" is arbitrary, because "embedding" almost always leaks some information about the resource. For example, cross-origin image loads leak the size of the image and whether it exists. When we design new Web APIs we have to decide whether they should be allowed for embeddable-but-not-readable resources, and if they are allowed, whether any information leak is tolerable --- or else we design some mechanism to control the spread of the information leak. For example, the HTML5 canvas spec allows cross-origin images to be drawn to a canvas, but prevents the ultimate leak of pixel data by "<a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#security-with-canvas-elements">tainting</a>" the canvas so that getImageData no longer works.
+<p>Unfortunately, this design process has problems. Sometimes combinations of features extend the spread of information into a full leak; for example, by combining <a href="http://lists.w3.org/Archives/Public/www-svg/2008Sep/0112.html">CSS pointer-events, SVG filters, IFRAMEs, and DOM APIs</a> you might be able to extract image pixel data cross-origin.
+<p>Every time we declare that some leak of information is "tolerable", we implicitly create strange requirements for Web authors, for example "secret information must not be correlated with the sizes of any images at guessable URLs in your intranet". As another example, if we decide that fonts are innocuous and create an API that gives Web authors full access to the contents of a cross-origin-loaded font, we implicitly declare that for all time, fonts will not and must not contain origin-private data. Such decisions seem dangerous to me; they're bets against serendipity and the ingenuity of attackers.
+<p>Needless to say, every time we create restrictions or workarounds for embeddable-but-not-readable resources, we add complexity for Web authors, who, for example, may be surprised when canvas's getImageData fails due to an invisible taint bit, quite removed from the drawImage that set the taint bit.
+<p>Worst of all, it seems to me that this distinction between "embedding" and "reading" has very limited usefulness beyond compatibility with legacy requirements. What are use-cases where an author wants their resources to be embeddable cross-origin, but doesn't want other sites to be able to read the contents of the resources? The only case I can think of is "IFRAME widgets" that contain user data private to a different origin to the enclosing page. In those cases the IFRAME needs to be embeddable but retain its integrity against intrusion by the enclosing page. This use-case is actually not well-served by the IFRAME API, which suffers from serious deficiencies such as clickjacking. I don't know of any use-cases for an embedding vs reading distinction with other APIs.
+<p>I don't think the distinction between "embedding" and "reading" was a conscious design decision. It seems that when &lt;img&gt;, &lt;script&gt; and &lt;style&gt; first appeared, cross-origin loads were allowed because no-one had thought of the problems that would arise. Then when APIs emerged that allowed reading the full resource data (e.g. XHR and getImageData), we realized we couldn't allow that cross-origin, but we couldn't break compatibility with cross-origin embedding, so we were forced to distinguish between embedding and reading.
+<p>We're saddled with this distinction for existing APIs. However, I think we shouldn't perpetrate it in new APIs (or any API where the compatibility burden of discarding it is low). I think in new Web APIs we should refuse to distinguish between embeddable and readable resources unless there are significant use-cases that require it. In practice, since readability usually needs to default be same-origin only, we will usually need to default to denying cross-origin embedding, and let sites opt-in to cross-origin reading and embedding using CORS or some other mechanism.
+<p>People I respect disagree, on the grounds that allowing cross-origin embedding for new resource types is more consistent with existing practice and author expectations. Their point is valid but I think that consistency is outweighed by the problems above.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Erik Dahlström</div>
+<div class='content'>I think you make some very good points here, these things need to be taken into consideration when designing/extending web standards.<br>For people not on the www-svg mailinglist I&#39;d like to point out that SVG filters are meant to have no affect on pointer-events processing whatsoever.<br>http://lists.w3.org/Archives/Public/www-svg/2011Feb/0005.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul</div>
+<div class='content'>A good example of &quot;embedding&quot; and &quot;reading&quot; confusion:<br>https://grepular.com/Abusing_HTTP_Status_Codes_to_Expose_Private_Information<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anne van Kesteren</div>
+<div class='content'>I posted a reply of sorts: http://annevankesteren.nl/2011/02/web-platform-consistency<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Danny Moules</div>
+<div class='content'>I agree broadly with the points you make, especially this:<br>&quot;Such decisions seem dangerous to me; they&#39;re bets against serendipity and the ingenuity of attackers.&quot;<br>The assumption that because these are edges cases they can be ignored is incorrect and potentially dangerous, if not terribly confusing. This is true of all API development.<br>When moving into the future we need to make the best choices we can. If we opted to bow to IE6&#39;s interpretation of specifications, in light of the hardship of rejecting it, where would we be now...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>With the current approach we&#39;re adding complexity to the platform anyway, as we discover and work around the information leaks from embedded-but-not-readable resources. :-(<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian Hickson</div>
+<div class='content'>I think the consistency argument has to be given a lot of weight, because otherwise each generation of Web standards people will bring with it a whole new set of API styles, and we&#39;ll end up with a platform that is nigh on impossible to intuitively understand. We&#39;re already there in many ways, in fact.<br>I don&#39;t know which argument is strongest in this particular case. Luckily, it&#39;s not my problem for once. :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Treponemiatic Yaqui</div>
+<div class='content'>Have you considered making your text a single, easily readable column which your users can control the width of?  It&#39;s insane only having three words per line.<br>There is a reason why no other site on the internet has adopted your layout.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>roricka</div>
+<div class='content'>Could someone please tell me -- when I read an image from an IP camera and put that .jpg into a canvas...is there a way to read the pixels using getImageData()? Is the reason it fails because of this cross-origin problem? I barely understand this thread -- but I do have the job of interpreting the images coming from this camera. Can someone PLEEEEZE suggest a way to do it? Thx.</div>
+</div>
+
+</div>

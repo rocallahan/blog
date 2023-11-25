@@ -1,0 +1,31 @@
+---
+layout: "post"
+title: "Relax, Scaling User Interfaces By Non-Integer Scale Factors Is Okay"
+date: "2014-11-13 11:48:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/11/relax-scaling-user-interfaces-by-non.html"
+---
+<p>About seven years ago we implemented "full zoom" in Firefox 3. <a href="http://robert.ocallahan.org/2007/02/units-patch-landed_07.html">An old blog post</a> gives some technical background to the architectural changes enabling that feature. When we first implemented it, I expected non-integer scale factors would never work as well as scaling by integer multiples. Apple apparently thinks the same, since (I have been told) on Mac and iOS, application rendering is always to a buffer whose size is an integer multiple of the "logical window size". GNOME developers apparently also agree since their <tt>org.gnome.desktop.interface scaling-factor</tt> setting only accepts integers. Note that here I'm conflating user-initiated "full zoom" with application-initiated "high-DPI rendering"; technically, they're the same problem.
+<p>Several years of experience shows I was wrong, at least for the Web. Non-integer scale factors work just as well as integer scale factors. For implementation reasons we restrict scale factors to 60/N for positive integers N, but in practice this gives you a good range of useful values. There are some <a href="http://robert.ocallahan.org/2008/10/hating-pixels_13.html">subtleties</a> to implementing scaling well, some of which are Web/CSS specific.
+<p>For example, normally we snap absolute scaled logical coordinates to screen pixels at rendering time, to ensure rounding error does not accumulate; if the distance between two logical points is N logical units, then the distance between the rendered points stays within one screen pixel of the ideal distance S*N (where S is the scale factor). The downside is that a visual distance of N logical units may be rendered in some places as ceil(S*N) screen pixels and elsewhere as floor(S*N) pixels. Such inconsistency usually doesn't matter much but for CSS borders (and usually not other CSS drawing!), such inconsistent widths are jarring. So for CSS borders (and only CSS borders!) we round each border width to screen pixels <em>at layout time</em>, ensuring borders with the same logical width always get the same screen pixel width.
+<p>I'm willing to declare victory in this area. Bug reports about unsatisfactory scaling of Web page layouts are very rare and aren't specific to non-integral scale factors. Image scaling remains hard; the performance vs quality tradeoffs are difficult --- but integral scale factors are no easier to handle than non-integral.
+<p>It may be that non-Web contexts are somehow more inimical to non-integral scaling, though I can't think why that would be.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Anne van Kesteren</div>
+<div class='content'>With iPhone 6 Plus there&#39;s an interesting divergence between what is exposed to software (3x) and what is output to the screen (2.7x or some such) so it seems like Apple gave up as well, though I wonder if they will keep doing that. I suspect that if they could have gotten a 3x screen they would have used that.</div>
+<div class='comment'>
+<div class='author'>Anne van Kesteren</div>
+<div class='content'>Whatever the reason is, it seems to validate the point you do not need an integer multiplier. For rendering to the screen anyway, for developers it might still more convenient if it is an integer.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;ve heard everything gets rendered at 3x and then downscaled by the GPU to the screen size. I assume Apple has a good reason for this but I don&#39;t know what it is.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>DaveH</div>
+<div class='content'>I heard that Apple is just working on gross percentages and accepting that there will therefore be a nominal percentage of errors... but it&#39;s prepared to live with them.</div>
+</div>
+
+</div>

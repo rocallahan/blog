@@ -1,0 +1,99 @@
+---
+layout: "post"
+title: "Retained Layers"
+date: "2010-07-16 17:02:00 +0000"
+categories: "Mozilla"
+permalink: "/2010/07/retained-layers_16.html"
+---
+<div class="columns"><p><a href="http://hg.mozilla.org/mozilla-central/pushloghtml?fromchange=92339b84d089&tochange=e1d7fd5255fd">Retained Layers</a> has landed and seems to have stuck.<br/><p>In a <a href="/2010/04/layers.html">previous post</a> I talked about our layers framework. Up until now we've constructed a new layer tree on every paint. With retained layers, we update our layer tree incrementally as content changes in the window. More importantly, we are able to cache the contents of layers. So for example if you have an element with partial opacity, we can cache the rendering of that element in a layer and every time you paint (perhaps with a different opacity each time), we can paint the cached contents without rerendering the element. This provides noticeable speedups for some kinds of fade effects. When we use layers to render CSS transforms, we'll get speedups there too.<br/><p>One side effect is that we were able to totally reimplement scrolling. Our current scrolling code relies on shifting pixels around in the window for speed, and that often doesn't work well, for example on pages where scrolling content overlays stationary content or vice versa. It's also prone to visible tearing on some platforms because we can't scroll and repaint in a single atomic paint operation. But now, our retained layer tree effectively contains the entire window contents pre-rendered. We can scroll by just adjusting the offsets of some layers and recompositing the layer tree. (Well, almost ... it's slightly more complicated.) This is a relatively simple approach. It eliminates tearing. It lets us aggressively accelerate the scrolling of nasty scrolling pages with complex contents, because we're able to separate the moving content into different layers from the non-moving content and scrolling becomes a matter of simply repainting the scrolled-into-view strip of the moving content and then blending layers together. We're seeing significant improvements in scrolling many kinds of pages. Soon I hope to blog again with more about how this works, what it can do and what the current limitations are.<br/><p>Immediate improvements are nice, but the most important benefit of retained layers is that it lays down infrastructure we will be exploiting in all kinds of ways. Our D3D and GL layer implementations benefit from reducing browser rendering and caching more rendered content in layer buffers, since compositing buffers is very cheap with GPUs. With those backends, because scrolling is fully layer-based, it will be accelerated by the GPU! Chris Jones is working on enabling layer composition to be in a dedicated process, at which point we'll be able to scroll without synchronizing with the Web content process --- in particular we'll be able to maintain a constant frame rate of smooth scrolling no matter what the Web content is doing, i.e. super-smooth. This will especially benefit Fennec. Fennec will also benefit because its current tile-caching implementation can be replaced with something layer-based; our layer-based scrolling permits the layer manager to cache prerendered content that's not (yet) visible.<br/><p>Before we ship the next Firefox release there are a few regressions to work on and some performance and quality knobs to tweak. But I'm feeling quite relieved, since this was one of the long poles for that release and the one I've been most on the hook for.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Mike Beltzner</div>
+<div class='content'>Congratulations, Roc! This is a great foundational change for the platform. Woo!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Mike: yes, we consume a bit more memory for retained layers. But we keep the increase to a minimum by only creating layers for stuff that&#39;s visible, and distinguishing between &quot;static&quot; content that&#39;s not changing and doesn&#39;t need its own layers and &quot;dynamic&quot; content that is changing and needs its own layers. Also note that for GL and D3D backends we&#39;re only consuming more *video* memory which is a separate pool that we hardly use at all currently.<br>Stefan: fixed.<br>Mike Ratcliffe: &quot;It seems like most everything in Firefox is going to be hardware accelerated and that can&#39;t be a bad thing.&quot; ... well, it can! doing things on the GPU isn&#39;t always the best approach.<br>robome: it&#39;ll be in the next Gecko release, which I believe is going to be called Gecko 2.<br>Alfred: yes, our D3D9 layers backend works on Windows XP.<br>&quot;even with the hardware acceleration, scrolling is now very smooth in Firefox on Windows XP&quot; --- I think you meant &quot;without&quot;. Hardware accelerated browser windows are not enabled yet unless you do something special (and then they probably don&#39;t work very well!).<br>Markus: Yes, we&#39;re using CGLayers now. That may account for the 8-9% Tp win we saw. In cairo we flip the Coregraphics transformation matrix to get around those problems.<br>Livio: yes, our GL backend works on Linux, at least on some hardware and drivers. Fullscreen video uses it already.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Most of what compositor was going to be has been done in various pieces already, or will be done shortly.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike</div>
+<div class='content'>Great work, Robert!<br>But what about memory tradeoff for retained Layers?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Depends on what you mean by &quot;detectable&quot;. Scrolling is detectable by reading element.scrollTop, but basically we just let the rendering lag behind what is exposed to script.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>robome</div>
+<div class='content'>I followed the scrolling lag and tearing theme for years now and every now and then it got a bit better.<br>But this, Robert, this is different. It&#39;s the best thing since sliced bread, really! There might be a bug hidden here or there but this rework resolves issues on all the pages I bookmarked for this kind of issues.<br>So did already I say I&#39;m pleased and happy? Thanks for all this hard work!<br>BTW, will this be Gecko 2 only or 1.9.x too?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alfred Kayser</div>
+<div class='content'>Even with the hardware acceleration, scrolling is now very smooth in Firefox on Windows XP, even in the new extension manager (which had some serious scrolling issues).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Stefan Fleiter</div>
+<div class='content'>Congratulations on landing this!<br>I look forward to enjoying the improvements with Firefox 4.<br>PS:<br>The &quot;previous post&quot; link is broken and should probably be http://weblogs.mozillazine.org/roc/archives/2010/04/layers.html.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Richard Ayotte</div>
+<div class='content'>Awesome stuff! Can&#39;t wait to see this in action.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Ratcliffe</div>
+<div class='content'>I did not realize that it is possible to cache the different layers, that should speed everything in the browser up quite significantly if good use is made of it.<br>It seems like most everything in Firefox is going to be hardware accelerated and that can&#39;t be a bad thing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Marko</div>
+<div class='content'>Is retained layers the same thing as compositor?  Or does compositor consist of other things?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Plugins have two modes: windowed and windowless. Windowed plugins get a platform native window --- an X window on Linux --- which essentially floats above the browser&#39;s own content in the browser window. We do some tricks to make opaque Web content that&#39;s supposed to be above the plugin visible by punching holes in the plugin&#39;s window, but as you have probably observed, there&#39;s not much you can do.<br>Windowless plugins integrate much better with the browser&#39;s rendering pipeline because we can get the plugin&#39;s rendered pixels and process them any way we need. But for video rendering, windowless doesn&#39;t perform as well because current windowless plugin rendering relies on having the plugin draw into an X pixmap, so it&#39;s hard for the plugin to use GL for acceleration. We need a new windowless plugin drawing API that lets the plugin use GL and lets us get the GL FBO or whatever and render it in our own GL pipeline. We&#39;re still getting our GL pipeline up for regular browser windows (we use it for fullscreen video already); once we&#39;ve done that, we&#39;ll be proposing a GL drawing API for windowless plugins.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jean</div>
+<div class='content'>Hi, I&#39;m late to the party.<br>Excellent work!<br>Will GPU-accelerated scrolling use Core Animation on OS X, or are you implementing your own GL code for this?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Markus Stange</div>
+<div class='content'>Congratulations on landing!<br>By the way, are we using CGLayers on Mac now? If so, how did you solve the flippedness problem you mentioned in that other blog post?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesús Alonso</div>
+<div class='content'>Ah, didn&#39;t know that. Thanks a lot for the detailed reply :) Are the changes to the GL pipeline scheduled for a post-FF4 final or will be a feature of the gold version?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>bastiaan</div>
+<div class='content'>Good stuff! With today&#39;s nightly, the transition of the banner image on http://eff.org (takes +- 10 seconds to change) is now quite pleasant with a non-default zoom. It used to render Firefox quite unusable.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brad</div>
+<div class='content'>Roc, Awesome job and congrats. We really appreciate your efforts<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Toe</div>
+<div class='content'>One thing I&#39;m noticing on 4b2 that might be related to this: text scrolling on overflow:scroll elements looks poor - bad anti-aliasing, I think.  It looks fine when the whole page is scrolled, but not when the element itself is scrolled.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian Hickson</div>
+<div class='content'>I&#39;ll try to keep an eye out for anything that makes scrolling detectable from the event loop and ensure we don&#39;t add anything like that if we haven&#39;t already.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alfred Kayser</div>
+<div class='content'>Amazing work!<br>Will there also be hardware acceleration for Windows XP?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesús Alonso</div>
+<div class='content'>Very clever approach, sounds great :3<br>I&#39;m curious about layered plugins. On Linux, Flash, VLC, etc. are all rendered always on top of other layers, regardless of their layer&#39;s position/order. Will these changes solve this artifact? We&#39;re working on a project heavily involved with video streaming and, given the HTML5 real-time video streaming support is still quite buggy for a workaround, the best approach would be to use one of such plugins, but we can&#39;t use them as nothing can be rendered on top of it right now :(<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Livio</div>
+<div class='content'>These are phenomenal news. I also hope for some GPU hardware acceleration on Linux. Will be appreciated!<br></div>
+</div>
+
+</div>

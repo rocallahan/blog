@@ -1,0 +1,51 @@
+---
+layout: "post"
+title: "CSS Gradient Syntax"
+date: "2009-11-04 00:21:00 +0000"
+categories: "Mozilla"
+permalink: "/2009/11/css-gradient-syntax_03.html"
+---
+<div class="columns"><p>We landed support for a form of CSS gradients on trunk a while ago, but we got considerable feedback that our syntax --- which was an incremental improvement of Webkit's syntax, which basically exposes a standard gradient API in the most direct possible way --- sucked. A bunch of people on www-style got talking and Tab Atkins produced a <a href="http://www.xanthir.com/:4bhipd">much better proposal</a>. Since we haven't shipped our syntax anywhere yet, dropping it and implementing Tab's syntax instead was a no-brainer. So Zack Weinberg, David Baron and I did that (using a -moz prefix of course), and today it landed on trunk. It should land on the Firefox 3.6 branch shortly. It's unfortunate to land something new like this after the last beta, but in this case, it seems like the right thing to do instead of shipping CSS gradient syntax that we know nobody wants.<br/><p>This does mean that anyone who's currently using -moz-linear-gradient or -moz-radial-gradient on pages is going to find that their syntax doesn't work anymore. Hopefully that's not too many people yet.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Kroc Camen</div>
+<div class='content'>I&#39;m using a couple of gradients, but that&#39;s no problem to adapt. It will most likely be skin writers who will have to adjust a lot of gradients, but I&#39;m totally for changing the syntax--it truly is bad. I&#39;ve never used something so complicated and unforgiving in CSS. The fact you can&#39;t specify the gradient height in the points (only 0 or 100% allowed) means you have to use background-size and position to make a 100px high gradient attached to the bottom of an element.<br>I don&#39;t like the idea of having separate declarations for repeating gradients, I would instead suggest that if the first parameter is &quot;repeat&quot;, then the gradient will be repeated.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Loban Rahman</div>
+<div class='content'>Love the new syntax - it gets rid of a lot of unnecessary clutter. And migrating was easy - just one big regular-expression find-and-replace. :-D<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rich Bradshaw</div>
+<div class='content'>Is this the syntax implemented in Fx from now on? Currently the old syntax (webkit-like) works - is that to be phased out in favour of this one?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jim Robert</div>
+<div class='content'>I like the new syntax very much! Can&#39;t wait until a certain group of sluggish devs in near seattle get around to adopting it:)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>MarkC</div>
+<div class='content'>I would also prefer a parameter to specify whether the gradient repeats. Ideally it would be optional (defaulting to no-repeat), but otherwise would take [no-repeat|repeat|reflect].<br>Note that I&#39;ve added &quot;reflect&quot; there. Whichever approach is taken, whether a new parameter or the addition of reflected-linear-gradient() and reflected-radial-gradient(), I think that reflected gradients are well worth adding. Reflected is like repeated, but the stops are reversed in each iteration such that the end stop of the first iteration is the same as the start of the second.<br>I do quite a bit of work in SVG using Inkscape, and find I use the reflected gradients far more than the repeating gradients.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Rich: It is implemented on trunk, and it will appear on the 3.6 branch in a day or three.<br>MarkC: you can at least do &quot;reflect&quot; by just repeating the gradient stops backwards.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>MarkC</div>
+<div class='content'>Yes, I can do my own reflected gradients - but that then requires me to keep both halves in synch if I make any changes. It&#39;s not difficult, but it would be nice if I didn&#39;t have to think about it.<br>In the longer term, whilst linear and radial gradients are a huge improvement over no gradients at all, it would be great to have other gradient types available. I can see immediate uses for &quot;square&quot; gradients (&#39;picture frames&#39; whose colours can be changed programmatically) and four-point gradients (set the four corner colours and the background is interpolated automatically).<br>And there are other gradient types: although I can&#39;t foresee any personal need for conical or spiral gradients in CSS backgrounds, I&#39;m sure someone else could make use of them - hypnotic Austin Powers time machine animations, for example ;-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Balogh</div>
+<div class='content'>Damn, that sucks that some of my pages are broken now.  But I agree that the new syntax looks much better, so thanks for being so quick to drop the old way.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kL</div>
+<div class='content'>New syntax is great!<br>BWT, people: You can use both old and new syntax. Browser will parse the one it understands, and skip the other one.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>seo perth</div>
+<div class='content'>I had my shares of trouble with Gradient style CSS. Thanks to this syntax, I can navigate better so thanks.</div>
+</div>
+
+</div>

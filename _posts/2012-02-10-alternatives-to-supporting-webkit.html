@@ -1,0 +1,86 @@
+---
+layout: "post"
+title: "Alternatives To Supporting -webkit Prefixes In Other Engines"
+date: "2012-02-09 21:03:00 +0000"
+categories: "Mozilla"
+permalink: "/2012/02/alternatives-to-supporting-webkit.html"
+---
+<p>Since news spread that the non-Webkit browser vendors are moving towards supporting some -webkit-prefixed properties, lots of people are pushing back with alternative suggestions, for example <a href="http://www.glazman.org/weblog/dotclear/index.php?post/2012/02/09/CALL-FOR-ACTION%3A-THE-OPEN-WEB-NEEDS-YOU-NOW">Daniel Glazman</a>. Many of these are good suggestions, but here's why they won't work for the properties like transitions, animations, and transforms already in wide use:
+<ul>
+<li><strong>Evangelize Web developers to not use prefixed properties on production sites.</strong> This is swimming upstream against trends in Web development and market forces. At every Web dev conference I've been to, on almost every Web dev site (including browser vendor's own sites), Web developers are encouraged to use vendor-prefixed properties. Web developers who refrain will lose business to Web developers who don't. Ergo, not going to happen.
+<li><strong>Evangelize Web developers to use prefixed properties with "all browsers' prefixes" (sometimes automatically through preprocessing tools or even CSS extensions).</strong> This would help in some ways, but despite us browser vendors and a large chunk of the Web dev community pushing this approach for a long time, even with tool support, Web devs don't do it consistently enough. Even when we specifically contact big, clueful sites we have a good relationship with (like Google) to get this fixed, we often don't succeed. So I don't think one more passionate (angry?) round of evangelism is going to make the difference. Of course evangelism can't help with sites that are no longer actively developed.
+<p>This approach has a big downside, too: it can severely limit the usefulness of prefixes in the first place. As soon as one browser implements a feature with given syntax, Web content can start assuming all other browsers use the same syntax and semantics, which forces those browsers to behave exactly as if the feature had been deployed unprefixed in the first place --- especially when Web developers include the unprefixed syntax as a "fallback" in case prefixed support is removed. Even if we could succeed at the evangelism, with this approach we might as well have not used prefixes in the first place.
+<li><strong>Teach Web developers not to rely on vendor prefixes by dropping support for them once standard versions exist.</strong> Webkit people have already said they won't do this. Furthermore, it encourages Web developers to go the "all prefixes plus standard name" route for everything they do, which makes prefixes pointless, as explained above. Doesn't help with deployed content anyway.
+<li><strong>Ignore the problem and hope that it goes away without us having to do anything distasteful</strong>. Um.
+</ul>
+<p>Some of the suggestions for things we could do in the future are good, like disabling experimental features in browser releases, but they won't help us out of the current situation. Maybe I'll discuss them in another post.
+<p>Note that trying alternatives that end up failing will have a huge cost to the open Web: it will delay the onset of a multi-vendor mobile Web, which is critically needed for the open Web to survive. I hate having to support -webkit prefixes, but "desperate evangelism while the problem gets worse, followed by supporting -webkit prefixes" would be even worse.
+<p>Meanwhile, to the people who think the solution is for Mozilla and others to just "work harder" at evangelism, or implementation, or standards work --- I cast aspersions in your direction. You have no idea how hard we work. I personally have never worked harder in my life, and I know that's true for many other Mozilla people. We hire more people, but the workload increases even faster. Meanwhile, Apple <a href="http://lists.w3.org/Archives/Public/www-style/2012Feb/0356.html">won't even hire a single full-time standards editor</a> to help their proposed CSS properties reach standardization, which is a large part of what got us into this mess in the first place.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Neil Rashbrook</div>
+<div class='content'>Indeed, a non-temporary prefix is as bad as any other non-standard addition. If only prefixes were versioned so that they would automatically time out...</div>
+</div>
+<div class='comment'>
+<div class='author'>AV</div>
+<div class='content'>it happens with most of the demos around for animations and 3d transforms. Keep us updated with these problems.
+1)Is possible to see the date the page (or the CSS) is written? Otherwise non webkit browser could support -webkit- (when the syntax is equal to -moz-) only for old pages, precedent to the implementation. For example for 3d css it would be only for pages old a month.
+2)Or introduce little bugs, for 3d transforms it would be something like incredibly ugly aliasing, the page still works but a decent developer should think why is incredibly bad...</div>
+</div>
+<div class='comment'>
+<div class='author'>squib</div>
+<div class='content'>Comedy solution: support -webkit prefixes but make it trigger a notification of some kind telling the user to berate the website owner for writing bad CSS.</div>
+<div class='comment'>
+<div class='author'>Mario De Roma</div>
+<div class='content'>this came out of irony, but with a non-obnoxious notification it could set the record straight without confusing people even more.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Dr. Insano</div>
+<div class='content'>Vendor prefixes have completely failed. What is the point of adding something &quot;temporary&quot; that will never be removed? It just makes life more difficult for developers and forces you to write ugly code. 
+
+Sadly, this has also affected JavaScript API&#39;s lately. Thank god that this did not happen a couple of years ago or we would all be writing &quot;new MozXMLHttpRequest();&quot; etc
+
+It is time to get rid of vendor prefixes. This would force developers to really update websites if the specification would change (how often does this happen anyway).</div>
+</div>
+<div class='comment'>
+<div class='author'>jto</div>
+<div class='content'>I love the direction these comments instantly started going! More comedy solutions:
+
+1) Support -webkit prefixes, but if any are present, strip all the ads out of the page. Google at least would fix their pages pretty quickly.
+
+2) Send a cake to Apple containing nanobots programmed to... nah, that wouldn&#39;t work.
+
+3) Implement -webkit prefixes in JS, using document.all.
+
+4) Implement -webkit prefixes, but only if the page contains a &lt;meta WEBKIT IS THE RADDEST!!!&gt; tag.
+
+5) Convince Microsoft to use its patents on the business process of screwing over the Web to force Webkit to abandon vendor prefixes.
+
+Of course none of this has the slightest thing to do with reality.</div>
+</div>
+<div class='comment'>
+<div class='author'>Yuhong Bao</div>
+<div class='content'>The funny thing is that the idea of vendor prefixes dates back to Q3 1998 (from the URLs on the http://hsivonen.iki.fi/doctype/ page), just after HTML 4.0 became a recommendation, for example.</div>
+</div>
+<div class='comment'>
+<div class='author'>thinsoldier</div>
+<div class='content'>#1 All vendors halt work on any other feature they were thinking of using a vender prefix for.
+
+#2 All vendors collaborate and focus on bringing the standards definition and their implementations of existing vendor prefixed features to 100% compatibility.
+
+#3 All vendors simultaneously release updates that ignore their vendor prefix for those features. (what&#39;s this really going to effect? Mostly just rounded corners and subtle gradients?)
+
+#4 All vendors implement Felipe&#39;s Beta Feature Unlocking proposal:
+http://felipe.wordpress.com/2012/02/02/a-proposal-to-drop-browser-vendor-prefixes/
+
+#5 No more new features in Release channel unless at least 3 vendors 100% agree that the standard as written for just that feature is ok and they see no reason to change it and they expect their implementation will match it 100%. And at least 1 other vendor is ready to activate that feature the same time mozilla does. Vendor prefix support will only exist in Nightlies (not aurora, not beta).</div>
+<div class='comment'>
+<div class='author'>thinsoldier</div>
+<div class='content'>Or the quirksmode proposal: http://www.quirksmode.org/blog/archives/2012/02/alpha_and_beta.html
+
+I prefer Felipe&#39;s but I imagine the alpha/beta way would be much quicker and easier to implement.</div>
+</div>
+</div>
+
+</div>

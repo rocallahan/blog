@@ -1,0 +1,47 @@
+---
+layout: "post"
+title: "Drive-By Debugging"
+date: "2007-12-22 21:27:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/12/drive-by-debugging_22.html"
+---
+<div class="columns"><p>My trunk dogfood build was feeling sluggish yesterday so I thought I should have a poke to see why. I'd noticed sluggish episodes on and off over the last week or two so I thought there might be some kind of problem. "top" showed firefox-bin using 75% CPU even when I wasn't doing anything in the browser, and there were no animations or other obvious activity going on in my windows, so something was definitely wrong.<br/><p>Fortunately I always dogfood debug builds so it was just a matter of attaching gdb... The first thing I did was poor-man's profiling, just hit ctrl-C to interrupt the process several times and look at the stacks. It was quickly obvious that we were constantly in painting code. I fired up QuartzDebug and confirmed that my GMail window was being fully repainted many times a second.<br/><p>The next step was to figure out what was triggering the painting. I set a breakpoint on nsIFrame::Invalidate, which is what most Gecko code goes through to force part of a window to be eventually repainted. That breakpoint wasn't being hit very often, so it wasn't related to the problem. I then looked for lower-level Cocoa APIs that could be being used to force the window to repaint, and discovered nsChildView::Invalidate calling those APIs. So I set a breakpoint in nsChildView::Invalidate. Bingo! That was being called very frequently, invalidating a 2000x2000 pixel area of the window.<br/><p>The stack for that call showed the whole story; you can see it <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=409337">here</a>. Basically the window was being invalidated by a Flash plugin instance requesting a repaint. The Flash plugin was responding to an "idle" event which we send to the plugin at a fairly high rate; each one of these events was causing the plugin to request a repaint of the window. I'm not really sure of the purpose of these events, but it's part of the NPAPI plugin API on Mac that we send them frequently. I'm even more unsure why Flash was requesting repaints of the whole window all the time; it was easy to see that the plugin's layout frame was only 100x100 pixels, and furthermore, the plugin was hidden. I think GMail only uses Flash to play sounds. I suspect there's a deeper bug here somewhere in the intersection of Flash, Gecko and GMail. Eep. It could be related to Quartz drawing model support that we added in the last year that has some other known nasty bugs (whether on our side or the Flash side, again I'm not sure).<br/><p>Anyway if the plugin is hidden, we should be able to ignore its invalidate requests, working around this bug and maybe other addressing other performance issues. It turns out that the invalidate requests pass through nsPluginInstanceOwner, which has a mWidgetVisible field which is false in this case because we know the plugin isn't visible. It's a one-line patch to drop invalidation requests on the floor when this field is false, and that's what we're going to do. I couldn't be sure of reproducing the bug in a fresh Gecko build but I used a gdb conditional breakpoint with an associated command to simulate the fix in my running build, and it worked.<br/><p>Episodes of unexplained sluggishness that are hard to reproduce are very frightening from my point of view, because they can really hurt the user experience but it's very hard to track them down; they don't leave stack traces and often there are no steps to reproduce so it's hard to write up a useful bug report. The moral of my story, I suppose, is to dogfood a debug build and if it seems to suddenly be afflicted by a problem like this, be willing to attach a debugger, collect some stacks and do whatever else is necessary to track down the problem ... because <em>you</em> may be our best chance to find and fix the bug before millions of users hit it.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Vladimir Vukicevic</div>
+<div class='content'>Soon enough I think we&#39;ll have some kind of symbol server for OSX builds, so that you can debug/profile all nightlies -- the ability to do this on win32 is pretty fantastic.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Dude! I have a co-worker who can make a computer stop working just by walking past it.<br>I don&#39;t know what that&#39;s called, but you&#39;re the exact opposite of her :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anon</div>
+<div class='content'>Can you really stop sending idle events to flash plugins? I thought that people had become so upset with Safari slowing flash down when windows were in the background (perhaps having a video playing while typing something elsewhere?) that Safari had to send them at the same rate regardless: http://webkit.org/blog/96/background-music/ . Perhaps that doesn&#39;t apply if the plugin has been scrolled off screen though....<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Bob: Shark&#39;s a great tool but for really obvious performance issues (&quot;why am I doing something instead of nothing&quot;) gdb is good enough, and gdb offers the normal debugging features as well like showing the values of local variables, setting breakpoints, etc.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Hi Manu! The first step to getting a bug noticed is to nominate it for blocking status. The other thing in this case would have been to reassign it to a Core component when Gecko developers are vastly more likely to be watching.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Manu</div>
+<div class='content'>Cool! This issue was actually already reported in bug 407456. Any tips on how we could have helped gotten that bug noticed?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bob</div>
+<div class='content'>Why didn&#39;t you use Shark?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Smokey Ardisson</div>
+<div class='content'>In addition to what roc said here and in the bug, any time there is a problem that deals with something in a web page, it belongs in a Core component instead of an application (Firefox, Thunderbird, SeaMonkey, Camino, etc.) component.  This is doubly true for any such bug that is filed in an application’s “General” component; the “General” components often are components where bugs go to get lost ;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We haven&#39;t changed the idle-event-sending behaviour.<br></div>
+</div>
+
+</div>

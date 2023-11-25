@@ -1,0 +1,149 @@
+---
+layout: "post"
+title: "Implementing Virtual Widgets On The Web Platform"
+date: "2014-02-17 01:38:00 +0000"
+categories: "Mozilla"
+permalink: "/2014/02/implementing-virtual-widgets-on-web.html"
+---
+<p>Some applications need to render large data sets in a single document, for example an email app might contain a list of tens of thousands of messages, or the FirefoxOS contacts app might have thousands of contacts in a single scrolling view. Creating explicit GUI elements for each item can be prohibitively expensive in memory usage and time. Solutions to this problem often involve custom widgets defined by the platform, e.g. the XUL tree widget, which expose a particular layout and content model and issue some kind of callback to the application to populate the widget with data incrementally, e.g. to get the data for the currently visible rows. Unfortunately these built-in widgets aren't a good solution to the problem, because they never have enough functionality to handle the needs of all applications --- they're never as rich as the language of explicit GUI elements.
+<p>Another approach is to expose very low-level API such as paint events and input events and let the developer reimplement their own widgets from scratch, but that that's far too much work.
+<p>I think the best approach is for applications to dynamically create UI elements that render the visible items. For this to work well, the platform needs to expose events or callbacks informing the application of which part of the list is (or will be) visible, and the application needs to be able to efficiently generate the UI elements in time for them to be displayed when the user is scrolling. We want to minimize the "checkerboarding" effect when a user scrolls to a point that app hasn't been able to populate with content.
+<p>I've written <a href="http://people.mozilla.org/~roc/virtual-list-demo.html">a demo</a> of how this can work on the Web. It's quite simple. On receiving a scroll event, it creates enough items to fill the viewport, and then some more items within a limited distance of the viewport, so that browsers with async scrolling will (mostly) not see blank space during scrolling. Items far away from the viewport are recycled to reduce peak memory usage and speed up the item-placement step.
+<p>The demo uses absolute positioning to put items in the right place; this is more efficient than moving elements around in the DOM to reorder them vertically. Moving elements in the DOM forces a significant amount of restyling work which we want to avoid. On the other hand, this approach messes up selection a bit. The correct tradeoff depends on the application.
+<p>The demo depends on the layout being a simple vertical stack of identically-sized items. These constraints can be relaxed, but to avoid CSS layout of all items, we need to build in some application-specific knowledge of heights and layout. For example, if we can cheaply compute the height of each item (including the important case where there are a limited number of kinds of items and items with the same kind have the same height), we can use a balanced tree of items with each node in the tree storing the combined height of the items to get the performance we need.
+<p>It's important to note that the best implementation strategy varies a lot based on the needs and invariants of the application. That's one reason why I think we should not provide high-level functionality for these use-cases in the Web platform.
+<p>The main downside of this approach, IMHO, is that async scrolling (scrolling that occurs independently of script execution) can occasionally and temporarily show blank space where items should be. Of course, this is difficult to avoid with <em>any</em> solution to the large-data-set problem. I think the only alternative is to have the application signal to the async scroll thread the visible area that is valid, and have the async scroll thread prevent scrolling from leaving that region --- i.e. jank briefly. I see no way to completely avoid both jank and checkboarding.
+<p>Is there any API we can add to the platform to make this approach work better? I can think of just a couple of things:
+<ul>
+<li>Make sure that at all times, an application can reliably tell which contents of a scrollable element are going to be rendered. We need not just the "scroll" event but also events that fire on resize. We need some way to determine which region of the scrolled content is going to be prerendered for async scrolling.
+<li>Provide a way for an application to choose between checkerboarding and janking for a scrollable element.
+</ul>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Penerimaan CPNS 2014</div>
+<div class='content'>it&#39; can make web better good</div>
+</div>
+<div class='comment'>
+<div class='author'>daftar facebook</div>
+<div class='content'>that will be amazing web, nice to hear that even  i am not a specialist of that </div>
+</div>
+<div class='comment'>
+<div class='author'>pendaftaran CPNS</div>
+<div class='content'>if very good article and commenting brother</div>
+</div>
+<div class='comment'>
+<div class='author'>Andrew Sutherland</div>
+<div class='content'>Thanks very much for the blog post; this jives with our improvement plan for the FirefoxOS e-mail app (bug: https://bugzil.la/796474 with related bug https://bugzil.la/959782) and that&#39;s good to see.
+
+APZ (Async Pan-and-Zoom) has recently changed the onscroll events to be fairly different from their pre-APZ form.  I understand them to basically only be generated when scrolling completes.  Perhaps scroll events could be sent predictively to support pre-rendering?
+
+For the e-mail app at least, we do have async IndexedDB lookups with potentially dependent lookups, so we do need a fair bit of notice.  (Step 1: get the messages, step 2: resolve contacts with caching.)
+
+In regards to your comment, I completely agree that it should just be up to the application to be able to pre-estimate heights of items and compensate for slop and that this is feasible.  In the e-mail domain, the variability would either come from some combination of message snippets and the number of messages in a conversation.  There may be some dependency on message &quot;interestingness&quot; which would need to be pre-computed for latency reasons anyways.  And in the case of subject/body snippets, we usually truncate the snippet anyways, so having an approximation that does not entirely line up with what layout determines at runtime is not a big deal.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I believe we still get scroll events before scrolling ends when scrolling with APZC. At least, Vivien has confirmed that my demo works reasonably well on trunk B2G. But I agree things could be done to support better predictivity.
+
+To populate items with async IndexedDB loads, I suggest creating &quot;blank&quot; items (e.g. with &quot;loading...&quot; in them) as quickly as possible and then filling them in when the results arrive. If an item gets recycled before the load completes, be careful to not apply the results of the load!</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Markus Stange</div>
+<div class='content'>Amazing timing! Two weeks ago I&#39;ve started converting the cleopatra profiler tree to this model (<a href="https://github.com/mstange/cleopatra/blob/5d1ea4d0ba598720f38f7229de1c4678ab00feb1/js/tree.js#L442" rel="nofollow">see here</a>) and ended up with very similar code, except that I didn&#39;t think to use cloneNode(). I ran into pretty much the same problems / questions.
+
+Does Gecko currently dispatch the scroll event before we paint at the new scroll position, or do we apply some throttling? If we do throttle, can we stop doing that whenever we have APZ scrolling?
+
+Have there been any standardization proposals for a display port DOM API?
+
+Another problem I had was that the absolute positioning triggered layerization of the rows during scrolling, which caused unnecessary repainting and jank, some of which I didn&#39;t quite understand - it looked like the layerization of the ancestor layers of the tree toggled between two states... Do we need a will-not-animate: top; property? ;-)</div>
+<div class='comment'>
+<div class='author'>Markus Stange</div>
+<div class='content'>Oh, right, I didn&#39;t actually want to stop throttling. I phrased that wrongly. What I was worried about was that we&#39;d paint layer contents with a new display port before we&#39;d send the scroll event, so that the scroll-induced paint would be wasted on out-of-date content. But if that can&#39;t happen, all is good.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Non-APZC Gecko dispatches a scroll event before every scroll-induced paint.
+
+APZC is the hard case. We have to throttle scroll events when you&#39;re scrolling quickly or the main thread event queue will get totally spammed by events. It&#39;s just a difficult problem to keep the window populated with meaningful content when you&#39;re scrolling faster than script can set up the content!
+
+No standardization proposals to expose the displayport AFAIK. We probably should have one.
+
+Not sure what to do about layerization. If you set will-change:top on the items then that might stop things bouncing between states, if properly supported. I don&#39;t think that works in Gecko yet though.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>In Gecko, a scroll event fires at a time when the scroll position is up to date so the rendered region will be sent to the compositor. Whether that&#39;s out of date depends on what the compositor and APZC is doing, but I think generally it will get used.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>if very good article and commenting brother
+
+<a href="http://sotopoker.com/app/Default0.aspx" rel="nofollow">Judi Online</a></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I was asking dbaron a few weeks ago if we&#39;d ever considered just exposing getContext() on all DOM Nodes. Its common to write custom drawing/layout on Android in places like this where performance is key (and Andorid/iOS already ship list implementations that do exactly what you&#39;re doing here. In fact it would probably be easier to steal code since they&#39;ve also solved this multi-height row problem).</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I&#39;m confused by this. The point is you aren&#39;t trying to write something that works well in every situation here. You&#39;re writing (fast) code that works extremely well for one very specific situation.
+
+I&#39;m also not sure why platform dependent things would matter unless you&#39;re trying to draw native widgets (which we don&#39;t support well in Canvas right now anyway...)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>There are a number of different classes of use-cases. Each class is quite large and can be handled using the same approach, using a single library. For example it&#39;s trivial to modify my demo to generate almost any static HTML/CSS content you want, as long as all items have the same size.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I think custom drawing/layout have to be avoided, because it&#39;s just too hard to write custom code that actually works well in all situations on all platforms.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anthony Ricaud</div>
+<div class='content'>Would it make a difference to use transform: translate instead of top?
+I&#39;m also wondering about the accessibility of such a solution.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Transforms should work well too. They probably won&#39;t be much different.
+
+Accessibility is a good question, and I don&#39;t have a good answer. Ordering elements in the DOM would probably be necessary ... other than that, it might work OK.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>To address a question brought up on Twitter (and in private email): what to do if your items are (potentially) multi-line messages, e.g. tweets or SMS messages?
+
+Again, the answer depends on the details of your application. If the message list is mostly stable across application sessions --- i.e. you do not expect thousands of new messages to be added between invocations of the application --- you can add all new messages to the DOM and measure their heights, storing those heights in persistent local storage. After an application restart, hopefully you can efficiently grab the heights of most messages from storage.
+
+If that doesn&#39;t work for your application, you could guess the height using whatever heuristics you want (e.g. run an approximate line-breaking algorithm, perhaps on a server), treat the item as having that height, and when it actually gets added to the DOM, measure its actual height and use that instead of the guess.
+
+Note that the hard problems here are independent of what platform APIs exist --- there&#39;s nothing the browser can do to make measuring the heights of thousands of items scale well. And whatever solutions exist are highly application-specific.</div>
+</div>
+<div class='comment'>
+<div class='author'>ralpht</div>
+<div class='content'>Wow, it&#39;s nice to see so much interest in this problem! Relatedly and recently Beth Dakin landed some support in WebKit for sending events when content will/did become visible via asynchronous scrolling: https://bugs.webkit.org/show_bug.cgi?id=127371
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Infinite scrolling isn&#39;t the same problem as I&#39;m analyzing here.
+
+I can&#39;t tell why those new Webkit events are needed over old-fashioned scroll events, but maybe it will become clear when the www-style discussion happens as promised.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>CPNS</div>
+<div class='content'>amazing for your psting brother</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>@roc you might be interested in https://github.com/emberjs/list-view (Ember List-View), a component that members of the Ember team wrote for this kind of situation because of how common this situation is when working with data-bound templates.
+
+Unfortunately, the &quot;fixed height&quot; restriction (even if it could be loosened somewhat) makes it a solution you have to think a lot about in a web that&#39;s defined by arbitrary content. It works sometimes, but often requires more compromises than you&#39;d like.</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>BTW, this &quot;Unknown&quot; is Yehuda Katz of the Ember team. I&#39;m not sure why this widget logs me in with my Google account but can&#39;t figure out who I am :(</div>
+</div>
+</div>
+
+</div>

@@ -1,0 +1,15 @@
+---
+layout: "post"
+title: "ATSUI Woes"
+date: "2007-02-12 22:21:00 +0000"
+categories: "Mozilla"
+permalink: "/2007/02/atsui-woes_12.html"
+---
+<div class="columns"><p>I spent most of today wrangling <a href="http://developer.apple.com/documentation/Carbon/Conceptual/ATSUI_Concepts/atsui_chap1/chapter_1_section_1.html">ATSUI</a> for the Mac textrun code. It turns out that the the information I need --- glyph IDs, advances, and horizontal and vertical offsets --- is only properly obtainable by registering a "post-layout callback" and reading that information within that callback. And it's not clear exactly when that callback is invoked. Also, I still haven't figured out how to get ATSUI to tell me the "image rect" (a.k.a. "inked rect", a.k.a. "glyph extents") for all glyphs in a layout. That's a big problem; we don't want to call ATSUMeasureTextImage a bazillion times. Working with complex frameworks is always tricky...<br/><p>Another thing that's come up is the realization that a list of positioned glyphs is not necessarily going to be enough to render complex text with all possible features. ATSUI, at least, can apply various transformations to glyphs when rendering them. We can actually handle this with our textrun abstraction, by stashing the original ATSUTextLayout in the textrun when necessary, but it's not clear how we'll be able to detect when that's necessary...<br/><p>Another really important issue is when to use ATSUI and when to bypass it for faster APIs. On Linux we have the compile-time option to bypass Pango for 8-bit-only text, which is currently enabled. (We also have the option to bypass Pango for all text, but the results are disastrous in many cases.) My current plan is to wait until we have textruns and the new textframe running reasonably on all platforms and then measure the performance impact of bypassing ATSUI, Pango and Uniscribe. Right now it's hard to predict what that impact will be, since we use textruns in a really stupid way --- usually we're creating one textrun (and hence one ATSUTextLayout/PangoLayout/etc) <em>per word</em>. With the new textframe we create one <em>per paragraph</em> (in the absence of font changes), which is much much more reasonable.<br/><p>It would be most desirable to always use the Pango/ATSUI/Uniscribe path, because they give higher quality results. It would also improve consistency; it's a problem if adding one character to the end of a string changes the rendering of the whole string. We'll see how it goes.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Tom Spivey</div>
+<div class='content'>Hi Robert,<br>I remember this behaviour of the ATSUI and programmed around it rendering each possible character offscreen and caching that, but maybe with Unicode this is not very useful anymore...<br>Cheers and regards to Chris C. from (tempest)<br>Tom<br></div>
+</div>
+
+</div>

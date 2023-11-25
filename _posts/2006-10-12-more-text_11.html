@@ -1,0 +1,19 @@
+---
+layout: "post"
+title: "More Text"
+date: "2006-10-11 16:21:00 +0000"
+categories: "Mozilla"
+permalink: "/2006/10/more-text_11.html"
+---
+<div class="columns"><p>Following up on yesterday's issue with line-breaking and kerning... Computing all line break opportunities up front and doing something special when lines could break between non-whitespace characters was going to be too difficult. It's much easier to compute line break opportunities during reflow. Also, I want to have the code structured so that we can have special shaping for glyphs at line ends, and that would apply even when a line breaks at whitespace (or doesn't break at all), which would mean we would want to recompute the text layout at unpredictable times.<br/><p>So I've opted to provide a hook back to layout from gfxTextRun, allowing it to recover the text used to originally build the textrun (which we can do by recrawling the DOM elements contributing to the textrun). This way textruns can forget the input text and just cache glyphs, and in the uncommon cases where they need the original text again, they can ask for it.<br/><p>In a few cases (:first-letter and :first-line, I'm looking at you!) it's hard to recompute the text given the information we have stored. For those rare cases I can force the textrun to remember the text at creation time, so I don't have to write complex code to do the reconstruction.<br/><p>Another round of the delicate dance of tradeoffs completed... for now.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Christopher Blizzard</div>
+<div class='content'>Have you been taking into account some of the more obscure language breaking behaviours?  Take for example Thai, which we&#39;re working on right now for One Laptop, where line breaking happens on a word level, and requires access to a dictionary to do so?  We&#39;re going to have to tackle this at some point in Gecko, so it would be good if the next text layout design was set up so to succeed.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;m aware of the issues with Thai. We&#39;re getting closer to being able to do that properly, although it won&#39;t be done yet.<br></div>
+</div>
+
+</div>

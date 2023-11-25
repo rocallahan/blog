@@ -1,0 +1,26 @@
+---
+layout: "post"
+title: "Running Firefox For Windows With rr"
+date: "2016-03-17 10:39:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2016/03/running-firefox-for-windows-with-rr.html"
+---
+<p>Behold!
+<p><img src="/assets/images/Screenshot%20from%202016-03-17%2022-48-32.png" title="Firefox for Windows running in Wine under rr" width="839" height="710">
+<p>OK OK, this is cheating a bit. <a href="https://www.winehq.org/">Wine</a> can run Firefox for Windows on Linux (if you disable multiprocess in Firefox; if you don't, Firefox starts up but nothing will load). rr can run Wine. Transitivity holds.
+<p>Caveats: it's slow (rr's syscall buffering optimization is mostly disabled by Wine), and the debugging experience is pretty much nonexistent since gdb doesn't know what's going on. But hey.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>stuaxo</div>
+<div class='content'>https://www.winehq.org/docs/winedev-guide/dbg-others
+
+I wonder if winedbg could work here?
+
+Disclaimer - I know nothing of all this.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>You&#39;d need to take what Winedbg does and somehow combine it with rr.</div>
+</div>
+</div>
+
+</div>

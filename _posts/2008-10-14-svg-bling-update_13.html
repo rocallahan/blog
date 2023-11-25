@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "SVG Bling Update"
+date: "2008-10-13 20:40:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/10/svg-bling-update_13.html"
+---
+<div class="columns"><p>For those who don't follow the <a href="http://developer.mozilla.org/web-tech">Web-Tech</a> blog --- you should. But anyway, support for SVG filter, clip-path and mask on non-SVG content landed on Gecko trunk <a href="http://developer.mozilla.org/web-tech/2008/09/15/svg-effects-for-html-content">a while ago</a> and is in Firefox 3.1 beta 1. Also, I've proposed these extensions to the SVG WG for standardization.<br/><p>Even more exciting is that Boris Zbarsky did an awesome job of implementing <a href="http://developer.mozilla.org/web-tech/2008/10/10/svg-external-document-references">external document references</a> --- I'm not sure if that made beta 1, but it will definitely be in beta 2. This means that all code that uses <a href="http://mxr.mozilla.org/mozilla-central/source/content/base/public/nsReferencedElement.h">nsReferencedElement</a> to track which element is referenced by a given URI/fragment-ID now automatically supports referring to external resource documents --- i.e. URIs of the form <tt>foobar.xml#abc</tt>. And Robert Longson has done a great job of migrating our last remaining SVG URI-ref users to use nsReferencedElement --- that is, markers and textPath --- so as of today, all the places where we support SVG referring to elements by ID support referring to elements in external documents as well as the current document. (It also means they're all "live for ID changes" and safe to use with incremental loading of SVG documents.)<br/><p>The combination of these features is particularly cool because it means you can now apply SVG filter/clip-path/mask in regular HTML (non-XHTML) documents by placing the effect definitions in an external SVG XML file.<br/><p>We're pretty much done for new features in Gecko 1.9.1 at this point. Looking forward post Gecko 1.9.1, we will be able to build on the external resource document loader to support SVG fonts (including via CSS @font-face) and SVG images (for CSS background-image etc, and HTML &lt;img&gt;). They should be a top priority for Gecko 1.9.2 or whatever it ends up being called.<br/><p>At this point most of my "bling branch" has landed, except for two features: SVG paint servers (gradients and patterns) for non-SVG content, via CSS background-image, and the "use any element as a CSS background-image" feature. I'm not sure what to do with them. The former probably should land at some point, but it's not a high priority for me at the moment --- maybe I'll roll it into SVG background-image support, since they're closely related. For the latter, my current thinking is that some uses are adequately served with a CSS background-image referencing an SVG pattern containing a &lt;foreignObject&gt;, and other uses really demand an API that lets you specify a particular DOM node to render (e.g. to mirror a particular element in a particular IFRAME).<br/><p>For that case, I think the way to go is to to create a new element --- some sort of <tt>viewPort</tt> element that acts like a replaced element and renders the content of some other element. It would have an attribute <tt>href</tt> that lets you declaratively specify a URI to the element to render, but it could also have a <tt>setSource(node)</tt> API so that you can give it a specific DOM node to mirror. You could even have an <tt>allowEvents</tt> attribute that lets events pass through the looking-glass... Right now <a href="http://developer.mozilla.org/web-tech/2008/10/13/mozafterpaint/">MozAfterPaint</a> and canvas.drawWindow are the best way to do effects like that, but they're not optimal. (Although there are uses for MozAfterPaint that the putative <tt>viewPort</tt> element would not satisfy, such as paint flashing/logging for debugging tools.)</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>At least when I checked out XULRunner with FIREFOX_3_1b1_RELEASE tag external SVG references were working - so I guess it made it into beta. Which is good, I needed that for TomTom HOME.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mardeg</div>
+<div class='content'>I&#39;d love to be able to use CSS background-image referencing a data: uri of an svg with filters or patterns.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>peepo</div>
+<div class='content'>tried to leave a message here:<br>https://developer.mozilla.org/web-tech/2008/10/10/svg-external-document-references/<br>got message that server is fried using opera, with mozilla application appears to freeze.<br>please forward attached message:<br>please implement multi-origin issue.<br>we are developing a social network site for people with low literacy that rely on icons to communicate.<br>they will necessarily communicate using symbols from a very broad range of sources.<br>in the more general case, web feeds that rely on remote svg icons necessarily cannot be successfully embedded in ones own pages until this is implemented.<br>(eg weather icons in the demo, but say public domain legends for google maps more generally.)<br>(pps some people could copy the icons locally, but that is counter-productive, and makes maintenance impossible, it&#39;s also a lot of work to make someone else&#39;s feed work with one&#39;s own icons, I had to do it for the weather example which uses a bbc feed and my svg symbols....)<br>(ppps eg I maintain around 6-7 sites, which reference perhaps 30 svgz files, but cannot imagine maintaining 30x7 files. this is due to grow to 100s or even 1000s of svgz files each containg ~30 distinct icons, you can do the maths...)<br>Opera already implements this by default, and I am not aware of any security implications having arisen.<br>demonstrations of SVG chat, search and feed applications are linked from http://www.openicon.org<br>they all work in Opera, but not Safari-webkit or Mozilla<br>regards<br></div>
+</div>
+<div class='comment'>
+<div class='author'>peepo</div>
+<div class='content'>congratulations on initiating implementation!<br>however...<br>caching of external document references is not enabled for other domains. please compare with Opera which enables by default.<br>there is a fairly small to non-existent security concern, perhaps a toggle?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Hubick</div>
+<div class='content'>I have been wanting to drop fixed size bitmap images in favor of SVG from CSS for one-stylesheet-fits-all scalable site themeing for a long time, and Gecko has fallen behind other engines in this regard.  I&#39;m really glad to hear SVG images will finally be a top priority!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>External document references did make beta 1.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>William J. Edney</div>
+<div class='content'>Thanks for the update. Of course, I&#39;m a bit disappointed about the paint server stuff not making 3.1. I&#39;ll have to go back to sliding SVG elements under my HTML stuff to get a gradient under there (which is a pain when dealing with rounded corners, etc.)<br>Are you sure that I can&#39;t bribe... uh... offer... you a nice bottle of something?? :-)<br>Cheers,<br>- Bill<br></div>
+</div>
+
+</div>

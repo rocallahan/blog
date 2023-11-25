@@ -1,0 +1,34 @@
+---
+layout: "post"
+title: "Chronicle Update"
+date: "2007-05-22 21:21:00 +0000"
+permalink: "/2007/05/chronicle-update_22.html"
+---
+<div class="columns"><p>I committed the Chronicle sources to Google Code's Subversion repository, along with a couple of bug fixes. One of those fixes will hopefully get it to build on Linux distros like Ubuntu where libelf headers go in /usr/include. The only downside is that I can no longer track download numbers --- currently 174 :-).<br/><p>I'm still working ever-so-gradually on the Eclipse debugger plugin. I need to play the name game again... incumbent: <em>Chronometer</em>, challenger: <em>Anachron</em>.<br/><p><strong>Update</strong> New challenger: <em>Parachron</em>.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; I think you accidentally forgot to run make clean<br>&gt; before checking it in, though :-)<br>I did? I thought I cleaned up the tree pretty carefully. What needs to be deleted? Oh, I guess you mean the valgrind Makefiles... guess I need to run make dist or something.<br>Thanks for the patch!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeremy Lea</div>
+<div class='content'>What about Paraleipomena.  If you want to be obscure.  Besides, it will always be the &quot;things omitted&quot; which people remember it for ;-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>I agree about Anachron - to close to an existing product. I find the other two ugly.<br>How about hitting something a little physics or a little sci-fi? Some time-travel kind of thing? That&#39;s a sweet spot for your target demographic I think.<br>Tachyon, Tachyograph. Causality. Event Horizon. Schr�dinger&#39;s Box. Spacetime. Decoherence. Observation. Entanglement.<br>Stuff like that.<br>Actually &quot;Causality&quot; is really doing it for me...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>What about &quot;Chronic Debugger&quot; - I know it is a tad bit unimaginative, but that is the way of Eclipse as far as I can tell... :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gerv</div>
+<div class='content'>Anachron is pretty close to &quot;anacron&quot;. So I&#39;d avoid that.<br>How about Chroniclipse? :-)<br>Or, if you want someone who goes backwards and forwards analysing a Chronicle, how about &quot;Historian&quot;?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Grahame Bowland</div>
+<div class='content'>I think you accidentally forgot to run  make clean before checking it in, though :-)<br>Here&#39;s a patch (a bit messy, as there&#39;s lots of patches against Makefile and other cruft) that makes chronicle build on Ubuntu feisty:<br>http://grahame.angrygoats.net/chronicle-feisty.diff<br>It&#39;s based off Ubuntu&#39;s patch to valgrind to set -fno-stack-protector in CFLAGS.<br></div>
+</div>
+
+</div>

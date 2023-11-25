@@ -1,0 +1,75 @@
+---
+layout: "post"
+title: "A Case For Non-Fatal Assertions"
+date: "2011-12-27 23:50:00 +0000"
+categories: "Mozilla"
+permalink: "/2011/12/case-for-non-fatal-assertions.html"
+---
+<p>Jeff Walden is doing awesome work on the foundations of Gecko to unify the lowest-level infrastructure used by JS and the rest of Gecko and to rebase it on modern C/C++ standards. But there is a <a href="http://whereswalden.com/2011/12/26/introducing-mozillaassertions-h-to-mfbt/">controversy</a> about whether non-fatal assertions should be part of that infrastructure. This issue <a href="http://blog.mozilla.com/nnethercote/2011/06/07/what-is-the-point-of-non-fatal-assertions/">came up before, not long ago</a>.
+<p>I strongly believe that non-fatal assertions are valuable when used to report the presence of a bug that is not as severe as a browser crash. An example I just pulled out of nsBlockFrame::Reflow:
+<pre><tt>    ReflowBullet(state, metrics, lineTop);
+    NS_ASSERTION(!BulletIsEmpty() || metrics.height == 0,
+                 "empty bullet took up space");</tt></pre>
+<p>If this assertion fails, then we have detected a Gecko bug which should be reported and eventually fixed. If the assertion failure is a regression, and we detect it in time, we will try very hard to fix it before the patch ships in a browser release. (If the regression is triggered by our layout reftest test suite, we will almost certainly detect it on checkin since reftests go orange on new non-fatal assertion failures.) However, if this assertion failure is the only thing that goes wrong, there will almost certainly be no ill-effects beyond the page having a slightly incorrect layout --- maybe. Some pages might trigger the assertion but appear to render correctly. Even if the bug causes a detectable test failure, the assertion helps to narrow down the cause and understand the code.
+<p>Using a fatal assertion here would have the same benefits but additional costs. A test run hitting the assertion would abort the suite, meaning we lose the results for the rest of the tests in the suite. This makes fixing test failures slower and more painful than necessary since more runs of the suite will often be required. (It's similar to a compiler always aborting after the first syntax error in a compilation unit.) Another cost is that if you are using a debug build for some reason and you hit this bug while trying to work on something else, your work will be unnecessarily blocked.
+<p>At this point some will say "<em>Ah! But assertion failures should always just be fixed. Since non-fatal assertions are more ignorable, they encourage you to leave bugs unfixed.</em>"
+<p>That statement ignores the reality of bug priorities. An assertion failure is just a bug and needs to be prioritized along with other bugs. If our assertion infrastructure and associated project rules forced us to always prioritize some rare list bullet spacing bug above all bugs that don't trigger assertions, then that infrastructure would be actively damaging our project. We would have to respond by simply removing a lot of our assertions and losing their benefits. <strong>It is crucial to be able to ignore unimportant bugs.</strong>
+<p>Having said all that, fatal assertions certainly have their place. I imagine that in the JS engine almost any bug will lead to a crash sooner or later, so it makes sense for fatal assertions to prevail there because the downside is minimal; you were going to crash anyway, and crashing later might just be confusing.
+<p>Addendum: an objection to non-fatal assertions is that libc "assert" and some other assertion mechanisms are fatal, so to call something non-fatal an "assertion" is confusing. That may be true for some people, but it's cultural. The culture in Gecko is that NS_ASSERTION is non-fatal. Maybe renaming our non-fatal assertion mechanism would end up being a net win by some point in the future, but I'm dubious. Although I wouldn't actually mind too much; I just want non-fatal assertions, whatever we call them.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>jwalden@mit.edu</div>
+<div class='content'>&quot;I imagine that in the JS engine almost any bug will lead to a crash sooner or later&quot;
+
+The JS engine uses assertions for everything, dangerous or not.  We don&#39;t distinguish crash-ful mis-execution even from &quot;harmless error&quot;.  I believe this cuts against the argument that some &quot;assertions&quot; should be non-fatal because it doesn&#39;t matter what will happen if things go wrong.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>As I said on dev.platform, the difference between fatality and non-fatality is not in the confidence we have that the condition is true, but in the consequences if it isn&#39;t true.</div>
+</div>
+<div class='comment'>
+<div class='author'>Don</div>
+<div class='content'>I am with you 100% on NS_ASSERTION and its relatives (NS_NOTREACHED is the only one I remember right now), which really are non-fatal assertions ...</div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>We could rename NS_ASSERTION to MOZ_BUG ;)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&gt; One problem with non-fatal assertions,
+&gt; however, is that our debug builds spew so
+&gt; much crap that&#39;s it&#39;s all too easy to miss
+&gt; them when they happen.
+
+OK. Reftests still catch them. Unfortunately the work to do the same thing for mochitests got stalled, probably because mochitests don&#39;t have a proper manifest.
+
+Ironically, that work is partially blocked on a JS engine assertion, bug 631289, thus demonstrating that that not all fatal assertions are rapidly fixed :-).
+
+&gt; And I also am one of those who object to
+&gt; Gecko&#39;s misappropriation
+
+Object to it all you like, but at this point it&#39;s ancient history whose consequences we have to live with today.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>The fact that the JS engine doesn&#39;t use non-fatal exceptions is probably more due to the fact that there isn&#39;t a non-fatal assertion mechanism available there. I see no reason to believe that the JS engine wouldn&#39;t benefit from harmless errors being non-fatal.</div>
+</div>
+<div class='comment'>
+<div class='author'>Steve Fink</div>
+<div class='content'>Smells like a conditional warning to me.
+
+We don&#39;t have to live with the NS_ASSERTION terminology dilution if we globally search and replace.
+
+I vote for MOZ_HOPE!</div>
+</div>
+<div class='comment'>
+<div class='author'>njn</div>
+<div class='content'>I can see the merit of your argument -- I have some NS_ASSERTIONs relating to memory reporting where aborting is also overkill if they are triggered.
+
+One problem with non-fatal assertions, however, is that our debug builds spew so much crap that&#39;s it&#39;s all too easy to miss them when they happen.
+
+And I also am one of those who object to Gecko&#39;s misappropriation of the existing term &quot;assert&quot; to mean something non-fatal.</div>
+</div>
+
+</div>

@@ -1,0 +1,29 @@
+---
+layout: "post"
+title: "innerText: Cleaning A Dark Corner Of the Web"
+date: "2016-01-04 10:14:00 +0000"
+categories: "Mozilla"
+permalink: "/2016/01/innertext.html"
+---
+<p>One of the things I did last year was implement <a href="http://rocallahan.github.io/innerText-spec/">innerText</a> in Gecko and write a specification for it. This is more or less a textbook case of cleaning a dark corner of the Web.
+<p>innerText was implemented in IE 5.5 (or maybe earlier?), apparently with the goal of approximating the getting and setting of the "rendered text contents" of a DOM node. Microsoft being Microsoft at the time, there was no attempt to add it to any Web specification. Some time later, Webkit implemented their own version of it --- a very different and quite incompatible implementation. Naturally, Blink inherited the Webkit implementation. Over the years implementations evolved independently.
+<p>In Gecko we didn't bother to implement it. It was seldom used, and you can quite easily polyfill a decent implementation, which has the advantage of working the same across all browsers. (Many users can just use textContent instead.) It's a feature the Web just doesn't need, even if it worked interoperably and had a spec.
+<p>Sadly, this year it became clear we have to implement it. People have been using it in mobile sites (Webkit monoculture) and it even started showing up on the odd desktop site where people didn't test with Firefox. I ran into this on <a href="http://xkcd.com/simplewriter/">xkcd.com</a> and then it was clear I had to fix it!
+<p>I could have done what Webkit/Blink (and I suspect IE) did and hooked it up to our existing plaintext serializer (which implements clipboard plaintext copy), adding a third totally incompatible implementation ... but that's not Mozilla. So I wrote a bunch of testcases (partly inspired by <a href="http://kangax.github.io/jstests/innerText/">kangax's</a>) and studied some other resources, and created <a href="http://rocallahan.github.io/innerText-spec/">a spec</a> that felt to me like a good tradeoff between simplicity and Web compatibility --- and implemented it in Gecko. As <a href="http://perfectionkills.com/the-poor-misunderstood-innerText/">kangax notes</a>, it's highly Blink-compatible but avoids some <a href="http://rocallahan.github.io/innerText-spec/getter-tests.html">obvious Blink bugs</a>.
+<p>My key insight while writing the getter's spec was that we should reuse the CSS spec by reference as much as possible instead of specifying rules that would duplicate CSS logic. For example, my spec (and implementation) don't mention CSS <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/white-space">white-space</a> property values explicitly, but instead incorporates CSS white-space processing by reference, which means all the values (and any new ones) just work.
+<p>So far so good --- our implementation is riding the trains in Firefox 45 --- but this is not the end of the story. The next step is for other browsers to change their behavior to converge on this spec --- or if they can't, to explain why so we can fix the spec so they can. To be honest, I'm not very optimistic about that since I've received minimal feedback from Apple/Google/Microsoft so far (despite begging). But we've done what we can at Mozilla to fix this wart on the Web, and we've probably done enough to fix innerText-specific Web compat problems in Firefox for the forseeable future.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Peter Kasting</div>
+<div class='content'>Are there Chromium bugs on compliance here?  If so I can try to help push those.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>https://code.google.com/p/chromium/issues/detail?id=573309</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I have never used innerText directly. Not sure if any of the frameworks that I&#39;ve used rely on it like jQuery, Angular or React.</div>
+</div>
+
+</div>

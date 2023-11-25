@@ -1,0 +1,215 @@
+---
+layout: "post"
+title: "Applying SVG Effects To HTML Content"
+date: "2008-06-04 13:27:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/06/applying-svg-effects-to-html-content_04.html"
+---
+<h2>Introduction</h2><br/><br/><p>One of the problems with the standards-based Web is that it's hard to use SVG's features to enhance HTML content.  For example, there is no reasonable way to clip an HTML element to a non-rectangular region, or to apply an alpha mask to an HTML element, or to apply image processing effects such as color channel manipulation to HTML elements. SVG has these features but they can only be applied to SVG elements. You can embed the HTML in a &lt;foreignObject&gt;, but that has major limitations; in particular, you can't apply effects to HTML elements via stylesheets without changing the markup --- ripping out content and putting it inside ugly SVG fragments --- and breaking most CSS layouts in the process.<br/><br/><p>One approach to solving this is to create new CSS properties for the desired effects. Dave Hyatt's been doing this a bit in Webkit, and the approach has its place. However for complex effects such as clipping to arbitrary shapes and custom image processing, CSS isn't really up to the task. One problem is that CSS isn't good at manipulating structured values like shapes and filter processing stacks; they're cumbersome to write in CSS expression syntax, or else they require new custom CSS syntax (e.g. @-rules), and there's no standard DOM to let scripts manipulate components of these structured values. Another issue is that we should<br/>try to avoid duplicating specification and implementation of complex features.<br/><br/><p>So I've been experimenting with better ways to apply SVG effects to HTML content. The first step is to make SVG's '<a href="http://www.w3.org/TR/SVG/masking.html#EstablishingANewClippingPath">clip-path</a>',<br/>'<a href="http://www.w3.org/TR/SVG/masking.html#Masking">mask</a>' and<br/>'<a href="http://www.w3.org/TR/SVG/filters.html#FilterProperty">filter</a>' properties work when applied to HTML content.<br/><br/><h2>clip-path</h2><br/><br/><p>Here's some XHTML markup that clips elements to a shape composed of a circle next to<br/>a rectangle.<br/><pre style="overflow:auto; padding:1em; border:1px solid black;">&lt;html xmlns="http://www.w3.org/1999/xhtml"<br/>xmlns:svg="http://www.w3.org/2000/svg"&gt;<br/>&lt;body style="background:#ccc; font-size:30px;"&gt;<br/>&lt;style&gt;<br/>p { width:300px; border:1px solid black; display:inline-block; margin:1em; }<br/>iframe { width:300px; height:300px; border:none; }<br/>b { outline:1px dotted blue; }<br/>&lt;/style&gt;<br/>&lt;p class="target" style="background:lime;"&gt;<br/>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt<br/>ut labore et dolore magna aliqua. Ut enim ad minim veniam.&lt;/p&gt;<br/>&lt;iframe class="target" src="http://mozilla.org"/&gt;<br/>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing<br/>&lt;b class="target"&gt;elit, sed do eiusmod tempor incididunt<br/>ut labore et dolore magna aliqua.&lt;/b&gt; Ut enim ad minim veniam.&lt;/p&gt;<br/><br/>&lt;style&gt;.target { clip-path: url(#c1); }&lt;/style&gt;<br/>&lt;svg:svg height="0"&gt;<br/>&lt;svg:clipPath id="c1" clipPathUnits="objectBoundingBox"&gt;<br/>&lt;svg:circle cx="0.25" cy="0.25" r="0.25" id="circle"/&gt;<br/>&lt;svg:rect x="0.5" y="0.2" width="0.5" height="0.8"/&gt;<br/>&lt;/svg:clipPath&gt;<br/>&lt;/svg:svg&gt;<br/>&lt;/body&gt;<br/>&lt;/html&gt;</pre><br/><p>So we have a block element, an &lt;iframe&gt;, and an inline element all clipped by the same clipPath. The clipPath shape coordinates are relative to the bounding-box of the clipped object.<br/><br/><p>Here's the rendering:<br/><div class="image"><img src="/assets/images/clipPath-screenshot.png" alt="screenshot of elements clipped by a circle and rectangle"/></div><br/><p>You can't see it in this example, but hit-testing is affected by clip-path as you'd expected; mouse events in the clipped-out area pass through to the element(s) underneath.<br/><br/><p>One of the tricky integration points is handling elements which generate multiple CSS boxes, such as the inline element here. I don't expect clipping and masking to find much use there, but filters can be useful for inlines. The approach that makes most sense is to apply the effects to the whole element at once, and make the SVG "object bounding box" be the rectangle union of all border-boxes for the element and its geometric descendants, plus any outlines on the element or descendants. This is useful and also seems in accord with the spirit of the SVG spec.<br/><br/><p>clipPath, mask and filter content can also use "userSpaceOnUse" units. In SVG,<br/>"user space" is established by the SVG viewport containing the affected content. We don't have such a viewport for non-SVG content, so I make "user space" be the rectangle which is the union of all border-boxes for the affected element. User space is in CSS pixel units, so clipPath, mask and filter content can specify lengths in CSS pixels as well as percentages relative to the size of the affected element.<br/><br/><h2>Scripting</h2><br/><br/><p>It's easy to add some dynamism to the above example:<br/><pre style="overflow:auto; padding:1em; border:1px solid black;">  &lt;button onclick="toggleRadius()"&gt;Toggle radius&lt;/button&gt;&lt;br/&gt;<br/>&lt;script&gt;<br/>function toggleRadius() {<br/>var circle = document.getElementById("circle");<br/>circle.r.baseVal.value = 0.40 - circle.r.baseVal.value;<br/>}<br/>&lt;/script&gt;</pre><br/><p>The SVG DOM isn't as clean as it could be, but it's adequate.<br/><br/><h2>mask</h2><br/><br/><p>Replace the 'clip-path' chunk above with 'mask':<br/><pre style="overflow:auto; padding:1em; border:1px solid black;">  &lt;style&gt;.target { mask: url(#m1); }&lt;/style&gt;<br/>&lt;svg:svg height="0"&gt;<br/>&lt;svg:mask id="m1" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox"&gt;<br/>&lt;svg:linearGradient id="g" gradientUnits="objectBoundingBox" x2="0" y2="1"&gt;<br/>&lt;svg:stop stop-color="white" offset="0"/&gt;<br/>&lt;svg:stop stop-color="white" stop-opacity="0" offset="1"/&gt;<br/>&lt;/svg:linearGradient&gt;<br/>&lt;svg:circle cx="0.25" cy="0.25" r="0.25" id="circle" fill="white"/&gt;<br/>&lt;svg:rect x="0.5" y="0.2" width="0.5" height="0.8" fill="url(#g)"/&gt;<br/>&lt;/svg:mask&gt;<br/>&lt;/svg:svg&gt;</pre><br/><p>Now the rectangle is being painted with a translucent gradient and the shape is being used<br/>as an alpha mask instead of just clipping.<br/><p>Here's the rendering:<br/><div class="image"><img src="/assets/images/mask-screenshot.png" alt="screenshot of elements masked by a circle and rectangle with gradient"/></div><br/><p>As per the SVG spec, masks do not affect hit-testing, so events will be received even where content is masked out. It would be smart to implement the SVG<br/><a href="http://www.w3.org/TR/SVG/interact.html#PointerEventsProperty">pointer-events</a> property for non-HTML content to give authors a way to control this.<br/><br/><h2>filter</h2><br/><br/><p>Replace the 'mask' chunk with some filters:<br/><pre style="overflow:auto; padding:1em; border:1px solid black;">  &lt;style&gt;<br/>p.target { filter:url(#f3); }<br/>body:hover p.target { filter:url(#f5); }<br/>b.target { filter:url(#f1); }<br/>body:hover b.target { filter:url(#f4); }<br/>iframe.target { filter:url(#f2); }<br/>body:hover iframe.target { filter:url(#f3); }<br/>&lt;/style&gt;<br/>&lt;svg:svg height="0"&gt;<br/>&lt;svg:filter id="f1"&gt;<br/>&lt;svg:feGaussianBlur stdDeviation="3"/&gt;<br/>&lt;/svg:filter&gt;<br/>&lt;svg:filter id="f2"&gt;<br/>&lt;svg:feColorMatrix values="0.3333 0.3333 0.3333 0 0<br/>0.3333 0.3333 0.3333 0 0<br/>0.3333 0.3333 0.3333 0 0<br/>0      0      0      1 0"/&gt;<br/>&lt;/svg:filter&gt;<br/>&lt;svg:filter id="f3"&gt;<br/>&lt;svg:feConvolveMatrix filterRes="100 100" style="color-interpolation-filters:sRGB"<br/>order="3" kernelMatrix="0 -1 0   -1 4 -1   0 -1 0" preserveAlpha="true"/&gt;<br/>&lt;/svg:filter&gt;<br/>&lt;svg:filter id="f4"&gt;<br/>&lt;svg:feSpecularLighting surfaceScale="5" specularConstant="1"<br/>specularExponent="10" lighting-color="white"&gt;<br/>&lt;svg:fePointLight x="-5000" y="-10000" z="20000"/&gt;<br/>&lt;/svg:feSpecularLighting&gt;<br/>&lt;/svg:filter&gt;<br/>&lt;svg:filter id="f5"&gt;<br/>&lt;svg:feColorMatrix values="1 0 0 0 0<br/>0 1 0 0 0<br/>0 0 1 0 0<br/>0 1 0 0 0" style="color-interpolation-filters:sRGB"/&gt;<br/>&lt;/svg:filter&gt;<br/>&lt;/svg:svg&gt;</pre><br/><p>Filters are cool so I decided to go a bit over the top here. The block element gets an edge-detection convolution filter. The &lt;iframe&gt; gets converted to grayscale.<br/>The inline element is blurred. When you hover over the body, the filters change; the &lt;iframe&gt; gets the edge detection filter, the block gets a color channel transformation that takes the alpha channel to the green channel, creating a punch-out effect, and the inline element gets a 3D lighting effect.<br/><br/><p>Here are the renderings:<br/><div class="image"><img src="/assets/images/filter-screenshot.png" alt="screenshot of elements with filters applied"/></div><br/><br><br/><div class="image"><img src="/assets/images/filter-hover-screenshot.png" alt="screenshot of elements with more filters applied"/></div><br/><p>Filters do not affect hit-testing.<br/><br/><h2>Discussion</h2><br/><br/><p>All these effects are fully live. You can select, zoom, change the DOM, invoke contenteditable, etc, and everything works fine. Effects are applied to the drawing of the selection, and even to the drawing of the caret while it's in an affected element.<br/><br/><p>The effects following the SVG composition model; if an element has a filter, clipping and masking, then the filter is applied first followed by the clipping and/or masking. They behave like CSS 'opacity' in that they induce a pseudo-stacking-context for the element. They do not affect layout, although 'filter' can produce drawing outside the bounds of the element (e.g., shadows). Currently, in my implementation, 'filter' can actually affect layout because when 'filter' paints outside the element we may show scrollbars so that the user can scroll to see the overflowing paint, but I think this should be considered a bug.<br/><br/><p>Since we don't yet support remote content references in Gecko, you have to put the effects fragments inline in your document. This is ugly and also means you can't use these effects in non-XML HTML. Once we implement remote content references, these problems will go away; author CSS style sheets will be able to reference effects in auxiliary SVG documents. Many effects can be stored in a single SVG document, amortizing the cost of an extra resource. Authors will even be able to use tools like<br/><a href="http://wiki.inkscape.org/wiki/index.php/Filter_Effects">Inkscape</a> to generate SVG effects and reference them from CSS.<br/><br/><p>At a spec level, there's very little that needs to be said. No new syntax is required.<br/>A specification needs to be written documenting decisions on the issues I've mentioned above (not necessarily the same decisions I made :-) ).<br/><br/><p>In lieu of a spec, we have to decide how much of this to take in Gecko and when. It's nice that there's no new syntax, but that also means there's no convenient way to use -moz prefixing to isolate the non-standard features. We could create new<br/>'-moz-filter'/'-moz-clip-path'/'-moz-mask' properties that behave like the existing properties except they also apply to HTML. Maybe it's not worth it. Something for discussion.<br/><br/><p>I'm making tryserver builds right now, and I'll update this post with a link when they're ready. Here's a link to my <a href="http://hg.mozilla.org/users/rocallahan_mozilla.com/svg-integration/index.cgi/summary">Mercurial repository</a>. (Unfortunately, I accidentally pushed copies of NSPR and NSS to that repo, so don't blindly pull from it unless you're OK with that.) Some demos:<br/><ul><br/><li><a href="http://people.mozilla.org/~roc/clipPath.xhtml">clipPath</a><br/><li><a href="http://people.mozilla.org/~roc/mask.xhtml">mask</a><br/><li><a href="http://people.mozilla.org/~roc/filter.xhtml">filter</a><br/></ul><br/><br/><p>At some point I'll post a followup talking about the other work I've done on this branch that leads up to these features, with some more details about the implementation. I'm also planning to add some more features soon.<br/><br/><h2>Aside</h2><br/><br/><p>A nice side effect of providing better SVG-HTML integration is that it gives SVG a leg up on the Web. You can't do these effects using Flash or Silverlight, and since they're not standards they probably won't ever be invited to this party.<br/><br/><p><strong>Update</strong> <a href="https://build.mozilla.org/tryserver-builds/2008-06-03_19:46-rocallahan@mozilla.com-1212547557/rocallahan@mozilla.com-1212547557-firefox-try-mac.dmg">Mac</a> build, <a href="https://build.mozilla.org/tryserver-builds/2008-06-03_21:17-rocallahan@mozilla.com-1212552992/rocallahan@mozilla.com-1212552992-firefox-try-linux.tar.bz2">Linux</a> build, <a href="https://build.mozilla.org/tryserver-builds/2008-06-03_21:17-rocallahan@mozilla.com-1212552992/rocallahan@mozilla.com-1212552992-firefox-try-win32.installer.exe">Windows</a> build.<br/><br/><p><a href="http://www.fatcow.com/edu/applying-svg-ef-be/">Belorussian translation</a><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>stu</div>
+<div class='content'>Is it possible to bend and rotate how the html looks using this?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Lilley</div>
+<div class='content'>You said:<br>&quot;SVG has these features but they can only be applied to SVG elements. You can embed the HTML in a , but that has major limitations; in particular, you can&#39;t apply effects to HTML elements via stylesheets without changing the markup --- ripping out content and putting it inside ugly SVG fragments --- and breaking most CSS layouts in the process.&quot;<br>Actually its perfectly possible to apply these to other markup languages, provided its clear what the coordinate system is. (Your suggestion on using the union bounding box is reasonable and fully in accord with the SVG definition of bounding box). The new filters module, in particular, takes care to not preclude applying these to other languages and to make clear what a host language must define. And there is of course no requirement to have the SVG in the same document. The properties use URIs not IDREF after all, for a reason.<br>You also state:<br>&quot;One approach to solving this is to create new CSS properties for the desired effects.&quot;.<br>Yeah. Another approach is to, you know, use the existing CSS properties, to do the same thing. They are properties for a reason. HTML document A can link to stylesheet B which in turn references SVG filter C.<br>So while the desire and benefit of applying clip, filter etc to other markup languages is clearly indicated by your post, the necessity to reinvent different, possibly compatible, CSS properties to do so is not at all demonstrated.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>John: I&#39;m not hostile to the existence of Flash or Gears. But in a world of limited resources I have to make choices about what to spend effort integrating with, and it makes more sense to spend effort on open standards, especially ones we&#39;ve already implemented. In any case, the Gears people have been pretty good about getting Gears APIs turned into real standards via HTML5.<br>Video&#39;s a tough issue because there aren&#39;t good unencumbered standards and codecs. In some cases we may have to choose the lesser of evils.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>@Dave Hyatt<br>Are you kidding us? You haven&#39;t seen the need for rounded corners on the web? Isn&#39;t that what clipping is, or am I missing the point altogether?<br>I&#39;m implementing a design that calls for a lot of rounded corners. Creating all the images and hacking in the extra HTML elements and bloating the CSS to achieve such elementary effects is a joke.<br>Whatever it takes: implementation of border-radius, clipping, whatever!!! PLEASE get the ability to round corners of boxes into the browser market NOW!<br>Has it already missed the HTML5 IE9/Fx4/SafariX/Opera10 bandwagon? Damn I hope not, or we&#39;ll have to wait for the middle of the next decade before we can achieve such an ELEMENTARY effect.<br>Screw SVG, put this mega-common use-case in CSS!<br>It&#39;s more important than gradients because any designer who uses gradients in that cliche web 2.0 logo reflection technique will stop doing so any minute and will want to create the logos in image format anyway to prevent resizing and maintain the exact presentation of the logo for brand recognition.<br>Please make my life less depressing and tell me that the east coast American intelligentsia that dictates the web actually realises that such a simple use-case has been around for years and should have been formalised years ago, and like IE8 being a decent browser, it will be at least belatedly fixed very soon.<br>P.S. last time I checked -moz-border-radius doesn&#39;t pass the W3C CSS validator despite the property being named in the custom semi-standard hyphen browser prefix syntax. Why is that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bram</div>
+<div class='content'>I think it would be nice if it was possible to have the SVG filter/mask/..-definitions in an external file. Maybe using XSLT?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anaximander</div>
+<div class='content'>With FireFox 3.0 I am afraid that on my system (Windows XP/SP2) the SVG statements in your examples are ignored - rest of statements are rendered correctly.<br>Guess I am being very stupid and would welcome some help<br>many thanks<br></div>
+</div>
+<div class='comment'>
+<div class='author'>stelt</div>
+<div class='content'>great stuff !<br></div>
+</div>
+<div class='comment'>
+<div class='author'>peepo</div>
+<div class='content'>Appreciate the issue, but do these examples highlight the benefits?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>PJ Brunet</div>
+<div class='content'>Just tried it, doesn&#39;t work in Firefox 3.  If I need a special build what&#39;s the point?<br>Why we haven&#39;t used something like SVG since 1994 makes no sense to me at all, people selling out to Macromedia/Adobe!  Even my BBS in the 90s had vector graphics.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jon Ferraiolo</div>
+<div class='content'>This is most certainly great to see, but I am surprised at how long it has taken the browsers to leverage SVG features within HTML. You know, Microsoft went public with XAML back in September 2003. Oh well, better late than never.<br>The examples above show SVG clip paths, masks, and filter effects. Other things you can gain by integrating HTML with SVG are: fill and stroke HTML text (with gradients and patterns); transformations; animation; timeline synchronization; event transparency (via &#39;pointer-events&#39;); international text (including vertical); color management; object opacity; group opacity; and graphical cursors. I have probably overlooked as many things as I have listed.<br>The Mozilla approach is a better direction than attempting to recreate all of the features from SVG as new features of CSS.<br>Regarding integration of SVG markup as new tags in HTML, that&#39;s probably a good thing for the long haul, but likely to result in a long standards and implementation process as that markup integration effort will have tons of complexities. Better to just do something evolutionary and incremental for the time being, such as what Mozilla is showing here.<br>Regarding getting this stuff working in IE, why don&#39;t Firefox or Safari install themselves as IE plugins? The HTML content would need a couple of extra lines to force &quot;render using the plugin&quot;, but such an approach would help address the current situation where IE to some extent has veto power over new features.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Schiller</div>
+<div class='content'>Thank you, sir!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>an0n1 m0us</div>
+<div class='content'>@Dave<br>Maybe I was confused. However, why isn&#39;t dorder radius already in a CR version of CSS? Until M# implements it, we can&#39;t use it. If it&#39;s not already a real standard, nobody can expect M$ to support it in IE8. Given IE8 will not be released until late this year, will not be installed en mass for longer, we&#39;ll have to wait until IE9 at the earliest before we see this simplistic feature.<br>It drives me bonkers that these things cannot be resolved faster.<br>The EU has created some light at the end of the tunnel by regulating that M$ become interoperable. In one decision they&#39;ve achieve more than any Americans can achieve. The time is now to make web standards legally enforceable and therefore the solution to the W3C glacial pace of standards ratification and even slower implementation.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sjoerd Visscher</div>
+<div class='content'>I assume these effects also work on MathML content?<br>Do they work on the output of plug-ins like Flash?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Exec</div>
+<div class='content'>Doesn&#39;t seem to be completely broken, the following returns true on Gecko/2008060309 Firefox/3.0<br>alert(document.implementation.hasFeature(&quot;http://www.w3.org/TR/SVG11/feature#CoreAttribute&quot;, &quot;1.1&quot;));<br>So does also the following (of the ones I&#39;ve tested)<br>http://www.w3.org/TR/SVG11/feature#Structure<br>http://www.w3.org/TR/SVG11/feature#BasicStructure<br>http://www.w3.org/TR/SVG11/feature#ConditionalProcessing<br>Used the list here<br>http://www.w3.org/TR/SVG/feature.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>@John F.,<br>&quot;The Mozilla approach is a better direction than attempting to recreate all of the features from SVG as new features of CSS.&quot;<br>I don&#39;t see anyone trying to recreate all of the features of SVG as CSS features, so I&#39;m not sure who you are directing this to.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Hubick</div>
+<div class='content'>First, having loved SVG since I first saw it, I&#39;m really glad to finally see some attention in this direction!<br>I think SVG can beat Flash (etc) in the marketplace due to it&#39;s ability for strong integration with the document (incl scripting and CSS).  I think the success of Flash does show that there is a strong enough desire to create documents leveraging enough graphical features that trying to enhance CSS to provide all that functionality will eventually result in basically reinventing SVG inside of CSS.  So, although I don&#39;t think I&#39;m in a position to judge all the merits of the competing proposals, I think it would be prudent to have CSS defer to the SVG specifications for defining graphics capabilities whenever possible - don&#39;t reinvent the wheel in CSS just for convenience, and instead leverage the existing work in SVG and let it to do what it was designed to do and what it does best.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>Neat!<br>My own opinion on this (as you know since we&#39;ve talked about it before) is that there should be CSS syntax for simple constructs and that SVG should be used for more advanced capabilities.  I think making these properties work on HTML content is a great idea and would like to see both approaches (yours and mine) supported.<br>I think the trick is where to draw the line when adding features to CSS.  It&#39;s not clear to me that just because a feature is in SVG that CSS should not do it.  However it&#39;s also not worth adding a whole lot of super-complex syntax to CSS if we can do something with SVG.<br>Filters are a great example where the CSS syntax would probably end up being so complex as to not be worth it.<br>Gradients have a very simple syntax in WebKit&#39;s CSS, and I think there&#39;s no reason to force the use of SVG for something so simple.<br>One could also envision overflow-clip and clip being extended in CSS to take a few more basic shapes.  They already support rects, so supporting circles, paths, etc. is not much of a stretch and doesn&#39;t add much syntactic complexity to CSS.   It kind of bugs me that we have similarly named clip properties (clip, clipMask, overflow-clip) in CSS.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>skierpage: right now clip-path is specced to only apply to SVG content. So that needs to be changed. And additional standards need to be written to specify what to do in those tricky situations I mentioned.<br>John: not sure. It&#39;s at the intersection of the CSS and SVG working groups, probably should be a combined thing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Marco Pivetta</div>
+<div class='content'>Really cool!<br>Could be really useful in things like extensions, where the browser is well-known by the developer!<br>I&#39;ll work with it...<br>Thank you roc :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Manfred Staudinger</div>
+<div class='content'>I got stuck with the very first example. Copied it to a local file (.xhtml), when using FF 2.0.0.14 shows fine but without clipping. Did I miss something???<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Blair McBride</div>
+<div class='content'>Wow... just, wow.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>john daggett</div>
+<div class='content'>So where would this go into a spec?  CSS3 Effects or something like that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Betina</div>
+<div class='content'>I&#39;m a blonde with very dark hair...<br>But can someone give me a code example of turning a color jpg into a BW jpg using SVG and/or CSS in Safari?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>AndyEd</div>
+<div class='content'>Wow!  With this, I could implement my browser simulation of human vision with Firefox, not Adobe AIR.  Woot.  See http://alwaysbetesting.com/abtest/index.cfm/2007/12/26/Scrutinizing-the-Shopping-Experience<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Maciej Stachowiak</div>
+<div class='content'>For clipping by path, it seems like just providing a path using the SVG path syntax would hit many common cases in both HTML and SVG, without the need to have an actual  object in the DOM. I would like to see the SVG path syntax directly usable in properties in more cases.<br>Cool stuff, by the way. I generally agree with Hyatt&#39;s stance, that I think CSS should have direct support for simple things and applying SVG to HTML allows handling of complex cases where you may need hierarchical constructs to express the style.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Dowdell</div>
+<div class='content'>&quot;You can&#39;t do these effects using Flash&quot;<br>Which of them? The gradient clipping seems like it would require the browsers&#39; cooperation on updating WMODE, and of course browser text is rendered by the browser rather than a common cross-browser extension, but when you categorized the prior few screenfuls of text as &quot;these effects&quot; I wasn&#39;t sure which effect in particular prompted the comment.<br>(Honest question, seeking clarification on your reference.)<br>&quot;since they&#39;re not standards they probably won&#39;t ever be invited to this party.&quot;<br>uh-oh, that sounds a little closed and exclusionary there...! :(<br>tx, jd/adobe<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Asbjørn Ulsberg</div>
+<div class='content'>Amazing stuff! I really, really, really like the implementation. It&#39;s very elegant and even allows for the SVG &quot;filters&quot; to be external to the document itself. This is much leaner than WebKit&#39;s plethora of CSS properties to apply similar effects. This should definately make it into a CSS3 specification.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>an0n1 m0us</div>
+<div class='content'>Is there any way to get this working in IE?<br>if not, it&#39;s just like the old and anti-alias challenged -moz-border-radius, for example.<br>Great to have but alas not useful for web developers coding for a diverse browser market.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>skierpage</div>
+<div class='content'>Which part of this is incompatible with standards?  Is it just the behavior of clip-path when handed a reference to an SVG?  validator.w3.org was confused by your code samples.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>monk.e.boy</div>
+<div class='content'>OMG, amazing.<br>I think you have just started a revolution. Finally HTML is not like a newspaper or magazine. It is what we want it to be :-)<br>I guess I can rotate text, add on :hover events? Paste DIVs on a cube and rotate it?<br>Good work :-)<br>monk.e.boy<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Maciej Stachowiak</div>
+<div class='content'>Does this work for non-X HTML?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>stu: rotation is not really posssible. Some distortion effects are possible using feDisplacementMap, but since filters don&#39;t affect hit-testing you can only do limited distortion or you&#39;ll break mouse event targeting.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I think CSS should have direct support for simple *and commonly used* things.<br>Adding SVG path syntax to &#39;overflow-clip&#39; (or clip-path) could be good if path clipping turns out to be commonly needed. You have to decide what the units of the path should be --- CSS pixels, or fractions of the bounding box? Or do you offer both, using different keywords? You also have to pick a clip-rule (nonzero or even-odd).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>-v.</div>
+<div class='content'>Finally!  Someone gets it.<br>Thanks for the webpage.  I still handcode a lot, and I always find .html, .css, .js, .svg, and sometimes, .x3d, .xml, .xsd, and .xsl rearing up to meet me.  Add some SQL, a splash of club soda, and presto!  Client-side Webpages!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Dowdell</div>
+<div class='content'>&quot;... I have to make choices about what to spend effort integrating with...&quot;<br>We&#39;re on the same page there. Each individual makes their own choices, based on their own criteria.<br>It was the &quot;won&#39;t be invited to this party&quot; line which concerned me, by sounding closed, prejudicial and proprietary. But that sentence had other ambiguities as well, so it&#39;s no big deal.<br>&quot;Now I can party with SVG like people have been partying with Flash&quot; works for me. Have fun with it! :)<br>jd/adobe<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan</div>
+<div class='content'>TBH, i&#39;d rather see better support for SVG itself than for this. Formatting HTML elements should belong to CSS, and only CSS.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; Other things you can gain by integrating HTML<br>&gt; with SVG are: fill and stroke HTML text (with<br>&gt; gradients and patterns);<br>These probably require new properties, say &#39;fill-text&#39; and &#39;stroke-text&#39;.<br>&gt; transformations;<br>We should have CSS support for transformations but SVG doesn&#39;t really add value here.<br>&gt; animation; timeline synchronization;<br>Maybe, but SMIL is horrid.<br>&gt; event transparency (via &#39;pointer-events&#39;);<br>Yep.<br>&gt; international text (including vertical);<br>Maybe some of the features could be carefully ported over to CSS. Vertical text is already in CSS. Most of the SVG implementation is not reusable though.<br>&gt; color management;<br>Yeah.<br>&gt; object opacity; group opacity; and graphical<br>&gt; cursors.<br>In CSS and implemented for a long time.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Maciej: it does work for regular HTML, but it&#39;s hard to use in the absence of external SVG references --- you have to get the SVG fragments into the document somehow. The only way you could do that in these Gecko builds is to use DOM APIs to create the fragments using script.<br>As Henri said, that would get easier with proposed SVG-in-HTML parsing for HTML5. But like I said in the post, the best solution is to support external SVG references.<br>monk.e.boy: rotating elements is not something I think should be supported through SVG integration. You really want some kind of &quot;CSS transforms&quot; like the Apple proposal.<br>Chris: I&#39;m deeply confused by your comment. You seem to taking issue with my post, but overall it&#39;s clear we agree completely. For example<br>&gt; the necessity to reinvent different, possibly<br>&gt; compatible, CSS properties to do so is not at<br>&gt; all demonstrated.<br>It should be obvious that I absolutely was not trying to demonstrate that! Quite the reverse, these examples and my implementation use the standard properties and that&#39;s my preferred approach. Maybe you should re-read the post.<br>Sjoerd: I haven&#39;t tested non-HTML but yes, this should work on MathML in Gecko since everything but SVG goes through the CSS renderer. On Mac the output of plugins actually is subjected to the SVG effects; on Windows and Linux, only &quot;windowless&quot; plugins are affected.<br>Andy: yes, you could!<br>Yes, there is no way to get this working in IE. Yes, it&#39;s not currently useful for cross-browser development. The goal is to get this stuff implemented and standardized and exert whatever pressure we can to get IE to follow.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>J. McNair</div>
+<div class='content'>Just tried this in Firefox 3.6 release. Nifty and speedy even on older computers. Now we just need web sites to actually USE this stuff...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>2017 and this method still only works in Firefox.</div>
+</div>
+<div class='comment'>
+<div class='author'>Bram</div>
+<div class='content'>Oops, I skipped over the remote content reference paragraph in your discussion before rushing to the comments box. It sounds like a much cleaner way than doing heavy client-side XSLT-processing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;m not sure about extending CSS clipping. I suspect it would be used a lot less than, say, gradients, and is therefore less deserving of special syntax.<br>To be honest, I prefer the approach of providing general functionality first and then identifying common usage patterns and making them easier, over guessing what the common use cases will be and providing them first.<br>The case for CSS gradient syntax is particularly strong because authors are using image workarounds already.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Henri Sivonen</div>
+<div class='content'>Very cool! This looks like a good additional reason to bring SVG into text/html.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John Dowdell</div>
+<div class='content'>&quot;Flash can&#39;t be a container for browser-rendered content.&quot;<br>Got it, thanks for the rephrase. That&#39;s true, that the browser renders its own instructions. A plugin could ask the browser to re-render a certain task via NPRuntime:<br>http://developer.mozilla.org/en/docs/Gecko_Plugin_API_Reference:Scripting_plugins<br>The opposite holds true as well... JavaScript executed by a browser can ask Adobe Flash Player to re-process and render its own content too, for cross-browser Pixel Bender work:<br>http://flickr.com/photos/pixelero/tags/pixelbender/<br>http://www.adobe.com/cfusion/exchange/index.cfm?event=productHome&amp;exc=26<br>If you wish to wait for W3C, then that&#39;s a different situation, true. I&#39;m assuming that Google Gears or realworld video would be off-limits then as well. Your prerogative, agreed.<br>jd/adobe<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurent</div>
+<div class='content'>Well, since SVG can&#39;t be detected with javascript anymore in the broken FF3RC2, I don&#39;t have a lot of hope for future.<br>the following code alerts true in FF2, alerts false in *every* FF3RC I have tried so far.<br>var SVG = document &amp;&amp;<br>document.implementation &amp;&amp;<br>document.implementation.hasFeature &amp;&amp;<br>document.implementation.hasFeature(&quot;org.w3c.dom.svg&quot;, &quot;1.0&quot;);<br>alert(SVG);<br>// FF2  =&gt; true<br>// FF3+ =&gt; false<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Manfred: yes, you missed that you need to use special builds with my patches. See the links at the end of the post.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;m gradually adding it to the trunk so it will be in nightly builds and some future version of Firefox.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brad Neuberg</div>
+<div class='content'>Sweet! This kind of experimentation is great.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>josh</div>
+<div class='content'>What ever came of this Robert? Unless I&#39;m missing something, webpages absolutely need this sort of combined SVG and HTML business. Seems like peanut butter and jelly to me. Firefox, at least as of 3.0.7 (May, 2009), doesn&#39;t correctly render these examples.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>What I meant was that there is currently no mechanism that we can use to apply Flash&#39;s effects to browser-rendered content. In particular Flash can&#39;t be a container for browser-rendered content.<br>I am being exclusionary, to the extent that I prefer implementation-level and spec-level integration with royalty-free W3C standards over non-standard alternatives.<br>If Adobe gets Flash accepted as a royalty-free W3C standard (which means giving up total control over its evolution), things would be different. Especially if an open-source implementation was available with friendly licensing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>&quot;Are you kidding us? You haven&#39;t seen the need for rounded corners on the web? Isn&#39;t that what clipping is, or am I missing the point altogether?&quot;<br>I have no idea what your point is. border-radius is in CSS3 and WebKit and Gecko both support it.  When the spec goes to CR, we&#39;ll drop our vendor prefixes.<br>I was simply pointing out that there is no reason to try to reinvent *all* of SVG in CSS and responding to Jon&#39;s implication that we might be trying to do this in WebKit.  We&#39;re not.<br>You want to cherry pick the SVG features that will actually become simpler / benefit authors when given CSS syntax.  If the feature doesn&#39;t get any easier to use when translated to CSS syntax, then it&#39;s better to just use SVG.<br></div>
+</div>
+
+</div>

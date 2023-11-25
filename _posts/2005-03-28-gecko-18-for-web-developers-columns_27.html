@@ -1,0 +1,75 @@
+---
+layout: "post"
+title: "Gecko 1.8 For Web Developers: Columns"
+date: "2005-03-27 22:15:00 +0000"
+categories: "Mozilla"
+permalink: "/2005/03/gecko-18-for-web-developers-columns_27.html"
+---
+<div class="columns">One of the big things I've been working on for Gecko 1.8 is support for multicolumn layout. Our implementation follows <a href="http://www.w3.org/TR/2001/WD-css3-multicol-20010118/">the CSS3 draft</a> pretty closely. Right now we support the properties -moz-column-count, -moz-column-width, -moz-column-gap and (soon) -moz-column-rule.<br/><br/>Basically this lets you set up multiple columns like a newspaper, so that content flows from the end of one column to the top of the next column automatically. The big win is that you can use the full width of a large screen without making lines excessively long. This very blog is using columns on most entries --- check it out with a Firefox trunk build.<br/><br/>The draft specifies 'balanced' columns. This means that we automatically find a minimal height for a set of columns that balances the content as evenly as possible across the columns while fitting into the available width of the page. This is very powerful and you have to see it in action to appreciate what it does for you. However, balanced columns are inherently a little slow. Also, sometimes you want the columns to be a fixed height but extend horizontally as far as necessary to fit the content. We support that by extending the draft slightly; if the 'height' property on the column set is 'auto', we balance the columns and horizontal overflow doesn't happen, otherwise we do not balance the columns and horizontal overflow can happen.<br/><br/>Our implementation has a few limitations that cannot be fixed for 1.8:<br/><ul><br/><li>Tables don't break across column boundaries.<br/><li>Absolutely positioned elements don't break across column boundaries, even if the absolutes' container does.<br/><li>We don't always find the minimum height for a balanced column set, for example when the column set contains blocks with margin, borders or padding things can go wrong.<br/><li>We don't support the CSS properties for page break control, so you can get widows and orphans (a paragraph breaking just after its first line or just before its last line). And you can't prevent breaks from happening without using hacks.<br/><li>There is no way to make content in one column span multiple columns. In the future we may allow content in a column to flow around overflowing floats in previous columns, but we're not going to get that in this release.<br/></ul><br/><br/>Of course there are still some bugs but it's already in much better shape than it was a few weeks ago. In particular some huge issues involving floats breaking across columns have been fixed. Since we use the same code for page layout as for columns, this also means a lot of problems with printing (and print previewing) pages with floats have been fixed.<br/><br/>I'm really interested in having Web developers play with this feature, in particular to shake out any critical bugs. Some tips for using columns:<br/><ul><br/><li>Watch out for content that horizontally overflows the column it's in. The next column will draw right over it.<br/><li>Thus, it might be a good idea to put a DIV inside a columns element and give it a background color, and put the rest of your content inside that.<br/><li>Column balancing can be slow. Unbalanced columns give faster layout.<br/><li>People have always thought of elements as being rectangular, thus we have Javascript properties like clientX, clientY, clientWidth, clientHeight etc. That was never true for inlines, and now it's not even true for blocks. Those properties will just give you the first rectangle of many rectangles that might make up the block. Beware.<br/></ul><br/><br/>Please file Bugzilla bugs when you find we're doing something unexpected or not per spec. If you have other feedback you can email me personally or just blog about it and let me know.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Foxtrot</div>
+<div class='content'>Whenever I use the middle mouse button for autoscrolling, the text in the columns moves ... this has never happened with normal text formatting before.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Lairo, Atheist, Expatriate American, Mozilla Tester</div>
+<div class='content'>The columns in your blog look great! I imagine there are many good uses for them. Can&#39;t wait to see this in a release (Firefox 1.1?). :-)<br>PS. I really mainly posted to imitate your subheader, because I thought it curious to be proclaiming being a christian. ;-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Jos�: known bug, I&#39;ll fix it soon.<br>rjw: that doesn&#39;t seem very useful. Consider a paragraph that has one line at the bottom of column 1 and a second line at the top of column 2.<br>Peter: :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Luke: you can do that. Position the columns element relative to the viewport and set its height to the height of the viewport and you&#39;ll get columns with the correct height flowing off to the right if necessary.<br>Grauw: probably the same bug that&#39;s already filed. I will fix it.<br>Foxtrot: not sure what you mean<br></div>
+</div>
+<div class='comment'>
+<div class='author'>rjw</div>
+<div class='content'>Wouldn&#39;t it be better to return the bounding box of all the components for clientX, clientY, clientWidth, clientHeight?<br>And make new properties for getting the real coverage. ( As a list of paths? Dunno what would make sense for this. )<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurens Holst</div>
+<div class='content'>I see a couple of problems...<br>In http://weblogs.mozillazine.org/roc/archives/2005/03/gecko_18_for_we_1.html when I hit reload, only part of the page (up till and including the columns) is rendered; the rest is shown when I click and hold a link though.<br>I also saw part of the content disappear a number of times. E.g. when I have any of these columned blog entries and remove my (Sage) sidebar (at 1024x768). A third column appears, and half of the content disappears.<br>~Grauw<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Luke</div>
+<div class='content'>This is a powerful feature, but personally I think columns are self-defeating if they don&#39;t exactly match the available screen height. It&#39;s counter-intuitive to scroll down a page while reading only to have to scroll back up to the top to read more. I think this feature requires some sort of device to match the height of the columns to the current window size.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeshii</div>
+<div class='content'>My Goddess, that is a wonderful idea! I have been wanting to print out this wiki I have for ages now, and if I could work out a way to get it into newspaper style columns... that&#39;d just be awesome. Time to go get me a development firefox...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Josh Aas</div>
+<div class='content'>Why do you have &lt;div class=&quot;columns&quot;&gt; twice in the source for this page?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I&#39;m aware we need hyphens but it&#39;s not happening for 1.8, sorry.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philippe</div>
+<div class='content'>I&#39;ve been playing with it quite a bit, and it really starts to work fine. I have it implemented through an alternate stylesheet on one of my sites (http://emps.l-c-n.com/), for the articles section.<br>It is a bit of problem when you have longer articles, spanning more than one window worth of contents, though. But it is sure a fun thing to play with.<br>Implementing css3 media queries, would give more (better ?) control over width and text flow.<br>But thanks for implementing this.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jos� Jeria</div>
+<div class='content'>When viewing this very page half of ot is missing (this form is not visible for example), resizing fixes the issue. This seems to only happend when the screen is very wide, i have a widescreen monitor with 1680x1050 resolution.<br>Screenshot:<br>http://www.jeria.net/mozilla/columns_bug.gif<br></div>
+</div>
+<div class='comment'>
+<div class='author'>dzd</div>
+<div class='content'>Dang, just took a look at this with 20050328/OSX and I am impressed as all get-out, even at such a relatively early stage.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Sorry, I needed to update the template...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Cusser</div>
+<div class='content'>I don&#39;t like to be a victim of &quot;pet bug syndrome&quot;, but if Gecko is getting column support, it really REALLY needs soft hyphen support too. Any chance of getting someone to look at that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Napolitano</div>
+<div class='content'>Wow, great work, as always, roc.  I&#39;d love to put this on my webpage eventually, with a user option to change the number of columns on the page (through javascript).<br></div>
+</div>
+
+</div>

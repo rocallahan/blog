@@ -1,0 +1,39 @@
+---
+layout: "post"
+title: "Let's Never Create An Ad-Hoc Text Format Again"
+date: "2017-07-26 23:53:00 +0000"
+categories: "Mozilla"
+permalink: "/2017/07/lets-never-create-ad-hoc-text-format.html"
+---
+<p>Recently I needed code to store a small amount of data in a file. Instinctively I started doing what I've always done before, which is create a trivial custom text-based format using stdio or C++ streams. But at that moment I had an epiphany: since I was using Rust, it would actually be more convenient to use the <tt>serde</tt> library. I put the data in a custom struct (<tt>EpochManifest</tt>), added <tt>#[derive(Serialize, Deserialize)]</tt> to <tt>EpochManifest</tt>, and then just had to write:
+<pre>    let f = File::create(manifest_path).expect("Can't create manifest");
+    serde_json::to_writer_pretty(f, &manifest).unwrap();</pre>
+and
+<pre>    let f = File::open(&p).expect(&format!("opening {:?}", &p));
+    let manifest = serde_json::from_reader(f).unwrap();</pre>
+<p>This is more convenient than hand-writing even the most trivial text (un)parser. It's almost guaranteed to be correct. It's more robust and maintainable. If I decided to give up on human readability in exchange for smaller size and faster I/O, it would only take a couple of changed lines to switch to <tt>bincode</tt>'s compact binary encoding. It prevents the classic trap where the stored data grows in complexity and an originally simple ad-hoc text format evolves into a baroque monstrosity.
+<p>There are libraries to do this sort of thing in C/C++ but I've never used them, perhaps because importing a foreign library and managing that dependency is a significant amount of work in C/C++, whereas <tt>cargo</tt> makes it trivial in Rust. Perhaps that's why the <a href="https://isocpp.org/wiki/faq/serialization">ISO C++ wiki page on serialization</a> provides lots of gory details about how to implement serialization rather than just telling you to use a library.
+<p>As long as I get to keep using Rust I should never create an ad-hoc text format again.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Screwtape</div>
+<div class='content'>Many employers ago, a colleague was writing a new application in .NET, and decided to use the built-in serialization functionailty instead of writing his own code to save and load documents. At first he was really pleased, since it was so easy to get started, but the next version of the app added features, and he had to add some deserialization code to load documents created by the first version. As time went on, he wound up with as much code as it would have taken to de/serialize manually, but gnarled around the details of the standard serialization API, instead of simple straight-forward code.
+
+Since then, I generally prefer to create ad-hoc text formats, or at least use a serialization library on a a fixed data structure that I then manually convert into my application&#39;s internal data structures, rather than trying to serialize the internal data structures directly.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That latter sounds reasonable.
+
+If you use JSON (or something similar) as your serialization format, serde lets you have custom attributes to specify default values (or functions that fill in default values) for fields that are missing in the input. So you get a reasonable amount of extensibility at low cost.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Slightly off-topic: the website looks broken in Firefox when Tracking Protection is turned on</div>
+</div>
+<div class='comment'>
+<div class='author'>Juarez Rudsatz</div>
+<div class='content'>Protocol Buffers, FlatBuffers, capnproto will save your time...</div>
+</div>
+
+</div>

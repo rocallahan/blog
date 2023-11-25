@@ -1,0 +1,33 @@
+---
+layout: "post"
+title: "rr Trace Portability"
+date: "2017-09-01 03:35:00 +0000"
+categories: "rr Mozilla"
+permalink: "/2017/09/rr-trace-portability.html"
+---
+<p>We want to be able to record an rr trace on one machine but copy it to another machine for replay. For example, you might record a failing test on one machine and copy the trace to a developer's machine for debugging. Or, you might record a failure locally and upload the trace to some cloud service for analysis. <strong>In short: on rr master, this works!</strong>
+<p>It turned out there were only two big issues to solve. We needed a way to make traces fully self-contained, because for efficiency we don't always copy all needed files into the trace during recording. <a href="/2017/06/new-rr-pack-command.html"><tt>rr pack</tt></a> addressed that. <tt>rr pack</tt> also compacts the trace by eliminating duplicate copies of the same file. <a href="/2017/07/selecting-compression-algorithm-for-rr.html">Switching to brotli</a> also reduced trace size, as did <a href="/2017/08/stabilizing-rr-trace-format.html">using Cap'n Proto</a> for trace data.
+<p>The other big issue was handling <tt>CPUID</tt> instructions. We needed a way to ensure that during replay <tt>CPUID</tt> instructions returned the same results as they did during recording &mdash; they generally won't if you switch machines. Modern Intel hardware supports "<tt>CPUID</tt> faulting", i.e. you can configure the CPU to trap every time a <tt>CPUID</tt> instruction occurs. Linux didn't expose this capability to user-space, so last year Kyle Huey did the hard work of adding a Linux system-call API to expose it: the <a href="http://elixir.free-electrons.com/linux/latest/source/arch/x86/include/uapi/asm/prctl.h#L9"><tt>ARCH_GET/SET_CPUID</tt></a> subfeature of <tt>arch_prctl</tt>. It works very much like the existing <tt>PR_GET/SET_TSC</tt>, which give control over the faulting of <tt>RDTSC/RDTSCP</tt> instructions. Getting the feature into the upstream kernel was a bit of an ordeal, but that's a story for another day. It finally shipped in the 4.12 kernel.
+<p>When <tt>CPUID</tt> faulting is available, rr recording stores the results of all <tt>CPUID</tt> instructions in the trace, and rr replay intercepts all <tt>CPUID</tt> instructions and takes their results from the trace. With this in place, we're able to move traces from one machine/distro/kernel to another and replay them successfully.
+<p>We also support situations where <tt>CPUID</tt> faulting is <em>not</em> available on the recording machine but is on the replay machine. At the start of recording we save all available <tt>CPUID</tt> data (there are only a relatively small number of possible <tt>CPUID</tt> "leaves"), and then rr replay traps <tt>CPUID</tt> instructions and emulates them using the stored data.
+<p>Caveat: the user is responsible for ensuring the destination machine supports all instructions and other CPU features used by the recorded program. At some point we could add an rr feature to mask the <tt>CPUID</tt> values reported during recording so you can limit the CPU features a recorded program uses. (We actually already do this internally so that applications running under rr believe that <tt>RTM</tt> transactional memory and <tt>RDRAND</tt>, which rr can't handle, are not available.)
+<p><tt>CPUID</tt> faulting is supported on most modern Intel CPUs, at least on Ivy Bridge and its successor Core architectures. Kyle also added support to upstream Xen and KVM to virtualize it, and even emulate it regardless of whether the underlying hardware supports it. However, VM guests running on older Xen or KVM hypervisors, or on other hypervisors, probably can't use it. And as mentioned, you will need a Linux 4.12 kernel or later.
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>What about the instructions with the encoding that are not illegal on an old processor but mean something specific or even different on a new processor? 
+
+Like the CET Endbranch instructions that reuse existing NOPs?  And the TZCNT instruction that contains a BSF as part of it?  Cross-generation replay is always going to be a problem unless you make sure to emulate everything that could be a problem in a semantically safe way.
+
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I think ENDBRANCH isn&#39;t a problem because it only acts as a non-noop if you enable CET, and in the recording it won&#39;t be enabled.
+
+Likewise TZCNT isn&#39;t likely to be a problem because it only differs from BSF when the input operand is zero, in which case the BSF result is undefined so programs shouldn&#39;t be using the result, though I suppose they could. Instructions with undefined results can even, in principle, break replay on the same machine, but that isn&#39;t causing problems in practice, so I&#39;m not too worried about it.
+
+Generally Intel is working pretty hard to ensure cross-generation compatibility, so I don&#39;t expect to see breaking semantic changes across processors that aren&#39;t gated on mode switches.</div>
+</div>
+</div>
+
+</div>

@@ -1,0 +1,91 @@
+---
+layout: "post"
+title: "Using Arbitrary Elements As Paint Servers"
+date: "2008-07-08 16:53:00 +0000"
+categories: "Mozilla"
+permalink: "/2008/07/using-arbitrary-elements-as-paint_08.html"
+---
+<div class="columns"><p>The latest feature in my bling branch is the ability to use <em>any element</em> as a paint-server CSS background for another element.<br/><p>There are a few motivations for this feature. Probably the biggest usage of the canvas "drawWindow" API extension in Mozilla is to create thumbnails of Web content. The problem is, drawWindow necessarily creates "snapshot" thumbnails. Wouldn't it be cooler if there was an easy way to create live thumbnails --- essentially, extra live viewports into Web content? Now there is. It should be pretty easy to add this to <a href="http://meyerweb.com/eric/tools/s5/">S5</a> to get slide thumbnails, for example.<br/><p>Another feature that's popular these days is reflections. With element-as-background, plus a small dose of transforms and masks, <a href="/2008/07/fun.html">reflections are easy</a>. A while ago Hyatt introduced a feature in Webkit to <a href="/2008/07/fun.html">use a &lt;canvas&gt; as a CSS background</a>; that falls out as a special case of element-as-background.<br/><p>So here's an example:</div><br/><div class="image"><img src="/assets/images/element-as-background.png" alt="An HTML element with a rotating canvas background" width="678" height="366"></div><br/><p>And here's the markup:<br/><pre>&lt;!DOCTYPE HTML&gt;<br/>&lt;html&gt;<br/>&lt;head&gt;<br/>&lt;style&gt;<br/>p { background:url(#d); }<br/>&lt;/style&gt;<br/>&lt;/head&gt;<br/>&lt;body style="background:yellow;"&gt;<br/>&lt;p style="width:60%; border:1px solid black; margin-left:100px;"&gt;<br/>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor<br/>incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud<br/>exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute<br/>irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla<br/>pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia<br/>deserunt mollit anim id est laborum."<br/>&lt;/p&gt;<br/>&lt;canvas id="d" width="50" height="50"&gt;&lt;/canvas&gt;<br/>&lt;script&gt;<br/>var d = document.getElementById("d");<br/>var iteration = 0;<br/>function iterate() {<br/>++iteration;<br/>var ctx = d.getContext("2d");<br/>ctx.save();<br/>ctx.clearRect(0, 0, 50, 50);<br/>ctx.translate(25,25);<br/>ctx.rotate(Math.PI*iteration/180);<br/>ctx.fillStyle = "lime";<br/>ctx.fillRect(-10, -10, 20, 20);<br/>ctx.restore();<br/>setTimeout(iterate, 10);<br/>}<br/>iterate();<br/>&lt;/script&gt;<br/>&lt;/body&gt;<br/>&lt;/html&gt;</pre><br/><div class="columns"><p>Unlike SVG paint servers, elements-as-backgrounds have an intrinsic size. Staying consistent with my earlier work on <a href="/2008/06/applying_svg_ef.html">SVG effects for HTML</a>, I define the intrinsic size as the bounding box of the border-boxes for the element.<br/><p>As with SVG paint servers, an element-as-background is subject to all CSS background effects, including 'background-repeat' as in the example above.<br/><p>Of course, the first thing any self-respecting computer scientist will think of when they read about this feature is, "can I exploit infinite recursion to create a hall-of-mirrors effect or sell exploits to gangsters?" No. We refuse to render an element-as-background if we're already in the middle of rendering the same element-as-background.<br/><p>The builds I linked to in my previous post contain this feature. I've uploaded the <a href="http://people.mozilla.com/~roc/element-as-background.html">above example</a> and the <a href="http://people.mozilla.com/~roc/reflection.xhtml">reflection demo</a>.<br/><p>The next thing I have to do is to write up a spec proposal for all this work and get it discussed by the CSS and SVG working groups. Based on that feedback we'll figure out the best way to deliver this functionality in Gecko. Unfortunately, the approach of "make existing syntax applicable in more situations" is not amenable to using vendor prefixes to isolate experimental features.</div><br/><br/>
+<div class='comments'><h2>Comments</h2>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The problem with  is that those elements are display:none, which means that they don&#39;t have frame tree/render tree. More abstractly, display:none elements don&#39;t have a size.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>Would background:element(url(ext.html#a#b)) work?<br>Very cool stuff. I can&#39;t believe some of this might get into 3.1.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>I don&#39;t think this feature necessarily obsoletes the idea of CSS canvas though.  For example being able to point  to an image element in the document by ID doesn&#39;t obsolete the idea of just referencing that raw image directly.<br>The same is true for direct access to the canvas buffer (and you avoid the need for an additional element in your DOM).<br>You can also reuse the actual canvas image buffer when tiling, although I suppose you could optimize the paint server version to use canvas or image element image buffers as long as no scale is in effect and no border/padding/masks are present.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Benjamin Otte</div>
+<div class='content'>Yeah, author control over the caching will likely not work. From my Flash experience only very few people use MovieClip.cacheAsBitmap and if they do, they use it in the wrong place. Plus, caching benefits are very different between systems (don&#39;t cache as much on mobile).<br>Slightly similar for this topic, I&#39;ve wondered about adding support to cairo for &quot;meshes&quot; (for lack of a better word). It would basically be a Cairo meta surface with a recorded set of rendering commands that you can then use as a normal surface (and with it: source pattern). That would sound like a natural part to move caching to.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>On OS X it&#39;s a huge win to repeatedly draw CGImageRefs (and CGLayerRefs), since you end up using the video card.  Similarly CGPatterns are much faster if they are simply tiling CGImageRefs (and not using custom tiling callback functions).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>display: none would suck for us in WebKit too for the exact same reason (no frame tree).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dao</div>
+<div class='content'>Wouldn&#39;t it be cooler if there was an easy way to create live thumbnails --- essentially, extra live viewports into Web content?<br>Yes, especially if there was support for background-size.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Another thing that&#39;s currently lacking is the ability to refer to an element of a subdocument (e.g. an IFRAME). It would be easy to implement, the problem is devising syntax. Maybe something like this:<br>background:element(#a#b)<br>Where #a refers to element with ID &#39;a&#39; in the styled document, which in this case is an element with a subdocument, and #b refers to element with ID &#39;b&#39; inside that subdocument. This extension would also cover the issue that there is currently no way for a CSS stylesheet to reference an element in the styled document. However, this syntax would not let you reference an element in a subdocument of an external document ... sigh.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>izle</div>
+<div class='content'>would suck for us in WebKit too for the exact same reason not view to frame.. :D<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>To me, having the element in the DOM (possibly the XBL shadow DOM, in an ideal world) feels better than having it in a special new namespace like the one that getCSSCanvas provides.<br>In practice I suspect slightly more direct access isn&#39;t going to matter much. The overhead is small. Doing the optimization you suggest would not be completely trivial since with element-as-background, styles applying to the canvas element are applied when rendering it as a background, so before we took direct access to the canvas buffer we&#39;d have to check there were no borders, no background, no opacity, etc. Doable, but I wouldn&#39;t bother without a testcase showing it&#39;s a big win.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Myk Melez</div>
+<div class='content'>If it were possible to reference other documents, that would make the Personas extension easier to implement and much more powerful.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>Yeah I like this idea, and it does work as a more generalized version of the canvas extension I did.  I think you need to be able to hide the content... you almost want something like a defs element to wrap presentational markup like this (e.g., arbitrary elements that will serve as masks etc.).<br>Maybe display:none could just allowed on the element and not prevent it from rendering in other contexts.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael K.</div>
+<div class='content'>My and roc&#39;s comments were about &lt;head&gt; if you were wondering. The parser stripped it out.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>Maybe we should create a new display type in CSS for these types of graphical definitions... e.g.,<br>display: paint-server<br>or something like that. :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>It&#39;s easy enough to wrap the canvas in an overflow:hidden, height:0 element. Arguably, that&#39;s a hack.<br>display:none would suck for us because we won&#39;t create a frame tree (i.e. renderobject tree) for such elements. In this implementation they won&#39;t work as background sources.<br>When we do external references, you&#39;d be able to reference an element in an external document, which would be quite clean. We&#39;d want an API to access the DOM of such documents, but that&#39;s something we&#39;re going to want anyway.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael K.</div>
+<div class='content'>Isn&#39;t  ideally the place to put elements that are not part of the document? I&#39;m sure it doesn&#39;t work that way in the real world right now, but ideally.<br>Anyway, I really like the flexibility you gain with this feature. And unlike the SVG stuff, this would work in regular HTML right now.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We don&#39;t use custom tiling callback functions here, they&#39;re only used for gradients in cairo. The only overhead here to be avoided by direct use of the canvas buffer is the creation of a temporary surface and a copy into that surface, and that only in the tile case.<br>An alternative optimization would be to cache a surface containing the rendering of the element subtree. That would make multiple references to a complex subtree super-fast and would also take care of the canvas case (except use more memory). Actually in the past we&#39;ve even talked about a generalization of that using heuristics to cache renderings of arbitrary subtrees to speed up multi-layer animations. Joost&#39;s Gecko extensions implement something like that, albeit with author control over the caching.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jonas Sicking</div>
+<div class='content'>This is rockin&#39;!<br>I do like hyatts idea of a display: paint-server frame type that doesn&#39;t affect the rest of the frame tree, but that still allows the element to be used as a paint server. This could be useful to do a &#39;proper&#39; implementation of svg:defs too.<br>Such a frame would probably behave like a block except maybe shrink-to-fit rather than taking up maximum width. And its size would be unaffected by the size of the page.<br>An alternative to explicitly having &quot;display: paint-server&quot;, would be to say that the nearest &quot;display:none&quot; parent of a paint server is automatically given a paint-server frame. This avoids having to add explicit CSS syntax, and also covers the case where you have a paint server somewhere in the DOM which as part of the UI for the page is occasionally set to display:none.<br>None of this would be needed for the initial release of course.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>qwe</div>
+<div class='content'>CSS seems like a wrong place for this. It should be canvas API.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Filim izle</div>
+<div class='content'>you almost want something like a defs element to wrap presentational markup like this (e.g., arbitrary elements that will serve as masks etc.).<br>Ex: eAccelerator doesn&#39;t work with the SAPI you are using!<br></div>
+</div>
+
+</div>
