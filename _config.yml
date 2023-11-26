@@ -4,4 +4,6 @@ incremental: true
 title: Eyes Above The Waves
 url: https://robert.ocallahan.org
 theme: null
+plugins:
+  - jekyll-feed
 
