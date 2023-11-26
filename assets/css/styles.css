@@ -19,7 +19,6 @@ a:not(:hover) {
 
 #main {
   display: flex;
-  margin: 0 2em;
 }
 
 @media (max-width: 1000px) {
@@ -29,7 +28,8 @@ a:not(:hover) {
 }
 
 #nav {
-  flex: 0 0 calc(min(50%, 14em));
+  flex: 0 0 calc(min(50%, 14rem));
+  margin: 0 2em;
 }
 
 #nav ul {
@@ -60,7 +60,7 @@ details > details {
 
 #body {
   flex: 1;
-  max-width: 40em;
+  max-width: 40rem;
 }
 
 .post {
