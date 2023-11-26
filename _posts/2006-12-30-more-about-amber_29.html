@@ -9,15 +9,19 @@ permalink: "/2006/12/more-about-amber_29.html"
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
 <div class='author'>Philip Withnall</div>
-<div class='content'>Hmmm...OK.<br>There&#39;s probably some obvious reason I&#39;m missing (still relatively new to programming and the like), but why put in the memory addresses of variables in the debugger interface? Or is this just temporary, waiting for something else to be implemented, like hyperlinked queries to when that variable was last modified, or its source?<br></div>
+<div class='content'>Having read through the PDF, and developed a headache, I&#39;ve got a few comments:<br>The timestamps could get very large; as you said, a simple Firefox test run executes over 4.8 billion instructions. Do you have any plans to make them easier to read in the interface? How about displaying them as differences from the current timestamp, when applicable?<br>I suppose you&#39;ve already explored this, but as you suspect most of the CPU time is being spent in zlib, how about changing to use a different compression library (one which has been designed for ridiculously fast compression) such as lzop?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Cunningham</div>
+<div class='content'>That pdf is being sent as application/octet-stream by the looks of things.<br>- Chris<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Philip: I never display timestamps in the interface.<br>There&#39;s a lot that could be done to improve performance. But now it&#39;s more important to build a useful debugger that can use this data.<br>Chris: I can&#39;t change the MIME type unfortunately, the site is hosted by Google Pages.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Chris Cunningham</div>
-<div class='content'>That pdf is being sent as application/octet-stream by the looks of things.<br>- Chris<br></div>
+<div class='author'>Philip Withnall</div>
+<div class='content'>Hmmm...OK.<br>There&#39;s probably some obvious reason I&#39;m missing (still relatively new to programming and the like), but why put in the memory addresses of variables in the debugger interface? Or is this just temporary, waiting for something else to be implemented, like hyperlinked queries to when that variable was last modified, or its source?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Dan Amelang</div>
@@ -26,10 +30,6 @@ permalink: "/2006/12/more-about-amber_29.html"
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>I know a little bit about Bugnet. Thanks for the pointers.<br>Bugnet seems less interesting than the alternatives. Their overhead isn&#39;t much lower than Amber, even though they&#39;re logging a lot less and don&#39;t support efficient state reconstruction. Compared to other replay systems like Nirvana, they seem to have sacrificed logging overhead in order to get smaller log sizes. But this doesn&#39;t seem like a good tradeoff to me, because disk space is so cheap. Average PCs have 200GB disks these days, so spending 5GB to store a log actually isn&#39;t a big deal. You just need to make sure that the log is small enough that reading or writing the log is not a bottleneck.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Philip Withnall</div>
-<div class='content'>Having read through the PDF, and developed a headache, I&#39;ve got a few comments:<br>The timestamps could get very large; as you said, a simple Firefox test run executes over 4.8 billion instructions. Do you have any plans to make them easier to read in the interface? How about displaying them as differences from the current timestamp, when applicable?<br>I suppose you&#39;ve already explored this, but as you suspect most of the CPU time is being spent in zlib, how about changing to use a different compression library (one which has been designed for ridiculously fast compression) such as lzop?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Michael</div>

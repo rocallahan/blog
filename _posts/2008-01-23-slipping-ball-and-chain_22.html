@@ -12,104 +12,84 @@ permalink: "/2008/01/slipping-ball-and-chain_22.html"
 <div class='content'>&quot;What&#39;s remarkable is that we&#39;ve not been hit by compatibility concerns&quot;<br>Not actually that remarkable. Firefox is the &quot;new Netscape&quot;, remember. Most web developers know (knew) about Netscape. When Netscape 6 was shipped, millions of sites were (re)designed with NS6 compatibility in mind.<br>And since Netscape used Gecko, Firefox benefited from that and got compatibility for free.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Vidar</div>
-<div class='content'>Most comments here seems IMHO to miss the point.<br>This is about saying &quot;I tested this page on the following versions of the following browsers&quot; as a HINT to the browsers that _IF_ they have specific compatibility functionality to better render pages intended for one of those browser/version combinations, then the page is less likely to break in unexpected ways.<br>Standards evolve. Products have bugs. People can&#39;t test. There&#39;s no way ANY page will continue to look exactly the same, and while the information may still be accessible if you&#39;ve done a good job, you will still miss something, and your site will break or not look as good as it could do everywhere.<br>Nothing forces browsers to keep rendering pages 100% the same. Nothing forces browsers to keep supporting really old pages.<br>But this provides a mechanism that allows browser innovation to speed up and also make it easier to deprecate outdated functionality, because you have an explicit mechanism to prevent the worst breakage from immediately affecting users until web designers can catch up.<br>If you&#39;re concerned about web designers becoming complacent about fixing broken sites, then set explicit schedules. Specifically state that just one or two prior versions rendering quirks will remain supported.<br>Or leave it to extensions to support the quirks, and it&#39;s entirely in the hand of users. That would allow users/developers to add the option of better compatibility with other browsers too, even when that other browser is &quot;broken&quot; and you really don&#39;t want to change the main codebase.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Sara</div>
-<div class='content'>First of:<br>I never develop a site outside of standads. I simply dont want to rewrite them period!<br>So, will this work for all that dont like standards or &quot;half of it&quot;?<br>If there were no standard, you couldn&#39;t buy a new owen to your kitchen and be sure it will fit!<br>Sara<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Colin Coghill</div>
-<div class='content'>Another thing that worries me about this trick of specifying the browser version in the document is that it lets all the current crop of awful developers who only ever test on one browser and OS combination to *continue* doing so.<br>Why bother testing your site with FF or Opera, or looking at the internet standards when you can force it to render using an IE7 engine.<br>(And those of us not on Windows will continue to be locked out of intranets)<br>- Colin<br></div>
-</div>
-<div class='comment'>
-<div class='author'>PeterS</div>
-<div class='content'>In all fairness to the IE team, Firefox development has added hacks that went against the W3 spec in order to prevent sites from breaking:<br>Firefox blocks load events from propagating to the window object to prevent too many sites from breaking since the sites were coded before a differnt bug was fixed.<br>https://bugzilla.mozilla.org/show_bug.cgi?id=335251<br>Now, FF did go to the W3 group to try to get the spec re-written so that their fix was spec compliant.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Alan</div>
-<div class='content'>By trying to accommodate their corporate users, are Microsoft not in part the reason that most corporate sites lie unmaintained? Corporations = money; they can certainly afford the occasional upgrade to their sites should technology advance enough that their sites are broken enough to need &#39;fixing&#39;.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jonadab the Unsightly One</div>
-<div class='content'>To get absolutely pixel-perfect reproductions of yesteryear&#39;s web page renderings, you also need yesteryear&#39;s widget set renderings.  Form widgets don&#39;t look the same on Vista as they did on Windows 3.1, no matter what the browser does (short of drawing them itself).  And don&#39;t forget Acrobat Reader 3.0, not to mention antique versions of Java...  Actually, come to think of it, what you really want is screenshots.<br>OTOH, I cannot think of a single piece of content for which I would care, ten years later, exactly what the layout originally looked like.  For long-term archive purposes, all that is really necessary, in vanishingly close to 100% of all cases, is to be able to read the words, and maybe follow the links.  Nothing else matters on stuff that old.  It doesn&#39;t have to look totally perfect, because you&#39;re not trying to impress anyone with it ten years later.  It is, at that point, of *historical* interest, so only the facts really matter, not visual impressions.<br>Of course, being able to follow links is something that&#39;s especially likely to break when sites targetted to IE6 are viewed in a newer browser, especially if there&#39;s significant client-side scripting.  But I consider that to be a design flaw in the first place.  Sites should always be designed to be at least minimally navigable without client-side scripting, for a long list of very good reasons.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>AndersH</div>
-<div class='content'>&gt; People have raised the &quot;archival format&quot; issue ... how do archaeologists decipher the late-90s Web far in the future. I honestly think that for total compatibility the best approach is virtual machines running the software of the age.<br>It seems to be very much the same problem, you face when needing to be able to build old versions of software. You might try putting the third party library in the source control, later adding the compiler, but in the end you end you really need to save the entire machine and that is of course easiest done when its virtual.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Boris</div>
-<div class='content'>PeterS, the behavior of Window during event dispatch is not specified by any W3C spec.  In fact, the Window object is not specified at all.  That&#39;s being worked on, of course.<br>But the upshot is that there is no spec either requiring or prohibiting Gecko&#39;s behavior with regard to load events on Window.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Nicolas Mailhot</div>
-<div class='content'>While all the points about corps tending to put updates on the back burner are true, it&#39;s false to think they&#39;ll applaud the Microsoft proposal today.<br>For years Microsoft has delivered non-standard solutions, and used all sorts of workarounds to hide consequences under the carpet, and delay pay-time as much as possible. However this can only go on so long and corps are beginning to realise the critical mass point is not far off.<br>.doc binary format relative stability is replaced by .docx experimenting hell.<br>office UI is rewritten by mad squirrels<br>w2k &amp; winXP are replaced by vista<br>last traces of MS JVM need to be hunted down<br>old software stacks are deprecated in favour of .Net<br>ie6 gets superceded by incompatible ie7 then (soon) ie8<br>win32 will have to be migrated to 64bit soon (for memory handling reasons mainly)<br>All those changes have huge costs for the conservative corporate users that froze their tech in the win2k/ie6 era. They&#39;re ripe for a major wintel house clean-up, and proposing a new hack now is not going to sell well.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>&gt; it&#39;s an admission that the majority of web<br>&gt; developers do not test their sites on multiple<br>&gt; browsers, or multiple versions of a browser, or<br>&gt; against the standards. Ever. Nor will they ever.<br>That may be true for the intranet, but I don&#39;t think it&#39;s true for the public Web. If it was, Firefox wouldn&#39;t work on most Web sites and we wouldn&#39;t have the market share we have.<br>In fact, the picture I get from Web developers for public Web sites is that most of them primarily test with Firefox and when they&#39;ve finalized the site design they then backport it to IE&#39;s quirks.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Sam Hasler</div>
-<div class='content'>Eventually this will gives us statistics for the number of web pages that are targeted at each browser version. My initial thought was that we would be able to watch the number of pages targeted at a specific browser, say IE8, drop over time and when it drops below a certain threshold it could stop supporting it in the next version of IE and make any pages targeting it use IE9. Or you could still include it but turn it&#39;s use off by default but it would still be there if some user wanted it. That would allow lazy site owners a &quot;grace period&quot; where they either update their site to the latest version, just fix the bugs introduced from the switch from IE8 -&gt; IE9, or ask their users to turn IE8 back on.<br>Also because IE has security zones they could turn off older engines at different times in each zone. So sites on an intranet could get extra time to upgrade.<br>As I was saying though, that was my initial thought, but now I&#39;m wondering just how many web pages are put up and forgotten about and will never be updated. The web is growing all the time so eventually they will be outnumbered by newer pages for newer browsers but most of that content will still be interesting to someone.<br>Will Microsoft have to have to support IE8 indefinitely?<br>What will be the half life of an X-UA-Compatible: IE=8 web page?<br></div>
-</div>
-<div class='comment'>
 <div class='author'>dantealiegri</div>
 <div class='content'>At worst, the way firefox can implement it is the way the IEtab in windows works;<br>You can have a &#39;view this page in legacy firefox&#39;.  It gives control of that space to a firefox that is a completely different application. That firefox has a different install path, runs as a seperate application.<br>An optimization of that would be having that remote process able to handle multiple pages, but in the theoretic future, one would probably only have one tab, for some intranet page.<br>This would also be the best method for IE as well.<br>I could see this as for an intranet page, an administrator sets some legacy white list, and no user knows or cares, and more importantly, the vast majority of the web doesn&#39;t need a tag it doesn&#39;t use.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Kevin LeCureux</div>
-<div class='content'>If they&#39;re pandering to corporations and others who don&#39;t bother to update their code, why not make a CMS that will produce standardized code? I am sure that many, many corporations would pay thousands of dollars for a Microsoft CMS that is &quot;standards-compliant&quot;.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>The only web content I produce is my personal stuff. It&#39;s all produced to web standards and I simply ignore buggy browsers. Of course, big companies with many users can&#39;t do the same, but just immagine how great it would be if they would.<br>What I actually want to see is an effort to abolish quirks modes of all stripes. If I was to write a web browser, I&#39;d impliment the specs exactly as written. Of course, that&#39;d &quot;break the web&quot;...<br>Microsoft is corporate scum and this is just the latest proof.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>AndersH</div>
-<div class='content'>&gt; People have raised the &quot;archival format&quot; issue ... how do archaeologists decipher the late-90s Web far in the future. I honestly think that for total compatibility the best approach is virtual machines running the software of the age.<br>It seems to be very much the same problem, you face when needing to be able to build old versions of software. You might try putting the third party library in the source control, later adding the compiler, but in the end you end you really need to save the entire machine and that is of course easiest done when its virtual.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Thanks, Chris.<br>I should have added to the &quot;archival format&quot; article that not only do you need the old browser engine, you need the old fonts, the old Flash player, the old version of Uniscribe, and goodness knows what else.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>David Naylor</div>
-<div class='content'>&quot;One could argue that by slaving themselves to the needs of the corporate intranet, IE is actually being hobbled for the mass market.&quot;<br>Definitely. The version target system is a solution to a problem only existant in IE.<br>If they hadn&#39;t left IE6 to rot for so long, this problem never would have existed.<br>The best solution proposed so far (in the various discussions) is to set the &quot;real&quot; standards mode in IE8 as default, and have a switch in the options to allow &quot;IE7 mode&quot; or &quot;IE6 mode&quot; for companies with ancient intranet apps.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Yuhong Bao</div>
-<div class='content'>Well, Gecko did implement a &quot;almost standard mode&quot; based on transitional vs strict DOCTYPE switching.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Chris Wilson</div>
-<div class='content'>A very perceptive post, Robert.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Whoever</div>
-<div class='content'>I sort of like the way in which Opera/GreaseMonkey allow you to mess with the page/css/javascript source.<br>Why doesn&#39;t IE just provide a similar crutch mechanism for hotpatching old broken content. That would provide a way for old crap content to be hacked so it works without even editing the original pages.<br>Even corporations can hire people to mess with css/js modifications.<br>Of course such features are a magnet for hackers. I know that I just expect MS products to be insecure these days.<br>I&#39;m still cynical about IE and I&#39;d say they aren&#39;t fixing the nonstandard crap because of fears about losing marketshare. It seems hypocritical that office 2003 sp3 won&#39;t open legacy office documents but god forbid that IE.next would do the same.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>DinoBoff</div>
-<div class='content'>@PeterS: Do you realize you are write website for specific Browsers? Testing them first in FF help to make them Standard complaint but at the end you have to apply fixes for IE6/7 bugs - and for other browsers.<br>And, it doesn&#39;t prevent it from breaking in IE8 (with IE8 mode). In IE8, the bug fixes you added for IE6/7 might break the page.<br>Remember which type of website did break with the launch of IE7:<br>http://www.thinkvitamin.com/features/design/internet-explorer-7-were-you-ready<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert Accettura</div>
 <div class='content'>I&#39;ll confess the problem:<br>There&#39;s some honorific html/js which seem to often be written by Java developers who know only compiled code but end up having to fake knowing front-end  tech due to lack of a developer with better knowledge of the stuff.<br>These apps exist for years on intranets, B2B sites, and even the general websites we all occasionally hit.<br>Nobody dares touch that code since it&#39;s pretty much duct tape and bubble gum holding it together.  Hence the gripes about breaking compatibility.<br>I can&#39;t say sites I&#39;ve worked on are perfect, but I really make an effort keep them clean and understandable in the markup.  Fixing an issue that someone notices with some browser OS combo is generally trivial at best.<br>As for &quot;archival&quot; purposes, I don&#39;t think it&#39;s an issue.  HTML itself has always been pretty easy to extract the actual info from.  It&#39;s the mid-late 2000&#39;s ajaxcentric sites that I&#39;d be more worried about.  How do you scrape all that JSON and xmlHttpRequest responses and recreate what JS does?  Look at archive.org.  Many/most sites have a few imperfections in that archive, but you can still get the info you need from pretty much any site dating back to the beginning of the archive.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Chris Wilson</div>
+<div class='content'>A very perceptive post, Robert.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Toe</div>
 <div class='content'>Now now, Robert.  They&#39;re not putting on a ball and chain here.  It&#39;s an &quot;Albatross!&quot;<br>http://blogs.msdn.com/cwilso/<br>;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Naylor</div>
+<div class='content'>&quot;One could argue that by slaving themselves to the needs of the corporate intranet, IE is actually being hobbled for the mass market.&quot;<br>Definitely. The version target system is a solution to a problem only existant in IE.<br>If they hadn&#39;t left IE6 to rot for so long, this problem never would have existed.<br>The best solution proposed so far (in the various discussions) is to set the &quot;real&quot; standards mode in IE8 as default, and have a switch in the options to allow &quot;IE7 mode&quot; or &quot;IE6 mode&quot; for companies with ancient intranet apps.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Thanks, Chris.<br>I should have added to the &quot;archival format&quot; article that not only do you need the old browser engine, you need the old fonts, the old Flash player, the old version of Uniscribe, and goodness knows what else.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colin Coghill</div>
+<div class='content'>Another thing that worries me about this trick of specifying the browser version in the document is that it lets all the current crop of awful developers who only ever test on one browser and OS combination to *continue* doing so.<br>Why bother testing your site with FF or Opera, or looking at the internet standards when you can force it to render using an IE7 engine.<br>(And those of us not on Windows will continue to be locked out of intranets)<br>- Colin<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alan</div>
+<div class='content'>By trying to accommodate their corporate users, are Microsoft not in part the reason that most corporate sites lie unmaintained? Corporations = money; they can certainly afford the occasional upgrade to their sites should technology advance enough that their sites are broken enough to need &#39;fixing&#39;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kevin LeCureux</div>
+<div class='content'>If they&#39;re pandering to corporations and others who don&#39;t bother to update their code, why not make a CMS that will produce standardized code? I am sure that many, many corporations would pay thousands of dollars for a Microsoft CMS that is &quot;standards-compliant&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Schend</div>
+<div class='content'>A few responses:<br>Toe: If the intranet application is unmaintained, how exactly are they supposed to add a special IE6/IE7 tag to it? It&#39;s unmaintained!<br>Robert: I think part of the point of this change is that it&#39;s an admission that the majority of web developers do not test their sites on multiple browsers, or multiple versions of a browser, or against the standards. Ever. Nor will they ever.<br>Any solution that requires web developers to change is going to fail for the same reason that DOCTYPE switching failed, because of this class of web developers. (They just saw the doctype tag as a &quot;magic word&quot; to add at the beginning of the code, and started pasting it on everything. Or their CMS, meaning well, added it despite the other code in the CMS being completely contrary to the DOCTYPE used.) Software can&#39;t change human behavior, it can only change its own behavior.<br>Now the type of developer who does care, they can still benefit from this situation. They can test their web app in the latest browsers and update their tag as needed, or simply set it to &quot;edge&quot; and keep up as browser developments come down the line.<br>Alan: If the intranet app is unmaintained, who exactly is going to port it into this fictional Microsoft CMS?<br>Robert: Your &quot;Preview&quot; button for comments on this blog is broken.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; it&#39;s an admission that the majority of web<br>&gt; developers do not test their sites on multiple<br>&gt; browsers, or multiple versions of a browser, or<br>&gt; against the standards. Ever. Nor will they ever.<br>That may be true for the intranet, but I don&#39;t think it&#39;s true for the public Web. If it was, Firefox wouldn&#39;t work on most Web sites and we wouldn&#39;t have the market share we have.<br>In fact, the picture I get from Web developers for public Web sites is that most of them primarily test with Firefox and when they&#39;ve finalized the site design they then backport it to IE&#39;s quirks.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>minimal design</div>
 <div class='content'>I build everything in FF and/or Safari, then add workarounds for IE6/7. with a quick final check in Opera which %99.99 of the time works just as fine as FF/Safari ;)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Sigurd Magnusson</div>
-<div class='content'>I think thanks to the continued efforts by Firefox and Safari to be really close to the various standards, and to each other, and to continuously bring out updates several times a year with additional html/js/css support, web development has become a lot easier than in the past.<br>The argument of opt-in rendering modes for IE wouldn&#39;t happen if they played in the same game, instead of being left behind for years. Let&#39;s not forget the IE 5.0 was really the good guy in the Netscape 4 days, simply because of innovation and bringing out a better product that let developers build more advanced websites. If IE updated several times a year then intranet developers wouldn&#39;t be so complacent about building IE-specific products, and the resulting sites wouldn&#39;t deviate so far from working in other browsers. Even I&#39;ve been down the path between 2000 and 2004 of making IE-only projects; and while IE continues to be off in their own neighbourhood it will be easy for developers to be led astray. I think, to be honest, more years just need to go by so that firefox &amp; safari continue to  outperform IE, until such time as Microsoft puts in much more resource and keeps up. I&#39;m not holding my breath.<br>The same sort of problem hits the server side too. Look at how so many projects and webhosts are stuck on PHP4 and how that has given rise to rails and django being seen as far more elegant code than what can be done with PHP5 (when in actual fact there&#39;s a bunch of interesting frameworks like our SilverStripe, symfony, kohanaphp, et al, that show the benefit of continually living on recent technology, i.e. PHP 5.2+)<br></div>
+<div class='author'>Nicolas Mailhot</div>
+<div class='content'>While all the points about corps tending to put updates on the back burner are true, it&#39;s false to think they&#39;ll applaud the Microsoft proposal today.<br>For years Microsoft has delivered non-standard solutions, and used all sorts of workarounds to hide consequences under the carpet, and delay pay-time as much as possible. However this can only go on so long and corps are beginning to realise the critical mass point is not far off.<br>.doc binary format relative stability is replaced by .docx experimenting hell.<br>office UI is rewritten by mad squirrels<br>w2k &amp; winXP are replaced by vista<br>last traces of MS JVM need to be hunted down<br>old software stacks are deprecated in favour of .Net<br>ie6 gets superceded by incompatible ie7 then (soon) ie8<br>win32 will have to be migrated to 64bit soon (for memory handling reasons mainly)<br>All those changes have huge costs for the conservative corporate users that froze their tech in the win2k/ie6 era. They&#39;re ripe for a major wintel house clean-up, and proposing a new hack now is not going to sell well.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Vidar</div>
+<div class='content'>Most comments here seems IMHO to miss the point.<br>This is about saying &quot;I tested this page on the following versions of the following browsers&quot; as a HINT to the browsers that _IF_ they have specific compatibility functionality to better render pages intended for one of those browser/version combinations, then the page is less likely to break in unexpected ways.<br>Standards evolve. Products have bugs. People can&#39;t test. There&#39;s no way ANY page will continue to look exactly the same, and while the information may still be accessible if you&#39;ve done a good job, you will still miss something, and your site will break or not look as good as it could do everywhere.<br>Nothing forces browsers to keep rendering pages 100% the same. Nothing forces browsers to keep supporting really old pages.<br>But this provides a mechanism that allows browser innovation to speed up and also make it easier to deprecate outdated functionality, because you have an explicit mechanism to prevent the worst breakage from immediately affecting users until web designers can catch up.<br>If you&#39;re concerned about web designers becoming complacent about fixing broken sites, then set explicit schedules. Specifically state that just one or two prior versions rendering quirks will remain supported.<br>Or leave it to extensions to support the quirks, and it&#39;s entirely in the hand of users. That would allow users/developers to add the option of better compatibility with other browsers too, even when that other browser is &quot;broken&quot; and you really don&#39;t want to change the main codebase.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>AndersH</div>
+<div class='content'>&gt; People have raised the &quot;archival format&quot; issue ... how do archaeologists decipher the late-90s Web far in the future. I honestly think that for total compatibility the best approach is virtual machines running the software of the age.<br>It seems to be very much the same problem, you face when needing to be able to build old versions of software. You might try putting the third party library in the source control, later adding the compiler, but in the end you end you really need to save the entire machine and that is of course easiest done when its virtual.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>AndersH</div>
+<div class='content'>&gt; People have raised the &quot;archival format&quot; issue ... how do archaeologists decipher the late-90s Web far in the future. I honestly think that for total compatibility the best approach is virtual machines running the software of the age.<br>It seems to be very much the same problem, you face when needing to be able to build old versions of software. You might try putting the third party library in the source control, later adding the compiler, but in the end you end you really need to save the entire machine and that is of course easiest done when its virtual.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>PeterS</div>
+<div class='content'>In all fairness to the IE team, Firefox development has added hacks that went against the W3 spec in order to prevent sites from breaking:<br>Firefox blocks load events from propagating to the window object to prevent too many sites from breaking since the sites were coded before a differnt bug was fixed.<br>https://bugzilla.mozilla.org/show_bug.cgi?id=335251<br>Now, FF did go to the W3 group to try to get the spec re-written so that their fix was spec compliant.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>PeterS, the behavior of Window during event dispatch is not specified by any W3C spec.  In fact, the Window object is not specified at all.  That&#39;s being worked on, of course.<br>But the upshot is that there is no spec either requiring or prohibiting Gecko&#39;s behavior with regard to load events on Window.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jonadab the Unsightly One</div>
+<div class='content'>To get absolutely pixel-perfect reproductions of yesteryear&#39;s web page renderings, you also need yesteryear&#39;s widget set renderings.  Form widgets don&#39;t look the same on Vista as they did on Windows 3.1, no matter what the browser does (short of drawing them itself).  And don&#39;t forget Acrobat Reader 3.0, not to mention antique versions of Java...  Actually, come to think of it, what you really want is screenshots.<br>OTOH, I cannot think of a single piece of content for which I would care, ten years later, exactly what the layout originally looked like.  For long-term archive purposes, all that is really necessary, in vanishingly close to 100% of all cases, is to be able to read the words, and maybe follow the links.  Nothing else matters on stuff that old.  It doesn&#39;t have to look totally perfect, because you&#39;re not trying to impress anyone with it ten years later.  It is, at that point, of *historical* interest, so only the facts really matter, not visual impressions.<br>Of course, being able to follow links is something that&#39;s especially likely to break when sites targetted to IE6 are viewed in a newer browser, especially if there&#39;s significant client-side scripting.  But I consider that to be a design flaw in the first place.  Sites should always be designed to be at least minimally navigable without client-side scripting, for a long list of very good reasons.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Whoever</div>
+<div class='content'>I sort of like the way in which Opera/GreaseMonkey allow you to mess with the page/css/javascript source.<br>Why doesn&#39;t IE just provide a similar crutch mechanism for hotpatching old broken content. That would provide a way for old crap content to be hacked so it works without even editing the original pages.<br>Even corporations can hire people to mess with css/js modifications.<br>Of course such features are a magnet for hackers. I know that I just expect MS products to be insecure these days.<br>I&#39;m still cynical about IE and I&#39;d say they aren&#39;t fixing the nonstandard crap because of fears about losing marketshare. It seems hypocritical that office 2003 sp3 won&#39;t open legacy office documents but god forbid that IE.next would do the same.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>PeterS</div>
@@ -120,8 +100,28 @@ permalink: "/2008/01/slipping-ball-and-chain_22.html"
 <div class='content'>In our company, what we do is write a website to the relevant W3C standards rather than to any particular browser. Using Firefox during development (in conjunction with live CSS/XHTML validation on our dev. server) allows us to do this easily. It&#39;s great!<br>Unfortunately, we then have to spend 10-30% of the development budget trying to find standards-compliant work arounds to IEs many failings. It&#39;s time and money that could be spent much better elsewhere...<br>Writing no browser specific code at all is our goal, so there is no way we&#39;d ever use an IE-only meta tag -- even though we&#39;re gagging for a more standards-compliant IE.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>James Schend</div>
-<div class='content'>A few responses:<br>Toe: If the intranet application is unmaintained, how exactly are they supposed to add a special IE6/IE7 tag to it? It&#39;s unmaintained!<br>Robert: I think part of the point of this change is that it&#39;s an admission that the majority of web developers do not test their sites on multiple browsers, or multiple versions of a browser, or against the standards. Ever. Nor will they ever.<br>Any solution that requires web developers to change is going to fail for the same reason that DOCTYPE switching failed, because of this class of web developers. (They just saw the doctype tag as a &quot;magic word&quot; to add at the beginning of the code, and started pasting it on everything. Or their CMS, meaning well, added it despite the other code in the CMS being completely contrary to the DOCTYPE used.) Software can&#39;t change human behavior, it can only change its own behavior.<br>Now the type of developer who does care, they can still benefit from this situation. They can test their web app in the latest browsers and update their tag as needed, or simply set it to &quot;edge&quot; and keep up as browser developments come down the line.<br>Alan: If the intranet app is unmaintained, who exactly is going to port it into this fictional Microsoft CMS?<br>Robert: Your &quot;Preview&quot; button for comments on this blog is broken.<br></div>
+<div class='author'>Sam Hasler</div>
+<div class='content'>Eventually this will gives us statistics for the number of web pages that are targeted at each browser version. My initial thought was that we would be able to watch the number of pages targeted at a specific browser, say IE8, drop over time and when it drops below a certain threshold it could stop supporting it in the next version of IE and make any pages targeting it use IE9. Or you could still include it but turn it&#39;s use off by default but it would still be there if some user wanted it. That would allow lazy site owners a &quot;grace period&quot; where they either update their site to the latest version, just fix the bugs introduced from the switch from IE8 -&gt; IE9, or ask their users to turn IE8 back on.<br>Also because IE has security zones they could turn off older engines at different times in each zone. So sites on an intranet could get extra time to upgrade.<br>As I was saying though, that was my initial thought, but now I&#39;m wondering just how many web pages are put up and forgotten about and will never be updated. The web is growing all the time so eventually they will be outnumbered by newer pages for newer browsers but most of that content will still be interesting to someone.<br>Will Microsoft have to have to support IE8 indefinitely?<br>What will be the half life of an X-UA-Compatible: IE=8 web page?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>DinoBoff</div>
+<div class='content'>@PeterS: Do you realize you are write website for specific Browsers? Testing them first in FF help to make them Standard complaint but at the end you have to apply fixes for IE6/7 bugs - and for other browsers.<br>And, it doesn&#39;t prevent it from breaking in IE8 (with IE8 mode). In IE8, the bug fixes you added for IE6/7 might break the page.<br>Remember which type of website did break with the launch of IE7:<br>http://www.thinkvitamin.com/features/design/internet-explorer-7-were-you-ready<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sigurd Magnusson</div>
+<div class='content'>I think thanks to the continued efforts by Firefox and Safari to be really close to the various standards, and to each other, and to continuously bring out updates several times a year with additional html/js/css support, web development has become a lot easier than in the past.<br>The argument of opt-in rendering modes for IE wouldn&#39;t happen if they played in the same game, instead of being left behind for years. Let&#39;s not forget the IE 5.0 was really the good guy in the Netscape 4 days, simply because of innovation and bringing out a better product that let developers build more advanced websites. If IE updated several times a year then intranet developers wouldn&#39;t be so complacent about building IE-specific products, and the resulting sites wouldn&#39;t deviate so far from working in other browsers. Even I&#39;ve been down the path between 2000 and 2004 of making IE-only projects; and while IE continues to be off in their own neighbourhood it will be easy for developers to be led astray. I think, to be honest, more years just need to go by so that firefox &amp; safari continue to  outperform IE, until such time as Microsoft puts in much more resource and keeps up. I&#39;m not holding my breath.<br>The same sort of problem hits the server side too. Look at how so many projects and webhosts are stuck on PHP4 and how that has given rise to rails and django being seen as far more elegant code than what can be done with PHP5 (when in actual fact there&#39;s a bunch of interesting frameworks like our SilverStripe, symfony, kohanaphp, et al, that show the benefit of continually living on recent technology, i.e. PHP 5.2+)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>The only web content I produce is my personal stuff. It&#39;s all produced to web standards and I simply ignore buggy browsers. Of course, big companies with many users can&#39;t do the same, but just immagine how great it would be if they would.<br>What I actually want to see is an effort to abolish quirks modes of all stripes. If I was to write a web browser, I&#39;d impliment the specs exactly as written. Of course, that&#39;d &quot;break the web&quot;...<br>Microsoft is corporate scum and this is just the latest proof.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sara</div>
+<div class='content'>First of:<br>I never develop a site outside of standads. I simply dont want to rewrite them period!<br>So, will this work for all that dont like standards or &quot;half of it&quot;?<br>If there were no standard, you couldn&#39;t buy a new owen to your kitchen and be sure it will fit!<br>Sara<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Yuhong Bao</div>
+<div class='content'>Well, Gecko did implement a &quot;almost standard mode&quot; based on transitional vs strict DOCTYPE switching.<br></div>
 </div>
 
 </div>

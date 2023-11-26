@@ -8,68 +8,68 @@ permalink: "/2005/12/means-and-ends_01.html"
 <div class="columns">For me, Firefox is a means, not an end. I want the world's information and applications to run on a broad variety of platforms, beyond the control of a single organization. A competitive, standards-based, cross-platform Web is the best way towards that, and Firefox is doing a lot to help us get there, so every day I'm pleased to be doing my part. With its market share, its brand, its standards compliance, its expanding feature set for Web developers, and its open-source nature and non-profit masters (which guard against Gecko ever becoming the basis for some new abusive monopoly), Firefox seems to be the ideal vehicle right now. But nevertheless Firefox is only a means and other means could serve.<br/><br/>Therefore I am very glad that the other major standards-focused, Web-focused browsers --- Opera, Safari, and Konqueror --- are fine products doing the right things. In fact, if KHTML were to exceed Firefox in every way that matters and become the dominant browser, I would not shed one tear. (I speak hypothetically; sorry KHTML fans, but that won't happen anytime soon!) I would remain satisfied knowing that the growth of Firefox has played a big part in reversing the trend of the Web becoming IE-only, and that we have thereby held the door open for other browsers and platforms.<br/><br/>But the door could yet close again, so back to coding!</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Michael Krax</div>
-<div class='content'>&quot;...very glad that the other major standards-focused, Web-focused browsers...&quot;<br>Well, i think this is one of the reasons Firefox is much more successfull among private users than corporate users. For standard web surfing and the typical &quot;web apps&quot; out there (webmail, webmaps, blogs, image/video archives, etc) a web-focused browser is perfect. But among corporate users especially Internet Explorer gets more used as a software platform than only a &quot;markup language parser&quot;.<br>Currently i am developing a new release of an intranet apllication based on IE created in the last 5 years. There is a bunch of IE specific stuff in it and it&#39;s not running on any other browser right now. Some of those IE specific features were introduced because of simply ignoring that there is also a w3c recommended way to do it (ok, my fault) - or because there is now way/was no way during that time.<br>One of my goals for the current release is to support FF, but it&#39;s really a pain. For example i have been affected by a regression of FF1.5 - the code runs in IE 5.x,6.x and 7.x beta without a flaw. Never faced a serious regression in 5 years. First version change of FF and *bang* i have to rewrite the code created a few weeks back.<br>Other example is the lack of features specific to the Windows platform (i know this is not in the scope of FF). The most important example is ActiveX. The mostly paranoid &quot;security concerns&quot; away (look at my homepage - i know what i am talking about, XPCOM isn&#39;t that much better) ActiveX is a great technology. You simply rely on that as a intranet developer. Every tried to control a sticker printer from a web app (no, not via the standard printer dialog!)? Ever tried to open a local powerpoint, extract the first three slides as png and upload them to a webserver? Every tried to create a custom context menu that can &quot;jump&quot; over the edges of a frame or the entire window? Ever tried to interact with drag and drop events from the system? The clipboard? An embedded Windows Media Player 10? Ever tried to disable all keyboard shortcuts and overwrite with you own? Every tried to use &quot;border: outset 2px window;&quot; and hoped it would like in windows? This list could go on and on and on...<br>Don&#39;t get me wrong. I love Firefox. I use it as my default browser and i am somewhat active finding (security) bugs in it and try to fix them. But if the goal of Firefox really should be to &quot;take back the web&quot;, we should extend the goal to &quot;take back the intranet&quot;. This is key to be taken serious in the corporate market. Developers like me simply decide what browsers should be supported by software design. Currently it is way to painfull - even for a dev like me who likes FF - to develop an intranet application for it.<br>So what can be done to extend Firefox to be a platform instead of a simple browser? Mhh, maybe we should not try to to it? Maybe we can make an AtiveX control out of the Gecko engine and get the &quot;best of both worlds&quot; embedded in an IE? But what is about Linux/MacOSX? But can we really seriously take back the intranet/corportate market if MS Office is still as dominant as IE? Getting to 10% of private users was a quick and thrilling ride... but can we go any further?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Laurens Holst</div>
-<div class='content'>First step would be for KHTML to actually be ported to Windows...<br>p.s. because of your access keys, I can�t type ALT+0133 like I normally do to write pretty ��� ellipsis. The ALT+1 is giving me troubles. Access keys suck. :(<br>~Grauw<br></div>
-</div>
-<div class='comment'>
-<div class='author'>poningru</div>
-<div class='content'>joe you cant depend upon &#39;acid&#39; tests for compliance measurement, the reason being it only tests a limited set of features, and even if a browser passes all but one, it looks horrible as the last bug can mess everything up. Someone (Roc, gerv or someone) had written an excellent article explaining all of these things.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ian</div>
-<div class='content'>I know that Firefox 2.0 is going to be released from the 1.8 branch (1.8.1), but it might be worth trying to patch the last Acid 2 test results in the 1.8.1 branch (not going into Firefox 1.5).<br>I know some of them are considered &#39;risky&#39; changes, but they&#39;d probably get enough testing before Firefox 2.0 is released.<br>Being able to say &#39;Firefox passes the Acid 2 test&#39; will lead to lots of positive news about Firefox (and take away some critcism from supporters of those browsers that do pass it). By 3.0, either it will be forgotten or it will be criticized for being so late.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Cory</div>
-<div class='content'>&quot;Not for profit&quot;?  The Mozilla Foundation makes tens on millions of dollars each year.<br>I don&#39;t want readers to think that &quot;Not for profit&quot; means they don&#39;t make money.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Michael: a couple of things. Any layout regression is regrettable but that&#39;s a risk we run because we fix bugs. IE has avoided regressions mainly by not fixing their layout bugs. All I can say is that we keep trying to do better and people can help us by testing their sites periodically with Firefox alpha and beta releases, and filing bugs.<br>What we should be doing to improve the intranet situation? It&#39;s a troublesome question. We actually can support ActiveX, if you build the right component, but that ties the browser to Windows, which I don&#39;t want to do. However maybe it should be easier for administrators to bundle that component with a Firefox deployment and configure it to work only on their intranet.<br>On the other hand, many of those things you mention we can already do crossplatform, in a nice way, with XUL. That doesn&#39;t help people like you who want a site to work in IE and Firefox. For you, some features can be made accessible to HTML ... e.g., Hixie is working on a mostly-IE-compatible drag-and-drop spec, which we should implement. The right answer is going to have to be worked out on a feature-by-feature basis, assuming we don&#39;t just want to become an ActiveX-supporting IE clone.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ian</div>
-<div class='content'>Joe: Just because Canvas isn&#39;t a W3C standard doesn&#39;t mean it&#39;s not a standard. It&#39;s a WHATWG standard. W3C isn&#39;t the only standards body out there. WHATWG also works with W3C and their standards are likely to become W3C standards also (they submit them to W3C).<br>And there&#39;s tons of new stuff related to JavaScript. Look at http://www.squarefree.com/burningedge/releases/1.5-comprehensive.html under &quot;JavaScript and DOM&quot; (which is under &quot;New web developer features&quot;). This includes &quot;Many fixes to make DHTML faster.&quot;<br>Also Canvas makes for lots of cool extensions, e.g. Tab Preview, so for that alone it&#39;s worth having :)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Wladimir Palant</div>
-<div class='content'>Michael: doing lots of web development myself, I know too well that IE 5.0, 5.5 and 6.0 all behave very differently (not to mention IE for Mac). Reason why your intranet application works in all of them is that it was designed with exactly these three IE versions in mind. And it works in IE 7.0 because nothing really changed in IE 7.0, so far most of the effort went into the user interface and nobody dared to fix web rendering.<br>Now my experience with Gecko is very different: usually it is ok to develop for the latest Firefox version. Then you try you application in Mozilla 1.0 from 2002 and everything works. Of course this is only the case if you try to stick to standards and not abuse things that are obviously bugs.<br>As to all the nice things you can do with IE: usually people complaining about lack of features like these simply didn&#39;t get web development. They are still trying to create their desktop application merely in a different programming language. But web application work differently. If you can&#39;t accept it - there is XUL, a perfect development tool for internet-supported desktop applications.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>James R. Craig</div>
-<div class='content'>I use Firefox because, in my opinion it the best in the market today! :)<br></div>
-</div>
-<div class='comment'>
 <div class='author'>David Naylor</div>
 <div class='content'>Well said!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Martijn</div>
-<div class='content'>Thanks for reminding me, I&#39;m a real person ;)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Jonathan Watt</div>
 <div class='content'>Agreed. On all points.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>James AkaXakA</div>
-<div class='content'>Agreed.<br></div>
+<div class='author'>Martijn</div>
+<div class='content'>Thanks for reminding me, I&#39;m a real person ;)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Joe</div>
 <div class='content'>Look, I&#39;m as big a fan of Firefox as the next guy but honestly, let&#39;s be real. Firefox has a commendable level of standards compliance but it still doesn&#39;t yet pass WaSP&#39;s acid2 test. Safari and Konqueror (khtml) both do now.<br>On top of that, Firefox implements something new that isn&#39;t in any W3C standard (html:canvas) - effort that could have been spent on acid2 compliance, maybe? Or perhaps better javascript performance? Granted, Safari was the first to implement html:canvas but Safari does pass acid2 and has a much faster javascript implementation.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>acid2 is far from the last word in standards compliance. It&#39;s just one particular set of features and bugs. The only really meaningful result you can take away from it is that Safari, KHTML, Opera and Firefox are all much better than IE and will be for a considerable time.<br>BTW my development build of Firefox fixes 2 of the 4 remaining Gecko acid2 issues.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James AkaXakA</div>
+<div class='content'>Agreed.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael Krax</div>
+<div class='content'>&quot;...very glad that the other major standards-focused, Web-focused browsers...&quot;<br>Well, i think this is one of the reasons Firefox is much more successfull among private users than corporate users. For standard web surfing and the typical &quot;web apps&quot; out there (webmail, webmaps, blogs, image/video archives, etc) a web-focused browser is perfect. But among corporate users especially Internet Explorer gets more used as a software platform than only a &quot;markup language parser&quot;.<br>Currently i am developing a new release of an intranet apllication based on IE created in the last 5 years. There is a bunch of IE specific stuff in it and it&#39;s not running on any other browser right now. Some of those IE specific features were introduced because of simply ignoring that there is also a w3c recommended way to do it (ok, my fault) - or because there is now way/was no way during that time.<br>One of my goals for the current release is to support FF, but it&#39;s really a pain. For example i have been affected by a regression of FF1.5 - the code runs in IE 5.x,6.x and 7.x beta without a flaw. Never faced a serious regression in 5 years. First version change of FF and *bang* i have to rewrite the code created a few weeks back.<br>Other example is the lack of features specific to the Windows platform (i know this is not in the scope of FF). The most important example is ActiveX. The mostly paranoid &quot;security concerns&quot; away (look at my homepage - i know what i am talking about, XPCOM isn&#39;t that much better) ActiveX is a great technology. You simply rely on that as a intranet developer. Every tried to control a sticker printer from a web app (no, not via the standard printer dialog!)? Ever tried to open a local powerpoint, extract the first three slides as png and upload them to a webserver? Every tried to create a custom context menu that can &quot;jump&quot; over the edges of a frame or the entire window? Ever tried to interact with drag and drop events from the system? The clipboard? An embedded Windows Media Player 10? Ever tried to disable all keyboard shortcuts and overwrite with you own? Every tried to use &quot;border: outset 2px window;&quot; and hoped it would like in windows? This list could go on and on and on...<br>Don&#39;t get me wrong. I love Firefox. I use it as my default browser and i am somewhat active finding (security) bugs in it and try to fix them. But if the goal of Firefox really should be to &quot;take back the web&quot;, we should extend the goal to &quot;take back the intranet&quot;. This is key to be taken serious in the corporate market. Developers like me simply decide what browsers should be supported by software design. Currently it is way to painfull - even for a dev like me who likes FF - to develop an intranet application for it.<br>So what can be done to extend Firefox to be a platform instead of a simple browser? Mhh, maybe we should not try to to it? Maybe we can make an AtiveX control out of the Gecko engine and get the &quot;best of both worlds&quot; embedded in an IE? But what is about Linux/MacOSX? But can we really seriously take back the intranet/corportate market if MS Office is still as dominant as IE? Getting to 10% of private users was a quick and thrilling ride... but can we go any further?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian</div>
+<div class='content'>I know that Firefox 2.0 is going to be released from the 1.8 branch (1.8.1), but it might be worth trying to patch the last Acid 2 test results in the 1.8.1 branch (not going into Firefox 1.5).<br>I know some of them are considered &#39;risky&#39; changes, but they&#39;d probably get enough testing before Firefox 2.0 is released.<br>Being able to say &#39;Firefox passes the Acid 2 test&#39; will lead to lots of positive news about Firefox (and take away some critcism from supporters of those browsers that do pass it). By 3.0, either it will be forgotten or it will be criticized for being so late.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian</div>
+<div class='content'>Joe: Just because Canvas isn&#39;t a W3C standard doesn&#39;t mean it&#39;s not a standard. It&#39;s a WHATWG standard. W3C isn&#39;t the only standards body out there. WHATWG also works with W3C and their standards are likely to become W3C standards also (they submit them to W3C).<br>And there&#39;s tons of new stuff related to JavaScript. Look at http://www.squarefree.com/burningedge/releases/1.5-comprehensive.html under &quot;JavaScript and DOM&quot; (which is under &quot;New web developer features&quot;). This includes &quot;Many fixes to make DHTML faster.&quot;<br>Also Canvas makes for lots of cool extensions, e.g. Tab Preview, so for that alone it&#39;s worth having :)<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Bruce</div>
 <div class='content'>Agreed. Brand-worship is always short-sighted. The bigger picture (and what we need to remain open) is standards for the web. Of course it helps that Opera ships on millions of mobile devices every year, too.  So, if Firefox has strength on the desktop, Opera sure has it in low-memory footprint portable devices.<br>Which might be one of the reasons Microsoft is very anti-Opera (they can never play fair, can they?) and had to pay them millions to avoid a lawsuit for sending corrupted MSN layouts to Opera users:<br>http://news.com.com/Microsoft+behind+$12+million+payment+to+Opera/2100-1032_3-5218163.html<br>An IE-only web would be disastrous for all involved (except Microsoft).<br></div>
 </div>
 <div class='comment'>
+<div class='author'>poningru</div>
+<div class='content'>joe you cant depend upon &#39;acid&#39; tests for compliance measurement, the reason being it only tests a limited set of features, and even if a browser passes all but one, it looks horrible as the last bug can mess everything up. Someone (Roc, gerv or someone) had written an excellent article explaining all of these things.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurens Holst</div>
+<div class='content'>First step would be for KHTML to actually be ported to Windows...<br>p.s. because of your access keys, I can�t type ALT+0133 like I normally do to write pretty ��� ellipsis. The ALT+1 is giving me troubles. Access keys suck. :(<br>~Grauw<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James R. Craig</div>
+<div class='content'>I use Firefox because, in my opinion it the best in the market today! :)<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>acid2 is far from the last word in standards compliance. It&#39;s just one particular set of features and bugs. The only really meaningful result you can take away from it is that Safari, KHTML, Opera and Firefox are all much better than IE and will be for a considerable time.<br>BTW my development build of Firefox fixes 2 of the 4 remaining Gecko acid2 issues.<br></div>
+<div class='content'>Michael: a couple of things. Any layout regression is regrettable but that&#39;s a risk we run because we fix bugs. IE has avoided regressions mainly by not fixing their layout bugs. All I can say is that we keep trying to do better and people can help us by testing their sites periodically with Firefox alpha and beta releases, and filing bugs.<br>What we should be doing to improve the intranet situation? It&#39;s a troublesome question. We actually can support ActiveX, if you build the right component, but that ties the browser to Windows, which I don&#39;t want to do. However maybe it should be easier for administrators to bundle that component with a Firefox deployment and configure it to work only on their intranet.<br>On the other hand, many of those things you mention we can already do crossplatform, in a nice way, with XUL. That doesn&#39;t help people like you who want a site to work in IE and Firefox. For you, some features can be made accessible to HTML ... e.g., Hixie is working on a mostly-IE-compatible drag-and-drop spec, which we should implement. The right answer is going to have to be worked out on a feature-by-feature basis, assuming we don&#39;t just want to become an ActiveX-supporting IE clone.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>Michael: doing lots of web development myself, I know too well that IE 5.0, 5.5 and 6.0 all behave very differently (not to mention IE for Mac). Reason why your intranet application works in all of them is that it was designed with exactly these three IE versions in mind. And it works in IE 7.0 because nothing really changed in IE 7.0, so far most of the effort went into the user interface and nobody dared to fix web rendering.<br>Now my experience with Gecko is very different: usually it is ok to develop for the latest Firefox version. Then you try you application in Mozilla 1.0 from 2002 and everything works. Of course this is only the case if you try to stick to standards and not abuse things that are obviously bugs.<br>As to all the nice things you can do with IE: usually people complaining about lack of features like these simply didn&#39;t get web development. They are still trying to create their desktop application merely in a different programming language. But web application work differently. If you can&#39;t accept it - there is XUL, a perfect development tool for internet-supported desktop applications.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Cory</div>
+<div class='content'>&quot;Not for profit&quot;?  The Mozilla Foundation makes tens on millions of dollars each year.<br>I don&#39;t want readers to think that &quot;Not for profit&quot; means they don&#39;t make money.<br></div>
 </div>
 
 </div>

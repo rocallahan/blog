@@ -8,12 +8,8 @@ permalink: "/2009/02/svg-filter-effects-for-plain-old-html_19.html"
 <div class="columns"><p>I forgot to mention this earlier, but Boris Zbarsky a while ago implemented <a href="https://developer.mozilla.org/web-tech/2008/10/10/svg-external-document-references/">SVG external document references</a>, so that SVG features such as <tt>filter</tt>, <tt>mask</tt>, <tt>clipPath</tt>, <tt>use</tt>, <tt>fill</tt>, <tt>stroke</tt>, <tt>marker</tt>, and <tt>textPath</tt> can refer to elements in other documents. A nice benefit is that our support for <a href="/2008/06/applying_svg_ef.html">SVG effects for HTML</a> can now be very easily applied to Plain Old HTML documents. For example, check out <a href="http://people.mozilla.org/~roc/textarea-shadow.html">this example</a> in a Firefox 3.1 trunk build. The key piece of magic is<br/><pre>textarea {<br/>filter:url(effects.xml#drop-shadow);<br/>}<br/></pre></div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Because really all I&#39;m doing is allowing two existing standards to work together. I also ran it by the SVG WG and other browser developers and they liked the idea. I would have used a -moz prefix except this approach is such a small increment on existing standards there is no new syntax to add a prefix to!<br>OTOH Microsoft&#39;s filter feature was entirely their own invention, it did not reuse existing standards, its design and nomenclature was tailored around their DirectX code, they did not collect feedback from standards organizations or other vendors, they did not propose it for standardization, and they did not use a prefix despite having the opportunity to do so.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>&quot;Real Soon&quot;<br></div>
+<div class='author'>David</div>
+<div class='content'>I love that feature : it makes HTML styling much more powerful without even a new spec.<br>It&#39;s really great !<br></div>
 </div>
 <div class='comment'>
 <div class='author'>David</div>
@@ -24,12 +20,16 @@ permalink: "/2009/02/svg-filter-effects-for-plain-old-html_19.html"
 <div class='content'>That is awesome.<br>When will we see it in a release?<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&quot;Real Soon&quot;<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Daniel</div>
 <div class='content'>Sort of playing the Devil&#39;s advocate here: isn&#39;t the use of nonstandard (as far as HTML and CSS 2.1/3 go), unprefixed attributes bad? Why, for example, is this more acceptable than IE&#39;s &quot;filter&quot; proposal?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>David</div>
-<div class='content'>I love that feature : it makes HTML styling much more powerful without even a new spec.<br>It&#39;s really great !<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Because really all I&#39;m doing is allowing two existing standards to work together. I also ran it by the SVG WG and other browser developers and they liked the idea. I would have used a -moz prefix except this approach is such a small increment on existing standards there is no new syntax to add a prefix to!<br>OTOH Microsoft&#39;s filter feature was entirely their own invention, it did not reuse existing standards, its design and nomenclature was tailored around their DirectX code, they did not collect feedback from standards organizations or other vendors, they did not propose it for standardization, and they did not use a prefix despite having the opportunity to do so.<br></div>
 </div>
 
 </div>

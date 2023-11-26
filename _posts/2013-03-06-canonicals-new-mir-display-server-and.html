@@ -13,19 +13,11 @@ permalink: "/2013/03/canonicals-new-mir-display-server-and.html"
 <p>Having said that, in the rush to get FFOS ready for market we've gone out on a limb a bit and created a number of features that only work in FFOS currently. A big theme for our development in 2013 is to get those features working on all the other platforms. This will benefit the Firefox product on those platforms and also make our developers' lives easier.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>VanillaMozilla</div>
-<div class='content'>I did a little checking, and it&#39;s possible that I am wrong.  Mir is an alternative to Wayland, which is supposed to replace X.org.  It turns out that the Wayland API is less than 1/10 the size of the X.org API.  I don&#39;t know where the dust will settle, but it&#39;s possible that this is a good thing.  I just hope they keep it all simple and don&#39;t break user space.</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>The not being disturbed by changes like a Display Server is something that can be said of Java, QT or GTK applications too, this is not exclusive to HTML/CSS/JavaScript</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>The web abstraction is a benefit and a curse. Not that I am against the web, but with the &quot;browser&quot; as a gateway to the hardware, innovation outside the browser vendors becomes limited on what they can do.
-
-In order to do many things you need that the gateway gives you access to it. I know that the Mozilla team is working hard to add APIs, but a web platform as Firefox OS will not be the center of the innovation on the application side because developers will be able to access features that leak from the platform and do things the browser is not able yet.
-
-I wish Firefox OS a lot of success primarily because there are many applications that really do not need something native and could be pure web applications, but I hope the Mozilla team is realistic that innovation can not wait for the gateway to open you a door. We are changing the locked store model, for the locked API model, It is an improvement, but I don&#39;t see how to break the lock that browser vendors will have on the access to the APIs if developer can not access then directly</div>
+<div class='content'>In theory yes, but in practice, it is an issue, which is why people are complaining that the split between Wayland and Mir will create difficulties for developers.</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -37,10 +29,6 @@ I wish Firefox OS a lot of success primarily because there are many applications
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Exactly the same thing is true of iOS or Android: their APIs are a gateway to the functionality of the device and &quot;innovation outside of  is hard to do&quot;. FirefoxOS is no different. (iOS is actually a lot worse since Apple is the sole gatekeeper there; at least Android can be extended by others than Google.)</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
 <div class='content'>Actually there&#39;s several reasons why toolkits don&#39;t provide the benefits of the Web platform abstraction:
 -- As said above, it&#39;s a leaky abstraction; developers are able to punch through the toolkit and access features directly, so they do (for good or bad reasons) and create unwanted dependencies. Web apps can&#39;t do this. Vendor-specific Web platform extensions are a bit like that, but unlike with C/C++ toolkits we are able to control which vendor-specific Web features are accessible, and we consciously minimize them.
 -- There are multiple toolkits and they evolve on a schedule that&#39;s not the same as the the display server&#39;s, so you have to maintain compatibility at the display server interface.
@@ -48,7 +36,15 @@ I wish Firefox OS a lot of success primarily because there are many applications
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>In theory yes, but in practice, it is an issue, which is why people are complaining that the split between Wayland and Mir will create difficulties for developers.</div>
+<div class='content'>The web abstraction is a benefit and a curse. Not that I am against the web, but with the &quot;browser&quot; as a gateway to the hardware, innovation outside the browser vendors becomes limited on what they can do.
+
+In order to do many things you need that the gateway gives you access to it. I know that the Mozilla team is working hard to add APIs, but a web platform as Firefox OS will not be the center of the innovation on the application side because developers will be able to access features that leak from the platform and do things the browser is not able yet.
+
+I wish Firefox OS a lot of success primarily because there are many applications that really do not need something native and could be pure web applications, but I hope the Mozilla team is realistic that innovation can not wait for the gateway to open you a door. We are changing the locked store model, for the locked API model, It is an improvement, but I don&#39;t see how to break the lock that browser vendors will have on the access to the APIs if developer can not access then directly</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Exactly the same thing is true of iOS or Android: their APIs are a gateway to the functionality of the device and &quot;innovation outside of  is hard to do&quot;. FirefoxOS is no different. (iOS is actually a lot worse since Apple is the sole gatekeeper there; at least Android can be extended by others than Google.)</div>
 </div>
 </div>
 <div class='comment'>
@@ -62,6 +58,10 @@ Oh, great.  They almost got the old system working, and now they want to throw i
 
 </div>
 </div>
+</div>
+<div class='comment'>
+<div class='author'>VanillaMozilla</div>
+<div class='content'>I did a little checking, and it&#39;s possible that I am wrong.  Mir is an alternative to Wayland, which is supposed to replace X.org.  It turns out that the Wayland API is less than 1/10 the size of the X.org API.  I don&#39;t know where the dust will settle, but it&#39;s possible that this is a good thing.  I just hope they keep it all simple and don&#39;t break user space.</div>
 </div>
 
 </div>

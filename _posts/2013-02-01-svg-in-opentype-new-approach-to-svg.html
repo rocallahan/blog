@@ -34,10 +34,6 @@ And you *need* hinting; it&#39;s critical for real typography and text presentat
 
 So how is hinting tackled? (and if the answer is &quot;we don&#39;t bother with that yet&quot;, bear in mind that&#39;s about as sensible as someone saying they made a new text editor but they&#39;re not bothering with unicode yet =)</div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>There really is no need for hinting with modern high-resolution displays, for example Mac OS X discards all hints and it has great-looking fonts.</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>We don&#39;t have any hinting support. None of the competing approaches do either. We need to add something to SVG to support hinting or some other kind of resolution-specific rendering. That would be useful for SVG images and regular content as well as glyphs.
 
@@ -55,21 +51,25 @@ whats the point again?
 
 </div>
 </div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>There really is no need for hinting with modern high-resolution displays, for example Mac OS X discards all hints and it has great-looking fonts.</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>How does text colouring work on multi-coloured glyphs? (Do you have to choose five text colours? Or are colours hard-coded? Do you choose one and everything else is defined in relation to that?)</div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>There have been requests however to have the ability to declare some pre-defined slots/parameters that you can fill in with specific colours.  I have seen examples of lettering on signs where there were two or more highlight colours that were used in addition to the base glyph colour, and it could make sense to be able to pass those in to the font.
-
-This use case isn&#39;t supported by the current proposal, although I imagine if we did want to extend it to support parameterised colours that using CSS variables in the glyph definitions (and somehow being able to pass in colour values for those variables from the outside) would make sense.</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>I&#39;m not sure what you mean by &quot;five text colors&quot;.
 
 An SVG glyph can use any colors it wants. If it needs to draw something in the &quot;text color&quot; that was set on the text, an SVG glyph can use the new &quot;context-fill&quot; CSS value to get that color.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>There have been requests however to have the ability to declare some pre-defined slots/parameters that you can fill in with specific colours.  I have seen examples of lettering on signs where there were two or more highlight colours that were used in addition to the base glyph colour, and it could make sense to be able to pass those in to the font.
+
+This use case isn&#39;t supported by the current proposal, although I imagine if we did want to extend it to support parameterised colours that using CSS variables in the glyph definitions (and somehow being able to pass in colour values for those variables from the outside) would make sense.</div>
 </div>
 </div>
 <div class='comment'>

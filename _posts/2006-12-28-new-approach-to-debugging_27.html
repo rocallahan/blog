@@ -8,124 +8,64 @@ permalink: "/2006/12/new-approach-to-debugging_27.html"
 <div class="columns">One of the painful truths about Linux development is that debugging sucks. Specifically, gdb on Linux sucks. Basic functionality simply does not work reliably. The details of the brokenness vary depending on the version, but the general suckiness seems to hold up across versions. Since it fails on the basics, we need not even discuss the lack of modern features or its appalling usability. This is a big problem for Linux because it is driving developers away from the platform.<br/><p>Here's a deeper and less widely understood truth: all debuggers suck. Debugging is mainly about tracing bug symptoms back to buggy code, i.e. tracing effects to causes. Effects follow their causes in time, so debugging by nature requires backwards traversal of time. But traditional debuggers don't provide this because it's not obvious how to implement it. Instead they let the programmer monitor a program's forward execution, in the hope that the programmer will be able to somehow remember or reconstruct enough history, usually by running the program several times, to figure out for themselves the backwards cause and effect chain. Such tools aren't particularly suited to the debugging task; they're just a compromise forced by either limited imagination or implementation constraints.<br/><p>Lots of other people have made this observation and have tried to extend traditional debuggers with some support for looking backwards in time. For example:<br/><ul><br/><li><a href="http://www.woodmann.com/fravia/lord_SIadv.html">SoftICE</a> supports a "back trace buffer" that records a limited number of instruction executions in a certain instruction address range. Only the program counter values are recorded.<br/><li><a href="http://www.ghs.com/products/timemachine.html">Green Hills' "Time Machine" debugger</a> also has a trace buffer, which apparently can include register and memory deltas so that old memory and register values can be restored by "backwards stepping" through the buffer. Unfortunately it seems this buffer is limited to memory, and therefore for a large application only a small history window can be retained. Furthermore Green Hills' implementation requires specialized hardware if you want to trace more than program counter values.<br/><li><a href="http://www.eecs.umich.edu/virtual/papers/king05_1.pdf">TTVM</a> logs the interactions between a guest virtual machine and its host so that later the exact execution of the guest VM can be replayed. Periodic checkpoints are recorded so that the replay cost required to reach any desired point in time is limited.<br/></ul><br/>In Time Machine and TTVM, the UI is a traditional debugger UI extended with "reverse" versions of the standard forward execution commands. The debugger still displays the program state at a certain point in time; there is now some capability to move the current point backwards as well as forwards.<br/><p>This is good progress --- but those tools still need to overcome implementation limitations to become immediately useful for mainstream desktop application debugging (i.e. useful to me!). More importantly, I want more than just reverse execution. For example, when debugging we frequently want to know exactly when a variable was set to its current (incorrect) value, and see what the program was doing at that time. Reverse-execution debuggers can set a watchpoint on the variable and execute backwards to find that write, but it would be quicker and more powerful if the debugger just <em>knew</em> the history of the variable and could perform an efficient database lookup to find the last time the variable was written before the current time. The debugger should have the entire history of the program available for efficient inspection and querying. With such a debugger, after we've gathered the history we don't need to run the program any more; the user just browses the history in the debugger until the bug is located.<br/><p>The only other exposition of this vision I know of is <a href="http://www.lambdacs.com/debugger/debugger.html">Omnisicient Debugging</a>. Bil Lewis has created a Java debugger that takes this approach. Unfortunately it is restricted to Java programs, and apparently rather small and short-running Java programs since it keeps the trace data in memory. So the big question is: can we implement this vision so that it's a practical approach for debugging real applications on commodity hardware?<br/><p>I have spent a few of the last 18 months investigating this question. I have built a system, which I'm calling <strong>Amber</strong>, to record the complete execution history of arbitrary Linux processes. The history is recorded using binary instrumentation based on Valgrind. The history is indexed to support efficient queries that debuggers need, and then compressed and written to disk in a format optimized for later query and retrieval. The history supports efficient reconstruction of the contents of any memory location or register at any point in time. It also supports efficient answers to "when was the last write to location X before time T", "when was location P executed between times T1 and T2", and other kinds of queries. I can record the 4.1 billion instructions of a Firefox debug build starting up, displaying a Web page, and exiting; the compressed, indexed trace is about 0.83 bytes per instruction executed. (With some cleverness, we achieve compression ratios of over 20 to 1.) It takes less than half an hour to record on my laptop. 300X slowdown may sound like a lot, but spending computer time to save programmer time is almost always a good idea. Furthermore Amber tracing easily parallelizes across multiple cores so hardware trends are in my favour.<br/><p>I've built a trace query engine in C and a prototype debugger front end using XULRunner to demonstrate the power of this approach. It works as expected. I've found that basing the debugger entirely on a "complete recording" approach dramatically simplifies some of the difficult parts of debugger implementation. Novell has filed for a patent on my work (and is planning to file another regarding an extension which I haven't described here yet), but I hope to get Novell to release the source code under an open source license so I can keep working on it. Maybe others will be interested in working on it too.<br/><p>When I get a chance I'll write more about how Amber works, its full set of features, and what needs to be done to get it to prime-time.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>voracity</div>
-<div class='content'>Brilliant idea. I&#39;d always taken non-reversibility as a given :)<br>I wonder how expensive the javascript (or python, perl, etc.) equivalent would be in terms of space and speed --- whether it would be practical today.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Michael: Thanks for those comments. All too often it&#39;s hard to figure out what&#39;s really going on from marketing material. Does the Green Hills debugger support &quot;go back to the last time this memory location was modified and show me the program state at that time&quot;?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Fredrik</div>
-<div class='content'>I&#39;m not saying there exist such capabilities today. I was thinking along the lines of a far-reaching paravirtualized system, where more aspects of the hosted OS would be hypercalls rather than plain old syscalls. A lower level instrumentation sort of thing.<br>Although thinking about it some more, it may end up being a problem that degrades into a &quot;attach Valgrind to everything&quot; sort of situation... At the very least it&#39;s even farther from trivial than Amber. Possibly not worth the hassle.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Johnny Lee</div>
-<div class='content'>From the paper titled &quot;Framework for Instruction-level Tracing and Analysis of Program Executions&quot;<br>We present a runtime framework with a goal of collecting a complete, machine- and task-independent, user-mode trace of a program’s execution that can be re-simulated deterministically with full fidelity down to the instruction level. The framework has reasonable runtime overhead and by using a novel compression scheme, we significantly reduce the size of traces. Our framework enables building a wide variety of tools for understanding program behavior. As examples of the applicability of our framework, we present a program analysis and a data locality profiling tool. Our program analysis tool is a time travel debugger that enables a developer to debug in both forward and backward direction over an execution trace with nearly all information available as in a regular debugging session. Our profiling tool has been used to improve data locality and reduce the dynamic working sets of real world applications.<br>Oh. Here&#39;s the URL to the PDF version: http://research.microsoft.com/manuvir/papers/instruction_level_tracing_VEE06.pdf.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Evan M</div>
-<div class='content'>Another one to check out is Jockey:<br>&quot;Jockey is a user-space library for recording and replaying an execution of generic GNU/Linux programs. It is a debugging tool especially for long-running networked servers that suffer from bugs that are difficult to reproduce.&quot;<br>http://home.gna.org/jockey/<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Hypervisors have no way to see what&#39;s happening on an instruction-by-instruction basis, which is what Amber wants. If all you want is replay, AND you&#39;re running on a single processor core, hypervisors are great.<br>If you&#39;re running on multiple cores then for accurate replay a hypervisor isn&#39;t enough, because it can&#39;t tell how writes to shared memory by one processor are observed by other processors.<br>Amber actually makes it easy to share program traces; the traces themselves are very large and hard to move around, but the query engine is accessible over a socket so you can allow other people to connect and analyze the trace. So we could have new kinds of Bugzilla workflows where users and testers record bugs using Amber and publish query engine connection info in Bugzilla; developers can then connect, debug, and submit a patch for testing. Great for those hard-to-reproduce bugs.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>Sorry, but the problem is not just with Microsoft&#39;s patents.  The problem is with software patents in general.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mike</div>
-<div class='content'>Wow. This is huge. That&#39;s all I have to say. Congrats Robert!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>It&#39;s worth pointing out that a replay facility like MEC&#39;s or ReVirt would work well in conjunction with Amber. You could capture a replayable trace with low overhead, then reexecute --- slowly, and offline --- with Amber recording enabled --- then debug.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Stack unwind and edit-and-continue are quite common these days; Java and Visual Basic have supported them for a long time, for example. They are, however, quite different to what I&#39;m talking about.<br>The O&#39;Caml debugger sounds similar to the SML/NJ debugger that Darrell mentioned. That&#39;s closer to what I&#39;m talking about, but still has a lot of limitations compared to Amber.<br>I&#39;ve been aware of MEC&#39;s work for a long time. It can be thought of as a replay technology that prefigures work like ReVirt. It&#39;s less complete, for example I don&#39;t think MEC ever replayed signal timing accurately.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Stan Shebs</div>
-<div class='content'>Oh the irony - I was working on reverse execution in GDB at Apple, before jumping to Mozilla. Can&#39;t say too much about it, since not in any product, except that I was very happy to escape...<br>Another system worthy of notice is the Simics instruction-set simulator, which can reverse at the instruction level. Trunk GDB has support for it, in the form of reverse-step and the like.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>My idea is that the recording overhead doesn&#39;t matter very much for a lot of applications and/or bugs, in particular when we can do the recording without any human intervention ... which we often can, because these days we have a lot of infrastructure for running automated tests.<br>Given that assumption, it makes most sense for us to focus on reducing the time spent during the debugging phase, because that&#39;s human time, which is far more valuable than computer time. That&#39;s where I think the extra information captured by Amber will be valuable.<br>If that assumption is wrong, though, there are quite a few things that can be done to reduce Amber&#39;s recording overhead.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>What about DTrace?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Anonymous: you can throw pretty much any app at it.<br>Mike:<br>&gt; If I recall correctly, a serious problem with<br>&gt; this approach is that in order to replay, you<br>&gt; either have to remember a *lot* of state<br>What I&#39;ve tried to explain is that a) &quot;replay&quot; is the wrong way to think about this and b) you do have to remember a lot of state, but it turns out you can compress it really, really well, and the output data volume is not too high to get work done.<br>There&#39;s a lot of FUD floating around about Novell, Microsoft and patents. Nevertheless, the concerns are about Microsoft&#39;s patents, not Novell&#39;s, so I don&#39;t see a problem here.<br>Darrell: Reconstructing an executable state and restarting execution would be fairly easy in theory: as I said, we can reconstruct the contents of every memory location and register for whatever time we want. As you obviously realize, the hard issues are reconstructing out-of-process state such as kernel state. Probably doable though. Would be a very nice project. It would be useful perhaps to skip that part and just allow execution up to the next system call ... that would let you test many kinds of fixes. Another issue is that you&#39;d need some kind of edit-and-continue capability to &quot;patch in&quot; updated code without changing the layout of unaffected code.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Fredrik</div>
-<div class='content'>Moving the mechanics of recording from a binary instrumentation framework like Valgrind to a hypervisor (virtual machine monitor, e.g. Xen) would probably make it easier to record either the full state of the machine or an arbitrary subset of the functionality, since the hypervisor sits below even operating systems and knows everything about all aspects of what it&#39;s hosting. Perhaps it would also speed things up, compared to the kinds of indirections Valgrind introduces.<br>I can only assume that it would at least make it fully possible (and &quot;easy&quot;) to make whole-system snapshots of every single aspect you&#39;re interested in (kernel state, you name it). Of course, the amount of data output by such a low-level recorder would have an upper bound that is enormous.<br>(Thinking out loud: Much like you can share a VM snapshot today, you could potentially share a &quot;debug snapshot&quot; between developers or, in an ideal world, between end users to developers, allowing a bug assignee to run an actual snapshot of a system where the bug manifests itself.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>dete: That&#39;s very accurate. I&#39;m glad you &quot;get it&quot;!<br>ol: That&#39;s another reverse execution system, yes. Like other reverse execution systems, it doesn&#39;t have Amber&#39;s query capability.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>dete</div>
-<div class='content'>I have no special information about Amber, but it seems to me that many folks commenting above seem to be misunderstanding the approach Amber is taking, and how it&#39;s fundamentally different that the &quot;rewind&quot; tools.  (Robert, please confirm, clarify or refute my point when you have a minute!)<br>The goal of Amber is not just to be able to step backwards, the goal is to create a complete multidimensional model of the program&#39;s execution including the time dimension.  I think the easiest way to explain the difference is to imagine tracking a bouncing ball.<br>A traditional debugger lets you press pause and resume time, but it can&#39;t ever go back in time.  You can start over again, but that&#39;s it (as far as time is concerned).<br>What the majority of the &quot;rewind&quot; tools mentioned above do (to a greater or lesser degree) is let you also rewind time.  Some let you rewind a little, others a lot.<br>What Amber is doing is essentially creating an n+1 dimensional model of the data, with the time dimension expanded out.  So, instead of seeing where the ball is at a particular point in time, Amber doing the moral equivalent of drawing a 2D graph of the ball&#39;s height on the y-axis and time on the x-axis.  For some problems (eg. determining the height of the ball at time &#39;t&#39;), Amber doesn&#39;t seem to be very interesting.  But for other problems (eg. determining the point in time when the ball has the greatest height), the Amber approach is pretty compelling.<br>Another way to think of this difference is that, when you&#39;re examining the program state with Amber, the program is no longer running.  Of course, everything that happened during the run can be examined, to the granularity of a single instruction.  (Once I understood this, the name Amber was immediately and obviously the perfect choice!)<br>The advantages to this is that, when looking at the results an Amber run, you are not at all bound by real-time.  You can do queries with time as a component, but going &quot;forward&quot; or &quot;backward&quot; doesn&#39;t actually take any time.  (Any more than looking at a different part of the ball&#39;s height chart takes time.)<br>The primary disadvantage is that it doesn&#39;t let you alter the program state.  Robert pointed out that you could use the Amber data to reconstruct the memory state at a particular point in time, then modify that state and continue executing from there.  While that&#39;s cool and all, it&#39;s not really the point of Amber.  If it&#39;s important to modify the program&#39;s state to see how that changes things, it doesn&#39;t seem like the Amber approach is the best.<br>On the other hand, modifying the program state is more a short-cut to helping determine *how* to fix a bug, while Amber seems like it would be a way more efficient tool to determine *where* to find the bug.<br>Robert, I&#39;m pretty darned impressed with the concept behind Amber, and I hope that somehow we&#39;ll all be able to use something like it someday!  Thanks!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>That is interesting; I didn&#39;t know about it, so thanks for the pointer.<br>It&#39;s definitely the closest thing to Amber that I know of. However, their approach is still based on reexecution (or rather, resimulation), and hence is actually quite different to what Amber does. It means they have lower overhead --- although not as much lower as you might think, if you add up the &quot;recording&quot; and &quot;resimulation&quot; overheads. On the other hand, it can&#39;t provide the efficiency of Amber&#39;s state reconstruction and queries (although unfortunately they don&#39;t measure that, and just mention vaguely &quot;indexes&quot; in their debugger). They certainly do enough to add reverse execution to a traditional debugger, but that was already done in ReVirt. I&#39;m aiming for even more.<br>Very interesting to know that it&#39;s being used inside Microsoft, though. I wonder if they&#39;re planning to make a product out of it.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>DTrace is also different --- a more powerful program monitoring framework, basically.<br>And, in case anyone mentions it, Frysk is another program monitoring framework in development. Interesting, but not much like Amber.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>psu</div>
-<div class='content'>FWIW, real automatic tests for many GUI-rich apps is still fairly rare in some circles. It would be nice to dream of a day when this isn&#39;t so, but I&#39;m not sure how realistic a dream it is. I think having the performance be good enough to be able to run small interactive test cases would be a great thing, although I don&#39;t know how easy that would be.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Zhijun</div>
-<div class='content'>&gt;DTrace is also different --- a more powerful program monitoring framework, basically.<br>As far as I know, dtrace is actually a &quot;system&quot; monitoring tool,it is able to trace a great deal of userland + kernel behaviours to locate the problem.<br>Information for dtrace can be found at:<br>http://opensolaris.org/os/community/dtrace/ and http://docs.sun.com/doc/817-6223<br>BTW: dtrace is really a good tool which helps me a lot in debugging problems.<br>And Amber seems like to be a tool for &quot;program&quot; debugging,aims to give detailed history for &quot;application programs&quot;.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>You can use Amber to record the execution of a Python or Javascript program. Heck, Firefox is such a program.<br>Of course, front-end work is required to display the state of the Javascript or Python interpreter (or JIT, for that matter) in a way that makes sense to Javascript or Python programmers, so there&#39;s no free lunch. But the basic technology is language and runtime neutral.<br>I think this is a very interesting approach to debugging JITted code. You can see the execution of JITted code, then look back at the execution of the compiler that generated the code to figure out the relationship between the source code to the JITted code. The JIT compiler probably doesn&#39;t have to generate debug information at all.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Michael</div>
-<div class='content'>Robert,<br>In response to your question...<br>&gt; Does the Green Hills debugger support &quot;go back to<br>&gt; the last time this memory location was modified<br>&gt; and show me the program state at that time&quot;?<br>Yes it does have that ability. In fact, if you double click on a variable in the debugger a graph will appear showing a history of its value over time.<br>There are some limitations... it only works on global variables and graphing only works on integer types.<br>The n-dimensional approach sounds cool, but this tool just works and is insanely powerful. Once you start using a back in time debugger like this you never want to go back to gdb or visual studio.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Michael</div>
-<div class='content'>Some comments/corrections about the Green Hills TimeMachine debugger.<br>1) About 90% of the debugging problems a programmer can encounter can be solved with a very small trace buffer. Typically the last 1 to 5 Million instructions is sufficient.<br>2) The TimeMachine trace buffer is not limited to memory. It downloads chunks of trace data from the program at certain intervals. Those intervals are either when the user requests, when the target halts, when the chunk fills up, and/or a regular polling interval.<br>Each chunk is limited to memory. However all of the chunks put together are not.<br>3) You would be surprised at how much data memory can store. A 1MB trace buffer can store about 5 Million instructions. Therefore if you have a GB of extra RAM you can record up to 5 billion instructions. I&#39;ve tested this with the Green Hills tools and works well.<br>4) The performance hit of the Green Hill&#39;s instrumentation is about 1.5X to 7X. At that speed your program is still completely usable. Slowing things down 300X can make any application unusable. Something that takes 3 seconds (like program startup) now takes 15 minutes.<br>5) If you are debugging certain types of hardware targets you can do all of this with NO PERFORMANCE HIT. There is built in hardware for these devices which spits out trace data at real time.<br>6) If you are using a Green Hills SuperTrace Probe you automatically get 1GB of trace buffer. Therefore you have zero performance hit, and zero memory hit.<br>Note that these tools are all currently commercially available (I have them!), but very much proprietary.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Shawn Wilsher</div>
-<div class='content'>That sounds really nice!<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Philip Withnall</div>
 <div class='content'>This sounds amazing, and could really help. I hope Novell do release it as OSS. :-D<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Mike</div>
-<div class='content'>This is a cool idea. I looked at the problem a bit 15 years ago, and even then there was a lot of prior work. If I recall correctly, a serious problem with this approach is that in order to replay, you either have to remember a *lot* of state, or remember a smaller amount but take a lot of time for each step backwards. That somewhat limits the usefullness of the approach.<br>More importantly for Amanda, if the tool is restricted by patents, it&#39;ll essentially be dead in the water in the Open Source world. Novell&#39;s name is mud right now because of the deal they cut with Microsoft. Maybe you could convince Novell to renounce their Amanda patents as a measure of good will. It won&#39;t help them, but it would help you.<br>(PS: This blog software is seriously broken.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Johnny Lee</div>
-<div class='content'>I doubt it&#39;ll become a product anytime soon (&lt;= 3yrs). Several internal dev apps have been used for years before becoming commercial products, if at all.<br>The MS Research project&#39;s perf claims look like they&#39;re about an order of magnitude faster than what you state for Amber - though I don&#39;t know if the numbers are comparable. If they are, then Amber will have to have some features not easily doable with other tools.<br>It sounds like you have other ideas in mind.<br></div>
+<div class='author'>Greg Perry</div>
+<div class='content'>Very nice!<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>Does it only work for firefox, or can you throw just about any app at it?<br>Either way, I *really* hope it&#39;ll become free software.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Mike</div>
+<div class='content'>This is a cool idea. I looked at the problem a bit 15 years ago, and even then there was a lot of prior work. If I recall correctly, a serious problem with this approach is that in order to replay, you either have to remember a *lot* of state, or remember a smaller amount but take a lot of time for each step backwards. That somewhat limits the usefullness of the approach.<br>More importantly for Amanda, if the tool is restricted by patents, it&#39;ll essentially be dead in the water in the Open Source world. Novell&#39;s name is mud right now because of the deal they cut with Microsoft. Maybe you could convince Novell to renounce their Amanda patents as a measure of good will. It won&#39;t help them, but it would help you.<br>(PS: This blog software is seriously broken.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Darrell</div>
+<div class='content'>I&#39;m sure Rob is also aware of the Standard ML of NJ debugger that supported reverse execution, based on checkpoint and replay:<br>http://citeseer.ist.psu.edu/tolmach93debugger.html<br>That method wouldn&#39;t extend well to imperative languages like C that do more frequent stores.  And unlike Rob&#39;s slick approach, it interacts poorly with operations like I/O that are hard to reverse and/or nondeterministic.<br>This raises another question I have: would the Amber approach support exploring &quot;alternate timelines&quot; (what if value X rather than Y had been written at time T?).  This seems like a next step you might want after determining the apparent cause of the misbehavior, to try out a fix without having to reproduce the problem.<br>Would reconstituting an executable state from the trace be &quot;hard&quot;?  Does the trace include enough information to do it in principle?  Of course you  have the sticky I/O issues.<br>Looking forward to hearing more.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Shawn Wilsher</div>
+<div class='content'>That sounds really nice!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Anonymous: you can throw pretty much any app at it.<br>Mike:<br>&gt; If I recall correctly, a serious problem with<br>&gt; this approach is that in order to replay, you<br>&gt; either have to remember a *lot* of state<br>What I&#39;ve tried to explain is that a) &quot;replay&quot; is the wrong way to think about this and b) you do have to remember a lot of state, but it turns out you can compress it really, really well, and the output data volume is not too high to get work done.<br>There&#39;s a lot of FUD floating around about Novell, Microsoft and patents. Nevertheless, the concerns are about Microsoft&#39;s patents, not Novell&#39;s, so I don&#39;t see a problem here.<br>Darrell: Reconstructing an executable state and restarting execution would be fairly easy in theory: as I said, we can reconstruct the contents of every memory location and register for whatever time we want. As you obviously realize, the hard issues are reconstructing out-of-process state such as kernel state. Probably doable though. Would be a very nice project. It would be useful perhaps to skip that part and just allow execution up to the next system call ... that would let you test many kinds of fixes. Another issue is that you&#39;d need some kind of edit-and-continue capability to &quot;patch in&quot; updated code without changing the layout of unaffected code.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeremy Dunck</div>
+<div class='content'>Any idea if the recording is IO bound on the disk or if a single machine running the app could quickly offload the state stream to a farm of recorders?<br>run state -&gt; socket -&gt; message queue -&gt; farm -&gt; disks?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The way things are configured right now, the bottleneck is the zlib compression.<br>I suspect the before-compression bandwidth is too high for effective offload to other machines, but it might be doable. There are lots of possibly interesting configurations.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Jeff Schiller</div>
 <div class='content'>Sounds great - but for now, I&#39;d be happy with the simplicity of the VC debugger and the ability to step into the code with watches, expression evaluators, etc.  This may technically be possible with gdb and some GUI wrapper, but I really have no clue and haven&#39;t spent the time to try and learn gdb&#39;s ins and outs...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>Brilliant idea. I&#39;d always taken non-reversibility as a given :)<br>I wonder how expensive the javascript (or python, perl, etc.) equivalent would be in terms of space and speed --- whether it would be practical today.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>You can use Amber to record the execution of a Python or Javascript program. Heck, Firefox is such a program.<br>Of course, front-end work is required to display the state of the Javascript or Python interpreter (or JIT, for that matter) in a way that makes sense to Javascript or Python programmers, so there&#39;s no free lunch. But the basic technology is language and runtime neutral.<br>I think this is a very interesting approach to debugging JITted code. You can see the execution of JITted code, then look back at the execution of the compiler that generated the code to figure out the relationship between the source code to the JITted code. The JIT compiler probably doesn&#39;t have to generate debug information at all.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>Sorry, but the problem is not just with Microsoft&#39;s patents.  The problem is with software patents in general.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yes, software patents in general are bad. But the anti-Novell brouhaha that Mike referred to and I was responding to is specifically about *Microsoft* patents.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Stan Shebs</div>
+<div class='content'>Oh the irony - I was working on reverse execution in GDB at Apple, before jumping to Mozilla. Can&#39;t say too much about it, since not in any product, except that I was very happy to escape...<br>Another system worthy of notice is the Simics instruction-set simulator, which can reverse at the instruction level. Trunk GDB has support for it, in the form of reverse-step and the like.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Kat</div>
@@ -133,27 +73,87 @@ permalink: "/2006/12/new-approach-to-debugging_27.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Yes, software patents in general are bad. But the anti-Novell brouhaha that Mike referred to and I was responding to is specifically about *Microsoft* patents.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Darrell</div>
-<div class='content'>I&#39;m sure Rob is also aware of the Standard ML of NJ debugger that supported reverse execution, based on checkpoint and replay:<br>http://citeseer.ist.psu.edu/tolmach93debugger.html<br>That method wouldn&#39;t extend well to imperative languages like C that do more frequent stores.  And unlike Rob&#39;s slick approach, it interacts poorly with operations like I/O that are hard to reverse and/or nondeterministic.<br>This raises another question I have: would the Amber approach support exploring &quot;alternate timelines&quot; (what if value X rather than Y had been written at time T?).  This seems like a next step you might want after determining the apparent cause of the misbehavior, to try out a fix without having to reproduce the problem.<br>Would reconstituting an executable state from the trace be &quot;hard&quot;?  Does the trace include enough information to do it in principle?  Of course you  have the sticky I/O issues.<br>Looking forward to hearing more.<br></div>
+<div class='content'>Stack unwind and edit-and-continue are quite common these days; Java and Visual Basic have supported them for a long time, for example. They are, however, quite different to what I&#39;m talking about.<br>The O&#39;Caml debugger sounds similar to the SML/NJ debugger that Darrell mentioned. That&#39;s closer to what I&#39;m talking about, but still has a lot of limitations compared to Amber.<br>I&#39;ve been aware of MEC&#39;s work for a long time. It can be thought of as a replay technology that prefigures work like ReVirt. It&#39;s less complete, for example I don&#39;t think MEC ever replayed signal timing accurately.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>The way things are configured right now, the bottleneck is the zlib compression.<br>I suspect the before-compression bandwidth is too high for effective offload to other machines, but it might be doable. There are lots of possibly interesting configurations.<br></div>
+<div class='content'>It&#39;s worth pointing out that a replay facility like MEC&#39;s or ReVirt would work well in conjunction with Amber. You could capture a replayable trace with low overhead, then reexecute --- slowly, and offline --- with Amber recording enabled --- then debug.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>What about DTrace?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>DTrace is also different --- a more powerful program monitoring framework, basically.<br>And, in case anyone mentions it, Frysk is another program monitoring framework in development. Interesting, but not much like Amber.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Johnny Lee</div>
+<div class='content'>From the paper titled &quot;Framework for Instruction-level Tracing and Analysis of Program Executions&quot;<br>We present a runtime framework with a goal of collecting a complete, machine- and task-independent, user-mode trace of a program’s execution that can be re-simulated deterministically with full fidelity down to the instruction level. The framework has reasonable runtime overhead and by using a novel compression scheme, we significantly reduce the size of traces. Our framework enables building a wide variety of tools for understanding program behavior. As examples of the applicability of our framework, we present a program analysis and a data locality profiling tool. Our program analysis tool is a time travel debugger that enables a developer to debug in both forward and backward direction over an execution trace with nearly all information available as in a regular debugging session. Our profiling tool has been used to improve data locality and reduce the dynamic working sets of real world applications.<br>Oh. Here&#39;s the URL to the PDF version: http://research.microsoft.com/manuvir/papers/instruction_level_tracing_VEE06.pdf.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That is interesting; I didn&#39;t know about it, so thanks for the pointer.<br>It&#39;s definitely the closest thing to Amber that I know of. However, their approach is still based on reexecution (or rather, resimulation), and hence is actually quite different to what Amber does. It means they have lower overhead --- although not as much lower as you might think, if you add up the &quot;recording&quot; and &quot;resimulation&quot; overheads. On the other hand, it can&#39;t provide the efficiency of Amber&#39;s state reconstruction and queries (although unfortunately they don&#39;t measure that, and just mention vaguely &quot;indexes&quot; in their debugger). They certainly do enough to add reverse execution to a traditional debugger, but that was already done in ReVirt. I&#39;m aiming for even more.<br>Very interesting to know that it&#39;s being used inside Microsoft, though. I wonder if they&#39;re planning to make a product out of it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Johnny Lee</div>
+<div class='content'>I doubt it&#39;ll become a product anytime soon (&lt;= 3yrs). Several internal dev apps have been used for years before becoming commercial products, if at all.<br>The MS Research project&#39;s perf claims look like they&#39;re about an order of magnitude faster than what you state for Amber - though I don&#39;t know if the numbers are comparable. If they are, then Amber will have to have some features not easily doable with other tools.<br>It sounds like you have other ideas in mind.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>My idea is that the recording overhead doesn&#39;t matter very much for a lot of applications and/or bugs, in particular when we can do the recording without any human intervention ... which we often can, because these days we have a lot of infrastructure for running automated tests.<br>Given that assumption, it makes most sense for us to focus on reducing the time spent during the debugging phase, because that&#39;s human time, which is far more valuable than computer time. That&#39;s where I think the extra information captured by Amber will be valuable.<br>If that assumption is wrong, though, there are quite a few things that can be done to reduce Amber&#39;s recording overhead.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Fredrik</div>
+<div class='content'>Moving the mechanics of recording from a binary instrumentation framework like Valgrind to a hypervisor (virtual machine monitor, e.g. Xen) would probably make it easier to record either the full state of the machine or an arbitrary subset of the functionality, since the hypervisor sits below even operating systems and knows everything about all aspects of what it&#39;s hosting. Perhaps it would also speed things up, compared to the kinds of indirections Valgrind introduces.<br>I can only assume that it would at least make it fully possible (and &quot;easy&quot;) to make whole-system snapshots of every single aspect you&#39;re interested in (kernel state, you name it). Of course, the amount of data output by such a low-level recorder would have an upper bound that is enormous.<br>(Thinking out loud: Much like you can share a VM snapshot today, you could potentially share a &quot;debug snapshot&quot; between developers or, in an ideal world, between end users to developers, allowing a bug assignee to run an actual snapshot of a system where the bug manifests itself.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Hypervisors have no way to see what&#39;s happening on an instruction-by-instruction basis, which is what Amber wants. If all you want is replay, AND you&#39;re running on a single processor core, hypervisors are great.<br>If you&#39;re running on multiple cores then for accurate replay a hypervisor isn&#39;t enough, because it can&#39;t tell how writes to shared memory by one processor are observed by other processors.<br>Amber actually makes it easy to share program traces; the traces themselves are very large and hard to move around, but the query engine is accessible over a socket so you can allow other people to connect and analyze the trace. So we could have new kinds of Bugzilla workflows where users and testers record bugs using Amber and publish query engine connection info in Bugzilla; developers can then connect, debug, and submit a patch for testing. Great for those hard-to-reproduce bugs.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Fredrik</div>
+<div class='content'>I&#39;m not saying there exist such capabilities today. I was thinking along the lines of a far-reaching paravirtualized system, where more aspects of the hosted OS would be hypercalls rather than plain old syscalls. A lower level instrumentation sort of thing.<br>Although thinking about it some more, it may end up being a problem that degrades into a &quot;attach Valgrind to everything&quot; sort of situation... At the very least it&#39;s even farther from trivial than Amber. Possibly not worth the hassle.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike</div>
+<div class='content'>Wow. This is huge. That&#39;s all I have to say. Congrats Robert!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael</div>
+<div class='content'>Some comments/corrections about the Green Hills TimeMachine debugger.<br>1) About 90% of the debugging problems a programmer can encounter can be solved with a very small trace buffer. Typically the last 1 to 5 Million instructions is sufficient.<br>2) The TimeMachine trace buffer is not limited to memory. It downloads chunks of trace data from the program at certain intervals. Those intervals are either when the user requests, when the target halts, when the chunk fills up, and/or a regular polling interval.<br>Each chunk is limited to memory. However all of the chunks put together are not.<br>3) You would be surprised at how much data memory can store. A 1MB trace buffer can store about 5 Million instructions. Therefore if you have a GB of extra RAM you can record up to 5 billion instructions. I&#39;ve tested this with the Green Hills tools and works well.<br>4) The performance hit of the Green Hill&#39;s instrumentation is about 1.5X to 7X. At that speed your program is still completely usable. Slowing things down 300X can make any application unusable. Something that takes 3 seconds (like program startup) now takes 15 minutes.<br>5) If you are debugging certain types of hardware targets you can do all of this with NO PERFORMANCE HIT. There is built in hardware for these devices which spits out trace data at real time.<br>6) If you are using a Green Hills SuperTrace Probe you automatically get 1GB of trace buffer. Therefore you have zero performance hit, and zero memory hit.<br>Note that these tools are all currently commercially available (I have them!), but very much proprietary.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>psu</div>
+<div class='content'>FWIW, real automatic tests for many GUI-rich apps is still fairly rare in some circles. It would be nice to dream of a day when this isn&#39;t so, but I&#39;m not sure how realistic a dream it is. I think having the performance be good enough to be able to run small interactive test cases would be a great thing, although I don&#39;t know how easy that would be.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Michael: Thanks for those comments. All too often it&#39;s hard to figure out what&#39;s really going on from marketing material. Does the Green Hills debugger support &quot;go back to the last time this memory location was modified and show me the program state at that time&quot;?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>dete</div>
+<div class='content'>I have no special information about Amber, but it seems to me that many folks commenting above seem to be misunderstanding the approach Amber is taking, and how it&#39;s fundamentally different that the &quot;rewind&quot; tools.  (Robert, please confirm, clarify or refute my point when you have a minute!)<br>The goal of Amber is not just to be able to step backwards, the goal is to create a complete multidimensional model of the program&#39;s execution including the time dimension.  I think the easiest way to explain the difference is to imagine tracking a bouncing ball.<br>A traditional debugger lets you press pause and resume time, but it can&#39;t ever go back in time.  You can start over again, but that&#39;s it (as far as time is concerned).<br>What the majority of the &quot;rewind&quot; tools mentioned above do (to a greater or lesser degree) is let you also rewind time.  Some let you rewind a little, others a lot.<br>What Amber is doing is essentially creating an n+1 dimensional model of the data, with the time dimension expanded out.  So, instead of seeing where the ball is at a particular point in time, Amber doing the moral equivalent of drawing a 2D graph of the ball&#39;s height on the y-axis and time on the x-axis.  For some problems (eg. determining the height of the ball at time &#39;t&#39;), Amber doesn&#39;t seem to be very interesting.  But for other problems (eg. determining the point in time when the ball has the greatest height), the Amber approach is pretty compelling.<br>Another way to think of this difference is that, when you&#39;re examining the program state with Amber, the program is no longer running.  Of course, everything that happened during the run can be examined, to the granularity of a single instruction.  (Once I understood this, the name Amber was immediately and obviously the perfect choice!)<br>The advantages to this is that, when looking at the results an Amber run, you are not at all bound by real-time.  You can do queries with time as a component, but going &quot;forward&quot; or &quot;backward&quot; doesn&#39;t actually take any time.  (Any more than looking at a different part of the ball&#39;s height chart takes time.)<br>The primary disadvantage is that it doesn&#39;t let you alter the program state.  Robert pointed out that you could use the Amber data to reconstruct the memory state at a particular point in time, then modify that state and continue executing from there.  While that&#39;s cool and all, it&#39;s not really the point of Amber.  If it&#39;s important to modify the program&#39;s state to see how that changes things, it doesn&#39;t seem like the Amber approach is the best.<br>On the other hand, modifying the program state is more a short-cut to helping determine *how* to fix a bug, while Amber seems like it would be a way more efficient tool to determine *where* to find the bug.<br>Robert, I&#39;m pretty darned impressed with the concept behind Amber, and I hope that somehow we&#39;ll all be able to use something like it someday!  Thanks!<br></div>
 </div>
 <div class='comment'>
 <div class='author'>ol</div>
 <div class='content'>What about http://www.virtutech.com/products/simics-hindsight.html<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Greg Perry</div>
-<div class='content'>Very nice!<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>dete: That&#39;s very accurate. I&#39;m glad you &quot;get it&quot;!<br>ol: That&#39;s another reverse execution system, yes. Like other reverse execution systems, it doesn&#39;t have Amber&#39;s query capability.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Jeremy Dunck</div>
-<div class='content'>Any idea if the recording is IO bound on the disk or if a single machine running the app could quickly offload the state stream to a farm of recorders?<br>run state -&gt; socket -&gt; message queue -&gt; farm -&gt; disks?<br></div>
+<div class='author'>Michael</div>
+<div class='content'>Robert,<br>In response to your question...<br>&gt; Does the Green Hills debugger support &quot;go back to<br>&gt; the last time this memory location was modified<br>&gt; and show me the program state at that time&quot;?<br>Yes it does have that ability. In fact, if you double click on a variable in the debugger a graph will appear showing a history of its value over time.<br>There are some limitations... it only works on global variables and graphing only works on integer types.<br>The n-dimensional approach sounds cool, but this tool just works and is insanely powerful. Once you start using a back in time debugger like this you never want to go back to gdb or visual studio.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Zhijun</div>
+<div class='content'>&gt;DTrace is also different --- a more powerful program monitoring framework, basically.<br>As far as I know, dtrace is actually a &quot;system&quot; monitoring tool,it is able to trace a great deal of userland + kernel behaviours to locate the problem.<br>Information for dtrace can be found at:<br>http://opensolaris.org/os/community/dtrace/ and http://docs.sun.com/doc/817-6223<br>BTW: dtrace is really a good tool which helps me a lot in debugging problems.<br>And Amber seems like to be a tool for &quot;program&quot; debugging,aims to give detailed history for &quot;application programs&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Evan M</div>
+<div class='content'>Another one to check out is Jockey:<br>&quot;Jockey is a user-space library for recording and replaying an execution of generic GNU/Linux programs. It is a debugging tool especially for long-running networked servers that suffer from bugs that are difficult to reproduce.&quot;<br>http://home.gna.org/jockey/<br></div>
 </div>
 
 </div>

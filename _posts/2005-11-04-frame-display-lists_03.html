@@ -12,20 +12,32 @@ permalink: "/2005/11/frame-display-lists_03.html"
 <div class='content'>How does this relate to dbaron&#39;s reflow branch?<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>CSS can be very difficult for web developers to get right when we start using &#39;tricks&#39; such as css drop down menus and ajax popup/autocomplete stuff. I can only imagine how complicated it is to actually try and render all this stuff reliably.<br>I think you mean &#39;frame&#39; in a different sense but one of the problems I keep encountering is cross Frame display of content (and by that I mean actual Frames/Iframe) - trying to draw a div that partially overlaps an Iframe or sibling in a frameset is way too hard(I know, other readers might say who uses framesets nowadays!? answer: complex intranets/biz apps). So perhaps that can be throw into the pot when considering your patch? And yes, it would be nice if the z-index of the div in question was honoured across Frames!<br>Sounds like excellent work, and this kind of effort is much appreciated. Anything to help stop clients saying &#39;but we&#39;ve been using Opera and its sooo faasst!&#39;<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Ian</div>
 <div class='content'>Thanks for the detailed explanation of this - I think I understood at least a good half of it :)<br>Are you aiming for Gecko 1.9 with this?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>neil</div>
-<div class='content'>&quot;Anything to help stop clients saying &#39;but we&#39;ve been using Opera and its sooo faasst!&#39;&quot;<br>You&#39;re very lucky...most of our clients still don&#39;t know of anything except IE and windows...<br></div>
+<div class='author'>Michael</div>
+<div class='content'>Great article! Especially for someone like me who&#39;s just getting into the way Gecko works. Sounds like a complex, but important change, so thank you for your hard work, and good luck. :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Andrew: it&#39;s almost entirely orthogonal.<br>Nameless User: We do support arbitrary elements overlapping sibling IFRAMEs. Is there a particular bug that concerns you? (There are some problems with event handling, mostly fixed in FF1.5, and some problems with the text editing caret, to be fixed in Gecko 1.9.) I don&#39;t understand the issue with framesets; there&#39;s just no way for content in one frame to escape to overlap its siblings, that&#39;s the way the standards are written. As for Opera, it&#39;s a very fine browser and I&#39;m not embarrassed that we have to catch up to it in some areas.<br>Ian: yes<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James Napolitano</div>
+<div class='content'>Sounds exciting.  Thanks for the explanation.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Oskar Malm</div>
 <div class='content'>While content overlapping iframes and plugins (i e everything with its own widget) display correctly today, how will that be possible in the future when view and widget hierachies have been removed?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>zbiggy</div>
-<div class='content'>I hope this fix grey background of transparent flash plugins and menu hidden under flash animation. Asus website is an example of such mozilla browser and flash plugin problem.<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>A display list will be built from the full frame trees of all visible documents, regardless of which widget we&#39;re painting.<br>(Actually today, content overlapping plugins does not display correctly. My changes will not fix this, there&#39;s no way to fix it.)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Oskar Malm</div>
@@ -36,32 +48,20 @@ permalink: "/2005/11/frame-display-lists_03.html"
 <div class='content'>The change to remove child widgets will take place separately from this.<br>I&#39;m aware of DAMAGE and COMPOSITE, and it&#39;s certainly on the radar. I guess I should have said &quot;there&#39;s no good, general way to fix it&quot;.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>CSS can be very difficult for web developers to get right when we start using &#39;tricks&#39; such as css drop down menus and ajax popup/autocomplete stuff. I can only imagine how complicated it is to actually try and render all this stuff reliably.<br>I think you mean &#39;frame&#39; in a different sense but one of the problems I keep encountering is cross Frame display of content (and by that I mean actual Frames/Iframe) - trying to draw a div that partially overlaps an Iframe or sibling in a frameset is way too hard(I know, other readers might say who uses framesets nowadays!? answer: complex intranets/biz apps). So perhaps that can be throw into the pot when considering your patch? And yes, it would be nice if the z-index of the div in question was honoured across Frames!<br>Sounds like excellent work, and this kind of effort is much appreciated. Anything to help stop clients saying &#39;but we&#39;ve been using Opera and its sooo faasst!&#39;<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Bora</div>
-<div class='content'>Robert, is this going to solve the plugin clipping problems by iframes? As you know iframes cant correctly handle clipping of plugins when on a variable z-order tree.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Andrew: it&#39;s almost entirely orthogonal.<br>Nameless User: We do support arbitrary elements overlapping sibling IFRAMEs. Is there a particular bug that concerns you? (There are some problems with event handling, mostly fixed in FF1.5, and some problems with the text editing caret, to be fixed in Gecko 1.9.) I don&#39;t understand the issue with framesets; there&#39;s just no way for content in one frame to escape to overlap its siblings, that&#39;s the way the standards are written. As for Opera, it&#39;s a very fine browser and I&#39;m not embarrassed that we have to catch up to it in some areas.<br>Ian: yes<br></div>
-</div>
-<div class='comment'>
 <div class='author'>asdf</div>
 <div class='content'>I don&#39;t know how complicated CSS is (but it sounds absolutely retarded with negative z-indexes and floating elements) but I was wondering if you can just store 1 element of the display list when calculating GetFrameForPoint or do you have to build the whole thing (and if so, I&#39;d hope you&#39;d take advantage of any pruning optimizations)?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Michael</div>
-<div class='content'>Great article! Especially for someone like me who&#39;s just getting into the way Gecko works. Sounds like a complex, but important change, so thank you for your hard work, and good luck. :)<br></div>
+<div class='author'>zbiggy</div>
+<div class='content'>I hope this fix grey background of transparent flash plugins and menu hidden under flash animation. Asus website is an example of such mozilla browser and flash plugin problem.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>A display list will be built from the full frame trees of all visible documents, regardless of which widget we&#39;re painting.<br>(Actually today, content overlapping plugins does not display correctly. My changes will not fix this, there&#39;s no way to fix it.)<br></div>
+<div class='author'>neil</div>
+<div class='content'>&quot;Anything to help stop clients saying &#39;but we&#39;ve been using Opera and its sooo faasst!&#39;&quot;<br>You&#39;re very lucky...most of our clients still don&#39;t know of anything except IE and windows...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>James Napolitano</div>
-<div class='content'>Sounds exciting.  Thanks for the explanation.<br></div>
+<div class='author'>Bora</div>
+<div class='content'>Robert, is this going to solve the plugin clipping problems by iframes? As you know iframes cant correctly handle clipping of plugins when on a variable z-order tree.<br></div>
 </div>
 
 </div>

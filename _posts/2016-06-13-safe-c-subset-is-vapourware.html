@@ -36,34 +36,103 @@ void bar() {
 <p><strong>Won't you look stupid when Section III is released?</strong> Occupational hazard, but that leads me to one more point: even if and when a statically checked, plausibly safe subset is produced, it will take significant experience working with that subset to determine whether it's viable. A subset that rejects core C++ features such as references, or otherwise excludes most existing C++ code, will not be very compelling (as acknowledged in the Lifetimes document: "Our goal is that the false positive rate should be kept at under 10% on average over a large body of code").
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>&gt; Or is there a simple example of Rust code that doesn&#39;t translate directly to C++?
-
-Sure:
-
-struct Foo {
-  b: Bar;
-}
-impl Foo {
-  fn b(&amp;self) { &amp;self.b }
-}
-
-&#39;b&#39; is a simple getter method that returns a reference to the inner field. This *appears* to translate directly to C++, but the Rust version gets compile-time checking that the reference to b does not outlive the &#39;Foo&#39;, while the C++ version does not, so the C++ version is actually very different.
-
-It looks like you could use SaferCPlusPlus to express this using registered pointers, but that would impose run-time overhead and increase the size of &#39;Foo&#39;. Also, it appears the developer would have to decide up-front whether to allow the reference to pass across threads (and be responsible for making sure that decision is followed); if it is allowed to pass across threads, then you have to use atomic ops for pointer (de)registration, which would be considerably more overhead. In Rust it is possible to pass the reference across threads safely with no overhead. So Rust is lower overhead (and safer because threading assumptions are checked rather than assumed).
-
-&gt; You&#39;re defending global variables as not just desirable, but indispensable?
-
-I&#39;m not a huge fan of global variables but sometimes you need them (sometimes thread-local). Besides, global variables are a longstanding feature used by lots of C++ code and it&#39;s disingenuous to say &quot;we&#39;ll statically verify the memory safety of your C++ code ... [fine print] as long as you restrict your code to a subset that doesn&#39;t look like C++ as you know it&quot;.</div>
+<div class='author'>Jeff Muizelaar</div>
+<div class='content'>This matches my experience. MSVC&#39;s checker doesn&#39;t handle shared_ptr and the work being done on the clang checker seems stalled. I&#39;ve had an open <a href="https://github.com/isocpp/CppCoreGuidelines/issues/523" rel="nofollow">issue on how shared_ptr will be handled</a> since February and there hasn&#39;t been much indication that there&#39;s a workable solution. </div>
+</div>
+<div class='comment'>
+<div class='author'>penguindev</div>
+<div class='content'>Interesting point about aliasing being hard.  There was a discussion on swift-users about aliasing issues with &quot;inout&quot; parameters, and someone pointed to a very long design document, that also looks like a bunch of voodoo, basically promising &quot;less unsafe&quot; behavior.  https://lists.swift.org/pipermail/swift-users/Week-of-Mon-20160606/002181.html</div>
+</div>
+<div class='comment'>
+<div class='author'>penguindev</div>
+<div class='content'>Interesting point about aliasing being hard.  There was a discussion on swift-users about aliasing issues with &quot;inout&quot; parameters, and someone pointed to a very long design document, that also looks like a bunch of voodoo, basically promising &quot;less unsafe&quot; behavior.  https://lists.swift.org/pipermail/swift-users/Week-of-Mon-20160606/002181.html</div>
+</div>
+<div class='comment'>
+<div class='author'>Benoit Jacob</div>
+<div class='content'>Note that the code example doesn&#39;t compile as-is with Clang 3.8 and libc++, as the make_unique call fails to automatically deduce the template parameter. make_unique makes it work. Good example!</div>
 </div>
 <div class='comment'>
 <div class='author'>Benoit Jacob</div>
 <div class='content'>Oh, i see, the &lt; and &gt; were eaten away by HTML parsing. I meant make_unique&lt;int&gt; , I suppose that&#39;s what happened to your snippet.</div>
 </div>
 <div class='comment'>
-<div class='author'>pal</div>
-<div class='content'>i like your last line &quot;A subset that rejects core C++ features such as references, or otherwise excludes most existing C++ code, will not be very compelling&quot;
-it explains that compellingness of rust is zero</div>
+<div class='author'>Herb Sutter</div>
+<div class='content'>Author here (of the Lifetimes paper you&#39;re mentioning):
+
+It is a work in progress, and I expected to get more done over the winter, but C++17 is happening: Things got very busy over the past 6-9 months as ISO C++ is now at the &quot;feature freeze&quot; phase of its cycle which happens next week, when we&#39;re closing the feature set of C++17 and sending it out for its primary international comment ballot over the summer. This phrase always causes extra work in the run-up months approaching feature freeze as everyone collectively works on what can make the cut for this release. Because I lead ISO C++ organizationally (as well as getting some of my own proposals into C++17), and of course Bjarne is heavily involved in its evolution technically, C++17 has had to take priority so as to get the standard out on tome, and it meant we&#39;ve been distracted from other important things, including this. I plan to pick Lifetimes up again this summer.
+
+The last comment in the post is absolutely correct that experience is needed to establish how well our approach works. That also takes time, but it&#39;s essential. So part of my work over the next year will be applying it to more and more existing real-world code; to paraphrase an NBA expression, &quot;real code don&#39;t lie.&quot;
+
+BTW, I like Rust (though I don&#39;t use it); there are lots of good languages. I&#39;m not aware that Bjarne or I ever said anything about Rust, and this work wasn&#39;t designed with Rust in mind, or to compete with it; we&#39;re just working on making C++ better, and this is part of starting to surface results from work that I&#39;ve been spending time on over the past decade. I hope that improving one language isn&#39;t viewed as a threat to another; in any case that&#39;s not a motivation here. FWIW, several of the Rust designers approached us about our Lifetimes design after the talks and again this month, and I think we&#39;re going to get together over the summer to chat (after this next standards meeting is over and we all get to recover for a few weeks).</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Thanks for being gracious. I&#39;ve updated my post to avoid impugning your motives.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Herb Sutter</div>
+<div class='content'>P.S.: Oh, and that code example is covered by the rule you cite:
+
+&quot;At a call site, by default passing a Pointer to a function requires that the argument’s lset not include anything that could be invalidated by the function.&quot;
+
+The call to foo(*p) is passing a reference (which is a a non-owning Pointer) whose lset is {p&#39;}, and p&#39; can be invalidated by writing to p. Because p is global and writeable it could be modified by foo(), and so the call foo(*p) would be diagnosed as an error because foo() could invalidate the reference parameter.
+
+(My paper doesn&#39;t explicitly cover raw references and for simplicity mentions only raw pointers, leaving the references to be treated analogously, but you can see this covered by what is in the paper if you just change the parameter to a * instead of &amp;, and change the call to foo(p.get()) instead of foo(*p). -- Same example, just passing a raw pointer instead of using a reference, and now it&#39;s explicitly covered by the rules in the paper.)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Thanks for that clarification. I&#39;ve updated my post.
+
+So you&#39;re taking the approach that anything reachable from a global variable cannot be passed by reference to a function. This seems pretty severe to me since by &quot;reachable&quot; we must include &quot;indirectly reachable&quot;. Talking about this in terms of references also helps show how severe this is, since it means you can&#39;t for example copy data reachable through a global variable using copy-constructors.</div>
+</div>
+<div class='comment'>
+<div class='author'>Herb Sutter</div>
+<div class='content'>Almost right: Anything *owned* by a *mutable* global variable could have the bug you just showed. If it&#39;s not an owner, or not mutable, the problem doesn&#39;t arise. And of course mutable global variables are problematic for many reasons, so we should all be discouraging those (e.g., if there must be a widely shared object, encapsulate it)...
+
+I agree the rule will likely be noisy, especially in existing code. My overall goal is to annotate as little as possible, and for the annotations you do write for legacy code to be mostly of the &quot;trust me / suppress this warning&quot; variety. Then you can make statements of the form &quot;type- and memory-safe except for where rules are explicitly suppressed&quot; which is the guarantee I&#39;m aiming for, so that if a safety error does occur we&#39;ve greatly reduced the surface area that needs to be checked or debugged by a human, and made all unsafe code greppable because it&#39;s annotated.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Actually I think this means you can&#39;t call nonstatic member functions on objects owned via mutable global variables. Which means you might as well ban ownership via mutable global variables completely.
+
+I think I see some other severe problems too but I guess I should just wait for Lifetimes III to come out.</div>
+</div>
+<div class='comment'>
+<div class='author'>Noah</div>
+<div class='content'>It&#39;ll be great when the Core Lifetimes Checker gets to the point that it can assert the program is &quot;memory-safe except for where rules are explicitly suppressed&quot;. It&#39;s hard to estimate, but presumably there will be a bunch of cases, even in new code, that&#39;ll call for some rule suppression in practice. For example, when you&#39;re holding an iterator to a linked list element and then delete a different element in the list. You may know that it&#39;s safe, but the lifetimes checker probably won&#39;t, right?
+
+So I propose the option of automatically injecting run-time checks for those situations where the checker can&#39;t verify safety. It would add some (perhaps unnecessary) run-time cost, but it would allow users to know that their entire program is memory safe, not just the &quot;unsuppressed&quot; part. Optionally.
+
+I mean, the number of injected run-time checks (and thus the extra run-time cost) should be modest, because the checker is supposed to be able to recognize most safe situations, right? I think there would be huge demand for such an option. Take for example the Tor Browser project. They are so desperate for a memory safe version of the Firefox browser that they have resorted to building with the llvm/gcc sanitizers enabled [1], even though those sanitizers exact a large performance penalty are otherwise not meant to be used in production builds. There are lots of applications that prioritize memory safety over performance. Even in performance critical applications, often only a minority of the code is actually performance critical. So the rest of the code can probably handle a few extra run-time checks in exchange for increased memory safety.
+
+Like I mentioned in the other comment, SaferCPlusPlus[2] is a library that allows you to achieve memory safety by providing compatible safe replacements for C++&#39;s potentially dangerous elements. It has examples of pointers and iterators made safe with run-time checks (as well as others that use compile-time restrictions).
+
+One nice thing about automatically injecting run-time checks to achieve memory safety is that as the checker/analyzer gets smarter, the code generated will get faster. That is, fewer run-time checks will be injected as the checker/analyzer is able to recognize more code situations that are actually safe.
+
+[1] https://blog.torproject.org/blog/tor-browser-55a4-hardened-released
+[2] https://github.com/duneroadrunner/SaferCPlusPlus
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Noah</div>
+<div class='content'>And this is going a bit further, but a possibly more desirable feature might be the ability to actually remove existing run-time checks in the code that are determined to be unnecessary. Basically using the lifetimes analysis to act as a specialized code optimizer as well. This would allow the programmer to write intrinsically safe code, using run-time checks (or a library that uses run-time checks), while being confident that most of the unnecessary checks will be stripped out so as to not hurt performance. While ostensibly, this produces the same result as the &quot;run-time check injection&quot; approach, it actually has a couple of advantages. First, you can apply any number of different &quot;run-time check discarding&quot; optimizers to your code, knowing that each optimizer can only improve the performance (or do nothing).
+
+But more importantly, this approach scales up beyond memory safety to more general notions of code correctness. That is, memory safety is just the enforcement of certain invariants. But generally, programs have other (application level) invariants that could also use some enforcement. Since those other invariants may not have specialized static checkers like the memory invariants do, they may need to be enforced with run-time checks. You could imagine more generalized (but possibly user guided/assisted) &quot;run-time check discarding&quot; optimizers attempting to discard those &quot;application invariant&quot; run-time checks. And if they are only able to discard a portion of those run-time checks, well fine. Something&#39;s better than nothing.
+
+And of course all these optimizers would report (to the programmer) which run-time checks they were and weren&#39;t able to discard.
+
+So basically I&#39;m contrasting the two approaches to code safety - &quot;static checking with false positives&quot; versus &quot;not completely optimized-out run-time checks&quot;. I&#39;m suggesting the latter may be a more practical approach for code safety in general. But someone probably needs to establish a standard framework for applying it.
+</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Patrick Walton</div>
+<div class='content'>I observed essentially the same problem with shared_ptr and wrote about it a few months ago: https://news.ycombinator.com/item?id=10912127
+
+It&#39;s even more serious with shared_ptr than the global variables problem, and unless I&#39;m missing something huge I think it kind of cripples the whole project with no way I can see to repair it.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes, I agree.</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>Noah</div>
@@ -85,103 +154,25 @@ You&#39;re defending global variables as not just desirable, but indispensable? 
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Benoit Jacob</div>
-<div class='content'>Note that the code example doesn&#39;t compile as-is with Clang 3.8 and libc++, as the make_unique call fails to automatically deduce the template parameter. make_unique makes it work. Good example!</div>
-</div>
-<div class='comment'>
-<div class='author'>penguindev</div>
-<div class='content'>Interesting point about aliasing being hard.  There was a discussion on swift-users about aliasing issues with &quot;inout&quot; parameters, and someone pointed to a very long design document, that also looks like a bunch of voodoo, basically promising &quot;less unsafe&quot; behavior.  https://lists.swift.org/pipermail/swift-users/Week-of-Mon-20160606/002181.html</div>
-</div>
-<div class='comment'>
-<div class='author'>penguindev</div>
-<div class='content'>Interesting point about aliasing being hard.  There was a discussion on swift-users about aliasing issues with &quot;inout&quot; parameters, and someone pointed to a very long design document, that also looks like a bunch of voodoo, basically promising &quot;less unsafe&quot; behavior.  https://lists.swift.org/pipermail/swift-users/Week-of-Mon-20160606/002181.html</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>See http://ithare.com/a-usable-c-dialect-that-is-safe-against-memory-corruption/ (it is an article from reviewed Overload journal): A Usable C++ Dialect that is Safe Against Memory Corruption . Requires static analyzer to enforce safety (currently WIP). Naked pointers and refs are supported (within reason, as long as safety is provable; formally - enlarging scope of naked pointers/refs is strictly prohibited - but most of the time it is a Good Idea(tm) anyway). </div>
-</div>
-<div class='comment'>
-<div class='author'>Jeff Muizelaar</div>
-<div class='content'>This matches my experience. MSVC&#39;s checker doesn&#39;t handle shared_ptr and the work being done on the clang checker seems stalled. I&#39;ve had an open <a href="https://github.com/isocpp/CppCoreGuidelines/issues/523" rel="nofollow">issue on how shared_ptr will be handled</a> since February and there hasn&#39;t been much indication that there&#39;s a workable solution. </div>
-</div>
-<div class='comment'>
-<div class='author'>Herb Sutter</div>
-<div class='content'>P.S.: Oh, and that code example is covered by the rule you cite:
-
-&quot;At a call site, by default passing a Pointer to a function requires that the argument’s lset not include anything that could be invalidated by the function.&quot;
-
-The call to foo(*p) is passing a reference (which is a a non-owning Pointer) whose lset is {p&#39;}, and p&#39; can be invalidated by writing to p. Because p is global and writeable it could be modified by foo(), and so the call foo(*p) would be diagnosed as an error because foo() could invalidate the reference parameter.
-
-(My paper doesn&#39;t explicitly cover raw references and for simplicity mentions only raw pointers, leaving the references to be treated analogously, but you can see this covered by what is in the paper if you just change the parameter to a * instead of &amp;, and change the call to foo(p.get()) instead of foo(*p). -- Same example, just passing a raw pointer instead of using a reference, and now it&#39;s explicitly covered by the rules in the paper.)</div>
-<div class='comment'>
-<div class='author'>Noah</div>
-<div class='content'>And this is going a bit further, but a possibly more desirable feature might be the ability to actually remove existing run-time checks in the code that are determined to be unnecessary. Basically using the lifetimes analysis to act as a specialized code optimizer as well. This would allow the programmer to write intrinsically safe code, using run-time checks (or a library that uses run-time checks), while being confident that most of the unnecessary checks will be stripped out so as to not hurt performance. While ostensibly, this produces the same result as the &quot;run-time check injection&quot; approach, it actually has a couple of advantages. First, you can apply any number of different &quot;run-time check discarding&quot; optimizers to your code, knowing that each optimizer can only improve the performance (or do nothing).
-
-But more importantly, this approach scales up beyond memory safety to more general notions of code correctness. That is, memory safety is just the enforcement of certain invariants. But generally, programs have other (application level) invariants that could also use some enforcement. Since those other invariants may not have specialized static checkers like the memory invariants do, they may need to be enforced with run-time checks. You could imagine more generalized (but possibly user guided/assisted) &quot;run-time check discarding&quot; optimizers attempting to discard those &quot;application invariant&quot; run-time checks. And if they are only able to discard a portion of those run-time checks, well fine. Something&#39;s better than nothing.
-
-And of course all these optimizers would report (to the programmer) which run-time checks they were and weren&#39;t able to discard.
-
-So basically I&#39;m contrasting the two approaches to code safety - &quot;static checking with false positives&quot; versus &quot;not completely optimized-out run-time checks&quot;. I&#39;m suggesting the latter may be a more practical approach for code safety in general. But someone probably needs to establish a standard framework for applying it.
-</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Thanks for that clarification. I&#39;ve updated my post.
+<div class='content'>&gt; Or is there a simple example of Rust code that doesn&#39;t translate directly to C++?
 
-So you&#39;re taking the approach that anything reachable from a global variable cannot be passed by reference to a function. This seems pretty severe to me since by &quot;reachable&quot; we must include &quot;indirectly reachable&quot;. Talking about this in terms of references also helps show how severe this is, since it means you can&#39;t for example copy data reachable through a global variable using copy-constructors.</div>
-</div>
-<div class='comment'>
-<div class='author'>Noah</div>
-<div class='content'>It&#39;ll be great when the Core Lifetimes Checker gets to the point that it can assert the program is &quot;memory-safe except for where rules are explicitly suppressed&quot;. It&#39;s hard to estimate, but presumably there will be a bunch of cases, even in new code, that&#39;ll call for some rule suppression in practice. For example, when you&#39;re holding an iterator to a linked list element and then delete a different element in the list. You may know that it&#39;s safe, but the lifetimes checker probably won&#39;t, right?
+Sure:
 
-So I propose the option of automatically injecting run-time checks for those situations where the checker can&#39;t verify safety. It would add some (perhaps unnecessary) run-time cost, but it would allow users to know that their entire program is memory safe, not just the &quot;unsuppressed&quot; part. Optionally.
+struct Foo {
+  b: Bar;
+}
+impl Foo {
+  fn b(&amp;self) { &amp;self.b }
+}
 
-I mean, the number of injected run-time checks (and thus the extra run-time cost) should be modest, because the checker is supposed to be able to recognize most safe situations, right? I think there would be huge demand for such an option. Take for example the Tor Browser project. They are so desperate for a memory safe version of the Firefox browser that they have resorted to building with the llvm/gcc sanitizers enabled [1], even though those sanitizers exact a large performance penalty are otherwise not meant to be used in production builds. There are lots of applications that prioritize memory safety over performance. Even in performance critical applications, often only a minority of the code is actually performance critical. So the rest of the code can probably handle a few extra run-time checks in exchange for increased memory safety.
+&#39;b&#39; is a simple getter method that returns a reference to the inner field. This *appears* to translate directly to C++, but the Rust version gets compile-time checking that the reference to b does not outlive the &#39;Foo&#39;, while the C++ version does not, so the C++ version is actually very different.
 
-Like I mentioned in the other comment, SaferCPlusPlus[2] is a library that allows you to achieve memory safety by providing compatible safe replacements for C++&#39;s potentially dangerous elements. It has examples of pointers and iterators made safe with run-time checks (as well as others that use compile-time restrictions).
+It looks like you could use SaferCPlusPlus to express this using registered pointers, but that would impose run-time overhead and increase the size of &#39;Foo&#39;. Also, it appears the developer would have to decide up-front whether to allow the reference to pass across threads (and be responsible for making sure that decision is followed); if it is allowed to pass across threads, then you have to use atomic ops for pointer (de)registration, which would be considerably more overhead. In Rust it is possible to pass the reference across threads safely with no overhead. So Rust is lower overhead (and safer because threading assumptions are checked rather than assumed).
 
-One nice thing about automatically injecting run-time checks to achieve memory safety is that as the checker/analyzer gets smarter, the code generated will get faster. That is, fewer run-time checks will be injected as the checker/analyzer is able to recognize more code situations that are actually safe.
+&gt; You&#39;re defending global variables as not just desirable, but indispensable?
 
-[1] https://blog.torproject.org/blog/tor-browser-55a4-hardened-released
-[2] https://github.com/duneroadrunner/SaferCPlusPlus
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Herb Sutter</div>
-<div class='content'>Almost right: Anything *owned* by a *mutable* global variable could have the bug you just showed. If it&#39;s not an owner, or not mutable, the problem doesn&#39;t arise. And of course mutable global variables are problematic for many reasons, so we should all be discouraging those (e.g., if there must be a widely shared object, encapsulate it)...
-
-I agree the rule will likely be noisy, especially in existing code. My overall goal is to annotate as little as possible, and for the annotations you do write for legacy code to be mostly of the &quot;trust me / suppress this warning&quot; variety. Then you can make statements of the form &quot;type- and memory-safe except for where rules are explicitly suppressed&quot; which is the guarantee I&#39;m aiming for, so that if a safety error does occur we&#39;ve greatly reduced the surface area that needs to be checked or debugged by a human, and made all unsafe code greppable because it&#39;s annotated.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Actually I think this means you can&#39;t call nonstatic member functions on objects owned via mutable global variables. Which means you might as well ban ownership via mutable global variables completely.
-
-I think I see some other severe problems too but I guess I should just wait for Lifetimes III to come out.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Patrick Walton</div>
-<div class='content'>I observed essentially the same problem with shared_ptr and wrote about it a few months ago: https://news.ycombinator.com/item?id=10912127
-
-It&#39;s even more serious with shared_ptr than the global variables problem, and unless I&#39;m missing something huge I think it kind of cripples the whole project with no way I can see to repair it.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Yes, I agree.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Herb Sutter</div>
-<div class='content'>Author here (of the Lifetimes paper you&#39;re mentioning):
-
-It is a work in progress, and I expected to get more done over the winter, but C++17 is happening: Things got very busy over the past 6-9 months as ISO C++ is now at the &quot;feature freeze&quot; phase of its cycle which happens next week, when we&#39;re closing the feature set of C++17 and sending it out for its primary international comment ballot over the summer. This phrase always causes extra work in the run-up months approaching feature freeze as everyone collectively works on what can make the cut for this release. Because I lead ISO C++ organizationally (as well as getting some of my own proposals into C++17), and of course Bjarne is heavily involved in its evolution technically, C++17 has had to take priority so as to get the standard out on tome, and it meant we&#39;ve been distracted from other important things, including this. I plan to pick Lifetimes up again this summer.
-
-The last comment in the post is absolutely correct that experience is needed to establish how well our approach works. That also takes time, but it&#39;s essential. So part of my work over the next year will be applying it to more and more existing real-world code; to paraphrase an NBA expression, &quot;real code don&#39;t lie.&quot;
-
-BTW, I like Rust (though I don&#39;t use it); there are lots of good languages. I&#39;m not aware that Bjarne or I ever said anything about Rust, and this work wasn&#39;t designed with Rust in mind, or to compete with it; we&#39;re just working on making C++ better, and this is part of starting to surface results from work that I&#39;ve been spending time on over the past decade. I hope that improving one language isn&#39;t viewed as a threat to another; in any case that&#39;s not a motivation here. FWIW, several of the Rust designers approached us about our Lifetimes design after the talks and again this month, and I think we&#39;re going to get together over the summer to chat (after this next standards meeting is over and we all get to recover for a few weeks).</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Thanks for being gracious. I&#39;ve updated my post to avoid impugning your motives.</div>
-</div>
+I&#39;m not a huge fan of global variables but sometimes you need them (sometimes thread-local). Besides, global variables are a longstanding feature used by lots of C++ code and it&#39;s disingenuous to say &quot;we&#39;ll statically verify the memory safety of your C++ code ... [fine print] as long as you restrict your code to a subset that doesn&#39;t look like C++ as you know it&quot;.</div>
 </div>
 <div class='comment'>
 <div class='author'>Noah</div>
@@ -245,6 +236,15 @@ Both. The lack of lifetime parameters suggests that it will necessarily be more 
 <div class='author'>Robert</div>
 <div class='content'>FWIW that it&#39;s now a full year since the last update to the lifetime-checking document. That project doesn&#39;t look very healthy.</div>
 </div>
+</div>
+<div class='comment'>
+<div class='author'>pal</div>
+<div class='content'>i like your last line &quot;A subset that rejects core C++ features such as references, or otherwise excludes most existing C++ code, will not be very compelling&quot;
+it explains that compellingness of rust is zero</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>See http://ithare.com/a-usable-c-dialect-that-is-safe-against-memory-corruption/ (it is an article from reviewed Overload journal): A Usable C++ Dialect that is Safe Against Memory Corruption . Requires static analyzer to enforce safety (currently WIP). Naked pointers and refs are supported (within reason, as long as safety is provable; formally - enlarging scope of naked pointers/refs is strictly prohibited - but most of the time it is a Good Idea(tm) anyway). </div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>

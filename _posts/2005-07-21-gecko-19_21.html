@@ -8,40 +8,76 @@ permalink: "/2005/07/gecko-19_21.html"
 <div class="columns">Within a week or two we'll be branching off 1.8 and opening the trunk for Gecko 1.9 development. This will be very exciting because we have a lot of interesting changes planned, many of which are underway and will land soon after the branch is cut. Here's a rundown of some of the upcoming changes:<br/><br/><ul><br/><li>The new Thebes graphics code will be landing. Thebes is a C++ wrapper around cairo. Very soon we should be able to produce Thebes-based Firefox builds for Linux and Windows. We'll be doing intensive development and testing of these builds during the 1.9 cycle until we reach the point where we can make them the default builds. This will give us a number of cool features:<br/><ul><br/><li>Much less graphics code for us to maintain --- most of the work will be in cairo, which is shared with many other projects<br/><li>Various options for accelerated graphics: Glitz on Windows and Linux, Quartz on Mac, XRender on Linux (with an accelerated X server such as Xglx or Exa)<br/><li>Better quality rendering: some antialiasing, bilinear image scaling<br/><li>A powerful new graphics API so we can draw fancier borders, draw rotated HTML, etc<br/><li>Fix various rendering bugs that are currently hard to fix<br/></ul><br/><li>Blake Kaplan's caret patch fixes many issues with caret positioning and drawing by making caret drawing go through our standard paint path. In conjunction with the Thebes work, carets in rotated text boxes will be drawn correctly.<br/><li>We have a units patch from sharparrow which will simplify our code and make Gecko work intelligently on high-density displays. On 200dpi screens we'll draw 2x2 screen pixels for every CSS pixel.<br/><li>We also have an events refactoring patch from sharparrow that will simplify our code and fix a number of bugs. Some more events refactoring patches will follow to simplify the code even more.<br/><li>I have a plan to eliminate our widget trees by having all Gecko content render into one top-level widget whose only children are plugins. This will simplify our code considerably, fix some bugs and should improve performance (especiallly with Glitz).<br/><li>I also have a plan to eliminate the separate view trees we currently maintain and move the view manager's functionality in the presshell. This will also simplify our code a lot and will smooth the path to fixing various bugs (including at least one Acid2 bug).<br/><li>Christian Biesinger has a patch to fix some plugin architecture problems by moving plugin loading to content. This also fixes an Acid2 bug.<br/><li>I hope that David Baron's reflow refactoring branch can land as soon as possible too, which will fix many bugs and simplify our code some more.<br/><li>There is a plan to simplify the SVG code and reduce the footprint of SVG elements by being more intelligent about how we handle DOM SVG values.<br/></ul><br/><br/>I'm excited that these changes will simplify Gecko considerably. It's definitely something that needs to be done. Moving from four trees (content, frames, views, widgets) to just two (content and frames) should be a huge help. Eliminating most of our gfx code will also be a big win.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>James Napolitano</div>
+<div class='content'>Simplifying code, architectural improvements, fixing whole classes of bugs... its enough to make me drool!  I hope to find the time to seriously start learning Mozilla so I can help with the coding.  BWT, Roc, have you considered listing your blog on Gemal&#39;s Blogupdates, http://gemal.dk/mozilla/blogupdates.html ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>Sounds great, all these changes.<br>And they don&#39;t cause any regressions, off course? ;-)<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Arthur</div>
 <div class='content'>Will any of this have an effect on [Bug 9458] Implement inline-block in layout.<br>I have not taken the time to understand the problem yet but just curious as you stated, &quot;Fix various rendering bugs that are currently hard to fix&quot;<br>and bug 9458 is one of them for sure.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>jamcnair</div>
-<div class='content'>Holy buckets, Gecko 1.9 sounds more like Gecko 2.0 with all the architectural improvements going in! I mean, all Cairo with C++ wrappers for graphics, major improvements to layout and rendering, bugfixes for the ages, and long needed cleanups and refactorings. I mean, wow, seriously!<br>any place I can go to see if any of the other Target: Mozilla 2 features from the Mozilla wiki will be going in? http://wiki.mozilla.org/Mozilla2:Home_Page<br>I&#39;m especially curious about things like Unified Storage, Docshell improvements, profile sharing/multiuser, and the improvements to libpr0n (JPEG2k and colour profiles).<br>If you can&#39;t answer, I truly understand, as you and the others are stupidly busy. Thanks for all your hard work.<br>--JM<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert Accettura</div>
-<div class='content'>@roc: great, just wanted to make sure that segment isn&#39;t forgotten.  It would be a mistake to ignore it.  Those GPU challeneged systems are manufactured in bulk and deployed in batches by the thousands.  There are easily millions of them in existance.  Most running win2k and IE 5.5 or IE 6.  All potential converts.<br>Those weak GPU&#39;s totally stink, but it is a large audience.<br></div>
+<div class='author'>steve england</div>
+<div class='content'>all this sounds awesome. can&#39;t wait!<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Some time during the 1.9 cycle we may indeed start calling it Gecko 2.0.<br>I&#39;m not really sure about those other Mozilla 2 features. There are plenty of other plans that I&#39;m not aware of.<br>Cairo will have to be ported to OS/2 and BeOS. It should be relatively easy to get basic cairo running there  --- more work to get acceleration going. I know people are already looking at it.<br></div>
+<div class='content'>Arthur: David&#39;s reflow refactoring is the key to that one.<br>Martijn: of course they&#39;ll cause regressions. And we&#39;ll fix them with your help :-)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Simon Paquet</div>
-<div class='content'>Robert, this sounds really cool. Will all that refactoring and simplification work also reduce the code size of gecko code in FF/TB/SB/SM?<br>Will we see improvements in HTML pageload (Tp), XUL pageload (Txul) and startup (Ts) time?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robin</div>
-<div class='content'>I don&#39;t know if I should post this here, but here goes:<br>If you take a look at the roadmap: (http://www.mozilla.org/projects/firefox/roadmap.html)<br>You see when DPA1 and DPA2 were released, but it doesn&#39;t mention either  1.1beta nor the final 1.1. Why is that? Am I overlooking something?<br></div>
+<div class='author'>miguel</div>
+<div class='content'>All I can say is wow!  I really can&#39;t imagine the kinds of cool stuff that people will do with Cairo.   But I wonder what the timeline will look like.  If Gecko 1.9 can land in Firefox 2.0 by early-to-mid next year then it should be able to take some of IE7&#39;s heat.  I have a feeling people are going to be dissapointed with IE7, and with Longhorn for that matter.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert Accettura</div>
 <div class='content'>I&#39;m personally curious about performance.  If Asa&#39;s right, there&#39;s a huge market in coming months of older Win 2k users who will want a better browser (and IE 7.0 is XP only).  This is potentially a huge chunk of the corporate market.  Lots of systems, some lower end.<br>Will this new graphics system work for them?  With their integrated intel GPU&#39;s in there bland Dell systems.  This is a rather large chunk of potential marketshare I hope we don&#39;t loose.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Robin</div>
+<div class='content'>I don&#39;t know if I should post this here, but here goes:<br>If you take a look at the roadmap: (http://www.mozilla.org/projects/firefox/roadmap.html)<br>You see when DPA1 and DPA2 were released, but it doesn&#39;t mention either  1.1beta nor the final 1.1. Why is that? Am I overlooking something?<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>miguel: we don&#39;t know exactly what the timeline will look like, but I&#39;m hoping we&#39;ll ship something as soon as the graphics work is done even if it means pushing off other Gecko work or Firefox features.<br>Robert: that is a big issue we&#39;re thinking a lot about. Graphics performance on that sort of system is probably going to take a lot of our energy for the next year especially when doing SVG and other advanced effects. The good news is that we&#39;re not working on it alone; it&#39;s a cairo issue.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Martijn</div>
-<div class='content'>Sounds great, all these changes.<br>And they don&#39;t cause any regressions, off course? ;-)<br></div>
+<div class='author'>Robin</div>
+<div class='content'>Robin - see http://supernova00.biz/blog/2005/07/firefox-11-scraped-will-be-15.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>john</div>
+<div class='content'>Will the Thebes landing include changing to cairo for printing?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Simon Paquet</div>
+<div class='content'>Robert, this sounds really cool. Will all that refactoring and simplification work also reduce the code size of gecko code in FF/TB/SB/SM?<br>Will we see improvements in HTML pageload (Tp), XUL pageload (Txul) and startup (Ts) time?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>john: yes, that&#39;s the plan. No work has been done it yet on our side, but on the cairo side there are some great people working on Postscript and PDF output.<br>Simon: hopefully!!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mark</div>
+<div class='content'>ROC, you mentioned that the powerful new graphics API will allow us to draw fancier borders.  I&#39;m unsure what that might look like, could you give an example?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Well, dotted borders could use antialiased circles instead of squares, and rounded borders could have the rounded edges antialiased.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Accettura</div>
+<div class='content'>@roc: great, just wanted to make sure that segment isn&#39;t forgotten.  It would be a mistake to ignore it.  Those GPU challeneged systems are manufactured in bulk and deployed in batches by the thousands.  There are easily millions of them in existance.  Most running win2k and IE 5.5 or IE 6.  All potential converts.<br>Those weak GPU&#39;s totally stink, but it is a large audience.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Justin Kerk</div>
+<div class='content'>Heck, there are folks still using old machines with no 3D accelerators at all, like my mom who I installed Firefox for, and my ghetto box in the bedroom :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jamcnair</div>
+<div class='content'>Holy buckets, Gecko 1.9 sounds more like Gecko 2.0 with all the architectural improvements going in! I mean, all Cairo with C++ wrappers for graphics, major improvements to layout and rendering, bugfixes for the ages, and long needed cleanups and refactorings. I mean, wow, seriously!<br>any place I can go to see if any of the other Target: Mozilla 2 features from the Mozilla wiki will be going in? http://wiki.mozilla.org/Mozilla2:Home_Page<br>I&#39;m especially curious about things like Unified Storage, Docshell improvements, profile sharing/multiuser, and the improvements to libpr0n (JPEG2k and colour profiles).<br>If you can&#39;t answer, I truly understand, as you and the others are stupidly busy. Thanks for all your hard work.<br>--JM<br></div>
 </div>
 <div class='comment'>
 <div class='author'>ANBO Motohiko</div>
@@ -49,55 +85,19 @@ permalink: "/2005/07/gecko-19_21.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Well, dotted borders could use antialiased circles instead of squares, and rounded borders could have the rounded edges antialiased.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Dysfunksional.Monkey</div>
-<div class='content'>Does anyone know where I could find a quick run-down on what CSS3 features Gecko1.9 supports? I&#39;ve just learned that Safari handles the CSS3 background spec, which is stunning<br></div>
-</div>
-<div class='comment'>
-<div class='author'>miguel</div>
-<div class='content'>All I can say is wow!  I really can&#39;t imagine the kinds of cool stuff that people will do with Cairo.   But I wonder what the timeline will look like.  If Gecko 1.9 can land in Firefox 2.0 by early-to-mid next year then it should be able to take some of IE7&#39;s heat.  I have a feeling people are going to be dissapointed with IE7, and with Longhorn for that matter.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>john</div>
-<div class='content'>Will the Thebes landing include changing to cairo for printing?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Justin Kerk</div>
-<div class='content'>Heck, there are folks still using old machines with no 3D accelerators at all, like my mom who I installed Firefox for, and my ghetto box in the bedroom :)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Stebs</div>
-<div class='content'>Not only features in upcoming Gecko 1.9 would be interesting, but also those in existing Gecko 1.8!<br>It would be very handy to have a status update of Gecko features (about CSS 2.1, CSS 3.0 etc.) like the nice Status Pages for SVG: http://www.mozilla.org/projects/svg/status.html and Xforms: http://www.mozilla.org/projects/xforms/status.html<br>Does such a Page exist, if not, wouldn&#39;t it be a good idea?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>James Napolitano</div>
-<div class='content'>Simplifying code, architectural improvements, fixing whole classes of bugs... its enough to make me drool!  I hope to find the time to seriously start learning Mozilla so I can help with the coding.  BWT, Roc, have you considered listing your blog on Gemal&#39;s Blogupdates, http://gemal.dk/mozilla/blogupdates.html ?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mark</div>
-<div class='content'>ROC, you mentioned that the powerful new graphics API will allow us to draw fancier borders.  I&#39;m unsure what that might look like, could you give an example?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robin</div>
-<div class='content'>Robin - see http://supernova00.biz/blog/2005/07/firefox-11-scraped-will-be-15.html<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>john: yes, that&#39;s the plan. No work has been done it yet on our side, but on the cairo side there are some great people working on Postscript and PDF output.<br>Simon: hopefully!!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Arthur: David&#39;s reflow refactoring is the key to that one.<br>Martijn: of course they&#39;ll cause regressions. And we&#39;ll fix them with your help :-)<br></div>
+<div class='content'>Some time during the 1.9 cycle we may indeed start calling it Gecko 2.0.<br>I&#39;m not really sure about those other Mozilla 2 features. There are plenty of other plans that I&#39;m not aware of.<br>Cairo will have to be ported to OS/2 and BeOS. It should be relatively easy to get basic cairo running there  --- more work to get acceleration going. I know people are already looking at it.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>ROBO Design</div>
 <div class='content'>Awesome guys!<br>I&#39;m looking forward for Gecko 1.9. It&#39;s always better to make it faster and faster and less buggier :).<br></div>
 </div>
 <div class='comment'>
-<div class='author'>steve england</div>
-<div class='content'>all this sounds awesome. can&#39;t wait!<br></div>
+<div class='author'>Dysfunksional.Monkey</div>
+<div class='content'>Does anyone know where I could find a quick run-down on what CSS3 features Gecko1.9 supports? I&#39;ve just learned that Safari handles the CSS3 background spec, which is stunning<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Stebs</div>
+<div class='content'>Not only features in upcoming Gecko 1.9 would be interesting, but also those in existing Gecko 1.8!<br>It would be very handy to have a status update of Gecko features (about CSS 2.1, CSS 3.0 etc.) like the nice Status Pages for SVG: http://www.mozilla.org/projects/svg/status.html and Xforms: http://www.mozilla.org/projects/xforms/status.html<br>Does such a Page exist, if not, wouldn&#39;t it be a good idea?<br></div>
 </div>
 
 </div>

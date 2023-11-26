@@ -21,20 +21,8 @@ permalink: "/2011/09/risks-of-exposing-web-page-pixel-data.html"
 https://developer.mozilla.org/en/CSS/Privacy_and_the_%3Avisited_selector</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>That&#39;s being discussed in public-fx.</div>
-</div>
-<div class='comment'>
-<div class='author'>ralpht</div>
-<div class='content'>What do you think of the Adobe CSS Shader work: http://www.adobe.com/devnet/html5/articles/css-shaders.html
-
-Is there a way to avoid RAF exposing composition time?</div>
-</div>
-<div class='comment'>
-<div class='author'>Sid</div>
-<div class='content'>I think exposing pixel data is too dangerous period and that we shouldn&#39;t even consider supporting it at all. (I also think the same for fullscreen, but apparently you disagree. :) )
-
-In general, I think trying to support everything a native app can do is a bad idea.</div>
+<div class='author'>Eamon Nerbonne</div>
+<div class='content'>In addition to the fingerprinting issue detecting a user&#39;s theme would help generating fake authoritative content (e.g. spoofing chrome) and might be part of trick to get the user to grant escalated privileges.</div>
 </div>
 <div class='comment'>
 <div class='author'>Luc</div>
@@ -46,18 +34,30 @@ For the first 3 use cases:
 The last 2 use cases are security holes by design. I don&#39;t think that there is a better solution than user authorization and phishing-like blacklist.</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Luc: it&#39;s already done. If you draw an image from a different origin to a canvas, you can&#39;t read the canvas anymore.</div>
+<div class='author'>Sid</div>
+<div class='content'>I think exposing pixel data is too dangerous period and that we shouldn&#39;t even consider supporting it at all. (I also think the same for fullscreen, but apparently you disagree. :) )
+
+In general, I think trying to support everything a native app can do is a bad idea.</div>
 </div>
 <div class='comment'>
-<div class='author'>Eamon Nerbonne</div>
-<div class='content'>In addition to the fingerprinting issue detecting a user&#39;s theme would help generating fake authoritative content (e.g. spoofing chrome) and might be part of trick to get the user to grant escalated privileges.</div>
+<div class='author'>Anonymous</div>
+<div class='content'>Luc: it&#39;s already done. If you draw an image from a different origin to a canvas, you can&#39;t read the canvas anymore.</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>Luc: an app can&#39;t do a load fully independently of the user context, because the browser&#39;s location on the network is part of that context (IP address, behind firewall etc). The only way to do it properly is to have the server fetch the page and proxy it to the app, which is already possible today.
 
 Anonymous, Sid: thanks for reminding me about the link-visitedness issue. I&#39;ll update the post.</div>
+</div>
+<div class='comment'>
+<div class='author'>ralpht</div>
+<div class='content'>What do you think of the Adobe CSS Shader work: http://www.adobe.com/devnet/html5/articles/css-shaders.html
+
+Is there a way to avoid RAF exposing composition time?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That&#39;s being discussed in public-fx.</div>
 </div>
 
 </div>

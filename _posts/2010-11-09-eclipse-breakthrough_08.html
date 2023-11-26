@@ -8,32 +8,32 @@ permalink: "/2010/11/eclipse-breakthrough_08.html"
 <div class="columns"><p>I've been using Eclipse for quite a while now as my code editor. A few years ago <a href="/2005/06/eclipse_cdt.html">I tried</a> using the "smart" CDT features on Gecko but they didn't work very well. Now, five years later (how time flies!) I am very pleased to report that they work much much better! I'm sure the software has improved (Eclipse 3.6.1, CDT 7), but my laptop now having four CPU cores and 8GB of memory has probably helped too :-).<br/><p>I create an "empty" C++ project with the source directory pointing to an existing hg repository. I turn off the automatic build options, but enable all the indexing features. I turn off the "scalability" option for the C++ editor --- setting the number-of-lines threshold to 100,000 doesn't seem to cause any problems for me. In the project properties, I add resource filters to exclude everything under the .hg and object directories. In the "Paths And Symbols" page of the project properties, I add all the symbol definitions from the generated mozilla-config.h file of my debug build. This probably could be automated but I did it manually. Then I let the indexer run to completion. It doesn't take very long --- minutes, not hours.<br/><p>With all that done, many features seem to mostly work, at least in layout and gfx code:<br/><ul><br/><li>Ctrl-click on an identifier jumps to its definition<br/><li>Ctrl-click on an identifier at its definition jumps to the declaration if there's a separate declaration<br/><li>Hovering over an identifer shows its definition<br/><li>Opening a "Type Hierarchy" shows the superclasses and subclasses of the selected class (or the class of the method containing the caret)<br/><li>Opening a "Call Hierarchy" shows the callers/callees of the selected method<br/><li>Opening "Quick Type Hierarchy" on a virtual method declaration shows the classes implementing that method<br/><li>Opening "References / Project" shows all references to the selected declaration<br/><li>Context-sensitive autocomplete often works.<br/></ul><br/>All very useful! And all very smooth and fast, on my laptop anyway. Major kudos to the Eclipse team, this should really improve my productivity.<br/><p>Of course, it's not perfect. For example, autocomplete after "foo->", where 'foo' is an nsCOMPtr or nsRefPtr, doesn't seem to work. However, the features work well enough that I'm getting into the habit of using the features and expecting them to work.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>FACORAT Fabrice</div>
-<div class='content'>NetBeans may be a good solution and many people are saying that NetBeans is faster than Eclipse<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Philipp</div>
-<div class='content'>I fully agree. I use Eclipse for Mozilla development for about two years now and it&#39;s amazingly stable and fast (building the initial index takes around 30 minutes here). I especially love the complete resolution of macros.<br></div>
+<div class='author'>Sid</div>
+<div class='content'>Yeah, I&#39;m honestly pretty amazed they got intellisense for foo-&gt; working in VC++.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Jason</div>
 <div class='content'>Have you tried using an HG plugin for Eclipse?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>KellieWilliams</div>
-<div class='content'>your setups to keep your personal privacy as well as various <a href="https://playstoreapp.co" rel="nofollow">playstoreapp.co</a> you have to download and install BlueStacks Android Emulator</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>I have used one of the hg plugins in the past. It was pretty good, but I&#39;m not sure it&#39;s a win over using the command line for me.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philipp</div>
+<div class='content'>I fully agree. I use Eclipse for Mozilla development for about two years now and it&#39;s amazingly stable and fast (building the initial index takes around 30 minutes here). I especially love the complete resolution of macros.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>FACORAT Fabrice</div>
+<div class='content'>NetBeans may be a good solution and many people are saying that NetBeans is faster than Eclipse<br></div>
 </div>
 <div class='comment'>
 <div class='author'>gleason ricardo</div>
 <div class='content'>good you will rather substantially get employing your info all the period <a href="https://itunesdownloadapp.com" rel="nofollow">https://itunesdownloadapp.com</a> First of all, let&#39;s speak about the caveats of employing Play Music nice.</div>
 </div>
 <div class='comment'>
-<div class='author'>Sid</div>
-<div class='content'>Yeah, I&#39;m honestly pretty amazed they got intellisense for foo-&gt; working in VC++.<br></div>
+<div class='author'>KellieWilliams</div>
+<div class='content'>your setups to keep your personal privacy as well as various <a href="https://playstoreapp.co" rel="nofollow">playstoreapp.co</a> you have to download and install BlueStacks Android Emulator</div>
 </div>
 
 </div>

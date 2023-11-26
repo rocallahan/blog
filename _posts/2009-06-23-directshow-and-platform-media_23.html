@@ -8,68 +8,140 @@ permalink: "/2009/06/directshow-and-platform-media_23.html"
 <div class="columns"><p>People keep asking why we don't integrate support for Windows' DirectShow into Firefox so the &lt;video&gt; element can play any media that the user has a DirectShow codec for. Even if a volunteer produces a patch, I would not want to ship it in Firefox in the near future; let me try to explain why.<br/><ol><br/><li>Probably most important: we want to focus our energy on promoting open unencumbered codecs at this time.<br/><li>Only a very small fraction of Windows users have a DirectShow codec for the most important encumbered codec, H.264. Windows 7 will be the first version of Windows to ship with H.264 by default. Even if millions of people have downloaded H.264 codecs themselves, that's a very small fraction of our users.<br/><li>DirectShow is underspecified and codecs are of highly variable quality. Many codecs probably will not work with Web sites that use all the rich APIs of &lt;video&gt;, and those bugs will be filed against us. We probably will not be able to fix them. (Note that the problem is bad enough that in Windows 7, Microsoft isn't even going to allow unknown third parties to install DirectShow codecs.) We could avoid some of this problem by white-listing codecs, but then a lot of the people who want DirectShow support wouldn't be satisfied.<br/><li>Many DirectShow codecs are actually malware. ("Download codec XYZ to play free porn!")<br/><li>DirectShow codecs are quite likely to have security holes. As those holes are uncovered, we will have to track the issues and often our only possible response will be to blacklist insecure codecs, since we can't fix them ourselves. If we blacklist enough codecs, DirectShow support becomes worthless.<br/><li>Each new video backend creates additional maintenance headaches as we evolve our internal video code.<br/></ol><br/><p>So even if we didn't care about promoting unencumbered codecs and someone gave us a working patch, shipping DirectShow support in Firefox is of limited value and creates tons of maintenance work for us.<br/><p>Some (but not all) of the same arguments apply to using Quicktime. But if we're going to ship our own video infrastructure for Windows, we save ourselves a lot of trouble by using that infrastructure across all platforms. It saves authors a lot of trouble too, due to less variability across Firefox versions.<br/><p>Currently no browser or browser plugin vendor is using codec implementations they don't control. Apple does allow third-party codecs to be used with Quicktime in Safari --- but at least they control the framework and the important codecs, and apparently they have made some changes for Web video.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Daiz</div>
-<div class='content'>&quot;People complain about the lack of h.264 because it&#39;s the latest and greatest codec around these days, but it&#39;s really not necessary for web video, in my opinion.&quot;<br>Are you serious? H.264 offers the best quality/compression ratio compared to any other video format, and the less you need bandwidth to deliver good quality, the more suited the solution is for web video. Theora flat out sucks compared to what you can do with x264, and it will never reach equal quality. Not implementing H.264 support and blindly shouting for Theora is stupid and waste of everyone&#39;s time.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>I totally agree with the decision not to use DirectShow or Quicktime.  The best solution is actually what Silverlight has done:  allow people to implement their own codecs.  Silverlight 3 allows you to write your own video decoder in C# and include it in your app.<br>Unfortunately Javascript&#39;s speed improvements, while nice, are nowhere near what&#39;s needed for real-time video decoding, and Javascript may never reach that level.  What I&#39;d like to see is support for OpenCL in Javascript.  Obviously this isn&#39;t a short-term solution, but in the future OpenCL could provide enough raw computing power to implement real-time video decoding.  Then websites could use whatever codec they wanted and implement it themselves.  OpenCL support would also fit nicely with the OpenGL support that&#39;s been proposed, and it would have lots of applications beyond codecs.  All these crazy demos people have been doing with HTML5 video (chroma key/green screen, face detection, etc) could easily be massively accelerated with OpenCL.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ernst</div>
-<div class='content'>What about Gstreamer then?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>kl</div>
-<div class='content'>Another reason is that we don&#39;t want WMV and legacy MPEGs to join the codec mess. Having market split between two is bad enough already.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Andrew</div>
-<div class='content'>Writing your own codec in Silverlight sounds good, but nobody really wants to do it. People have been able to write video codecs with Java Applets for ages, and apart from the Theora applet I have not seen a massive call for it.<br>There are a few problems:<br>1) Writing a video codec is hard - doubly hard if you are aiming for hardware decoding.<br>2) If the aim is to distribute H.264 video files, then anyone how distributes a H.264 codec will need to pay license fees. This puts the burden on the web sites themselves, rather than on the client but it is still a burden.<br>3) Ideally, video files should be requested through the browser&#39;s HTTP code, so that things like local caching and proxy settings follow the user&#39;s settings in the browser. This is something that Safari&#39;s use of Quicktime gets wrong - Quicktime downloads the video files itself, completely bypassing the browser.<br>My understanding is that Silverlight does have some nice features for video, but the video tag is meant to make embedding video easy without having to develop custom Silverlight/Flash/Applets for themselves.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Wim</div>
-<div class='content'>This doesn&#39;t help either:<br>https://forums2.symantec.com/t5/blogs/blogarticlepage/blog-id/vulnerabilities_exploits/article-id/199<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>&quot;-&quot;, thanks for that clarification.<br>The codecs installed in Windows 7 do sound more attractive. The problem is that by the time Windows 7 has enough market penetration that we can rely on it (say 5-10 years from now), those codecs will probably not be very interesting. Unless Microsoft starts aggressively auto-pushing codecs to old systems, the platform codec route is never going to be appealing.<br>Yes, the WMP and Quicktime NPAPI plugins do expose a lot of attack surface already. This is a problem. However, they are not our responsibility and are barely used.<br>Diego: Dirac doesn&#39;t perform well at Web bit rates, and AFAIK no-one is saying it does, or trying to change that. Dirac would also require us to do legal analysis that has not been done. However, adding Dirac is certainly something to look at in the future.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>If there will be no broadly used codec, it&#39;s going to suck.<br>We need (at least) one codec supported by everyone.<br>To precise my question : Is  going to be relevant on the web by the help of Apple letting users add a 3rd party OGG codec plugin (and thus avoiding the patent issue) ?<br>As a developer, I always thought I would be able to detect if a browser doesn&#39;t support my codec, and provide a link to some codec download...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ray Cromwell</div>
-<div class='content'>How does this solve the security problem? I&#39;m not a windows user, but won&#39;t Firefox already launch windows media player based on mime-type/extension/URL? If I send an AVI or WMV from a server, won&#39;t Firefox offer to open it? How would this be any different than letting the video tag delegate directly and offer the user a dialog warning about using third party codecs?<br>All of these excuses seem pretty weak, why not just admit that this is a Stallman-esque stubborn headed refusal to allow linkage with non-open code, and that the greater mission is to somehow, defeat H.264 as a web video codec, a mission which seems extremely naive.<br>The usual rants about freedom seem self contradictory. &quot;Freedom&quot; means being prevented from having choice in codecs. People with GPU acceleration or mobile devices should just deal with it until the future Nirvana of Theora hardware acceleration blocks arrives.<br>Seems to me that this is all going to force a bifurcation in HTML5 browsers between Firefox and Chrome/Safari, and this can only benefit Adobe and Microsoft. Good job.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Fowl</div>
-<div class='content'>Also, I&#39;d like to show my support of not supporting the platform media pipelines - I agree on security reasons alone.<br>It would create huge new surface area of unhardened, performance tuned, code.<br>FYI MediaFoundation is DirectShow&#39;s successor on Windows and 3rd party DirectShow codecs are installable on Windows 7.<br>Number 1. is a admirable goal and I&#39;d be getting some people working on making the encoder more accessible and attractive to content providers, as well improving it&#39;s output.<br>Another aspect in getting adoption is spreading the vorbis decoder around. Is Mozilla in the business plugins for other browsers? One option I can see is writing/porting/supporting a decoder for Java or Silverlight/Moonlight so that content providers could provide fallback without encoding again. Unfortunately I don&#39;t think flash allows additions to it&#39;s internal media stack.<br>*end of ramblings*<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Diego Calleja</div>
-<div class='content'>Are you guys planning to add other uncumbered codecs in future releases, like, say, Dirac (which always seemed to me the natural open competitor of H.264)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>modeless</div>
-<div class='content'>The aim is not explicitly to allow H.264 but to allow choice and competition.  I wouldn&#39;t actually expect everyone to develop their own codecs; obviously you&#39;d have some open source projects like Theora or x264 doing the hard work of implementing codecs and web authors would just include them as libraries.<br>I&#39;m not suggesting that Silverlight actually be used to implement this; I&#39;m saying that if OpenCL was built into browsers it would enable this and more.  However, it certainly would be deliciously ironic if someone wrote a library which implemented HTML 5 video + Theora in IE via Silverlight.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>That would be cool if it worked.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Gigi</div>
-<div class='content'>Windows Media Foundation, the technology that replaced DirectShow, solves a lot of these problems. In particular, the H.264 codec is written by Microsoft and it doesn&#39;t have many of the negatives written in this article. Of course, this is Windows 7 only (and maybe Vista), but Windows 7 is rapidly replacing XP.<br></div>
+<div class='author'>Andrew</div>
+<div class='content'>Writing your own codec in Silverlight sounds good, but nobody really wants to do it. People have been able to write video codecs with Java Applets for ages, and apart from the Theora applet I have not seen a massive call for it.<br>There are a few problems:<br>1) Writing a video codec is hard - doubly hard if you are aiming for hardware decoding.<br>2) If the aim is to distribute H.264 video files, then anyone how distributes a H.264 codec will need to pay license fees. This puts the burden on the web sites themselves, rather than on the client but it is still a burden.<br>3) Ideally, video files should be requested through the browser&#39;s HTTP code, so that things like local caching and proxy settings follow the user&#39;s settings in the browser. This is something that Safari&#39;s use of Quicktime gets wrong - Quicktime downloads the video files itself, completely bypassing the browser.<br>My understanding is that Silverlight does have some nice features for video, but the video tag is meant to make embedding video easy without having to develop custom Silverlight/Flash/Applets for themselves.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ernst</div>
+<div class='content'>What about Gstreamer then?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>modeless</div>
+<div class='content'>The aim is not explicitly to allow H.264 but to allow choice and competition.  I wouldn&#39;t actually expect everyone to develop their own codecs; obviously you&#39;d have some open source projects like Theora or x264 doing the hard work of implementing codecs and web authors would just include them as libraries.<br>I&#39;m not suggesting that Silverlight actually be used to implement this; I&#39;m saying that if OpenCL was built into browsers it would enable this and more.  However, it certainly would be deliciously ironic if someone wrote a library which implemented HTML 5 video + Theora in IE via Silverlight.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Wim</div>
+<div class='content'>This doesn&#39;t help either:<br>https://forums2.symantec.com/t5/blogs/blogarticlepage/blog-id/vulnerabilities_exploits/article-id/199<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ander13</div>
+<div class='content'>I think, you have no choice: you should later add support for H.264 because it will be supported on mobile &amp; portable devices playable format for it&#39;s browsers.<br>Everything comes to what...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>Oooh lookout Robert, someone has mentioned mobile! Seems everything this last 12 months at Mozilla is driven by whatever suits Fennec. Maybe you&#39;ll have to reconsider given that H.264 is installed on a lot of phones.<br>Back to the topic of supporting more than theora or other codecs IE doesn&#39;t (and therefore content producers are unlikely to) support, what are your thoughts on Mozilla contributing to GStreamer?<br>GStreamer is LGPL and aims to provide &quot;... a library for constructing graphs of media-handling components ...&quot; in a cross-platform fashion. A &#39;relationship&#39; between Mozilla and GStreamer similar to that between Mozilla and Xiphos would surely be a good road towards more video support in a tighter development environment (well, as tight as you can get in open source) would it not? This seems to be route taken by Songbird isn&#39;t it? Whilst Songbird appears annoyingly audio focused, they have supported video at some point when I tried one of their pre v1 builds. Surely there would be some code Songbird could contribute given it uses the same platform as Firefox?<br>P.S. I didn&#39;t include this response in mozilla.dev.app instead of bugzilla because this post already has it&#39;s own context.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jason</div>
+<div class='content'>Agreed.  Firefox should only support open codecs.  People complain about the lack of h.264 because it&#39;s the latest and greatest codec around these days, but it&#39;s really not necessary for web video, in my opinion.  Sure it would be nice to have but it&#39;s not worth the license issues.  Some people want h.264 support because mobile devices have hardware decoding for it so it could save a lot of battery power.  Well, maybe it&#39;s time for hardware Theora decoding support.<br>The  tag is a lot like the  tag when the web first supported that.  A lot of people still used GIFs despite the license/patent issues that it had.  It&#39;ll be interesting to see which video formats will win the war, especially since the competition (Apple, Google) isn&#39;t as dedicated to openness as Mozilla regarding video.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Fowl</div>
+<div class='content'>Could someone write a plugin that adds codecs to the video tag?<br>I understand that someone wrote a little wrapper plugin that pretended to be the Windows Media Player plugin on linux but inserted a Moonlight object instead. (free as in beer h.264 and vc-1 decoding everywhere, courtesy of Microsoft)<br>As the video tag is handled internally, is this sort of thing possible.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Fowl</div>
+<div class='content'>Also, I&#39;d like to show my support of not supporting the platform media pipelines - I agree on security reasons alone.<br>It would create huge new surface area of unhardened, performance tuned, code.<br>FYI MediaFoundation is DirectShow&#39;s successor on Windows and 3rd party DirectShow codecs are installable on Windows 7.<br>Number 1. is a admirable goal and I&#39;d be getting some people working on making the encoder more accessible and attractive to content providers, as well improving it&#39;s output.<br>Another aspect in getting adoption is spreading the vorbis decoder around. Is Mozilla in the business plugins for other browsers? One option I can see is writing/porting/supporting a decoder for Java or Silverlight/Moonlight so that content providers could provide fallback without encoding again. Unfortunately I don&#39;t think flash allows additions to it&#39;s internal media stack.<br>*end of ramblings*<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Aaron Strontsman</div>
+<div class='content'>I&#39;d say, Mozilla has a choice. Although of course, Mozilla&#39;s leverage might not be great enough to almost alone push Ogg audio / video. The people battling against this plan include Apple, various handset producers (probably even Nokia), Microsoft and somehow Google. The only other supporters of open video probably are Gnome / KDE / Linux developers.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>-</div>
+<div class='content'>&quot;Note that the problem is bad enough that in Windows 7, Microsoft isn&#39;t even going to allow unknown third parties to install DirectShow codecs.&quot;<br>Unless this has changed post-RC, it&#39;s not completely true. What MS has done is to always prefer &quot;inbox&quot; decoders over installed ones. This is a pain because the inbox decoders, while very robust, aren&#39;t of the best quality (the ASP one postprocesses too much and blurs the picture, the AVC one is about 40% slower than the good ones unless when using hardware acceleration). However you can install new codecs just fine, and they&#39;ll be used if there isn&#39;t an internal (to W7) decoder that can handle it. Applications can workaround this by constructing the DirectShow graph themselves (MPC-HC for example does this and is not affected).<br>The inbox decoders can be used outside of DirectShow (they have a newer, simpler, more robust API), are digitally signed, are MS&#39; responsability security- and stability-wise (bugs here would affect many other parts of the OS, from WMP to IE to thumbnail generation), and seem to behave very well overall. The same filters seem to handle a variety of formats (from MPEG2 to AVC).<br>I haven&#39;t really looked into it, but don&#39;t the WMP and Quicktime NPAPI plugins expose all the mentioned problems already?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Diego Calleja</div>
+<div class='content'>Are you guys planning to add other uncumbered codecs in future releases, like, say, Dirac (which always seemed to me the natural open competitor of H.264)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&quot;-&quot;, thanks for that clarification.<br>The codecs installed in Windows 7 do sound more attractive. The problem is that by the time Windows 7 has enough market penetration that we can rely on it (say 5-10 years from now), those codecs will probably not be very interesting. Unless Microsoft starts aggressively auto-pushing codecs to old systems, the platform codec route is never going to be appealing.<br>Yes, the WMP and Quicktime NPAPI plugins do expose a lot of attack surface already. This is a problem. However, they are not our responsibility and are barely used.<br>Diego: Dirac doesn&#39;t perform well at Web bit rates, and AFAIK no-one is saying it does, or trying to change that. Dirac would also require us to do legal analysis that has not been done. However, adding Dirac is certainly something to look at in the future.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ray Cromwell</div>
+<div class='content'>How does this solve the security problem? I&#39;m not a windows user, but won&#39;t Firefox already launch windows media player based on mime-type/extension/URL? If I send an AVI or WMV from a server, won&#39;t Firefox offer to open it? How would this be any different than letting the video tag delegate directly and offer the user a dialog warning about using third party codecs?<br>All of these excuses seem pretty weak, why not just admit that this is a Stallman-esque stubborn headed refusal to allow linkage with non-open code, and that the greater mission is to somehow, defeat H.264 as a web video codec, a mission which seems extremely naive.<br>The usual rants about freedom seem self contradictory. &quot;Freedom&quot; means being prevented from having choice in codecs. People with GPU acceleration or mobile devices should just deal with it until the future Nirvana of Theora hardware acceleration blocks arrives.<br>Seems to me that this is all going to force a bifurcation in HTML5 browsers between Firefox and Chrome/Safari, and this can only benefit Adobe and Microsoft. Good job.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>&quot;How would this be any different than letting the video tag delegate directly and offer the user a dialog warning about using third party codecs?&quot;<br>It would be equally as annoying, a lot more work for us, and shift responsibility from Microsoft to us. No thanks.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Stefan Moebius</div>
+<div class='content'>There you go. The security issue isn&#39;t a theoretical one:<br>http://www.h-online.com/security/Web-pages-infect-Windows-PCs-via-new-DirectShow-hole--/news/113695<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>So, it won&#39;t be enough to just install my favorite codecs on my OS.<br>But how does it work then ? How can I install video/audio codecs on firefox ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>If there will be no broadly used codec, it&#39;s going to suck.<br>We need (at least) one codec supported by everyone.<br>To precise my question : Is  going to be relevant on the web by the help of Apple letting users add a 3rd party OGG codec plugin (and thus avoiding the patent issue) ?<br>As a developer, I always thought I would be able to detect if a browser doesn&#39;t support my codec, and provide a link to some codec download...<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Mandarinka</div>
 <div class='content'>Lots of your arguemnts against directshow are fairly illusionary, imho.<br>People do install h.264 decoders, it&#39;s not used just in windows 7, you know.<br>I think you can enable directshow support fairly safely, if you recommend the users to isntall CCCP, which is a well maintained (and tested) codec suite based on ffmpeg/ffdshow. It&#39;s stable and very low-risk. It&#39;s an ellegant and *free* solution to the inability to ship the needed codecs in Firefox itself.<br>But it seems to me you just want to push Theora... it doesn&#39;t seem you can get very far with html5 that way though.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>iooi</div>
+<div class='content'>I call bullshit. Programming and Politic don&#39;t mix and if you have to fight a war do it on your own and don&#39;t try to use your fellow supporters to do your warring<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>Two things are clear from the post: There is no technological or legal barrier to Firefox implementing DirectShow support in the video tag.<br>Second, the only reason why this developer refuses to give users access to their DirectShow codecs in Firefox is IDEOLOGICAL. Somehow ROC finds it distasteful that users are slumming around with DirectShow, and by God, he won&#39;t let his precious Firefox be an accessory to anything so profane.<br>I can&#39;t overstate how much this holier-than-thou attitude pisses me off. What is the point of an open source project if not to provide more freedom for the project&#39;s user? Who came up with this OSS totalitarianism, according to which it&#39;s OK to make intentionally crippled software that prevents users from doing what they want? Gee, I&#39;m really feeling the freedom now! Please recognize that this is what you are doing, and that there are no licensing nor technical reasons why this software should remain crippled. You simply want to recruit your users into a crusade against some ubiquitous industry standard, and you don&#39;t care that you never received our consent.<br>I hope you re-examine your reasons for thinking that this sort of totalitarianism is wise in an OSS project. Its effect is to drive anyone who wants to watch a Youtube video in the browser to either install Flash(!) or use Chrome. You know you could prevent this by adding a perfectly legal and feasible feature to FF, and yet you proudly prefer the status quo. How could you possibly be proud of this?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>DJ</div>
+<div class='content'>You&#39;re all living a pipe dream. Chrome, Apple, and MS already have license to use H.264. They also have mobile hardware acceleration support. Why would they just toss that out the window, wait for hardware vendors to add non-existent Ogg acceleration hardware support, and revamp their infrastructures to support it, when there is no benefit to doing so above the insignificant cost of h.264 licensing? While the license fees might be daunting to a small company, they are literally nothing to the likes of these.<br>Firefox is dead in the water if they don&#39;t add h.264 support, and all of their current market share will go down with them. The market share that makes them a player in the game will be the very thing they lose by not adding it.<br>There are definitely battles to pick, and this isn&#39;t one they can ever hope to win.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kl</div>
+<div class='content'>Another reason is that we don&#39;t want WMV and legacy MPEGs to join the codec mess. Having market split between two is bad enough already.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>zombie</div>
+<div class='content'>Firefox without H.264 is like outlook without email. Why do you promote something what is not good, like free codecs without live encoders etc, instead of making option to install H.264 codec and play videos from the browser?<br>H.264 is not just the codec, it&#39;s the process of recording the digital video, editing it, encoding and transmitting and finally viewing, in your browser.<br>If you think you can replace this with theora... it&#39;s just silly.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daiz</div>
+<div class='content'>&quot;People complain about the lack of h.264 because it&#39;s the latest and greatest codec around these days, but it&#39;s really not necessary for web video, in my opinion.&quot;<br>Are you serious? H.264 offers the best quality/compression ratio compared to any other video format, and the less you need bandwidth to deliver good quality, the more suited the solution is for web video. Theora flat out sucks compared to what you can do with x264, and it will never reach equal quality. Not implementing H.264 support and blindly shouting for Theora is stupid and waste of everyone&#39;s time.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bill McGonigle</div>
+<div class='content'>It sounds like the real problem is poor isolation between the user process and the plugin architecture.  Sandbox those and the security problems aren&#39;t yours - plus Firefox gets less crashy overall.<br>That said, I used the QuickTime plug-in in Firefox (nee Moz/Fiz-illa) for nearly a decade, and it worked well, for all sorts of oddball codecs.<br>I appreciate the openness stand, but these things should get worked out in free competition, not by artificial barriers.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Sandboxing DirectShow plugins would require two things: 1) that you can play DirectShow video in one process and deliver the output to another process and 2) that you can run the DirectShow process in some kind of low-rights mode without breaking DirectShow. The former can probably be done, the latter is highly doubtful.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kamilion</div>
+<div class='content'>This sounds like a job for Electrolysis!<br>https://wiki.mozilla.org/Electrolysis<br>Future Phases<br>* Security sandboxing (involves removing the native widgets and event loop from the content processes)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>bikash kunwar</div>
+<div class='content'>i filly agree with directshow. allow people to view that type of porn picture.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan</div>
+<div class='content'>All OSes which Firefox runs on have a codec framework. Patents aren&#39;t Mozilla&#39;s problem, it&#39;s the user&#39;s problem and it also depends on the country the user is in.<br>Just make the browser search for missing codecs like it does for missing plug-ins: make Firefox go to a page on Mozilla.org and point the user to a known good codec packs (e.g. CCCP).<br>Chrome plays H.264 and Ogg and Safari uses the OS&#39;s codec framework to play non-H.264 video. Their user share is going to take off because the user doesn&#39;t want to be part of this fight. By all means Firefox should have built-in Ogg support but not to the exclusion of everything else so it forces the user to change browser depending on the website they view.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gigi</div>
+<div class='content'>Windows Media Foundation, the technology that replaced DirectShow, solves a lot of these problems. In particular, the H.264 codec is written by Microsoft and it doesn&#39;t have many of the negatives written in this article. Of course, this is Windows 7 only (and maybe Vista), but Windows 7 is rapidly replacing XP.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>Don&#39;t worry, Microsoft are doing the sensible thing by providing Firefox and Chrome plugins for their H.264 codec bundled with Windows 7.<br>Sanity prevails! webm + H.264, both available to the  tag. Now THAT is a solution.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>i4004</div>
@@ -103,78 +175,6 @@ so overall it&#39;s just laziness and poor predictions of what will future bring
 
 this also serves as a reminder that video was never really truly solved on the web, even since old days of realvideo, windows media video etc. there never was one format that was good eneough for everybody, and that&#39;s a pitty. because mpeg-la should (for example) give away these things for free (they essentially are free, they won&#39;t make money on windows or linux video decoders), OR price it at some very low price so that anybody can buy it.
 </div>
-</div>
-<div class='comment'>
-<div class='author'>Bill McGonigle</div>
-<div class='content'>It sounds like the real problem is poor isolation between the user process and the plugin architecture.  Sandbox those and the security problems aren&#39;t yours - plus Firefox gets less crashy overall.<br>That said, I used the QuickTime plug-in in Firefox (nee Moz/Fiz-illa) for nearly a decade, and it worked well, for all sorts of oddball codecs.<br>I appreciate the openness stand, but these things should get worked out in free competition, not by artificial barriers.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>-</div>
-<div class='content'>&quot;Note that the problem is bad enough that in Windows 7, Microsoft isn&#39;t even going to allow unknown third parties to install DirectShow codecs.&quot;<br>Unless this has changed post-RC, it&#39;s not completely true. What MS has done is to always prefer &quot;inbox&quot; decoders over installed ones. This is a pain because the inbox decoders, while very robust, aren&#39;t of the best quality (the ASP one postprocesses too much and blurs the picture, the AVC one is about 40% slower than the good ones unless when using hardware acceleration). However you can install new codecs just fine, and they&#39;ll be used if there isn&#39;t an internal (to W7) decoder that can handle it. Applications can workaround this by constructing the DirectShow graph themselves (MPC-HC for example does this and is not affected).<br>The inbox decoders can be used outside of DirectShow (they have a newer, simpler, more robust API), are digitally signed, are MS&#39; responsability security- and stability-wise (bugs here would affect many other parts of the OS, from WMP to IE to thumbnail generation), and seem to behave very well overall. The same filters seem to handle a variety of formats (from MPEG2 to AVC).<br>I haven&#39;t really looked into it, but don&#39;t the WMP and Quicktime NPAPI plugins expose all the mentioned problems already?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>pd</div>
-<div class='content'>Don&#39;t worry, Microsoft are doing the sensible thing by providing Firefox and Chrome plugins for their H.264 codec bundled with Windows 7.<br>Sanity prevails! webm + H.264, both available to the  tag. Now THAT is a solution.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>pd</div>
-<div class='content'>Oooh lookout Robert, someone has mentioned mobile! Seems everything this last 12 months at Mozilla is driven by whatever suits Fennec. Maybe you&#39;ll have to reconsider given that H.264 is installed on a lot of phones.<br>Back to the topic of supporting more than theora or other codecs IE doesn&#39;t (and therefore content producers are unlikely to) support, what are your thoughts on Mozilla contributing to GStreamer?<br>GStreamer is LGPL and aims to provide &quot;... a library for constructing graphs of media-handling components ...&quot; in a cross-platform fashion. A &#39;relationship&#39; between Mozilla and GStreamer similar to that between Mozilla and Xiphos would surely be a good road towards more video support in a tighter development environment (well, as tight as you can get in open source) would it not? This seems to be route taken by Songbird isn&#39;t it? Whilst Songbird appears annoyingly audio focused, they have supported video at some point when I tried one of their pre v1 builds. Surely there would be some code Songbird could contribute given it uses the same platform as Firefox?<br>P.S. I didn&#39;t include this response in mozilla.dev.app instead of bugzilla because this post already has it&#39;s own context.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>Two things are clear from the post: There is no technological or legal barrier to Firefox implementing DirectShow support in the video tag.<br>Second, the only reason why this developer refuses to give users access to their DirectShow codecs in Firefox is IDEOLOGICAL. Somehow ROC finds it distasteful that users are slumming around with DirectShow, and by God, he won&#39;t let his precious Firefox be an accessory to anything so profane.<br>I can&#39;t overstate how much this holier-than-thou attitude pisses me off. What is the point of an open source project if not to provide more freedom for the project&#39;s user? Who came up with this OSS totalitarianism, according to which it&#39;s OK to make intentionally crippled software that prevents users from doing what they want? Gee, I&#39;m really feeling the freedom now! Please recognize that this is what you are doing, and that there are no licensing nor technical reasons why this software should remain crippled. You simply want to recruit your users into a crusade against some ubiquitous industry standard, and you don&#39;t care that you never received our consent.<br>I hope you re-examine your reasons for thinking that this sort of totalitarianism is wise in an OSS project. Its effect is to drive anyone who wants to watch a Youtube video in the browser to either install Flash(!) or use Chrome. You know you could prevent this by adding a perfectly legal and feasible feature to FF, and yet you proudly prefer the status quo. How could you possibly be proud of this?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>bikash kunwar</div>
-<div class='content'>i filly agree with directshow. allow people to view that type of porn picture.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>zombie</div>
-<div class='content'>Firefox without H.264 is like outlook without email. Why do you promote something what is not good, like free codecs without live encoders etc, instead of making option to install H.264 codec and play videos from the browser?<br>H.264 is not just the codec, it&#39;s the process of recording the digital video, editing it, encoding and transmitting and finally viewing, in your browser.<br>If you think you can replace this with theora... it&#39;s just silly.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Aaron Strontsman</div>
-<div class='content'>I&#39;d say, Mozilla has a choice. Although of course, Mozilla&#39;s leverage might not be great enough to almost alone push Ogg audio / video. The people battling against this plan include Apple, various handset producers (probably even Nokia), Microsoft and somehow Google. The only other supporters of open video probably are Gnome / KDE / Linux developers.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Dan</div>
-<div class='content'>All OSes which Firefox runs on have a codec framework. Patents aren&#39;t Mozilla&#39;s problem, it&#39;s the user&#39;s problem and it also depends on the country the user is in.<br>Just make the browser search for missing codecs like it does for missing plug-ins: make Firefox go to a page on Mozilla.org and point the user to a known good codec packs (e.g. CCCP).<br>Chrome plays H.264 and Ogg and Safari uses the OS&#39;s codec framework to play non-H.264 video. Their user share is going to take off because the user doesn&#39;t want to be part of this fight. By all means Firefox should have built-in Ogg support but not to the exclusion of everything else so it forces the user to change browser depending on the website they view.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>DJ</div>
-<div class='content'>You&#39;re all living a pipe dream. Chrome, Apple, and MS already have license to use H.264. They also have mobile hardware acceleration support. Why would they just toss that out the window, wait for hardware vendors to add non-existent Ogg acceleration hardware support, and revamp their infrastructures to support it, when there is no benefit to doing so above the insignificant cost of h.264 licensing? While the license fees might be daunting to a small company, they are literally nothing to the likes of these.<br>Firefox is dead in the water if they don&#39;t add h.264 support, and all of their current market share will go down with them. The market share that makes them a player in the game will be the very thing they lose by not adding it.<br>There are definitely battles to pick, and this isn&#39;t one they can ever hope to win.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jason</div>
-<div class='content'>Agreed.  Firefox should only support open codecs.  People complain about the lack of h.264 because it&#39;s the latest and greatest codec around these days, but it&#39;s really not necessary for web video, in my opinion.  Sure it would be nice to have but it&#39;s not worth the license issues.  Some people want h.264 support because mobile devices have hardware decoding for it so it could save a lot of battery power.  Well, maybe it&#39;s time for hardware Theora decoding support.<br>The  tag is a lot like the  tag when the web first supported that.  A lot of people still used GIFs despite the license/patent issues that it had.  It&#39;ll be interesting to see which video formats will win the war, especially since the competition (Apple, Google) isn&#39;t as dedicated to openness as Mozilla regarding video.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>ander13</div>
-<div class='content'>I think, you have no choice: you should later add support for H.264 because it will be supported on mobile &amp; portable devices playable format for it&#39;s browsers.<br>Everything comes to what...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Fowl</div>
-<div class='content'>Could someone write a plugin that adds codecs to the video tag?<br>I understand that someone wrote a little wrapper plugin that pretended to be the Windows Media Player plugin on linux but inserted a Moonlight object instead. (free as in beer h.264 and vc-1 decoding everywhere, courtesy of Microsoft)<br>As the video tag is handled internally, is this sort of thing possible.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>iooi</div>
-<div class='content'>I call bullshit. Programming and Politic don&#39;t mix and if you have to fight a war do it on your own and don&#39;t try to use your fellow supporters to do your warring<br></div>
-</div>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>So, it won&#39;t be enough to just install my favorite codecs on my OS.<br>But how does it work then ? How can I install video/audio codecs on firefox ?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Sandboxing DirectShow plugins would require two things: 1) that you can play DirectShow video in one process and deliver the output to another process and 2) that you can run the DirectShow process in some kind of low-rights mode without breaking DirectShow. The former can probably be done, the latter is highly doubtful.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Stefan Moebius</div>
-<div class='content'>There you go. The security issue isn&#39;t a theoretical one:<br>http://www.h-online.com/security/Web-pages-infect-Windows-PCs-via-new-DirectShow-hole--/news/113695<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Kamilion</div>
-<div class='content'>This sounds like a job for Electrolysis!<br>https://wiki.mozilla.org/Electrolysis<br>Future Phases<br>* Security sandboxing (involves removing the native widgets and event loop from the content processes)<br></div>
 </div>
 
 </div>

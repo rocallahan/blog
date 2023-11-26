@@ -8,51 +8,148 @@ permalink: "/2010/01/css-absolute-length-units_12.html"
 <div class="columns"><p>While reexamining the way we handle screen resolutions in Gecko, we had to reconsider how to handle CSS "absolute length units" --- especially <tt>pt</tt>, but also <tt>in</tt>, <tt>cm</tt>, <tt>mm</tt> and <tt>pc</tt>. <a href="http://www.w3.org/TR/CSS21/syndata.html#length-units">The spec</a> says that these units should be displayed at their physical sizes, so CSS "1in" is rendered as one inch, etc. Unfortunately this breaks Web content, because most Web pages were designed on desktop screens. A one-inch margin may be fine on paper or on a desktop screen but doesn't make much sense on a two-inch-high phone screen. For related reasons, IE and Webkit have already redefined these units to be fixed numbers of CSS pixels, i.e. 1in = 96px, etc.<br/><p>After I raised this issue on <a href="http://lists.w3.org/Archives/Public/www-style/2010Jan/0058.html">www-style</a>, it became clear that this is not just an issue of compatibility with existing content. In fact, absolute length units as defined in CSS are only rarely useful. When do you want to force a length to be one inch, no matter what kind of screen is being used or how far from the user's eyes it would be? The only use cases I know of would be touch interfaces and "life size" diagrams. Indeed, the CSS spec says<br/><blockquote>Absolute length units are only useful when the physical properties of the output medium are known.</blockquote><br/>On the Web, physical properties of the output medium are almost never known, so the spec suggests that currently absolute length units are useless on the Web.<br/><p>It seems to me that it will be far more useful, as well as compatible with existing Web content, to specify that absolute length units should take those physical lengths when printed to "normal paper" --- paper (or other media) that you hold when reading, like almost every printed page. Then the browser decides how to render the content on a screen to best express the author's intent. Common sense, as well as Web compatibility, will dictate that the ratios between "px", "pt", "in", "cm", "mm" and "pc" will be fixed based on the assumption that 1in = 96px.<br/><p>We may find it useful to define a new unit or units, say "truemm", that is a true physical millimeter, for the rare use cases of touch interfaces and "life size" diagrams.<br/><p>Redefining "in" to not always mean physical inches is quite controversial in www-style. I hope sanity prevails.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Red</div>
-<div class='content'>It&#39;s scarry...<br>What kind of &quot;standard&quot; it is, if CSS didn&#39;t respect standard units?<br>Argument about cell phones is wrong. Browsers have ability to zoom in and out web page, but in 1:1 zoom level 1cm should be 1cm.<br>Redefine px unit if you must. Pixel is not a _real_ unit, it can have different size on each screen, but please do not touch real world units.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Paul</div>
-<div class='content'>Also, if you want to know how many pixels one millimeter on a screen has, at least on Windows, you could try to use this:<br>http://msdn.microsoft.com/en-us/library/dd144877%28VS.85%29.aspx<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Eamon Nerbonne</div>
-<div class='content'>CSS has the the concept of media-specific rules.  Wouldn&#39;t it make sense to indeed have different conversion rates for different media?  Say, an 1cm declared in a media-unspecified context is presumed to be intended for screen/print usage (and thus to follow the 1in == 96 &quot;px&quot; != device pixels), but when specified in a more explicit, known media context, to then more faithfully render them?<br>Obviously, the entire situation isn&#39;t ideal (calling something an inch or a cm when you just don&#39;t have a clue what it really is isn&#39;t the brightest idea there&#39;s ever been)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>&gt; - Maps. A map could have defined a scale so just<br>&gt; by looking at it you might know that those 10 cm<br>&gt; are actually 10 km.<br>I don&#39;t see how that is useful if you&#39;re displaying the page on an HDTV, you can&#39;t even tell what 10cm looks like that far away.<br>&gt; - Medical devices. Maybe there could be a<br>&gt; database of some somatic features which you<br>&gt; might want to consult / compare with.<br>&gt; - School books. There could be a book for<br>&gt; children showing how big various bugs and<br>&gt; butterflies are.<br>That&#39;s &quot;life size diagrams&quot; which I mentioned.<br>&gt; - Typography. If a medium has fixed dimensions<br>&gt; then you might want to prevent the text from<br>&gt; reflowing or to force it to follow the design<br>&gt; manual.<br>I&#39;m explicitly talking about Web pages where you almost never know the dimensions of the medium. If you just want a fixed layout that is scaled to fill the viewport, you can do that without physical length units (e.g. using SVG viewports).<br>&gt; - Physical interfaces. Maybe one day, while<br>&gt; designing a user interface you would like to<br>&gt; follow some ergonomic norms for finger size or<br>&gt; arm length<br>Right, that&#39;s the &quot;touch interface&quot; use case I mentioned.<br>Personally, I think the &quot;life size&quot; and &quot;touch interface&quot; use cases are important enough to have a true physical unit for them, but they&#39;re much *less* important than being able to specify lengths that are a particular physical length when printed but are scaled appropriately when viewed on a phone or HDTV.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Great and impressive article.!!
-
-
-<a href="http://www.onlinemarketingcourse.in/" rel="nofollow">online marketing course</a></div>
-</div>
-<div class='comment'>
-<div class='author'>Red</div>
-<div class='content'>I think HDTV and cinema projector are special cases.<br>They are designed to display everything much bigger (even 100:1).<br>Phone is just another extreme. Reading web on it, is like looking through keyhole… You wrote about margins – good. Then scroll page to the left by default. Do not resize until user doesn&#39;t want to. If you scale margins, you will scale font size too, but it&#39;s not good, Nobody want small unreadable text.<br>But… There are many other devices where you really need real units.<br>I want to buy new phone very soon. I&#39;m looking at specifications, but I wish to know it&#39;s size, today I can&#39;t. This is a big failure…<br>Another, maybe stupid example: Think about near future, when almost any device will have some display… refrigerator? kitchen table? You want to interact with physical item on this table? You have know its size, and be able to display everything using real world units.<br>And think about maps once again… I like mountains and I like to use 1:50000 maps. For me it&#39;s much easier to &quot;feel&quot; distance by simple looking, than using abstract kilometers. Having ability to both zooming page _and_ map is… wrong.<br>BTW. Your proposition to zoom page by 140% on 140dpi screen is wrong. User should know nothing about it&#39;s DPI. 100% zoom should mean 1:1 size.<br>There is one thing I hate on modern web. Default font size can be so different from page to page. Sometimes I can hide whole paragraph under my thumb. Sometimes even 180% is too small.<br></div>
+<div class='author'>Screwtape</div>
+<div class='content'>My employer has a couple of web-sites where physical units are very important: customers want to be able to print an payment-slip off the Web (including the invoice-number that&#39;s being paid, etc), staple a cheque to it, and send it in. When it&#39;s processed at the bank, the payment-slip is fed through an OCR system that looks for the payment metadata in a certain physical region of the page, which meant we had to absolutely-position the required elements with absolute length units to make sure everything appeared where it needed to be.<br>We did briefly toy with the idea of presenting invoices as PDFs rather than as HTML, but by default Acrobat Reader will shrink the document to fit within the printer&#39;s margins (well outside our assigned physical space), and it was easier to teach people how to reset the print margins in their browser than in Acrobat.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Tony Mechelynck</div>
 <div class='content'>Of course, when printing on paper, it is &quot;known&quot; that, let&#39;s say, an A4 sheet is 21cm wide by 29.7cm long, so *in that case* millimeters, inches, and so on, have a &quot;known&quot; meaning. On a screen, it is much less obvious, especially since some systems (and users) &quot;lie&quot; about how many pixels-per-inch they are really using. Two screens of exactly the same size (in inches or centimeters) may have quite different numbers of pixels: in that case, text that is readable on an 800x600 screen can become much too small for reading on a 1600x1200. Rather than fix the dpi at an arbitrary value of 96, wouldn&#39;t it be better to assume that one screen is approximately as big as one paper sheet?<br>(Thinking out loud) Maybe we should use &quot;pseudopixels&quot; too, and decide that one screen height = 8 pseudo-inches = 8*96 i.e. 768 pseudo-pixels?<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Eamon Nerbonne</div>
+<div class='content'>CSS has the the concept of media-specific rules.  Wouldn&#39;t it make sense to indeed have different conversion rates for different media?  Say, an 1cm declared in a media-unspecified context is presumed to be intended for screen/print usage (and thus to follow the 1in == 96 &quot;px&quot; != device pixels), but when specified in a more explicit, known media context, to then more faithfully render them?<br>Obviously, the entire situation isn&#39;t ideal (calling something an inch or a cm when you just don&#39;t have a clue what it really is isn&#39;t the brightest idea there&#39;s ever been)<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>Trying to fit King James&#39; foot into a size 1152px shoe. The touch screen is touched by a human dimension called a fingertip. 1in=96px is the tail waggin&#39; the dog. At one time when one-screen-fits-all (almost) 1in did equal 96px, but let&#39;s not date ourselves with legacy code. If you want 96px, then code 96px. But let the real world be defined by real dimensions and the virtual by the virtual.</div>
+<div class='content'>While the end result would be convenient, I don&#39;t think the appropriate solution is to bend for stupid web designers.<br>In addition, such a change, regardless of rationale, seems like the source for potential headaches resulting from hard to track down problems and those scathing indictments (or simple blurbs in break-into-a-technology guides) about the stupidity of a given system:<br>&quot;In their infinite wisdom, browser vendors decided that &#39;in&#39; would just be an alias for a multiple of 96 pixels. If you use these units hoping to, you know, actually specify a measurement in inches, you have to use &#39;truein&#39;. I suppose by the same reasoning, to be safe you should probably use &#39;truepx&#39; and &#39;color: true#92B;&#39; when that&#39;s what you really want. Interestingly enough, these don&#39;t work.&quot;<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Screwtape: right, printing is one situation where the absolute length units make sense. It&#39;s screen display which is a problem.<br>Anonymous: my point is that this is not just an issue because of stupid Web designers. If you&#39;re a brilliant Web designer who faithfully follows the specs and expects 1in to always be one physical inch, then you basically can&#39;t use &#39;in&#39; etc for screen media.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Red</div>
+<div class='content'>It&#39;s scarry...<br>What kind of &quot;standard&quot; it is, if CSS didn&#39;t respect standard units?<br>Argument about cell phones is wrong. Browsers have ability to zoom in and out web page, but in 1:1 zoom level 1cm should be 1cm.<br>Redefine px unit if you must. Pixel is not a _real_ unit, it can have different size on each screen, but please do not touch real world units.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>You can think of this proposal as browsers always zooming your content by default, if you like.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Harsh</div>
+<div class='content'>I&#39;m really loving these latest blog posts. Please keep them coming.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>pd</div>
 <div class='content'>Despite what the Mozilla cult seem to believe, the entire world is not abandoning desktops for mobile postage stamp browsers. Not everyone wants to use some Nokia &#39;smart&#39; phone nor owns a iLoan (so named because you need a personal loan to pay for them). Your Fennec-infested assumptions are dubious at best. Not that it&#39;s your fault. I believe Fennec  is a epidemic in Mozilla circles.<br>If a designer wants to use inches as a measurement, they might well have a damn good reason. It is arguable that PCs hooked into HDTVs are giving mobiles a good challenge in terms of future browser output resolutions. If we&#39;re to follow your logic that inches are not relevant on mini mobile phones, inches surely are much *more* likely to be relevant on massive HDTVs? More so than desktop screens. Therefore there is a case for not only maintaining inches as a measurement but encouraging developers to use them!<br>Just because you assume that use cases for existing measurements are low, doesn&#39;t give you the right to dictate compatibility-breaking changes to a browser that should be &#39;owned&#39; by it&#39;s users, not the Mozilla cult.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Jean-Jacques Sarton</div>
-<div class='content'>Redifining one inch to 96px is stupid. If some web page are worse you have not to help the idiotic designer. For the page I support I had used pt because the text size was mostly OK and independant of the dpi of the screen. Unfortunatelly the WebKit people seem to mean that worse programming must be promoted, so I have all in relative units, mostly em with the benefit that the pages are barriere free.<br></div>
+<div class='author'>Paul</div>
+<div class='content'>I agree with Red, this is rather scary.<br>&quot;Common sense, as well as Web compatibility, will dictate that the ratios between &quot;px&quot;, &quot;pt&quot;, &quot;in&quot;, &quot;cm&quot;, &quot;mm&quot; and &quot;pc&quot; will be fixed based on the assumption that 1in = 96px&quot;<br>No one ever expected a pixel to be 0.26458333 mm. If you have another screen than I do then it might well be that your pixels are of different size than mine. It&#39;s pixels which have not fixed size, not meters.<br>Ad common sense:<br>&quot;We may find it useful to define a new unit or units, say &quot;truemm&quot;,&quot;<br>There is already perfectly good unit to describe such length, even better, everyone agrees on its value - it&#39;s called &quot;mm&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul</div>
+<div class='content'>Also, if you want to know how many pixels one millimeter on a screen has, at least on Windows, you could try to use this:<br>http://msdn.microsoft.com/en-us/library/dd144877%28VS.85%29.aspx<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alexandre de Menezes</div>
+<div class='content'>I guess the absolute units don&#39;t make much sense if used alone to define a fixed absolute size for an element, but they can be useful when coupled with media queries.<br>We can use pixels for screen and inches for printer, for example.  Another option is to define element sizes based on display sizes: 1in border for output over 8in wide, 1mm border for output smaller than 3in, and so on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colby Russell</div>
+<div class='content'>The Anonymous above was me.<br>Solution for font sizes: use ems. This doesn&#39;t mean &quot;body { font-size: 0.86 em; }&quot; or whatever. David Baron&#39;s Bugzilla comment from 2000 about web designers&#39; font size styling choices is apropos: https://bugzilla.mozilla.org/show_bug.cgi?id=24846#c2<br>As for the other problems, web designers should say what they mean. If they are expecting these physical dimensions to map to some absolute measurement in pixels, use pixels instead, though ideally they wouldn&#39;t be trying to do this anyway. Otherwise, it&#39;s just deception so that they can wear their &quot;I care about accessibility&quot; bonnet (or whatever the hipsters are wearing these days).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>pd: treating 1in as always one physical inch is what breaks compatibility. As I said, IE has treated 1in as always 96px for many versions, and so has Webkit.<br>Treating 1in as one physical inch would be terrible for a browser on an HDTV. Millions of documents containing stuff like &quot;text-indent:0.5in&quot; will suddenly have negligible text-indent when displayed on your HDTV.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul</div>
+<div class='content'>&quot;Millions of documents containing stuff like &quot;text-indent:0.5in&quot; will suddenly have negligible text-indent when displayed on your HDTV.&quot;<br>Exactly rightly so. Maybe the unit you were searching for is not &quot;in&quot;, but &quot;%&quot;...<br>&quot;treating 1in as always one physical inch is what breaks compatibility. As I said, IE...&quot;<br>I assume you just wanted to tell pd who&#39;s really breaking what in current situation. I also assume you don&#39;t take IE as a norm.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; Exactly rightly so. Maybe the unit you were<br>&gt; searching for is not &quot;in&quot;, but &quot;%&quot;...<br>They&#39;re not *my* documents. I&#39;m just pointing out that millions of documents on the Web will not be displayed in a way that satisfies the user. We may all wish that wasn&#39;t so, but we have to deal with reality.<br>However, I&#39;m also pointing out that if you want your documents to be viewable on phones and HDTVs (which I hope we all do!), then treating &quot;in&quot; as physical inches means that you basically can&#39;t use &quot;in&quot; anymore. Instead, I think we should define &quot;in&quot; in a way that makes it actually useful.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Red</div>
+<div class='content'>My screen is 140dpi - if every unit will be based on pixel size I will be unable to read this page. Without zooming by 140%<br>This is only beginning, soon there will be many e-book readers with even bigger resolutions (200dpi and more).<br>This &quot;redefinition&quot; will sacrifice future in the name of past and some broken pages. Try to explain your daughter why &quot;this 4 inch box is smaller than 1 inch&quot;. Think about medical displays.<br>I see no point to use other units at all if they will be tied to pixel size. Why bother with inches and centimeters if they are not real units?<br>What next? Assumption that every screen is 1024x768? How many pages looks bad at higher resolutions?<br>Maybe there is better solution? For example some media query to provide &quot;quirk mode screen&quot; and &quot;real display&quot;<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>&gt; Why bother with inches and centimeters if they<br>&gt; are not real units?<br>They&#39;ll be &quot;real&quot; when printed.<br>For 140dpi screens, all browsers today make 1px = 1/140 inch, and 1in will be 96/140 inches. So my proposal will change nothing at all for you. However, you will be able to opt in to using some other size for 1px ... for example on Windows, you could set the system &quot;font DPI&quot; to 144.<br>For 200dpi devices designed to be read at arms length we can make 1px equal 2 device pixels. That decision depends on how the device is intended to be used and what other apps on the device do (we don&#39;t want buttons in Web content to be twice the size of buttons in other apps).<br>All the people who insist that &quot;in&quot; should always be one physical inch need to explain how they&#39;re going to use &quot;in&quot; when the page might be displayed on a phone or an HDTV.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&gt; All the people who insist that &quot;in&quot; should always<br>&gt; be one physical inch need to explain how they&#39;re &gt; going to use &quot;in&quot; when the page might be<br>&gt; displayed on a phone or an HDTV.<br>I think everyone here already explain that: take a pencil and draw 1 inch line with a ruler - either on HDTV or a phone.<br>&gt; They&#39;ll be &quot;real&quot; when printed.<br>The key here is &quot;when printed&quot;. What does it mean? When I put ink on a paper do I print? When I put e-ink on e-paper do I print?<br>If I am graphic designer and I set text in 8/10pt for a billboard which you wont be able to read from a car 100 meters away - who is responsible for it? The graphic designer or the company which printed the billboard?<br>I think the real question here boils down to &quot;angle of view&quot;. If I understood you correctly you have no problem drawing 1 inch on a phone because it&#39;s close to your eye. However, since HDTV is across the whole room you might not even notice 1 inch, right? Then, &quot;inch&quot; is not the unit you want. And if the document already uses inches then zoom-in - but this is something completelly different than to redefine the length of &quot;inch&quot;. And lastly, redefining inches wont help you because various devices use various DPI and are shown at various distances. I never thought that but maybe your view really is a bit &quot;web browser on a PC&quot;-like..?<br>Why don&#39;t you use pixels in the first place?<br>&gt; 1in will be 96/140 inches<br>&gt; For 140dpi screens, all browsers today make<br>&gt; 1px = 1/140 inch<br>Wait... you said 1 inch is 96 pixels.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; I think everyone here already explain that: take<br>&gt; a pencil and draw 1 inch line with a ruler -<br>&gt; either on HDTV or a phone.<br>But what are you going to use &quot;1in&quot; *for*? Since you have no idea how it will be perceived by the user. Give some actual examples of Web page designs where you would use &quot;in&quot; to mean a physical inch and the results are useful on both phones and HDTVs.<br>(I&#39;ve actually given you a couple of examples in my post ... try to come up with something more common than those.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; I never thought that but maybe your view really<br>&gt; is a bit &quot;web browser on a PC&quot;-like..?<br>No. The whole purpose of this exercise is to a) make existing Web pages display as the author intended on all kinds of media, from phones to HDTVs and b) make absolute length units like &quot;in&quot; useful on all kinds of media, from phones to HDTVs. If I only cared about &quot;Web browser on a PC&quot; I&#39;d be wasting my time with this discussion.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul</div>
+<div class='content'>&gt; Give some actual examples<br>- Maps. A map could have defined a scale so just by looking at it you might know that those 10 cm are actually 10 km.<br>- Medical devices. Maybe there could be a database of some somatic features which you might want to consult / compare with.<br>- School books. There could be a book for children showing how big various bugs and butterflies are.<br>- Typography. If a medium has fixed dimensions then you might want to prevent the text from reflowing or to force it to follow the design manual.<br>- Physical interfaces. Maybe one day, while designing a user interface you would like to follow some ergonomic norms for finger size or arm length.<br>&gt; No. The whole purpose of this exercise<br>Hey, I hope I didn&#39;t offend you. This is all dear to my heart, too. Peace.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; - Maps. A map could have defined a scale so just<br>&gt; by looking at it you might know that those 10 cm<br>&gt; are actually 10 km.<br>I don&#39;t see how that is useful if you&#39;re displaying the page on an HDTV, you can&#39;t even tell what 10cm looks like that far away.<br>&gt; - Medical devices. Maybe there could be a<br>&gt; database of some somatic features which you<br>&gt; might want to consult / compare with.<br>&gt; - School books. There could be a book for<br>&gt; children showing how big various bugs and<br>&gt; butterflies are.<br>That&#39;s &quot;life size diagrams&quot; which I mentioned.<br>&gt; - Typography. If a medium has fixed dimensions<br>&gt; then you might want to prevent the text from<br>&gt; reflowing or to force it to follow the design<br>&gt; manual.<br>I&#39;m explicitly talking about Web pages where you almost never know the dimensions of the medium. If you just want a fixed layout that is scaled to fill the viewport, you can do that without physical length units (e.g. using SVG viewports).<br>&gt; - Physical interfaces. Maybe one day, while<br>&gt; designing a user interface you would like to<br>&gt; follow some ergonomic norms for finger size or<br>&gt; arm length<br>Right, that&#39;s the &quot;touch interface&quot; use case I mentioned.<br>Personally, I think the &quot;life size&quot; and &quot;touch interface&quot; use cases are important enough to have a true physical unit for them, but they&#39;re much *less* important than being able to specify lengths that are a particular physical length when printed but are scaled appropriately when viewed on a phone or HDTV.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul</div>
+<div class='content'>Oh my, I was already in bed....another example:<br>in typography, there are two parameters: character size and line height. The relation between those two is non-linear meaning that, roughly, the smaller the size is the greater relative line spacing should be. E.g. for 8pt text size the line height is usually 10pt. For 10pt text, 12pt lines, and 20pt / 24pt (?). What&#39;s worse, these numbers don&#39;t really follow an objective rule as they are the subject of ever day disagreement among type designers.<br>If you don&#39;t know what the character size really is, how do you want assign a line height then?<br>&gt; I don&#39;t see how that is useful if you&#39;re<br>&gt; displaying the page on an HDTV, you can&#39;t even &gt; tell what 10cm looks like that far away.<br>You can come closer. The point I was making was about maintaining of the visual clue of distance.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Red</div>
+<div class='content'>I think HDTV and cinema projector are special cases.<br>They are designed to display everything much bigger (even 100:1).<br>Phone is just another extreme. Reading web on it, is like looking through keyhole… You wrote about margins – good. Then scroll page to the left by default. Do not resize until user doesn&#39;t want to. If you scale margins, you will scale font size too, but it&#39;s not good, Nobody want small unreadable text.<br>But… There are many other devices where you really need real units.<br>I want to buy new phone very soon. I&#39;m looking at specifications, but I wish to know it&#39;s size, today I can&#39;t. This is a big failure…<br>Another, maybe stupid example: Think about near future, when almost any device will have some display… refrigerator? kitchen table? You want to interact with physical item on this table? You have know its size, and be able to display everything using real world units.<br>And think about maps once again… I like mountains and I like to use 1:50000 maps. For me it&#39;s much easier to &quot;feel&quot; distance by simple looking, than using abstract kilometers. Having ability to both zooming page _and_ map is… wrong.<br>BTW. Your proposition to zoom page by 140% on 140dpi screen is wrong. User should know nothing about it&#39;s DPI. 100% zoom should mean 1:1 size.<br>There is one thing I hate on modern web. Default font size can be so different from page to page. Sometimes I can hide whole paragraph under my thumb. Sometimes even 180% is too small.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Juan Lanus</div>
+<div class='content'>Stumbled upon this while googling Robert ...<br>This discussion reminds me when the authors of the original XML spec, with the purpose of finding out real word requirements, talked to the browser makers (maybe NN4 and the like).<br>The makers wholeheartedly recommended to make the language strict, arguing that more than 50% of the browser development work was devoured by making HTML less strict, more &quot;flexible&quot;, like for example not forcing the authors to close some tags. I believe that this was the origin of the quirks mode: patronizing the authors.<br>This thread is IMO a revival of the quirks by trying in absolute good faith to solve the authors problems.<br>In the discussion between inches and pixels we already know that each one has its own strengths and weaknesses.<br>IMO the valuable arguments so far are those regarding the angle of view and the browser&#39;s zoom capabilities.<br>IMO a reasonable solution would be recommending that the UA had a default zoom ratio depending on the view distance, screen resolution and pixel size, and getting advice from experts about the recommended settings for different devices and sights.<br>During installation of the browser, or upon a display device change, the ratio would be set giving the user reasonable choices like Robert&#39;s 140%. With a try-and-accept functionality like when one changes the screen resolution in Windows XP.<br>No browser or standard will solve the problems raised by sloppy design and development. Also, IMO it is not the charter of the experts. This would patronizing the developers with the inevitable side effect of hurting the users.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Kyle Lahnakoski</div>
+<div class='content'>&gt; On the Web, physical properties of the output medium are almost never known<br>I have done some web development, and I do browser type detection to get a good idea of what the output medium is.  I deliver completely different content to handhelds than I deliver to a regular browser.  I admit, I hardly use “in”, but I often use “pt” to make sure the text is readable irrespective of the handheld resolution.  Specifically, the Blackberry family has a variety of pixel densities, and I am grateful I can get my web page to show my text at the same point size on all of them.<br>Assuming 1 inch=96px is not a good thing, and will force me to design different pages for each type of handheld:  A 10pt (=0.138in =13.3px) font is just right on a Curve, and too small on a Bold.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jean-Jacques Sarton</div>
+<div class='content'>Redifining one inch to 96px is stupid. If some web page are worse you have not to help the idiotic designer. For the page I support I had used pt because the text size was mostly OK and independant of the dpi of the screen. Unfortunatelly the WebKit people seem to mean that worse programming must be promoted, so I have all in relative units, mostly em with the benefit that the pages are barriere free.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>micky C.</div>
+<div class='content'>What&#39;s happening???the print on my computer shrinks to 10% zoom while I am typing or pulling up info on Google...I have to reset back to 100% on the lower right at zoom area??<br>Help<br>Thx<br></div>
+</div>
+<div class='comment'>
+<div class='author'>qwazix</div>
+<div class='content'>It is much simpler to force screen makers to report their ppi to the OS. The browser would then know how to implement 1 inch. (for current devices we can just make a utility where the user puts a 2 euro coin on the inch, and draws a circle around it if she wants to have accuracy or else assume something like 96ppi) The inch will not be unusable, it will be just not used very often in webpages. Pinning it to the pixel defeats the purpose of it existing. Use pixels instead. Now we have the ability to use real-world units if we know the devices&#39; ppi. For backword compatibility we can use zoom for high density screens and bury an option to force 1in=96px somewhere in the settings. I have a hunch that nobody will ever seek it)<br>Px is indeed a very useful length unit, because pixel density is often relative to the distance that you view a screen. So the real viewing angle of 1px is about the same in all devices. Imagine drawing webpages on a phone 1:1 with the size on a desktop screen. It would be unusable.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Danny Moules</div>
+<div class='content'>&quot;make absolute length units like &quot;in&quot; useful on all kinds of media, from phones to HDTVs.&quot;<br>By radically redefining their semantics, thereby changing their meaning to everyone who has ever used them, contravening SI units and generally throwing common sense out of the window.<br>Microsoft have to worry about overarching backwards compatibility - that&#39;s why they iterate so slowly. Mozilla is about innovating and improving, not appeasing old mistakes.<br>If people wanted pixels, they used pixels. If they wanted inches, they chose to use inches for a reason. There&#39;s no reason to second-guess it, they opted in to doing so.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>&gt; If they wanted inches, they chose to use inches<br>&gt; for a reason. There&#39;s no reason to second-guess<br>&gt; it, they opted in to doing so.<br>Inches isn&#39;t the most commonly used physical length unit, &quot;pt&quot; is. The assertion that every Web author who uses &quot;pt&quot; chose it because they want their fonts to be the same physical size on 4&quot; phone screens and 24&quot; monitors is false.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Trying to fit King James&#39; foot into a size 1152px shoe. The touch screen is touched by a human dimension called a fingertip. 1in=96px is the tail waggin&#39; the dog. At one time when one-screen-fits-all (almost) 1in did equal 96px, but let&#39;s not date ourselves with legacy code. If you want 96px, then code 96px. But let the real world be defined by real dimensions and the virtual by the virtual.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mary Brown</div>
+<div class='content'>For screen it is recommended to use em, px %
+
+For Paper it is recommended to use em,cm, mm, in, pt, pc %
+
+<a href="http://wisentechnologies.com/it-courses/html-css-javascript-jquery-training.aspx" rel="nofollow">CSS Training</a></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>visit us @http://www.besanttechnologies.com/training-courses/java-training</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -64,120 +161,23 @@ permalink: "/2010/01/css-absolute-length-units_12.html"
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Paul</div>
-<div class='content'>I agree with Red, this is rather scary.<br>&quot;Common sense, as well as Web compatibility, will dictate that the ratios between &quot;px&quot;, &quot;pt&quot;, &quot;in&quot;, &quot;cm&quot;, &quot;mm&quot; and &quot;pc&quot; will be fixed based on the assumption that 1in = 96px&quot;<br>No one ever expected a pixel to be 0.26458333 mm. If you have another screen than I do then it might well be that your pixels are of different size than mine. It&#39;s pixels which have not fixed size, not meters.<br>Ad common sense:<br>&quot;We may find it useful to define a new unit or units, say &quot;truemm&quot;,&quot;<br>There is already perfectly good unit to describe such length, even better, everyone agrees on its value - it&#39;s called &quot;mm&quot;.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Danny Moules</div>
-<div class='content'>&quot;make absolute length units like &quot;in&quot; useful on all kinds of media, from phones to HDTVs.&quot;<br>By radically redefining their semantics, thereby changing their meaning to everyone who has ever used them, contravening SI units and generally throwing common sense out of the window.<br>Microsoft have to worry about overarching backwards compatibility - that&#39;s why they iterate so slowly. Mozilla is about innovating and improving, not appeasing old mistakes.<br>If people wanted pixels, they used pixels. If they wanted inches, they chose to use inches for a reason. There&#39;s no reason to second-guess it, they opted in to doing so.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>While the end result would be convenient, I don&#39;t think the appropriate solution is to bend for stupid web designers.<br>In addition, such a change, regardless of rationale, seems like the source for potential headaches resulting from hard to track down problems and those scathing indictments (or simple blurbs in break-into-a-technology guides) about the stupidity of a given system:<br>&quot;In their infinite wisdom, browser vendors decided that &#39;in&#39; would just be an alias for a multiple of 96 pixels. If you use these units hoping to, you know, actually specify a measurement in inches, you have to use &#39;truein&#39;. I suppose by the same reasoning, to be safe you should probably use &#39;truepx&#39; and &#39;color: true#92B;&#39; when that&#39;s what you really want. Interestingly enough, these don&#39;t work.&quot;<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>Very great article. You really gave some valid points and I liked it. So thanks
 
 <a href="http://www.digitalmarketingcourses.in/" rel="nofollow"> best digital marketing courses in chennai</a> </div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>pd: treating 1in as always one physical inch is what breaks compatibility. As I said, IE has treated 1in as always 96px for many versions, and so has Webkit.<br>Treating 1in as one physical inch would be terrible for a browser on an HDTV. Millions of documents containing stuff like &quot;text-indent:0.5in&quot; will suddenly have negligible text-indent when displayed on your HDTV.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>You can think of this proposal as browsers always zooming your content by default, if you like.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>&gt; I think everyone here already explain that: take<br>&gt; a pencil and draw 1 inch line with a ruler -<br>&gt; either on HDTV or a phone.<br>But what are you going to use &quot;1in&quot; *for*? Since you have no idea how it will be perceived by the user. Give some actual examples of Web page designs where you would use &quot;in&quot; to mean a physical inch and the results are useful on both phones and HDTVs.<br>(I&#39;ve actually given you a couple of examples in my post ... try to come up with something more common than those.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Red</div>
-<div class='content'>My screen is 140dpi - if every unit will be based on pixel size I will be unable to read this page. Without zooming by 140%<br>This is only beginning, soon there will be many e-book readers with even bigger resolutions (200dpi and more).<br>This &quot;redefinition&quot; will sacrifice future in the name of past and some broken pages. Try to explain your daughter why &quot;this 4 inch box is smaller than 1 inch&quot;. Think about medical displays.<br>I see no point to use other units at all if they will be tied to pixel size. Why bother with inches and centimeters if they are not real units?<br>What next? Assumption that every screen is 1024x768? How many pages looks bad at higher resolutions?<br>Maybe there is better solution? For example some media query to provide &quot;quirk mode screen&quot; and &quot;real display&quot;<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Colby Russell</div>
-<div class='content'>The Anonymous above was me.<br>Solution for font sizes: use ems. This doesn&#39;t mean &quot;body { font-size: 0.86 em; }&quot; or whatever. David Baron&#39;s Bugzilla comment from 2000 about web designers&#39; font size styling choices is apropos: https://bugzilla.mozilla.org/show_bug.cgi?id=24846#c2<br>As for the other problems, web designers should say what they mean. If they are expecting these physical dimensions to map to some absolute measurement in pixels, use pixels instead, though ideally they wouldn&#39;t be trying to do this anyway. Otherwise, it&#39;s just deception so that they can wear their &quot;I care about accessibility&quot; bonnet (or whatever the hipsters are wearing these days).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Screwtape</div>
-<div class='content'>My employer has a couple of web-sites where physical units are very important: customers want to be able to print an payment-slip off the Web (including the invoice-number that&#39;s being paid, etc), staple a cheque to it, and send it in. When it&#39;s processed at the bank, the payment-slip is fed through an OCR system that looks for the payment metadata in a certain physical region of the page, which meant we had to absolutely-position the required elements with absolute length units to make sure everything appeared where it needed to be.<br>We did briefly toy with the idea of presenting invoices as PDFs rather than as HTML, but by default Acrobat Reader will shrink the document to fit within the printer&#39;s margins (well outside our assigned physical space), and it was easier to teach people how to reset the print margins in their browser than in Acrobat.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>qwazix</div>
-<div class='content'>It is much simpler to force screen makers to report their ppi to the OS. The browser would then know how to implement 1 inch. (for current devices we can just make a utility where the user puts a 2 euro coin on the inch, and draws a circle around it if she wants to have accuracy or else assume something like 96ppi) The inch will not be unusable, it will be just not used very often in webpages. Pinning it to the pixel defeats the purpose of it existing. Use pixels instead. Now we have the ability to use real-world units if we know the devices&#39; ppi. For backword compatibility we can use zoom for high density screens and bury an option to force 1in=96px somewhere in the settings. I have a hunch that nobody will ever seek it)<br>Px is indeed a very useful length unit, because pixel density is often relative to the distance that you view a screen. So the real viewing angle of 1px is about the same in all devices. Imagine drawing webpages on a phone 1:1 with the size on a desktop screen. It would be unusable.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Juan Lanus</div>
-<div class='content'>Stumbled upon this while googling Robert ...<br>This discussion reminds me when the authors of the original XML spec, with the purpose of finding out real word requirements, talked to the browser makers (maybe NN4 and the like).<br>The makers wholeheartedly recommended to make the language strict, arguing that more than 50% of the browser development work was devoured by making HTML less strict, more &quot;flexible&quot;, like for example not forcing the authors to close some tags. I believe that this was the origin of the quirks mode: patronizing the authors.<br>This thread is IMO a revival of the quirks by trying in absolute good faith to solve the authors problems.<br>In the discussion between inches and pixels we already know that each one has its own strengths and weaknesses.<br>IMO the valuable arguments so far are those regarding the angle of view and the browser&#39;s zoom capabilities.<br>IMO a reasonable solution would be recommending that the UA had a default zoom ratio depending on the view distance, screen resolution and pixel size, and getting advice from experts about the recommended settings for different devices and sights.<br>During installation of the browser, or upon a display device change, the ratio would be set giving the user reasonable choices like Robert&#39;s 140%. With a try-and-accept functionality like when one changes the screen resolution in Windows XP.<br>No browser or standard will solve the problems raised by sloppy design and development. Also, IMO it is not the charter of the experts. This would patronizing the developers with the inevitable side effect of hurting the users.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>&gt; Exactly rightly so. Maybe the unit you were<br>&gt; searching for is not &quot;in&quot;, but &quot;%&quot;...<br>They&#39;re not *my* documents. I&#39;m just pointing out that millions of documents on the Web will not be displayed in a way that satisfies the user. We may all wish that wasn&#39;t so, but we have to deal with reality.<br>However, I&#39;m also pointing out that if you want your documents to be viewable on phones and HDTVs (which I hope we all do!), then treating &quot;in&quot; as physical inches means that you basically can&#39;t use &quot;in&quot; anymore. Instead, I think we should define &quot;in&quot; in a way that makes it actually useful.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>&gt; If they wanted inches, they chose to use inches<br>&gt; for a reason. There&#39;s no reason to second-guess<br>&gt; it, they opted in to doing so.<br>Inches isn&#39;t the most commonly used physical length unit, &quot;pt&quot; is. The assertion that every Web author who uses &quot;pt&quot; chose it because they want their fonts to be the same physical size on 4&quot; phone screens and 24&quot; monitors is false.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Screwtape: right, printing is one situation where the absolute length units make sense. It&#39;s screen display which is a problem.<br>Anonymous: my point is that this is not just an issue because of stupid Web designers. If you&#39;re a brilliant Web designer who faithfully follows the specs and expects 1in to always be one physical inch, then you basically can&#39;t use &#39;in&#39; etc for screen media.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>&gt; I never thought that but maybe your view really<br>&gt; is a bit &quot;web browser on a PC&quot;-like..?<br>No. The whole purpose of this exercise is to a) make existing Web pages display as the author intended on all kinds of media, from phones to HDTVs and b) make absolute length units like &quot;in&quot; useful on all kinds of media, from phones to HDTVs. If I only cared about &quot;Web browser on a PC&quot; I&#39;d be wasting my time with this discussion.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>visit us @http://www.besanttechnologies.com/training-courses/java-training</div>
-</div>
-<div class='comment'>
-<div class='author'>Harsh</div>
-<div class='content'>I&#39;m really loving these latest blog posts. Please keep them coming.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Kyle Lahnakoski</div>
-<div class='content'>&gt; On the Web, physical properties of the output medium are almost never known<br>I have done some web development, and I do browser type detection to get a good idea of what the output medium is.  I deliver completely different content to handhelds than I deliver to a regular browser.  I admit, I hardly use “in”, but I often use “pt” to make sure the text is readable irrespective of the handheld resolution.  Specifically, the Blackberry family has a variety of pixel densities, and I am grateful I can get my web page to show my text at the same point size on all of them.<br>Assuming 1 inch=96px is not a good thing, and will force me to design different pages for each type of handheld:  A 10pt (=0.138in =13.3px) font is just right on a Curve, and too small on a Bold.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Paul</div>
-<div class='content'>Oh my, I was already in bed....another example:<br>in typography, there are two parameters: character size and line height. The relation between those two is non-linear meaning that, roughly, the smaller the size is the greater relative line spacing should be. E.g. for 8pt text size the line height is usually 10pt. For 10pt text, 12pt lines, and 20pt / 24pt (?). What&#39;s worse, these numbers don&#39;t really follow an objective rule as they are the subject of ever day disagreement among type designers.<br>If you don&#39;t know what the character size really is, how do you want assign a line height then?<br>&gt; I don&#39;t see how that is useful if you&#39;re<br>&gt; displaying the page on an HDTV, you can&#39;t even &gt; tell what 10cm looks like that far away.<br>You can come closer. The point I was making was about maintaining of the visual clue of distance.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>&gt; All the people who insist that &quot;in&quot; should always<br>&gt; be one physical inch need to explain how they&#39;re &gt; going to use &quot;in&quot; when the page might be<br>&gt; displayed on a phone or an HDTV.<br>I think everyone here already explain that: take a pencil and draw 1 inch line with a ruler - either on HDTV or a phone.<br>&gt; They&#39;ll be &quot;real&quot; when printed.<br>The key here is &quot;when printed&quot;. What does it mean? When I put ink on a paper do I print? When I put e-ink on e-paper do I print?<br>If I am graphic designer and I set text in 8/10pt for a billboard which you wont be able to read from a car 100 meters away - who is responsible for it? The graphic designer or the company which printed the billboard?<br>I think the real question here boils down to &quot;angle of view&quot;. If I understood you correctly you have no problem drawing 1 inch on a phone because it&#39;s close to your eye. However, since HDTV is across the whole room you might not even notice 1 inch, right? Then, &quot;inch&quot; is not the unit you want. And if the document already uses inches then zoom-in - but this is something completelly different than to redefine the length of &quot;inch&quot;. And lastly, redefining inches wont help you because various devices use various DPI and are shown at various distances. I never thought that but maybe your view really is a bit &quot;web browser on a PC&quot;-like..?<br>Why don&#39;t you use pixels in the first place?<br>&gt; 1in will be 96/140 inches<br>&gt; For 140dpi screens, all browsers today make<br>&gt; 1px = 1/140 inch<br>Wait... you said 1 inch is 96 pixels.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Alexandre de Menezes</div>
-<div class='content'>I guess the absolute units don&#39;t make much sense if used alone to define a fixed absolute size for an element, but they can be useful when coupled with media queries.<br>We can use pixels for screen and inches for printer, for example.  Another option is to define element sizes based on display sizes: 1in border for output over 8in wide, 1mm border for output smaller than 3in, and so on.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Paul</div>
-<div class='content'>&gt; Give some actual examples<br>- Maps. A map could have defined a scale so just by looking at it you might know that those 10 cm are actually 10 km.<br>- Medical devices. Maybe there could be a database of some somatic features which you might want to consult / compare with.<br>- School books. There could be a book for children showing how big various bugs and butterflies are.<br>- Typography. If a medium has fixed dimensions then you might want to prevent the text from reflowing or to force it to follow the design manual.<br>- Physical interfaces. Maybe one day, while designing a user interface you would like to follow some ergonomic norms for finger size or arm length.<br>&gt; No. The whole purpose of this exercise<br>Hey, I hope I didn&#39;t offend you. This is all dear to my heart, too. Peace.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mary Brown</div>
-<div class='content'>For screen it is recommended to use em, px %
+<div class='content'>Great and impressive article.!!
 
-For Paper it is recommended to use em,cm, mm, in, pt, pc %
 
-<a href="http://wisentechnologies.com/it-courses/html-css-javascript-jquery-training.aspx" rel="nofollow">CSS Training</a></div>
-</div>
-<div class='comment'>
-<div class='author'>micky C.</div>
-<div class='content'>What&#39;s happening???the print on my computer shrinks to 10% zoom while I am typing or pulling up info on Google...I have to reset back to 100% on the lower right at zoom area??<br>Help<br>Thx<br></div>
+<a href="http://www.onlinemarketingcourse.in/" rel="nofollow">online marketing course</a></div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>Very nice article. I learned some knowledgeable information. Thanks for sharing.
 
 <a href="http://www.digitalmarketingcourses.in/html-training-in-chennai.php" rel="nofollow">html training in chennai</a></div>
-</div>
-<div class='comment'>
-<div class='author'>Paul</div>
-<div class='content'>&quot;Millions of documents containing stuff like &quot;text-indent:0.5in&quot; will suddenly have negligible text-indent when displayed on your HDTV.&quot;<br>Exactly rightly so. Maybe the unit you were searching for is not &quot;in&quot;, but &quot;%&quot;...<br>&quot;treating 1in as always one physical inch is what breaks compatibility. As I said, IE...&quot;<br>I assume you just wanted to tell pd who&#39;s really breaking what in current situation. I also assume you don&#39;t take IE as a norm.<br></div>
 </div>
 
 </div>

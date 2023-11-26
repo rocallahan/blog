@@ -22,18 +22,18 @@ impl X {
 
 But you seem to say (I don&#39;t know Rust -- yet) that Rust enforces this lifetime constraint at compile time, right? Nice!</div>
 <div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yeah, nice!
+
+Yeah, making &#39;y&#39; a shared_ptr member here would force it to be a separate allocation. It would also mean the getter function incurs the cost of a thread-safe addref and release. It also means X and Y can&#39;t live in read-only memory.</div>
+</div>
+<div class='comment'>
 <div class='author'>Gerald</div>
 <div class='content'>&quot;separate allocation&quot;
 Just to be clear, I was referring to the aliasing ability of std::shared_ptr, where the shared_ptr seems to point at &#39;y&#39; when dereferenced, but the reference count is actually tied to &#39;x&#39;. So there is no separate allocation happening, &#39;y&#39; is contained as a straight &#39;Y&#39; within &#39;X&#39;.
 (Better explanations there: http://www.codesynthesis.com/~boris/blog/2012/04/25/shared-ptr-aliasing-constructor/ )
 
 However all the other bad stuff is still there: addrefs&amp;releases, reference count object that has to exist somewhere, no ROM objects...</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Yeah, nice!
-
-Yeah, making &#39;y&#39; a shared_ptr member here would force it to be a separate allocation. It would also mean the getter function incurs the cost of a thread-safe addref and release. It also means X and Y can&#39;t live in read-only memory.</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -44,7 +44,97 @@ Though it does point out that std::shared_ptr has to be two words, which sucks. 
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>I began to imagine the Haskell version of this, but it ended up being totally nonsensical because Haskell doesn&#39;t have &quot;references&quot; with a limited lifetime (since it has GC, and also just copies around as it needs).</div>
+<div class='content'>So basically this?
+
+```
+class X
+  attr_accessor :y
+end
+```</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&quot;containing a field y of type Y directly&quot;
+
+Your code defines an instance variable that holds a Ruby VALUE, which is a reference, and a function that returns that reference. The content of the VALUE will be heap allocated.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>And a full compilable example in Crystal:
+
+```
+class Y
+end
+
+class X
+  def initialize(y : Y)
+    @y = y
+  end
+
+  def y
+    @y
+  end
+end
+
+y = Y.new
+x = X.new(y: y)
+puts x.y
+```</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That makes &#39;y&#39; use a separate heap allocation, which I explicitly said we don&#39;t want.</div>
+</div>
+<div class='comment'>
+<div class='author'>Dominik Dalek</div>
+<div class='content'>Not only that, Crystal has GC under the hood, which mounts the cost (but, to be fair, I don&#39;t know if it collects all of the objects or just some of the allocations are GCed).</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Andreas Bergmeier</div>
+<div class='content'>These checks indeed are nice.
+A few things (facts):
+- We have gazillion of lines/projects in C++. One of the important reasons why C++ got popular is that it had near full backwards compat. with C. Rust is breaking that.
+- Support for architectures and tooling has decades to catch up.
+- &quot;Compilation Provider&quot; (Sony, Microsoft, Apple, Google, ...) barely currently provide working C and C++ toolchains. Shipping Rust, too, would be a huge investment.
+- There still is no support by a big &quot;Compilation Provider&quot;.
+- Focus on better C++ static analysis is to a degree driven by Rust
+
+Personal opinion:
+- Rust is a great research project.
+- I think the Rust community has a HUGE problem. You outline exactly this with your blog. This one feature is nice. Most people I know who today write C++/System programming are senior and rarely trip on lifetime problems. It is to me by far not a as big problem as you make it out to be.
+- Rust has a huge potential to get junior devs into System programming because they do not be as proficient. So you should rather outline how easy System programming with Rust is.
+- Rust may have potential in parallelism. To me it seems however as though the section is not yet cooked through. If Rust can do parallelism straight-forward, effective and correct, THIS is the thing you should be advocating.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I agree with much of what you say. Just a couple of replies:
+
+By building on LLVM Rust is actually leveraging a lot of the investment in modern C++ compilers. And Rust, at the levels above LLVM, is significantly less complicated than C++. So the situation is not as daunting as you may think.
+
+I think &quot;most people I know ... rarely trip on lifetime problems&quot; undersells the seriousness of those problems when they arise. These are serious security issues. Mozilla&#39;s browser developers are definitely elite level and they are excited about this stuff.
+
+It&#39;s certainly true that Rust&#39;s &quot;parallelism without fear&quot; story is strong. I&#39;ll write about that.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I believe the usecase of this that Manishearth described in his blog post http://manishearth.github.io/blog/2015/05/03/where-rust-really-shines/ is where no sane C++ senior could do this kind of pointer sharing without ownership problems (and thus would probably fall back to copying the memory with new heap allocations, or probably could ‘optimize’ it with shared_ptr or other smart pointer, but then would still have runtime checks with are nonexistent in Rust).</div>
+</div>
+<div class='comment'>
+<div class='author'>Tyler Neely</div>
+<div class='content'>You don&#39;t think that it&#39;s a problem that every piece of widely deployed c/c++ infrastructure is effectively a door that only the government and mob can open, due to the current economics of exploit development?</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Ivan Nikitin</div>
+<div class='content'>In Java, this code won&#39;t produce a separate heap allocation for Y:
+class X {
+private Y y;
+}
+
+In most cases the heap is already pre-allocated, so creating a X object, won&#39;t result in two heap allocations.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Those are two separate objects on the heap. That&#39;s what I mean by &quot;separate heap allocation&quot;.</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>Yano</div>
@@ -113,6 +203,16 @@ Will refuse to compile.</div>
 </div>
 </div>
 <div class='comment'>
+<div class='author'>Myrealname Smith</div>
+<div class='content'>With the specified requirements (safety, no double heap allocation, being able to make a reference to an inner object), Go can do that too.
+
+(of course, Go also has GC, so it does have its limitations as a systems programming language)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes, that&#39;s true. I&#39;ll update the post.</div>
+</div>
+</div>
+<div class='comment'>
 <div class='author'>matklad</div>
 <div class='content'>Nice example! I also like this one as something you can do in modern C++ and (rightfully) can&#39;t in Rust:
 
@@ -133,33 +233,18 @@ int main() {
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>And a full compilable example in Crystal:
-
-```
-class Y
-end
-
-class X
-  def initialize(y : Y)
-    @y = y
-  end
-
-  def y
-    @y
-  end
-end
-
-y = Y.new
-x = X.new(y: y)
-puts x.y
-```</div>
-<div class='comment'>
-<div class='author'>Dominik Dalek</div>
-<div class='content'>Not only that, Crystal has GC under the hood, which mounts the cost (but, to be fair, I don&#39;t know if it collects all of the objects or just some of the allocations are GCed).</div>
+<div class='content'>I began to imagine the Haskell version of this, but it ended up being totally nonsensical because Haskell doesn&#39;t have &quot;references&quot; with a limited lifetime (since it has GC, and also just copies around as it needs).</div>
 </div>
 <div class='comment'>
+<div class='author'>Joel McCracken</div>
+<div class='content'>Maybe I&#39;m dense, but it is not apparent to me why this set of guarantees are so important. Could you elaborate on this?</div>
+<div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>That makes &#39;y&#39; use a separate heap allocation, which I explicitly said we don&#39;t want.</div>
+<div class='content'>&quot;Getter&quot; methods that provide access to interior parts of an object are common and very useful.
+
+It&#39;s often a lot more efficient to return a reference (a pointer) to an interior part than copy it.
+
+However, C and C++ programs often have &quot;use after free bugs&quot; where the reference is used after the underlying object has been deleted. These bugs often create security issues and should be prevented.</div>
 </div>
 </div>
 <div class='comment'>
@@ -171,6 +256,16 @@ More generally, I&#39;m somewhat familiar with Haskell, and it seems to suit the
 (Also, your comment box seems to be very broken for me trying to use my WordPress profile to identify me.  Even now I&#39;m accepting all 3rd party cookies.)</div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
+<div class='content'>And as soon as I add that note about it being broken, it works.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&quot;newtype&quot; doesn&#39;t help with the borrowing-a-field situation here.
+
+You&#39;re quite right that Haskell and Rust have a lot in common, and a lot of people like both languages! But Rust has some big advantages over Haskell: an execution model that maps much better to hardware (no lazy evaluation, no GC, stateful updates), and its affine type system that provides strong control over aliasing.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
 <div class='content'>Thanks.  I might well enjoy programming in Rust, if the occasion ever arises.
 
 It sounds like most of Rust&#39;s advantages over Haskell relate to what the code compiles down to.  Would that be fair?
@@ -178,30 +273,10 @@ It sounds like most of Rust&#39;s advantages over Haskell relate to what the cod
 In the past, I haven&#39;t really needed to worry about that level of optimization; good asymptotic complexity and trusting the compiler to do a not-terrible job has been enough for me.  But I might need to think more carefully about optimization in programs I work on in future.</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>And as soon as I add that note about it being broken, it works.</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>&gt; It sounds like most of Rust&#39;s advantages over Haskell relate to what the code compiles down to. Would that be fair?
 
 The affine type system and aliasing control enable various kinds of checking that other type systems, including Haskell&#39;s, don&#39;t offer. See https://people.mpi-sws.org/~dreyer/papers/rustbelt/paper.pdf for some explanation of that. If you stick to pure functional programming then I guess those checks aren&#39;t important.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>&gt; For example, how purely functional could a Rust implementation of mergesort be made to be, without sacrificing efficiency?
-
-I guess it would be reasonably easy to do it in O(n log n) space and time.
-
-Efficiency isn&#39;t just about time, it&#39;s also about space. In Rust it&#39;s pretty easy to write a sorting implementation that is guaranteed to sort in-place. Obviously a purely functional implementation can&#39;t do that. Furthermore any language that depends on GC has to wrestle with the inevitable GC tradeoffs between throughput, latency and space overhead.
-
-It sounds like you work on the sorts of problems where these efficiency issues aren&#39;t important, and that&#39;s fine --- Haskell sounds like a good fit for you. However, when you ship software to a lot of users, efficiency issues are magnified. When you compete against other implementations on performance, they become even more important.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>&quot;newtype&quot; doesn&#39;t help with the borrowing-a-field situation here.
-
-You&#39;re quite right that Haskell and Rust have a lot in common, and a lot of people like both languages! But Rust has some big advantages over Haskell: an execution model that maps much better to hardware (no lazy evaluation, no GC, stateful updates), and its affine type system that provides strong control over aliasing.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -223,90 +298,15 @@ So perhaps I might use Rust if I ever want to reason very carefully about the ef
 
 Thanks for the link to that paper, by the way; it was really interesting (though I can&#39;t claim to have understood all the details).</div>
 </div>
-</div>
-<div class='comment'>
-<div class='author'>Myrealname Smith</div>
-<div class='content'>With the specified requirements (safety, no double heap allocation, being able to make a reference to an inner object), Go can do that too.
-
-(of course, Go also has GC, so it does have its limitations as a systems programming language)</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Yes, that&#39;s true. I&#39;ll update the post.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Andreas Bergmeier</div>
-<div class='content'>These checks indeed are nice.
-A few things (facts):
-- We have gazillion of lines/projects in C++. One of the important reasons why C++ got popular is that it had near full backwards compat. with C. Rust is breaking that.
-- Support for architectures and tooling has decades to catch up.
-- &quot;Compilation Provider&quot; (Sony, Microsoft, Apple, Google, ...) barely currently provide working C and C++ toolchains. Shipping Rust, too, would be a huge investment.
-- There still is no support by a big &quot;Compilation Provider&quot;.
-- Focus on better C++ static analysis is to a degree driven by Rust
+<div class='content'>&gt; For example, how purely functional could a Rust implementation of mergesort be made to be, without sacrificing efficiency?
 
-Personal opinion:
-- Rust is a great research project.
-- I think the Rust community has a HUGE problem. You outline exactly this with your blog. This one feature is nice. Most people I know who today write C++/System programming are senior and rarely trip on lifetime problems. It is to me by far not a as big problem as you make it out to be.
-- Rust has a huge potential to get junior devs into System programming because they do not be as proficient. So you should rather outline how easy System programming with Rust is.
-- Rust may have potential in parallelism. To me it seems however as though the section is not yet cooked through. If Rust can do parallelism straight-forward, effective and correct, THIS is the thing you should be advocating.</div>
-<div class='comment'>
-<div class='author'>Tyler Neely</div>
-<div class='content'>You don&#39;t think that it&#39;s a problem that every piece of widely deployed c/c++ infrastructure is effectively a door that only the government and mob can open, due to the current economics of exploit development?</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I agree with much of what you say. Just a couple of replies:
+I guess it would be reasonably easy to do it in O(n log n) space and time.
 
-By building on LLVM Rust is actually leveraging a lot of the investment in modern C++ compilers. And Rust, at the levels above LLVM, is significantly less complicated than C++. So the situation is not as daunting as you may think.
+Efficiency isn&#39;t just about time, it&#39;s also about space. In Rust it&#39;s pretty easy to write a sorting implementation that is guaranteed to sort in-place. Obviously a purely functional implementation can&#39;t do that. Furthermore any language that depends on GC has to wrestle with the inevitable GC tradeoffs between throughput, latency and space overhead.
 
-I think &quot;most people I know ... rarely trip on lifetime problems&quot; undersells the seriousness of those problems when they arise. These are serious security issues. Mozilla&#39;s browser developers are definitely elite level and they are excited about this stuff.
-
-It&#39;s certainly true that Rust&#39;s &quot;parallelism without fear&quot; story is strong. I&#39;ll write about that.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I believe the usecase of this that Manishearth described in his blog post http://manishearth.github.io/blog/2015/05/03/where-rust-really-shines/ is where no sane C++ senior could do this kind of pointer sharing without ownership problems (and thus would probably fall back to copying the memory with new heap allocations, or probably could ‘optimize’ it with shared_ptr or other smart pointer, but then would still have runtime checks with are nonexistent in Rust).</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>So basically this?
-
-```
-class X
-  attr_accessor :y
-end
-```</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>&quot;containing a field y of type Y directly&quot;
-
-Your code defines an instance variable that holds a Ruby VALUE, which is a reference, and a function that returns that reference. The content of the VALUE will be heap allocated.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Ivan Nikitin</div>
-<div class='content'>In Java, this code won&#39;t produce a separate heap allocation for Y:
-class X {
-private Y y;
-}
-
-In most cases the heap is already pre-allocated, so creating a X object, won&#39;t result in two heap allocations.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Those are two separate objects on the heap. That&#39;s what I mean by &quot;separate heap allocation&quot;.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Joel McCracken</div>
-<div class='content'>Maybe I&#39;m dense, but it is not apparent to me why this set of guarantees are so important. Could you elaborate on this?</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>&quot;Getter&quot; methods that provide access to interior parts of an object are common and very useful.
-
-It&#39;s often a lot more efficient to return a reference (a pointer) to an interior part than copy it.
-
-However, C and C++ programs often have &quot;use after free bugs&quot; where the reference is used after the underlying object has been deleted. These bugs often create security issues and should be prevented.</div>
+It sounds like you work on the sorts of problems where these efficiency issues aren&#39;t important, and that&#39;s fine --- Haskell sounds like a good fit for you. However, when you ship software to a lot of users, efficiency issues are magnified. When you compete against other implementations on performance, they become even more important.</div>
 </div>
 </div>
 

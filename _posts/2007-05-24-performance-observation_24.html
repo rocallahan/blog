@@ -8,12 +8,12 @@ permalink: "/2007/05/performance-observation_24.html"
 <div class="columns"><p>I'm running Tp2 page load tests on a Linux box --- a real dual-core machine, not a VM. Interesting observations:<br/><ul><br/><li>Firefox uses 40% of one processor<br/><li>X11 uses 60% of one processor<br/><li>One processor is basically idle<br/></ul><br/><p>I don't know why we're spending so much time in the X server. These are old pages and they're fairly simple. Maybe we're not using cairo well, or cairo isn't using X well.<br/><p>I also wonder why we aren't using two processors more effectively here. Firefox should be able to overlap with X. They must be waiting on each other for some reason.<br/><p>I'm tempted to go off on a rant here about how X has sucked for so long and continues to suck in spite of all promises to the contrary. But I won't.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Tessa</div>
-<div class='content'>Depending on your Linux distro, it might be some new bug in X.  I&#39;ve been trying to figure out why in the latest Ubuntu distro (Feisty), desktop performance degrades over time.  Some links:<br>https://bugs.launchpad.net/ubuntu/+source/xorg/+bug/104481<br>http://ubuntuforums.org/showthread.php?t=443799<br></div>
+<div class='author'>Jeff</div>
+<div class='content'>Please go on a rant about X.  It seems that people used to dislike it (http://www.art.net/~hopkins/Don/unix-haters/x-windows/disaster.html)<br>Maybe I&#39;m not looking hard enough but most users seem to like X these days.  I&#39;m not sufficiently well informed to have a strong opinion, but I&#39;d like to hear yours.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Dan Amelang</div>
-<div class='content'>Hi Rob,<br>I think it would be more productive if you posted this information (and more, like an oprofile report) to the cairo and/or xorg lists. Frankly, I don&#39;t see anything constructive that can come out of ranting about performance to an audience that is unlikely to help you resolve your problem. Let&#39;s resume this conversation on the lists (I&#39;m active on both lists).<br>About your assertion of what the &quot;fundamental problem&quot; is regarding X, I have a different view.<br>As one that has read many, many system-wide performance profiles of applications that use the X server in various environments (e.g. desktop, embedded devices), I can say that the fact that drawing is done in a separate process is rarely the cause of poor performance.<br>I&#39;d be happy to go on, but as I said, this isn&#39;t the most productive place to carry on discussions of this nature.<br>Thank you for all the wonderful work you&#39;re doing at Mozilla. I&#39;m a very big fan of yours.<br></div>
+<div class='author'>Boris</div>
+<div class='content'>That&#39;s basically what I see nowadays, yeah.  I think there might be some of both, basically; there&#39;s definitely cairo not using X well around.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
@@ -24,16 +24,16 @@ permalink: "/2007/05/performance-observation_24.html"
 <div class='content'>The original reason for the separate X11 server process was to reduce the amount of memory consumed by the low-level graphics libraries which in the pre-shared library days would have to be statically linked into every process. Of course, those days are long over.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Jeff</div>
-<div class='content'>Please go on a rant about X.  It seems that people used to dislike it (http://www.art.net/~hopkins/Don/unix-haters/x-windows/disaster.html)<br>Maybe I&#39;m not looking hard enough but most users seem to like X these days.  I&#39;m not sufficiently well informed to have a strong opinion, but I&#39;d like to hear yours.<br></div>
+<div class='author'>Tessa</div>
+<div class='content'>Depending on your Linux distro, it might be some new bug in X.  I&#39;ve been trying to figure out why in the latest Ubuntu distro (Feisty), desktop performance degrades over time.  Some links:<br>https://bugs.launchpad.net/ubuntu/+source/xorg/+bug/104481<br>http://ubuntuforums.org/showthread.php?t=443799<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan Amelang</div>
+<div class='content'>Hi Rob,<br>I think it would be more productive if you posted this information (and more, like an oprofile report) to the cairo and/or xorg lists. Frankly, I don&#39;t see anything constructive that can come out of ranting about performance to an audience that is unlikely to help you resolve your problem. Let&#39;s resume this conversation on the lists (I&#39;m active on both lists).<br>About your assertion of what the &quot;fundamental problem&quot; is regarding X, I have a different view.<br>As one that has read many, many system-wide performance profiles of applications that use the X server in various environments (e.g. desktop, embedded devices), I can say that the fact that drawing is done in a separate process is rarely the cause of poor performance.<br>I&#39;d be happy to go on, but as I said, this isn&#39;t the most productive place to carry on discussions of this nature.<br>Thank you for all the wonderful work you&#39;re doing at Mozilla. I&#39;m a very big fan of yours.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>You&#39;re absolutely right, it&#39;s not productive, that&#39;s why I wrote a short note instead of a long screed.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Boris</div>
-<div class='content'>That&#39;s basically what I see nowadays, yeah.  I think there might be some of both, basically; there&#39;s definitely cairo not using X well around.<br></div>
 </div>
 
 </div>

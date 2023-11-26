@@ -21,15 +21,74 @@ permalink: "/2016/02/rewrite-everything-in-rust.html"
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>Write everything in GO !! Starting with a simple tour www.golang.org</div>
+<div class='content'>you go first :-)
+
+But seriously, I wonder why so many new projects are started using the old, known unsafe, languages? Is it inertia? Fear of the unknown? The newer languages have just as many problems, just a different type?  Dunno.
+
+Glad I don&#39;t still have to teach C++ any more anyway,
+
+- Colin</div>
 <div class='comment'>
-<div class='author'>Jason Dusek</div>
-<div class='content'>It&#39;s not clear how you&#39;d do systems programming in a language like that, or how Go would provide libraries that other systems -- Postgres, Python, Nginx -- could load and use. Systems programming is one part doing things right and another part helping others to do so. (&quot;Write everything in Java&quot; is the rallying cry of an earlier generation; and it&#39;s about as realistic.)</div>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s probably a combination of factors --- inertia, fear of the unknown, fewer libraries, fear of having a smaller pool of potential contributors...
+Most of these fears will be mitigated the more people write code in Rust.
+
+Of course Mozilla is working on rewriting browser code in Rust. Of course, rewriting a huge amount of code is daunting. But as you say, for new projects, it shouldn&#39;t be such an issue.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Some of us have to build for systems outside of the Linux/OSX/Windows universe. For example, we have C++ compilers for AIX but no Rust compiler. So, C++ it is.</div>
+</div>
+<div class='comment'>
+<div class='author'>Corey</div>
+<div class='content'>Good ol&#39; Blub paradox?
+
+A lot of C++ programmers I talk to dismiss Rust as &quot;another trendy language,&quot; &quot;Why would you ever learn that?&quot; etc.
+
+They think C++ can already do everything Rust can do, &quot;What&#39;s the big deal about Rust? C++ has smart pointers, C++17 will add that feature,&quot; etc. etc.
+
+The C++ programmer argues that C++ supports safe programming, and if you can&#39;t program safely in C++, then you just suck, so Rust isn&#39;t needed  (seriously, when I took a jab at C++, my question was, what parts of C++ am I supposed to use and which are forbidden? How am I supposed to navigate the practices of &quot;good&quot; C++ programming without it being a full time job?).
+
+It&#39;s kind of funny how most programmers think they&#39;re the &quot;good programmer,&quot; invincible, and won&#39;t make mistakes, while everyone else just sucks (and really, this isn&#39;t a flaw of C++ programmers, but of human nature).
+
+But I think one thing they miss is that Rust takes the burden off the programmer to &quot;program correctly&quot;, and puts that as the compiler&#39;s job to enforce. This means even us mortal programmers can write safe code.</div>
+</div>
+<div class='comment'>
+<div class='author'>Brian</div>
+<div class='content'>Ocaml is type and memory safe as long as you avoid the Marshal library.  It still hasn&#39;t taken the world by storm even though it has been around for a few decades.  Guaranteed safety just isn&#39;t valued.</div>
+</div>
+<div class='comment'>
+<div class='author'>Brian</div>
+<div class='content'>Ocaml is type and memory safe as long as you avoid the Marshal library.  It still hasn&#39;t taken the world by storm even though it has been around for a few decades.  Guaranteed safety just isn&#39;t valued.</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Yeah, Go just isn&#39;t the right language for this, for the reasons I alluded to in my second paragraph.</div>
+<div class='content'>In fact there&#39;s no shortage of languages with guaranteed safety that are massively used in practice. Java, C#, Javascript and Python are just a few. (They vary in the strength of that guarantee but they&#39;re all reasonably sound.)
+
+The problem is that those Languages, and OCaml, don&#39;t give you complete control over resources, and require complex runtime support. Therefore you can&#39;t use them in a kernel and you can&#39;t use them as a library you&#39;d link into programs in a different language using standard mechanisms. When was the last time someone wrote an OCaml library that you would want to write Java and C# bindings for?</div>
 </div>
+<div class='comment'>
+<div class='author'>jan Tepo</div>
+<div class='content'>Rust is hard.
+
+No, seriously. It takes time and effort to adjust your thinking from C to Rust. And many developers (me) are too lazy to do that. So they just keep writing more and more code in C.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>mayankleoboy1</div>
+<div class='content'>Why not make it a rule that any new code added to gecko should be written in rust?
+Nothing says to the world that you believe in a language better than using it yourself in production code.
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>A lot of the code being added to Gecko has complicated interactions with lots of Gecko C++ code. That makes it hard to write in Rust.
+
+But yes, for new code added to Gecko we should --- and are --- asking whether it can be written in Rust.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Geeze, can you say installed base and ROI.  Not to mention programming resources, because the world is just chock full of Rust programmers.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -50,125 +109,23 @@ Edit the given example by removing comments ... get compilation error and think 
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>There&#39;s no doubt in my mind that Rust is a better language than C++. C++ has accumulated too much cruft over the years to be as simple and accessible as Rust, while not being safer.
-
-It&#39;s not a fair comparison, but that&#39;s often the case when a fresh new technology threatens an established one. At the same time, it is to be expected, since Rust was *designed* to be better than C++, with all of C++&#39;s faults in mind. 
-
-However, safety isn&#39;t the only important aspect of systems programming languages. C set the standards for object file formats, which in turn inspired many module systems, and finally package managers which give us fancy ways of copying libraries from one place to another.
-
-The C object format is at the root of most dependency hell problems, where a program needs two different versions of a library to run and can&#39;t load them both into the same process. What can Rust do to alleviate that pain ? 
-
-I looked at Cargo, but it seems as prone to DH as all other package managers out there. If you could guarantee that two distinct dependencies will *always* compile together, *that* would be a killer feature ! Many languages have strong guarantees and type systems, but very few get that part right (none that I know of, at least)</div>
+<div class='content'>Write everything in GO !! Starting with a simple tour www.golang.org</div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Yes, but what if I pull two versions of a library and try to import a function from one of them, how does Rust know which one I mean ? Since they both share a common namespace, and the function likely hasn&#39;t been renamed from one version to another, there&#39;s no possible way of knowing. 
-
-From what you wrote and the Cargo manual, it seems that transitive dependencies are always handled correctly, which is a good start. However, solving dependency hell means curing all DH-related headaches, not just the most common. Otherwise, you can be sure that someone, somewhere, at some point, will curse your module system for not keeping its promises ;-) 
-
-PS: conflicting C libraries are indeed trickier to include without causing linking problems, but if you mangle all the symbols of a C library relative to its dependent Rust one, then you can pretty much achieve the same result, can&#39;t you (I think I read this described somewhere as &quot;linker trickery&quot;) ? It&#39;s a bit more invasive, but, as you said, such is life when aiming to be C-compatible :-D 
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Rust uses name mangling to alleviate this problem. It can&#39;t help when you&#39;re bringing in external C-based dependencies, but pulling in two versions of the same pure-Rust dependency Just Works.
-
-Such is life when aiming to be C-compatible.
-</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Writing something is a great thing. But rewriting is quite difficult. Isn&#39;t it? For me, yes. Thanks for sharing. Top Tips!! For more visit: http://www.paperrewriter.com/</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Citations needed: &quot; Servo shows that large, complex Rust applications can perform well.&quot;</div>
-<div class='comment'>
-<div class='author'>Steve Klabnik</div>
-<div class='content'>&gt; There is essentially no webpage out there that it cannot get through at multiple hundreds of frames-per-second
-
-https://air.mozilla.org/bay-area-rust-meetup-february-2016/</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Dan L</div>
-<div class='content'>A memory safe language is a necessary but insufficient condition to &quot;do it right&quot;: 
-
-http://blog.acolyer.org/2016/02/23/not-quite-so-broken-tls/</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Of course.
-
-As it happens, Rust provides a lot more than just memory safety. For example the type system lets you create abstractions for parallelism that statically prevent data races.
-
-And as I mentioned in the post, Rust can and should be extended to provide even more guarantees.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Geeze, can you say installed base and ROI.  Not to mention programming resources, because the world is just chock full of Rust programmers.</div>
-</div>
-<div class='comment'>
-<div class='author'>Germán Diago</div>
-<div class='content'>Latest modules proposal: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0142r0.pdf. Fresh from last week or so.</div>
-</div>
-<div class='comment'>
-<div class='author'>REALHIPHOPINYOURLIFE</div>
-<div class='content'>Maybe if Rust had Algol/C style syntax people would be more willing. The fn -&gt; () -&lt; fn stuff turns some C and C++ people off.</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I&#39;ve never understood this; Rust&#39;s syntax *is* C-like. Notice the curly brackets-based scoping, the parenthesis-based function invocation, the fact that `-&lt;` never appears anywhere in the syntax, the way `while` and `if` are lifted almost verbatim from C, `struct`s are lifted almost verbatim (albeit somewhat extended), `enum`s are also lifted from C (albeit extensively extended into a whole sum-type implementation), the comment syntax, a ton of operators (`&amp;` reference, `*` dereference, `&gt;&gt;` and `&lt;&lt;` for shift, `&amp;` and `|` for bitwise compare, `&amp;&amp;` and `||` for boolean compare, `.` for member access, `%` for remainder, `!` for invert, `&#39;` for characters and `&quot;` for strings, `[]` for array access, `=` for assignment and `==` for comparison, and while they also share several others I guess it doesn&#39;t count of they&#39;re centuries-old math notation), the flow control statements `return`, `break`, and `continue`, and the identifier naming rules.
-
-There are other things Rust steals from C, like most of the underlying memory and execution model, but you were just talking about the syntax. It also borrows extensively from C++ specifically, but you said &quot;Algol/C style syntax&quot; and I don&#39;t know Algol.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I&#39;ve never understood this; Rust&#39;s syntax *is* C-like. Notice the curly brackets-based scoping, the parenthesis-based function invocation, the fact that `-&lt;` never appears anywhere in the syntax, the way `while` and `if` are lifted almost verbatim from C, `struct`s are lifted almost verbatim (albeit somewhat extended), `enum`s are also lifted from C (albeit extensively extended into a whole sum-type implementation), the comment syntax, a ton of operators (`&amp;` reference, `*` dereference, `&gt;&gt;` and `&lt;&lt;` for shift, `&amp;` and `|` for bitwise compare, `&amp;&amp;` and `||` for boolean compare, `.` for member access, `%` for remainder, `!` for invert, `&#39;` for characters and `&quot;` for strings, `[]` for array access, `=` for assignment and `==` for comparison, and while they also share several others I guess it doesn&#39;t count of they&#39;re centuries-old math notation), the flow control statements `return`, `break`, and `continue`, and the identifier naming rules.
-
-There are other things Rust steals from C, like most of the underlying memory and execution model, but you were just talking about the syntax. It also borrows extensively from C++ specifically, but you said &quot;Algol/C style syntax&quot; and I don&#39;t know Algol.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>mayankleoboy1</div>
-<div class='content'>Why not make it a rule that any new code added to gecko should be written in rust?
-Nothing says to the world that you believe in a language better than using it yourself in production code.
+<div class='author'>Jason Dusek</div>
+<div class='content'>It&#39;s not clear how you&#39;d do systems programming in a language like that, or how Go would provide libraries that other systems -- Postgres, Python, Nginx -- could load and use. Systems programming is one part doing things right and another part helping others to do so. (&quot;Write everything in Java&quot; is the rallying cry of an earlier generation; and it&#39;s about as realistic.)</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>A lot of the code being added to Gecko has complicated interactions with lots of Gecko C++ code. That makes it hard to write in Rust.
-
-But yes, for new code added to Gecko we should --- and are --- asking whether it can be written in Rust.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I know it is a cheap shot, but I have to say it: a blog post written by author of rather large project written in C++ (rr).</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>And in terms of rewriting everything to Rust … do you plan to rewrite rr?</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Not at this stage, no. rr is low priority for rewriting in a safe language because it has a small user base and doesn&#39;t deal with untrusted input.
-
-I&#39;d like to write new rr-related code in Rust if I can, though.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Sure, but rr started a long time before Rust was ready.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I think we chip away at things one step at a time. I am interested in DNS servers and caches using Rust. I like DJB&#39;s work but installing it on OS X is a huge pain.</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>This was my thinking also. DJB&#39;s work is great and could be a good starting point for a Rust based implementation.</div>
+<div class='content'>Yeah, Go just isn&#39;t the right language for this, for the reasons I alluded to in my second paragraph.</div>
 </div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>I&#39;m all for abandoning C++ for something better, but I think Nim is a much more suitable candidate for the job. Not only is a better language as a whole (check it out if you don&#39;t believe me), but it compiles to C++, so C and C++ can be freely reused with it. So with Nim, you don&#39;t have to rewrite everything, but instead reuse everything and write your new code in it.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Nim lacks Rust&#39;s ownership type system. The implications of that are too big to write in a blog comment, but basically in Rust you can build much more powerful statically-checked abstractions for safe memory management, parallelism, etc.</div>
+</div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>rvalues and unique pointers are in Nim&#39;s imminent future. Both are functionally borrowed from C++ and can have better compile time errors making it feel much like Rust in this regard.
@@ -181,17 +138,23 @@ The reason I support Nim if over Rust are its much more powerful metaprogramming
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Nim lacks Rust&#39;s ownership type system. The implications of that are too big to write in a blog comment, but basically in Rust you can build much more powerful statically-checked abstractions for safe memory management, parallelism, etc.</div>
+<div class='content'>Rust&#39;s ownership type system is more powerful than rvalues and unique pointers; safe borrowing is also essential. E.g. Rust&#39;s type system can be used to prevent iterator invalidation, but C++&#39;s rvalues and unique pointers can&#39;t.
+
+Rust&#39;s metaprogramming is also pretty great.</div>
 </div>
 <div class='comment'>
 <div class='author'>Jason Dusek</div>
 <div class='content'>Maybe when Nim develops stronger safety guarantees, we can rewrite some system libraries, filesystems or VPN servers in it. There is no shortage of work to be done here. And since Nim, Rust (and Swift) all have such clean handling of native code, there&#39;s no reason that using one limits us when we want to use the other.</div>
 </div>
+</div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Rust&#39;s ownership type system is more powerful than rvalues and unique pointers; safe borrowing is also essential. E.g. Rust&#39;s type system can be used to prevent iterator invalidation, but C++&#39;s rvalues and unique pointers can&#39;t.
+<div class='author'>Anonymous</div>
+<div class='content'>Citations needed: &quot; Servo shows that large, complex Rust applications can perform well.&quot;</div>
+<div class='comment'>
+<div class='author'>Steve Klabnik</div>
+<div class='content'>&gt; There is essentially no webpage out there that it cannot get through at multiple hundreds of frames-per-second
 
-Rust&#39;s metaprogramming is also pretty great.</div>
+https://air.mozilla.org/bay-area-rust-meetup-february-2016/</div>
 </div>
 </div>
 <div class='comment'>
@@ -227,18 +190,14 @@ https://www.youtube.com/watch?v=1OEu9C51K2A
 
  </div>
 <div class='comment'>
-<div class='author'>Germán Diago</div>
-<div class='content'>There is a modules proposal already in the works for at least a couple of years and two experimental implementations: Microsoft Compiler and Clang. </div>
+<div class='author'>Unknown</div>
+<div class='content'>Modern C++ has added a lot, but does it have a real module system yet instead of one that is founded upon <a href="http://graydon2.dreamwidth.org/218040.html" title="things rust shipped without" rel="nofollow">textual inclusion</a>, and has anybody actually committed to adopting it?
+
+That alone is almost worth staying off C++, but it&#39;s not as if there aren&#39;t other reasons if you wanted to look for more.</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>&gt; Add C compatibility and wide availability and you will understand that, as a tool, it is very useful.
-
-Rust has a zero-overhead C FFI; it is compatible with C.
-
-Rust is not a syntactic superset of C, but that gains very little. C calling into idiomatic C++ is just as complicated as C calling into Rust, because good C++/Rust APIs use features C simply doesn&#39;t have. C++ has a slight advantage calling into C, because the C++ compiler can parse C&#39;s headers, but there are external tools for doing that (rust-bindgen), and even C++ doesn&#39;t interface with C libraries exactly the same way it does native C++ ones, because there are still those `extern &quot;C&quot; {}` blocks (this will become even worse if C++ gets modules). Providing an idiomatic wrapper API for a C libraries, of course, is done the same way.
-
-Not having C&#39;s syntax is a strength anyway. For example, in C++, the syntactic validity of a statement can depend on the result of a template metaprogram, which itself will depend on type information declared earlier. This means that one does not simply parse a C++ program alone, one must do parsing and type resolution interleaved. Clang is an incredible engineering feat, and Rustc can get that good with less effort, and can surpass it with the same amount.</div>
+<div class='author'>Germán Diago</div>
+<div class='content'>There is a modules proposal already in the works for at least a couple of years and two experimental implementations: Microsoft Compiler and Clang. </div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -251,16 +210,6 @@ Even if those hold up, you have to consider whether rewriting your C++ code to f
 What I&#39;m looking for from Herb Sutter is not just a set of good guidelines and tools to check for them, but also a proof --- or at least an argument --- that if the tool finds no errors in a piece of code then that code cannot be the source of memory safety bugs.</div>
 </div>
 <div class='comment'>
-<div class='author'>Unknown</div>
-<div class='content'>Modern C++ has added a lot, but does it have a real module system yet instead of one that is founded upon <a href="http://graydon2.dreamwidth.org/218040.html" title="things rust shipped without" rel="nofollow">textual inclusion</a>, and has anybody actually committed to adopting it?
-
-That alone is almost worth staying off C++, but it&#39;s not as if there aren&#39;t other reasons if you wanted to look for more.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Maybe you could point me to the latest version of the write-up containing the soundness argument?</div>
-</div>
-<div class='comment'>
 <div class='author'>Germán Diago</div>
 <div class='content'>Did you see the video? It *can* be done. See Herb Sutter&#39;s video and demos. There is a subset, that, with the help of analysis is *guaranteed* to be type, bounds- and lifetime-safe. Which is what you are asking for. We all know Rust was designed for that from the ground up, noone will negate that. But I think you did not see the video as per your comment. It is a bit long, but Herb&#39;s video is exactly about this topic.
 
@@ -271,61 +220,112 @@ Bonus: when you use all these profiles: bounds-, type- and memory-safe, you can 
 <div class='author'>Robert</div>
 <div class='content'>I read the paper when it came out. There were gaping holes related to the treatment of aliasing. AFAIK no new paper has been produced since.</div>
 </div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Maybe you could point me to the latest version of the write-up containing the soundness argument?</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>you go first :-)
+<div class='content'>&gt; Add C compatibility and wide availability and you will understand that, as a tool, it is very useful.
 
-But seriously, I wonder why so many new projects are started using the old, known unsafe, languages? Is it inertia? Fear of the unknown? The newer languages have just as many problems, just a different type?  Dunno.
+Rust has a zero-overhead C FFI; it is compatible with C.
 
-Glad I don&#39;t still have to teach C++ any more anyway,
+Rust is not a syntactic superset of C, but that gains very little. C calling into idiomatic C++ is just as complicated as C calling into Rust, because good C++/Rust APIs use features C simply doesn&#39;t have. C++ has a slight advantage calling into C, because the C++ compiler can parse C&#39;s headers, but there are external tools for doing that (rust-bindgen), and even C++ doesn&#39;t interface with C libraries exactly the same way it does native C++ ones, because there are still those `extern &quot;C&quot; {}` blocks (this will become even worse if C++ gets modules). Providing an idiomatic wrapper API for a C libraries, of course, is done the same way.
 
-- Colin</div>
+Not having C&#39;s syntax is a strength anyway. For example, in C++, the syntactic validity of a statement can depend on the result of a template metaprogram, which itself will depend on type information declared earlier. This means that one does not simply parse a C++ program alone, one must do parsing and type resolution interleaved. Clang is an incredible engineering feat, and Rustc can get that good with less effort, and can surpass it with the same amount.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Germán Diago</div>
+<div class='content'>Latest modules proposal: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0142r0.pdf. Fresh from last week or so.</div>
+</div>
+<div class='comment'>
+<div class='author'>Dan L</div>
+<div class='content'>A memory safe language is a necessary but insufficient condition to &quot;do it right&quot;: 
+
+http://blog.acolyer.org/2016/02/23/not-quite-so-broken-tls/</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>It&#39;s probably a combination of factors --- inertia, fear of the unknown, fewer libraries, fear of having a smaller pool of potential contributors...
-Most of these fears will be mitigated the more people write code in Rust.
+<div class='content'>Of course.
 
-Of course Mozilla is working on rewriting browser code in Rust. Of course, rewriting a huge amount of code is daunting. But as you say, for new projects, it shouldn&#39;t be such an issue.</div>
+As it happens, Rust provides a lot more than just memory safety. For example the type system lets you create abstractions for parallelism that statically prevent data races.
+
+And as I mentioned in the post, Rust can and should be extended to provide even more guarantees.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>REALHIPHOPINYOURLIFE</div>
+<div class='content'>Maybe if Rust had Algol/C style syntax people would be more willing. The fn -&gt; () -&lt; fn stuff turns some C and C++ people off.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I&#39;ve never understood this; Rust&#39;s syntax *is* C-like. Notice the curly brackets-based scoping, the parenthesis-based function invocation, the fact that `-&lt;` never appears anywhere in the syntax, the way `while` and `if` are lifted almost verbatim from C, `struct`s are lifted almost verbatim (albeit somewhat extended), `enum`s are also lifted from C (albeit extensively extended into a whole sum-type implementation), the comment syntax, a ton of operators (`&amp;` reference, `*` dereference, `&gt;&gt;` and `&lt;&lt;` for shift, `&amp;` and `|` for bitwise compare, `&amp;&amp;` and `||` for boolean compare, `.` for member access, `%` for remainder, `!` for invert, `&#39;` for characters and `&quot;` for strings, `[]` for array access, `=` for assignment and `==` for comparison, and while they also share several others I guess it doesn&#39;t count of they&#39;re centuries-old math notation), the flow control statements `return`, `break`, and `continue`, and the identifier naming rules.
+
+There are other things Rust steals from C, like most of the underlying memory and execution model, but you were just talking about the syntax. It also borrows extensively from C++ specifically, but you said &quot;Algol/C style syntax&quot; and I don&#39;t know Algol.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>Some of us have to build for systems outside of the Linux/OSX/Windows universe. For example, we have C++ compilers for AIX but no Rust compiler. So, C++ it is.</div>
+<div class='content'>I&#39;ve never understood this; Rust&#39;s syntax *is* C-like. Notice the curly brackets-based scoping, the parenthesis-based function invocation, the fact that `-&lt;` never appears anywhere in the syntax, the way `while` and `if` are lifted almost verbatim from C, `struct`s are lifted almost verbatim (albeit somewhat extended), `enum`s are also lifted from C (albeit extensively extended into a whole sum-type implementation), the comment syntax, a ton of operators (`&amp;` reference, `*` dereference, `&gt;&gt;` and `&lt;&lt;` for shift, `&amp;` and `|` for bitwise compare, `&amp;&amp;` and `||` for boolean compare, `.` for member access, `%` for remainder, `!` for invert, `&#39;` for characters and `&quot;` for strings, `[]` for array access, `=` for assignment and `==` for comparison, and while they also share several others I guess it doesn&#39;t count of they&#39;re centuries-old math notation), the flow control statements `return`, `break`, and `continue`, and the identifier naming rules.
+
+There are other things Rust steals from C, like most of the underlying memory and execution model, but you were just talking about the syntax. It also borrows extensively from C++ specifically, but you said &quot;Algol/C style syntax&quot; and I don&#39;t know Algol.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>There&#39;s no doubt in my mind that Rust is a better language than C++. C++ has accumulated too much cruft over the years to be as simple and accessible as Rust, while not being safer.
+
+It&#39;s not a fair comparison, but that&#39;s often the case when a fresh new technology threatens an established one. At the same time, it is to be expected, since Rust was *designed* to be better than C++, with all of C++&#39;s faults in mind. 
+
+However, safety isn&#39;t the only important aspect of systems programming languages. C set the standards for object file formats, which in turn inspired many module systems, and finally package managers which give us fancy ways of copying libraries from one place to another.
+
+The C object format is at the root of most dependency hell problems, where a program needs two different versions of a library to run and can&#39;t load them both into the same process. What can Rust do to alleviate that pain ? 
+
+I looked at Cargo, but it seems as prone to DH as all other package managers out there. If you could guarantee that two distinct dependencies will *always* compile together, *that* would be a killer feature ! Many languages have strong guarantees and type systems, but very few get that part right (none that I know of, at least)</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Rust uses name mangling to alleviate this problem. It can&#39;t help when you&#39;re bringing in external C-based dependencies, but pulling in two versions of the same pure-Rust dependency Just Works.
+
+Such is life when aiming to be C-compatible.
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Yes, but what if I pull two versions of a library and try to import a function from one of them, how does Rust know which one I mean ? Since they both share a common namespace, and the function likely hasn&#39;t been renamed from one version to another, there&#39;s no possible way of knowing. 
+
+From what you wrote and the Cargo manual, it seems that transitive dependencies are always handled correctly, which is a good start. However, solving dependency hell means curing all DH-related headaches, not just the most common. Otherwise, you can be sure that someone, somewhere, at some point, will curse your module system for not keeping its promises ;-) 
+
+PS: conflicting C libraries are indeed trickier to include without causing linking problems, but if you mangle all the symbols of a C library relative to its dependent Rust one, then you can pretty much achieve the same result, can&#39;t you (I think I read this described somewhere as &quot;linker trickery&quot;) ? It&#39;s a bit more invasive, but, as you said, such is life when aiming to be C-compatible :-D 
+</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I think we chip away at things one step at a time. I am interested in DNS servers and caches using Rust. I like DJB&#39;s work but installing it on OS X is a huge pain.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>This was my thinking also. DJB&#39;s work is great and could be a good starting point for a Rust based implementation.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I know it is a cheap shot, but I have to say it: a blog post written by author of rather large project written in C++ (rr).</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Sure, but rr started a long time before Rust was ready.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>And in terms of rewriting everything to Rust … do you plan to rewrite rr?</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>In fact there&#39;s no shortage of languages with guaranteed safety that are massively used in practice. Java, C#, Javascript and Python are just a few. (They vary in the strength of that guarantee but they&#39;re all reasonably sound.)
+<div class='content'>Not at this stage, no. rr is low priority for rewriting in a safe language because it has a small user base and doesn&#39;t deal with untrusted input.
 
-The problem is that those Languages, and OCaml, don&#39;t give you complete control over resources, and require complex runtime support. Therefore you can&#39;t use them in a kernel and you can&#39;t use them as a library you&#39;d link into programs in a different language using standard mechanisms. When was the last time someone wrote an OCaml library that you would want to write Java and C# bindings for?</div>
+I&#39;d like to write new rr-related code in Rust if I can, though.</div>
+</div>
 </div>
 <div class='comment'>
-<div class='author'>Brian</div>
-<div class='content'>Ocaml is type and memory safe as long as you avoid the Marshal library.  It still hasn&#39;t taken the world by storm even though it has been around for a few decades.  Guaranteed safety just isn&#39;t valued.</div>
-</div>
-<div class='comment'>
-<div class='author'>jan Tepo</div>
-<div class='content'>Rust is hard.
-
-No, seriously. It takes time and effort to adjust your thinking from C to Rust. And many developers (me) are too lazy to do that. So they just keep writing more and more code in C.</div>
-</div>
-<div class='comment'>
-<div class='author'>Brian</div>
-<div class='content'>Ocaml is type and memory safe as long as you avoid the Marshal library.  It still hasn&#39;t taken the world by storm even though it has been around for a few decades.  Guaranteed safety just isn&#39;t valued.</div>
-</div>
-<div class='comment'>
-<div class='author'>Corey</div>
-<div class='content'>Good ol&#39; Blub paradox?
-
-A lot of C++ programmers I talk to dismiss Rust as &quot;another trendy language,&quot; &quot;Why would you ever learn that?&quot; etc.
-
-They think C++ can already do everything Rust can do, &quot;What&#39;s the big deal about Rust? C++ has smart pointers, C++17 will add that feature,&quot; etc. etc.
-
-The C++ programmer argues that C++ supports safe programming, and if you can&#39;t program safely in C++, then you just suck, so Rust isn&#39;t needed  (seriously, when I took a jab at C++, my question was, what parts of C++ am I supposed to use and which are forbidden? How am I supposed to navigate the practices of &quot;good&quot; C++ programming without it being a full time job?).
-
-It&#39;s kind of funny how most programmers think they&#39;re the &quot;good programmer,&quot; invincible, and won&#39;t make mistakes, while everyone else just sucks (and really, this isn&#39;t a flaw of C++ programmers, but of human nature).
-
-But I think one thing they miss is that Rust takes the burden off the programmer to &quot;program correctly&quot;, and puts that as the compiler&#39;s job to enforce. This means even us mortal programmers can write safe code.</div>
-</div>
+<div class='author'>Anonymous</div>
+<div class='content'>Writing something is a great thing. But rewriting is quite difficult. Isn&#39;t it? For me, yes. Thanks for sharing. Top Tips!! For more visit: http://www.paperrewriter.com/</div>
 </div>
 
 </div>

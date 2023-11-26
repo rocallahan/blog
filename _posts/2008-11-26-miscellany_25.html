@@ -8,22 +8,6 @@ permalink: "/2008/11/miscellany_25.html"
 <div class="columns"><p>I'm going offline from Wednesday afternoon to Saturday --- 10th wedding anniversary.<br/><p>I'm excited that FF3.1 should be released <a href="http://blogs.msdn.com/ie/archive/2008/11/19/ie8-what-s-after-beta-2.aspx">well in advance of IE8</a>; of course, we have serious competition from other directions :-). The layout blocker list for 1.9.1 is currently at 51 bugs. However, 23 of those bugs are fixed by patches that are ready to land as soon as the tree reopens after beta2. Several other bugs have patches awaiting review. So I think we're in quite good shape heading towards the final release. On the other hand, video/audio currently has 15 blocker bugs --- partly because the spec keeps changing. We're definitely going to go down to the wire in that area. But overall I'm feeling more comfortable heading into the end-game than I ever have before. I think a few factors have contributed to that: great test infrastructure over the entire development cycle, no huge architectural changes in this cycle, and more development manpower.<br/><p>We had a <a href="http://lists.whatwg.org/pipermail/whatwg-whatwg.org/2008-November/017083.html">big</a> <a href="http://lists.xiph.org/pipermail/theora/2008-November/001931.html">discussion</a> over the last couple of weeks about whether to restrict &lt;video&gt; and &lt;audio&gt; elements to playing media from the same domain by default (with <a href="http://www.w3.org/TR/access-control">Access Controls</a> to let servers opt in to greater permissiveness). The result was to allow it, with a few caveats.<br/><p><a href="http://blog.karlt.net/">Karl Tomlinson</a> has CSS @font-face "src:url()" downloaded fonts working with GTK/Pango/Freetype, and should be landing right after beta2. (@font-face "src: local()" isn't done yet but should be soon.) The integration is deep; ligatures, kerning and other shaping features are supported to the full extent Pango allows. It's also integrated with fontconfig although the best way to interface with fontconfig is <a href="http://lists.freedesktop.org/archives/fontconfig/2008-November/003037.html">not obvious</a>.<br/><p>One semi-controversial issue is what to display while a font is downloading. Should we display nothing, as Safari/Webkit does, or should we display text from the fallback font (e.g. the font used by a non @font-face-supporting browser)? There are arguments both ways.<br/><p>It's summer so that means interns are arriving (hi Michael!). We've also got Jonathan Kew visiting from the UK. Jonathan's working on integrating <a href="http://developer.apple.com/documentation/Carbon/Conceptual/CoreText_Programming/Overview/chapter_2_section_4.html#//apple_ref/doc/uid/TP40005533-CH3-DontLinkElementID_10">Core Text</a> into Gecko; Apple promises performance wins, so it'll be interesting to see how that works out. In any case we'll need it sooner or later since key parts of ATSUI won't be available in 64-bit Mac. It shouldn't be hard to support both ATSUI and Core Text, even switching at runtime depending on the OS version. I'd like to get that into Gecko 1.9.2.<br/><p>There's a lot more interesting font and text work to do. We're running into limitations of platform shaping APIs. For example, we want to expose CSS properties that let authors control the use of Opentype features, e.g., to control the kinds of ligatures that are used --- already in Firefox 3 we've found that there's no ligature setting that satisfies all authors. Another problem with platform APIs is that we have performance-critical optimizations that depend on assumptions like "fonts don't perform contextual shaping across ASCII spaces" and "insertion of line breaks doesn't affect shaping". These assumptions could be wrong, so we need to be able to tell when they're wrong and turn them off when necessary (and <em>only</em> when necessary) ... but platform shaper APIs don't give us this information.<br/><p>It seems like <a href="http://groups.google.com/group/mozilla.dev.platform/browse_thread/thread/e09b03086f6ea97b/79c4dca97ef050ba">a promising way to go</a> is to invest in <a href="http://freedesktop.org/wiki/Software/HarfBuzz">Harfbuzz</a>, first to use with GTK instead of going through Pango, then to ship and support on Windows and Mac as well. The second step is not trivial since we will have to make it play well with platform rasterizers (GDI and Quartz) without significant performance overhead. But it should let us solve the above problems and create new opportunities, e.g., the ability to add support for whatever Opentype features we desire. For various reasons we'd want to continue supporting Core Text and Uniscribe for fonts and scripts that Harfbuzz doesn't support well.<br/><p>There are lots of other exciting things to work on for 1.9.2. SMIL, SVG fonts and SVG images (&lt;img&gt; and CSS background-image) are high on the list, along with low-hanging CSS3 features like background-size, multiple backgrounds, maybe text-overflow. I think we'll see more work on deep architectural improvements than during the 1.9.1 cycle, although some of those will probably be too deep to actually make 1.9.2, assuming we keep it tight like we have for 1.9.1 --- I think we should!<br/><p>One deep project is memory management. I fantasize about a world without refcounting and the cycle collector, having JS objects and C++ objects living in the same heap, with concurrent mark and sweep collection. I don't know how realistic that is but I hope we find out.<br/><p>Amid all this, one thing that focuses me:<br/><blockquote><a href="http://www.biblegateway.com/passage/?book_id=49&chapter=12&verse=48&version=31&context=verse">From everyone who has been given much, much will be demanded; and from the one who has been entrusted with much, much more will be asked.</a></blockquote></div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Question</div>
-<div class='content'>Any news for https://wiki.mozilla.org/Gecko:Compositor?<br>SVG animation rely on it for better performance, isn&#39;t it?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>They rushed IE8 out faster than I thought they would. A lot of people don&#39;t think it&#39;s ready.<br>http://blogs.msdn.com/ie/archive/2009/02/16/just-the-facts-recap-of-compatibility-view.aspx#9430200<br>Also, 3.1 has slipped, mainly because of Tracemonkey.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jeff</div>
-<div class='content'>Harfbuzz!! woohoo!!  - this means we can use SIL&#39;s graphite fonts.  =)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Chris</div>
-<div class='content'>Exciting stuff!<br>Any chance of prioritising the camera / microphone / webcam work for 1.9.2? See https://bugzilla.mozilla.org/show_bug.cgi?id=451674<br>and https://bugzilla.mozilla.org/show_bug.cgi?id=46135.<br>This would make Google&#39;s recent iPhone speech recognition app work on the open web. It would also be great for mobile.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Fowl</div>
 <div class='content'>On the Windows side have you looked at DirectWrite (http://channel9.msdn.com/pdc2008/PC18/)<br></div>
 </div>
@@ -32,16 +16,32 @@ permalink: "/2008/11/miscellany_25.html"
 <div class='content'>We&#39;re aware of it.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Question</div>
+<div class='content'>Any news for https://wiki.mozilla.org/Gecko:Compositor?<br>SVG animation rely on it for better performance, isn&#39;t it?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris</div>
+<div class='content'>Exciting stuff!<br>Any chance of prioritising the camera / microphone / webcam work for 1.9.2? See https://bugzilla.mozilla.org/show_bug.cgi?id=451674<br>and https://bugzilla.mozilla.org/show_bug.cgi?id=46135.<br>This would make Google&#39;s recent iPhone speech recognition app work on the open web. It would also be great for mobile.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colm O Cinneide</div>
+<div class='content'>Thanks! followed the link-path and got Core text sample running.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>TheDaniel</div>
 <div class='content'>I look forward to the compositor work as well. Bug 215055 is really annoying.<br>I guess display: run-in; is not a low-hanging feature for 3.2? It&#39;s sad, because IE8 will include it (like Safari and Opera do, kind of..).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff</div>
+<div class='content'>Harfbuzz!! woohoo!!  - this means we can use SIL&#39;s graphite fonts.  =)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>RichB</div>
 <div class='content'>&gt; I&#39;m excited that FF3.1 should be released well in advance of IE8;<br>Still sure about that?<br>http://www.techarp.com/showarticle.aspx?artno=621<br>Still lots of TraceMonkey blockers<br>https://wiki.mozilla.org/Platform/2009-02-17<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Colm O Cinneide</div>
-<div class='content'>Thanks! followed the link-path and got Core text sample running.<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>They rushed IE8 out faster than I thought they would. A lot of people don&#39;t think it&#39;s ready.<br>http://blogs.msdn.com/ie/archive/2009/02/16/just-the-facts-recap-of-compatibility-view.aspx#9430200<br>Also, 3.1 has slipped, mainly because of Tracemonkey.<br></div>
 </div>
 
 </div>

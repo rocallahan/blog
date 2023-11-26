@@ -36,25 +36,12 @@ The speculatively executed code violates no type system invariants, but could le
 <p>Perhaps the biggest question is whether we are seeing just the start of a flood of serious attacks based on Spectre-like ideas. I think it's entirely possible, and if so, then dealing with those attacks piecemeal as they surface is going to be incredibly expensive and painful. There is even a possibility that the cost of mitigations will compound as mitigations interfere with one another and fewer and fewer people are capable of understanding what's going on. Therefore I hope and pray that people in positions of power &mdash; CPU vendors, big software vendors, etc &mdash; work together to come up with comprehensive, preventative fixes that simply rule out these classes of attacks, and don't let themselves be entirely consumed by demands for immediate responses to zero-day vulnerabilities. I applaud the sentiment of <a href="https://riscv.org/2018/01/more-secure-world-risc-v-isa/">RISC-V's statement to this end</a>, self-serving as it is.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Trevor Saunders</div>
-<div class='content'>yeah, process per origin is certainly a good thing in any case.  I don&#39;t really think the embargo hurt in the web browser space the way it kind of did in the VPS / virtualized server provider space, I imagine if your a small provider competing with Amazon and Google that wasn&#39;t great.
-Yeah, the synchronization is a real problem especially when power usage is important and spinlocking is really unfortunate.  Also I&#39;m not entirely sure how many things out there deal with multiple trust domains in one process like thing other than web browsers.  I seem to remember servo doing dom / js on a separate thread from layout, and people trying to run multiple dom threads in quantum, even if you wanted to share processes for memory usage reasons I wonder how thread per origin would work out / if either of these things gets you close enough to only one trust domain per thread.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>&quot;Little interpreters in the same address space&quot; include, say, Truetype hinting programs and Dwarf debuginfo expression evaluators.</div>
-</div>
-</div>
-<div class='comment'>
 <div class='author'>Ben Karel</div>
 <div class='content'>Languages that track effects in their type system, like Koka, could have an appealing story: both trusted code and untrusted code with sufficiently restricted effects (no concurrency and no timer access) can run &quot;full speed&quot;; only untrusted code needing access to dangerous primitives will have to take the full hit of Spectre mitigations. That is, rather than paying the cost for mitigations in all code, the type system can be used to elide the mitigations for code that doesn&#39;t have the power to (reliably) observe the microarchitectural side channel.
 
 One tiny (?) design cost of Spectre for effect type systems is that effect masking must be done more carefully. After all, Spectre leaks data via implementation details, and effect masking can hide such details! So while masking away internal mutation is probably still OK, masking away internal concurrency is a no-go.
 
 A complication for existing effect-typed languages like Haskell is that their effects aren&#39;t fine-grained enough to be useful in this context -- we&#39;d need to get rid of the IO sin bin. Having only coarse-grained effects is probably not more useful than having no effects at all. That said, I also don&#39;t have a principled answer for where to draw the line for &quot;sufficiently&quot; fine grained effects. Is network access OK? Console access? Filesystem access? For the time being, it&#39;ll boil down to unsubstantiated beliefs about the rates exposed by different potential channels.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I don&#39;t think this is a viable approach mainly because multithreaded shared-memory code is not going to go away, so solutions must be developed that still allow that code to run (fast), and if you have those solutions then your languages that prevent observing the timing channel are no longer needed.</div>
-</div>
 <div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>I don&#39;t understand how effect types would help against Spectre. Are you suggesting that effect types could block extraction of data from timing channels?</div>
@@ -67,6 +54,10 @@ It&#39;s the same intuition behind the mitigations in Firefox: take the observat
 and indirect access to precise timers), and the channel&#39;s bandwidth gets drastically reduced.
 
 </div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t think this is a viable approach mainly because multithreaded shared-memory code is not going to go away, so solutions must be developed that still allow that code to run (fast), and if you have those solutions then your languages that prevent observing the timing channel are no longer needed.</div>
 </div>
 </div>
 <div class='comment'>
@@ -97,6 +88,15 @@ I think I&#39;ve heard speculation Chrome has pushed on the process per site bec
 <div class='content'>Chrome&#39;s site per process work has been going on for years so I don&#39;t think the embargo was an issue here. In a way they got lucky, but it&#39;s also fair to argue that it was forward-thinking.
 
 Good point about separating trust across multiple cores. Since cores are relatively cheap these days that could be a good way to go ... if you can make the synchronization cheap enough.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Trevor Saunders</div>
+<div class='content'>yeah, process per origin is certainly a good thing in any case.  I don&#39;t really think the embargo hurt in the web browser space the way it kind of did in the VPS / virtualized server provider space, I imagine if your a small provider competing with Amazon and Google that wasn&#39;t great.
+Yeah, the synchronization is a real problem especially when power usage is important and spinlocking is really unfortunate.  Also I&#39;m not entirely sure how many things out there deal with multiple trust domains in one process like thing other than web browsers.  I seem to remember servo doing dom / js on a separate thread from layout, and people trying to run multiple dom threads in quantum, even if you wanted to share processes for memory usage reasons I wonder how thread per origin would work out / if either of these things gets you close enough to only one trust domain per thread.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>&quot;Little interpreters in the same address space&quot; include, say, Truetype hinting programs and Dwarf debuginfo expression evaluators.</div>
 </div>
 </div>
 

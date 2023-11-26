@@ -8,84 +8,84 @@ permalink: "/2005/04/acid2_22.html"
 There's been lots of speculation about which browser will get Acid2 working first. I'd put my money on Safari. The problem is that we're late in the Gecko 1.8/Firefox 1.1 release cycle and there are a couple of bugs that would be quite a lot of work to fix, and introduce significant risk, and they're just not as important as other work that we have long planned for 1.8 and some other strategic work that I'll blog about soon. We will get to it in 1.9.<br/><br/>I'm sure some will seize on this as an opportunity to say "Gecko developers don't care about standards" ... they're simply wrong, as anyone can tell by looking at the huge number of standards compliance bugs we fix in every release. And keep in mind that if everyone's #1 priority was always standards compliance, Firefox would never have happened.<br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Caleb</div>
-<div class='content'>I don&#39;t think that you guys realize the impact of this.<br>Even though that Safari will be the first one to pass the acid2 test, no one really cares about Safari since it&#39;s on the Mac.<br>But if the upcoming IE7 (which will probably be released two or three months after Firefox 1.1) will be the second browser to support acid2, and then, Opera8, leaving Firefox behind (since Gecko 1.9 is lightyears away) this will really be bad rep for Firefox.<br>I&#39;m sure that major news sites will have a blast bashing Firefox (I can already see the headlines in my head).<br>On the other hand, If IE7 fails the test then we have nothing to worry about :)<br>I bet that the Opera guys are worknig on this already so I suppose it&#39;ll be only IE7 and Firefox 1.1 who don&#39;t pass the test.<br>Just my 2 cents.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jimmy Hoeflinger</div>
-<div class='content'>Lightyear is a unit of distance, not time. Stop abusing your scientific units guys!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Adam Hauner</div>
-<div class='content'>Opera has even worse situation: test came day after freeze for Opera 8.0.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Adam Hauner</div>
-<div class='content'>Safari pass!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>S�ren Kuklau</div>
-<div class='content'>&quot;Even though that Safari will be the first one to pass the acid2 test, no one really cares about Safari since it&#39;s on the Mac.&quot;<br>Well apparently Nokia *does* care, since they&#39;re porting WebCore and thus Safari&#39;s backend to GNOME.<br>&quot;What does count as being the first to be compliant with the acid2 test?&quot;<br>Safari having passed it is a guarantee that some time this year (or early next year), it will publically support it, which is good for the web community as a whole. That&#39;s all that really matters -- not why, how or when a particular engine actually passed it, but whether it did.<br>&quot;Now it would be really nice for the Apple users for Apple to release a little Safari patch with all the updates from Dave Hyatt, let&#39;s hope it&#39;ll happen soon...&quot;<br>hyatt&#39;s final post includes links to all the 11 patches necessary, however, the last one is ObjC++ and thus won&#39;t work directly with KHTML, only with WebCore.<br>As for a publically-available precompiled update, I&#39;m sure a lot of QA will be necessary first. ;-)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Myrd</div>
-<div class='content'>Well, the timing is bad for everyone but the IE team on this one, Firefox being the second most fortunate after IE.<br>Opera gets a code freeze for 8.0 when the test is released. Apple ships Safari 1.3 (Panther) and Safari 2.0 (Tiger), and Mozilla Foundation is getting ready to get Firefox 1.1/Gecko 1.8 out the door.<br>Only the IE team has the perfect timing for the next release: IE7 is imminent. Whether they actually care about this test, is another story.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Kevin Hamilton</div>
-<div class='content'>t: Rory<br>I&#39;d say the only people who would care about something like the Acid2 test are people who are using standards oriented browsers already.  So while it might give enough of a PR boost to pull a couple of people over from Opera or Safari, it isn&#39;t going to mean squat to the other 85% of websurfers.<br>I think the real boost would be a morale boost for the evangelists.  Those who evangelize whichever browser completes Acid2 first will have something to talk about, which will make them happy.<br></div>
+<div class='author'>David Naylor</div>
+<div class='content'>Sounds great to me. I didn&#39;t expect that amount of rendering stuff to get fixed before 1.1/1.8.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Rory Parle</div>
 <div class='content'>It&#39;s unfortunate that the test wasn&#39;t released at a better time for Firefox. It would have been a great PR booster to be the first browser to pass the test.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Tr909</div>
-<div class='content'>What does count as being the first to be compliant with the acid2 test? Because, if Safari passes the acid2 test, when will users be able to get that version? As mentioned on: http://weblogs.mozillazine.org/mt/comment.cgi?entry_id=8011<br>...It took 8 months between the time that Dave posted about XSLT support for Safari here, and the time that we could actually get a copy of Safari with XSLT support. ...<br></div>
+<div class='author'>Adam Hauner</div>
+<div class='content'>Opera has even worse situation: test came day after freeze for Opera 8.0.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Leon Brooks</div>
-<div class='content'>KHTML (Konqueror) now passes, and iCab. That&#39;s three so far.<br>Going to be embarrassing for MS with 8 or 9 other browsers (&quot;everyone else&quot;) past the post in a few months but IE7 still dragging its butt.<br>Robert O&#39;C: spot the Kiwi.<br>Jimmy H: I prefer terms like &quot;light nanosecond&quot; (30 cm or approx 1 foot, making a kilometer roughly 3.3 light microseconds, a chain 66 light nanoseconds, a mile six light microseconds and Perth CBD about 0.1 light-milliseconds from here - Perth powerlines are in antiphase with powerlines in Collie or Jurien).<br></div>
+<div class='author'>Kevin Hamilton</div>
+<div class='content'>t: Rory<br>I&#39;d say the only people who would care about something like the Acid2 test are people who are using standards oriented browsers already.  So while it might give enough of a PR boost to pull a couple of people over from Opera or Safari, it isn&#39;t going to mean squat to the other 85% of websurfers.<br>I think the real boost would be a morale boost for the evangelists.  Those who evangelize whichever browser completes Acid2 first will have something to talk about, which will make them happy.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>David Naylor</div>
-<div class='content'>Sounds great to me. I didn&#39;t expect that amount of rendering stuff to get fixed before 1.1/1.8.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>The IE team has already done more than I thought they would (i.e., more than none), but passing Acid2 would require them to do tons of work (e.g., implement &quot;data:&quot; URLs).<br></div>
+<div class='author'>Caleb</div>
+<div class='content'>I don&#39;t think that you guys realize the impact of this.<br>Even though that Safari will be the first one to pass the acid2 test, no one really cares about Safari since it&#39;s on the Mac.<br>But if the upcoming IE7 (which will probably be released two or three months after Firefox 1.1) will be the second browser to support acid2, and then, Opera8, leaving Firefox behind (since Gecko 1.9 is lightyears away) this will really be bad rep for Firefox.<br>I&#39;m sure that major news sites will have a blast bashing Firefox (I can already see the headlines in my head).<br>On the other hand, If IE7 fails the test then we have nothing to worry about :)<br>I bet that the Opera guys are worknig on this already so I suppose it&#39;ll be only IE7 and Firefox 1.1 who don&#39;t pass the test.<br>Just my 2 cents.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>The chances of IE7 passing Acid2 are negligible. If it does, I&#39;ll change my name to Helen Clark.<br>Gecko 1.9 hopefully isn&#39;t lightyears away. It should be much shorter than 1.8 took. But even so, we have the advantage that before we do a real release people can still download our interim builds and see that it is fixed on trunk.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Masklinn</div>
-<div class='content'>Tr909 &gt; Dave posted the patches he created for the KHTML engine on his blog, so wether or not Apple decides to do an early release the users of Konqueror and other KHTML based browsers (are there any other but Safari?) will have a fully Acid2 compliant browser.<br>Now it would be really nice for the Apple users for Apple to release a little Safari patch with all the updates from Dave Hyatt, let&#39;s hope it&#39;ll happen soon...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Nathan</div>
-<div class='content'>it&#39;s true it matters.<br>I personally goes for the best browser.<br>Turns out Firefox has been the best to me for years now. But I admit that when I saw that Safari passed the test, I looked to see if a Windows version of Safari existed :)<br>(Un?)fortunately, there isn&#39;t. I also looked for Konqueror. I have also have a linux computer with firefox, i might install konqueror on it.<br>Keep up the good work firefox! I had my name of that New York Times ad!!! ;)<br></div>
+<div class='author'>Mr. Mike</div>
+<div class='content'>&quot;Even though that Safari will be the first one to pass the acid2 test, no one really cares about Safari since it&#39;s on the Mac.&quot;<br>Stop trolling around please, this is just putting your person below expectations..<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Caleb</div>
 <div class='content'>I&#39;ll hold you to that promise ;-)<br>There was this blog post by an IE7 developer (http://blogs.msdn.com/ie/archive/2005/04/22/410963.aspx) that said that they&#39;re working on CSS consistency issues and that the Beta1 is nearing, so who knows.<br>I hope that Gecko 1.9 won&#39;t be lightyears away either, but judging from the major changes in it and the polishing required for everything to be rock-solid (as possible) it will definetly be finalized after IE7.<br>And yeah, it&#39;s a big plus that that people can track your development by the nightly (and the hourly) builds, I know I do :)<br>Good luck!<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Myrd</div>
+<div class='content'>Well, the timing is bad for everyone but the IE team on this one, Firefox being the second most fortunate after IE.<br>Opera gets a code freeze for 8.0 when the test is released. Apple ships Safari 1.3 (Panther) and Safari 2.0 (Tiger), and Mozilla Foundation is getting ready to get Firefox 1.1/Gecko 1.8 out the door.<br>Only the IE team has the perfect timing for the next release: IE7 is imminent. Whether they actually care about this test, is another story.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>The IE team has already done more than I thought they would (i.e., more than none), but passing Acid2 would require them to do tons of work (e.g., implement &quot;data:&quot; URLs).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tr909</div>
+<div class='content'>What does count as being the first to be compliant with the acid2 test? Because, if Safari passes the acid2 test, when will users be able to get that version? As mentioned on: http://weblogs.mozillazine.org/mt/comment.cgi?entry_id=8011<br>...It took 8 months between the time that Dave posted about XSLT support for Safari here, and the time that we could actually get a copy of Safari with XSLT support. ...<br></div>
+</div>
+<div class='comment'>
 <div class='author'>shakey_snake</div>
 <div class='content'>If IE7 passes the acid2 test everyone wins.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>z</div>
-<div class='content'>FYI Opera 8.1 gets better results in Acid2 than the latest Firefox. ;)<br></div>
+<div class='author'>Adam Hauner</div>
+<div class='content'>Safari pass!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Masklinn</div>
+<div class='content'>Tr909 &gt; Dave posted the patches he created for the KHTML engine on his blog, so wether or not Apple decides to do an early release the users of Konqueror and other KHTML based browsers (are there any other but Safari?) will have a fully Acid2 compliant browser.<br>Now it would be really nice for the Apple users for Apple to release a little Safari patch with all the updates from Dave Hyatt, let&#39;s hope it&#39;ll happen soon...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>S�ren Kuklau</div>
+<div class='content'>&quot;Even though that Safari will be the first one to pass the acid2 test, no one really cares about Safari since it&#39;s on the Mac.&quot;<br>Well apparently Nokia *does* care, since they&#39;re porting WebCore and thus Safari&#39;s backend to GNOME.<br>&quot;What does count as being the first to be compliant with the acid2 test?&quot;<br>Safari having passed it is a guarantee that some time this year (or early next year), it will publically support it, which is good for the web community as a whole. That&#39;s all that really matters -- not why, how or when a particular engine actually passed it, but whether it did.<br>&quot;Now it would be really nice for the Apple users for Apple to release a little Safari patch with all the updates from Dave Hyatt, let&#39;s hope it&#39;ll happen soon...&quot;<br>hyatt&#39;s final post includes links to all the 11 patches necessary, however, the last one is ObjC++ and thus won&#39;t work directly with KHTML, only with WebCore.<br>As for a publically-available precompiled update, I&#39;m sure a lot of QA will be necessary first. ;-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jimmy Hoeflinger</div>
+<div class='content'>Lightyear is a unit of distance, not time. Stop abusing your scientific units guys!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Leon Brooks</div>
+<div class='content'>KHTML (Konqueror) now passes, and iCab. That&#39;s three so far.<br>Going to be embarrassing for MS with 8 or 9 other browsers (&quot;everyone else&quot;) past the post in a few months but IE7 still dragging its butt.<br>Robert O&#39;C: spot the Kiwi.<br>Jimmy H: I prefer terms like &quot;light nanosecond&quot; (30 cm or approx 1 foot, making a kilometer roughly 3.3 light microseconds, a chain 66 light nanoseconds, a mile six light microseconds and Perth CBD about 0.1 light-milliseconds from here - Perth powerlines are in antiphase with powerlines in Collie or Jurien).<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Surfingtom</div>
 <div class='content'>Good grief! STANDARDS DO MATTER. What the hell are you guys talking about. Thats the selling point for Firefox. Without it you have lost the lead (if you haven&#39;t already). You guys are resting on your laurels when the race has just started! Cmon - get going - kick some ass...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Mr. Mike</div>
-<div class='content'>&quot;Even though that Safari will be the first one to pass the acid2 test, no one really cares about Safari since it&#39;s on the Mac.&quot;<br>Stop trolling around please, this is just putting your person below expectations..<br></div>
+<div class='author'>Nathan</div>
+<div class='content'>it&#39;s true it matters.<br>I personally goes for the best browser.<br>Turns out Firefox has been the best to me for years now. But I admit that when I saw that Safari passed the test, I looked to see if a Windows version of Safari existed :)<br>(Un?)fortunately, there isn&#39;t. I also looked for Konqueror. I have also have a linux computer with firefox, i might install konqueror on it.<br>Keep up the good work firefox! I had my name of that New York Times ad!!! ;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>z</div>
+<div class='content'>FYI Opera 8.1 gets better results in Acid2 than the latest Firefox. ;)<br></div>
 </div>
 
 </div>

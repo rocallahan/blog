@@ -12,8 +12,16 @@ permalink: "/2011/11/drawing-dom-content-to-canvas.html"
 <p>Another limitation that's a bit annoying is that you have to use XML/XHTML syntax for the SVG image. It would be nice if you could use HTML syntax for the HTML content at least. Maybe it would be worth defining an "HTML image format" (image/html?) that uses the HTML5 parser to parse the image contents. Another issue is having to wait for the onload event to fire, drawing asynchronously. It might make sense to add a convenience API like "drawHTML(string, x, y, w, h)" which behaves like drawing an SVG image containing &lt;foreignObject&gt; (so doesn't introduce any new security concerns) but uses the HTML5 parser and is much more convenient. On the other hand, it might be better for developers to experiment with the existing solution and use that experience when designing a better API.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Tim M</div>
-<div class='content'>@Robert @Daniel I welcome the page https://developer.mozilla.org/en/SVG/SVG_as_an_Image but note it says &quot;:visited-link styles aren&#39;t rendered&quot; - I take it that actually all CSS rules involving :visited are omitted, as otherwise I can put another element within the a tag and use CSS rules to change that (eg margins and spacing) to leak the same info (something like &quot;.leaker { display: none; } :visited .leaker { display: block }&quot;)</div>
+<div class='author'>Tomer Cohen</div>
+<div class='content'>Who would be the first to build full featured feedback form which can include portion of the screen? I know that Google+ has it, but we need something that allow us to embed it on our sites as well.</div>
+</div>
+<div class='comment'>
+<div class='author'>Kevin Gadd</div>
+<div class='content'>Are the security constraints on SVG in Firefox or WebKit clearly documented anywhere? In the past I spent a couple frustrated days trying to get SVGs to work reliably in both browsers and was completely unsuccessful. 
+
+I basically encountered and tracked down each of the limitations you describe, but I was never able to find documentation of any of them. Is there a good reference page out there I should bookmark?
+
+If not, thanks for documenting those limitations here :)</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -22,12 +30,23 @@ permalink: "/2011/11/drawing-dom-content-to-canvas.html"
 Kevin: I don&#39;t think there is an MDN page for that. We need to create one.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I remember talking about this once, but I can&#39;t remember what we did about it. I think perhaps &lt;iframe&gt;s don&#39;t work at all in SVG images?</div>
+<div class='author'>Tim M</div>
+<div class='content'>IE doesn&#39;t support foreignObject in SVG at all in IE9 and it&#39;s not on the plan for IE10 either AFAIK.
+
+As it stands, when you do this with links, then it re-opens the history-leak-via-CSS security hole that all the browsers have been working to close (ie put an a tag in the foreignObject in SVG, render to canvas, then read back the pixels to see if the link was rendered in the :visited style) - see http://blog.mozilla.com/security/2010/03/31/plugging-the-css-history-leak/
+
+I&#39;d be more than happy to see it possible to render arbitrary SVG to PNG via canvas in the browser (or a toDataUrl() method) but I got the idea it wasn&#39;t going to be done for anything more than the most simplistic SVG - not to say that you don;t know more about it than me, but I am surprised...</div>
 </div>
 <div class='comment'>
-<div class='author'>Perth web design</div>
-<div class='content'>Funny that I&#39;ve never experienced this before. Thank you very much for sharing and I&#39;ll keep an eye on this.</div>
+<div class='author'>Robert</div>
+<div class='content'>Tim, I mentioned in my post that we don&#39;t apply visited-link styles in SVG images --- that&#39;s specifically to avoid history leaks.
+
+(The situation is actually slightly complicated; the patch to not use visited-link styles in SVG images only landed recently, but up to now drawing SVG images clears the origin-clean flag in canvases anyway, so there will never be a Firefox release that allows visited-link styles and also allows origin-clean SVG image drawing.)</div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Kroon</div>
+<div class='content'>Your demo only seems to work on Android WebKit for me. Chrome Canary and FF10 fail....
+Still like the demo :-)</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -42,26 +61,8 @@ Kevin: I don&#39;t think there is an MDN page for that. We need to create one.</
 Agreed. I&#39;ve just created an MDN page to document this: https://developer.mozilla.org/en/SVG/SVG_as_an_Image</div>
 </div>
 <div class='comment'>
-<div class='author'>Christoph</div>
-<div class='content'>I played around with the idea, using the MDN page as a reference. However with my current example I cannot get background-image to work with a dataURI.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>&quot;The trick is to create an SVG image containing the content you want to render, in this case a  containing HTML&quot;
-
-This restricts accessing/exporting from the canvas (after rendering) on Chrome (or Webkit based browsers in general), is that true? </div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Yes. Though I think it&#39;s cross-browser now because the spec on data URLs now says they&#39;re never same-origin.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Is this why I can&#39;t use the canvas created this way as a WebGL texture?</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Yes, it&#39;s a Chrome bug.</div>
-</div>
+<div class='author'>salmatron</div>
+<div class='content'>Aww I&#39;ve been waiting for this bug to be fixed since months :(</div>
 </div>
 <div class='comment'>
 <div class='author'>Tim M</div>
@@ -72,8 +73,18 @@ Hope you don&#39;t mind if I reference this page and your example as testcases.
 @Peter Kroon - the canvas rendered with the content for me under Chrome v16...</div>
 </div>
 <div class='comment'>
-<div class='author'>Christoph</div>
-<div class='content'>Robert, I finally filed a bug report. I&#39;d be happy if somebody could take a look at it. I made sure to add a test case and a workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=789249</div>
+<div class='author'>Robert</div>
+<div class='content'>Tim: of course I&#39;m glad to have people using this content!</div>
+</div>
+<div class='comment'>
+<div class='author'>Tim M</div>
+<div class='content'>@Robert @Daniel I welcome the page https://developer.mozilla.org/en/SVG/SVG_as_an_Image but note it says &quot;:visited-link styles aren&#39;t rendered&quot; - I take it that actually all CSS rules involving :visited are omitted, as otherwise I can put another element within the a tag and use CSS rules to change that (eg margins and spacing) to leak the same info (something like &quot;.leaker { display: none; } :visited .leaker { display: block }&quot;)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Reread the link you posted earlier --- &quot;Visited links can only be different in color: foreground, background, outline, border, SVG stroke and fill colors.&quot;
+
+In SVG images we don&#39;t even allow the colors to be different.</div>
 </div>
 <div class='comment'>
 <div class='author'>Jesse Ruderman</div>
@@ -82,33 +93,8 @@ Hope you don&#39;t mind if I reference this page and your example as testcases.
 (I tried this and couldn&#39;t get the HTML iframe to work at all, but I&#39;m guessing I just screwed up.)</div>
 </div>
 <div class='comment'>
-<div class='author'>Kevin Gadd</div>
-<div class='content'>Are the security constraints on SVG in Firefox or WebKit clearly documented anywhere? In the past I spent a couple frustrated days trying to get SVGs to work reliably in both browsers and was completely unsuccessful. 
-
-I basically encountered and tracked down each of the limitations you describe, but I was never able to find documentation of any of them. Is there a good reference page out there I should bookmark?
-
-If not, thanks for documenting those limitations here :)</div>
-</div>
-<div class='comment'>
-<div class='author'>Peter Kroon</div>
-<div class='content'>Your demo only seems to work on Android WebKit for me. Chrome Canary and FF10 fail....
-Still like the demo :-)</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Tim: of course I&#39;m glad to have people using this content!</div>
-</div>
-<div class='comment'>
-<div class='author'>Ryan Donovan</div>
-<div class='content'>My fellow <a href="http://www.designoffice.co.uk/" rel="nofollow">web designers in Cheshire</a> and I have been trying to implement DOM objects into our HTML codes, but whenever we debug it an error always appear. Reading your post just gave us an idea on what we can modify in our source code to make it work.</div>
-</div>
-<div class='comment'>
-<div class='author'>salmatron</div>
-<div class='content'>Aww I&#39;ve been waiting for this bug to be fixed since months :(</div>
-</div>
-<div class='comment'>
-<div class='author'>Qwertie</div>
-<div class='content'>Since apparently there are operations that make a canvas&#39;s pixel values unreadable by scripts, why is there any security concern? Rendering links and such on a canvas should be okay if the script can&#39;t read the pixels.</div>
+<div class='content'>I remember talking about this once, but I can&#39;t remember what we did about it. I think perhaps &lt;iframe&gt;s don&#39;t work at all in SVG images?</div>
 </div>
 <div class='comment'>
 <div class='author'>Daniel</div>
@@ -119,32 +105,46 @@ However, the code that ends up blocking &lt;iframe src=&quot;data URI&quot;&gt; 
 I&#39;m cleaning up that check in a followup bug, as noted in comment 39 on that bug.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Tim, I mentioned in my post that we don&#39;t apply visited-link styles in SVG images --- that&#39;s specifically to avoid history leaks.
-
-(The situation is actually slightly complicated; the patch to not use visited-link styles in SVG images only landed recently, but up to now drawing SVG images clears the origin-clean flag in canvases anyway, so there will never be a Firefox release that allows visited-link styles and also allows origin-clean SVG image drawing.)</div>
+<div class='author'>Perth web design</div>
+<div class='content'>Funny that I&#39;ve never experienced this before. Thank you very much for sharing and I&#39;ll keep an eye on this.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Reread the link you posted earlier --- &quot;Visited links can only be different in color: foreground, background, outline, border, SVG stroke and fill colors.&quot;
-
-In SVG images we don&#39;t even allow the colors to be different.</div>
+<div class='author'>Christoph</div>
+<div class='content'>I played around with the idea, using the MDN page as a reference. However with my current example I cannot get background-image to work with a dataURI.</div>
 </div>
 <div class='comment'>
 <div class='author'>Christoph</div>
 <div class='content'>I now built a simple library around the idea presented here. I do sometimes experience and issue where a background-image with data: URI is only rendered after a reload. For reference have a look at example.html in https://github.com/cburgmer/rasterizeHTML.js</div>
 </div>
 <div class='comment'>
-<div class='author'>Tim M</div>
-<div class='content'>IE doesn&#39;t support foreignObject in SVG at all in IE9 and it&#39;s not on the plan for IE10 either AFAIK.
-
-As it stands, when you do this with links, then it re-opens the history-leak-via-CSS security hole that all the browsers have been working to close (ie put an a tag in the foreignObject in SVG, render to canvas, then read back the pixels to see if the link was rendered in the :visited style) - see http://blog.mozilla.com/security/2010/03/31/plugging-the-css-history-leak/
-
-I&#39;d be more than happy to see it possible to render arbitrary SVG to PNG via canvas in the browser (or a toDataUrl() method) but I got the idea it wasn&#39;t going to be done for anything more than the most simplistic SVG - not to say that you don;t know more about it than me, but I am surprised...</div>
+<div class='author'>Ryan Donovan</div>
+<div class='content'>My fellow <a href="http://www.designoffice.co.uk/" rel="nofollow">web designers in Cheshire</a> and I have been trying to implement DOM objects into our HTML codes, but whenever we debug it an error always appear. Reading your post just gave us an idea on what we can modify in our source code to make it work.</div>
 </div>
 <div class='comment'>
-<div class='author'>Tomer Cohen</div>
-<div class='content'>Who would be the first to build full featured feedback form which can include portion of the screen? I know that Google+ has it, but we need something that allow us to embed it on our sites as well.</div>
+<div class='author'>Christoph</div>
+<div class='content'>Robert, I finally filed a bug report. I&#39;d be happy if somebody could take a look at it. I made sure to add a test case and a workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=789249</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&quot;The trick is to create an SVG image containing the content you want to render, in this case a  containing HTML&quot;
+
+This restricts accessing/exporting from the canvas (after rendering) on Chrome (or Webkit based browsers in general), is that true? </div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes, it&#39;s a Chrome bug.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Is this why I can&#39;t use the canvas created this way as a WebGL texture?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yes. Though I think it&#39;s cross-browser now because the spec on data URLs now says they&#39;re never same-origin.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Qwertie</div>
+<div class='content'>Since apparently there are operations that make a canvas&#39;s pixel values unreadable by scripts, why is there any security concern? Rendering links and such on a canvas should be okay if the script can&#39;t read the pixels.</div>
 </div>
 
 </div>

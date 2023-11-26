@@ -12,44 +12,44 @@ permalink: "/2008/03/not-cross-browser-implementation-of_07.html"
 <div class='content'>OTOH, if it quacks like a duck...<br>What are the use cases for modifying the DOM after the binding is applied?<br>Are there any that couldn&#39;t be satisfactorily addressed with functions added by the binding?<br>e.g. we already have different DOM interfaces for different elements: childNodes, removeChild(), rows, deleteRow(), options, remove()<br>I don&#39;t think anyone will balk at having: tabs, removeTab, etc<br>XBL2 (even a JS implementation) can standardize the way element behavior is enhanced. You can ditch toolkit specific attributes, elements.  Just use good semantic HTML and change your behavior in the same way as you change your style-sheets.<br>The only new things I can see native XBL2 facilitating (apart from speed) are:<br>- dynamically switchable bindings, and<br>- safe cross-site widgets, but I doubt that the security implications have been fully thought out.<br>Of course, I could be very wrong. Plus I&#39;m biased because I&#39;m also working on a JS implementation of XBL2. See http://www.meekostuff.net/xbl2<br>I&#39;d be quite interested in your thoughts.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Sean Hogan</div>
-<div class='content'>Brendan: Are you asking if one of the JS implementations could be made into a browser extension that does comply?<br>I&#39;m not sure if my approach would lend itself to this - I&#39;d definitely be considering other solutions if I was to do this.<br>You are probably better off asking Mr Ilinsky about his implementation. I haven&#39;t implemented any of the shadow-tree stuff.<br>Anyway, I&#39;m usually keen to show my ignorance. I&#39;d want:<br>- effectively two DOM trees - the physical (what the user sees) and the virtual (where original document and scripts live).<br>- private properties on elements (or unique ID&#39;s).<br>- DOMSubtreeModified to work.<br>- hooks into the CSS engine.<br>- also style resetting / scoping.<br>- Oh yeah, and to be exempted from the same-origin policy.<br>I haven&#39;t given any thought to elements prior to insertion into the DOM. And probably other stuff too numerous to mention.<br>Anyway, I&#39;ve convinced myself that my implementation isn&#39;t a good base for a conforming browser extension.<br>A lot of the complexity disappears for the (probably common) cases of bindings with no xbl:template or bindings attached to childless elements, which I think covers pretty much everything in web-forms2. Anyway, that is where I will be aiming with my implementation.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Brendan Eich</div>
-<div class='content'>Could this become a propert XBL2 implementation with just one or two native helper functions?<br>/be<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Martijn</div>
-<div class='content'>I still have difficulty understanding why xbl2 is needed when Mozilla already has xbl, fwiw.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Laurens Holst</div>
-<div class='content'>You’re pretty harsh. Is Mozilla even actively implementing XBL2? Any other browser?<br>~Grauw<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>&gt; What are the use cases for modifying the DOM<br>&gt; after the binding is applied?<br>Adding or removing items in an XBL-defined container?<br>Sure, you can add per-container APIs, but that makes XBL-defined containers distinctly second-class citizens, and makes life harder for developers who should be able to get by using only the regular DOM APIs.<br>Anonymity also helps developers by hiding binding implementation details from Firebug and other tools, and prevents developers from accidentally depending on binding implementation details, yielding more robust code.<br>Anonymity is also needed if you want to apply XBL easily to existing code, especially if that code is not under your control. XBL2 was specifically designed so that you can change the implementation of an element and be *sure* that you&#39;re not going to break anyone who&#39;s using it, even if you don&#39;t have their code in front of you, even if they hate you.<br>Again, I think this kind of JS preprocessing is cool. I just think this particular project is oversold.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Brendan: No. In XBL2 the anonymous nodes belong to their own bindings document, not the client&#39;s document. There are lots of other issues with providing full anonymity, like event propagation hiding the original target, CSS selectors working properly, etc.<br>Sean: yeah, these approaches could help drive XBL interest and adoption. That&#39;d be great.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Sean Hogan</div>
 <div class='content'>Okay, so it&#39;s not worse than the current solutions.<br>And when native XBL2 implementations are available and there are a decent number of XBL2 bindings floating around, I suspect that there will be a significant subset (perhaps a majority) of those bindings that Just Work in JS XBL implementations. Maybe not in the edge cases, but in the majority of scenarios.<br>But I wonder how many sites are going to use XBL at all if it isn&#39;t usable on IE. From that perspective the JS implementations could even help save XBL.<br>Time will tell, unless it doesn&#39;t.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Sean Hogan</div>
-<div class='content'>The XBL implementation would need hooks into pretty much all the DOM accessors / modifiers so as to present the relevant DOM tree for the different contexts: bound-document, binding-documents.<br>You&#39;d need JS sandboxes to create the binding document contexts. You probably already have that.<br>Event handling is the simplest part of the implementation. I&#39;d be surprised if you need to add much. TextInput events?<br>You&#39;d need hooks into the CSS engine, and the ability to block styles from applying in a shadow-tree.<br>There are some special elements like &lt;input&gt; which don&#39;t ever allow their children to be displayed (for obvious reasons). You&#39;d need to find a work-around for that - they will be the most commonly bound elements.<br>Thoughts? You can contact me directly if you want. shogun70 westnet com au<br></div>
+<div class='author'>Brendan Eich</div>
+<div class='content'>Could this become a propert XBL2 implementation with just one or two native helper functions?<br>/be<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>XBL1 is very poorly designed.<br></div>
+<div class='content'>Brendan: No. In XBL2 the anonymous nodes belong to their own bindings document, not the client&#39;s document. There are lots of other issues with providing full anonymity, like event propagation hiding the original target, CSS selectors working properly, etc.<br>Sean: yeah, these approaches could help drive XBL interest and adoption. That&#39;d be great.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurens Holst</div>
+<div class='content'>You’re pretty harsh. Is Mozilla even actively implementing XBL2? Any other browser?<br>~Grauw<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sean Hogan</div>
+<div class='content'>Brendan: Are you asking if one of the JS implementations could be made into a browser extension that does comply?<br>I&#39;m not sure if my approach would lend itself to this - I&#39;d definitely be considering other solutions if I was to do this.<br>You are probably better off asking Mr Ilinsky about his implementation. I haven&#39;t implemented any of the shadow-tree stuff.<br>Anyway, I&#39;m usually keen to show my ignorance. I&#39;d want:<br>- effectively two DOM trees - the physical (what the user sees) and the virtual (where original document and scripts live).<br>- private properties on elements (or unique ID&#39;s).<br>- DOMSubtreeModified to work.<br>- hooks into the CSS engine.<br>- also style resetting / scoping.<br>- Oh yeah, and to be exempted from the same-origin policy.<br>I haven&#39;t given any thought to elements prior to insertion into the DOM. And probably other stuff too numerous to mention.<br>Anyway, I&#39;ve convinced myself that my implementation isn&#39;t a good base for a conforming browser extension.<br>A lot of the complexity disappears for the (probably common) cases of bindings with no xbl:template or bindings attached to childless elements, which I think covers pretty much everything in web-forms2. Anyway, that is where I will be aiming with my implementation.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Brendan Eich</div>
 <div class='content'>I&#39;m asking what the simplest thing that would possibly &quot;work&quot; in the full sense roc rightly wants might be. What native APIs do we need for binding document, event propagation, etc., such that the code from ilinsky.com with added calls becomes a proper XBL2 implementation.<br>Maybe this is backwards, but it seems worth a moment&#39;s thought. I don&#39;t relish a full C++ XBL2 implementation if it&#39;s not needed, and if much of the code has already been written in JS.<br>/be<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sean Hogan</div>
+<div class='content'>The XBL implementation would need hooks into pretty much all the DOM accessors / modifiers so as to present the relevant DOM tree for the different contexts: bound-document, binding-documents.<br>You&#39;d need JS sandboxes to create the binding document contexts. You probably already have that.<br>Event handling is the simplest part of the implementation. I&#39;d be surprised if you need to add much. TextInput events?<br>You&#39;d need hooks into the CSS engine, and the ability to block styles from applying in a shadow-tree.<br>There are some special elements like &lt;input&gt; which don&#39;t ever allow their children to be displayed (for obvious reasons). You&#39;d need to find a work-around for that - they will be the most commonly bound elements.<br>Thoughts? You can contact me directly if you want. shogun70 westnet com au<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>I still have difficulty understanding why xbl2 is needed when Mozilla already has xbl, fwiw.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>XBL1 is very poorly designed.<br></div>
 </div>
 
 </div>

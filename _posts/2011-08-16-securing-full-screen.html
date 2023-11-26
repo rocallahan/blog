@@ -13,39 +13,8 @@ permalink: "/2011/08/securing-full-screen.html"
 <p>This problem would be a good one for security researchers to study and solve! I think the world would be a better place if security research focused more on constructive solutions to problems like this one :-). Anyway, feedback and ideas welcome from anyone, security researchers or not.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Josh Cogliati</div>
-<div class='content'>This is kind of a side comment, but when I click on flash to make it full screen, I really just want it to be the full size of the tab I am browsing it in.  Unfortunately the ui usually does not give that option.  If there is a full screen api, it would be very nice if there was an option to never allow full screen to actually be the full screen.  
-
-Also, &quot;We can ensure that full-screen requests are only honoured from scripts triggered by user input (mouse clicks and keystrokes), much like requests to open popup windows. &quot;  in practice means that the web page waits until I click on the page trying to do something else (like click on a link) and instead it opens the popup window then.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>good movies and trustworthy video web links, <a href="https://iterrariumtv.com" rel="nofollow">Terrarium TV App</a> PlayView, CinemaBox HD, PlayBox HD and also much more nice.</div>
-</div>
-<div class='comment'>
-<div class='author'>Ian Melven</div>
-<div class='content'>Hi Robert,
-
-a good post, it&#39;s nice to see this being discussed publicly.
-
-I agree wholeheartedly about the focus on attacks rather than defense, this was discussed pretty widely at Blackhat this year. 
-
-Personally, i like the idea of showing the URL bar if the fullscreened site navigates elsewhere. There are some edge cases here, and there&#39;s an objection the user could &#39;just miss it&#39; but I think it&#39;s not a bad compromise. 
-
-The points about spoofing being difficult because the user may have customized or non standard UI are valid, but there&#39;s so much fingerprinting possible by web content that I&#39;m not sure how solid of a mitigation this is. 
-
-As far as Flash goes, I believe many of the attacks around full screen mode involved clickjacking the Flash settings manager, which thankfully Firefox does not have to deal with :)</div>
-</div>
-<div class='comment'>
-<div class='author'>Juan Lang</div>
-<div class='content'>Browser security people don&#39;t much like phone browsers:
-http://mu.cs.ucdavis.edu/~fhsu/papers/upsec08.pdf</div>
-</div>
-<div class='comment'>
-<div class='author'>Rob Sayre</div>
-<div class='content'>I&#39;m still wondering about the perceived threat. If a large percentage of users don&#39;t understand the difference between browser UI and web content, what&#39;s been made worse?
-
-I&#39;d like to see a really good study on user awareness of browser trust boundaries. My guess is that awareness is close to 0%, but data would be awesome.</div>
+<div class='author'>Josh Triplett</div>
+<div class='content'>Why not do what video fullscreen does, and don&#39;t allow scripting to initiate fullscreen at all, in response to user input or otherwise?  You&#39;d get the equivalent of the old &quot;press alt-enter if you want to play fullscreen&quot;.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -54,97 +23,10 @@ I&#39;d like to see a really good study on user awareness of browser trust bound
 Any automatic full screen mode is asking for trouble. The simplest problem I can see is people getting stuck in that mode and asking for help to get their &quot;regular internet&quot; back.</div>
 </div>
 <div class='comment'>
-<div class='author'>Matt McMahon</div>
-<div class='content'>Warning messages won&#39;t work; they&#39;ll just be ignored. I&#39;d suggest a simple compromise:
-
-No matter what the page wants, no matter what preferences the user sets, what toolbar the user hides, or what plugins the user installs, the user should always be able to get their current location by moving their mouse to the top of the screen. If the browser is currently chrome-less (e.g., to play a movie) this would mean having the URL box slide down (like it does with Firefox&#39;s F11 full-screen currently). And yes, I think this should apply equally to full-screen flash (and other plugins) as it does to plain-old-html.
-
-No preference, plugin, or act of god should be allowed to disable this functionality.
-
-(Some day we may be able to figure out &quot;installing web apps&quot; and &quot;pin as app-tab&quot; well enough to avoid security issues, but that day hasn&#39;t yet arrived.)</div>
-</div>
-<div class='comment'>
-<div class='author'>RemiB</div>
-<div class='content'>like while playing a video on desktop app, while don&#39;t you show the url on mouse move ?</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>What about restricting fullscreen to HTTP sessions? Most of the fullscreen takeover scenarios involve things like bank accounts and web shops, usually using HTTPS.</div>
-</div>
-<div class='comment'>
-<div class='author'>Smylers</div>
-<div class='content'>Ian, it would not be acceptable for a presentation to show the URL bar every time the speaker switches to the next next slide.</div>
-</div>
-<div class='comment'>
-<div class='author'>Andrew</div>
-<div class='content'>I&#39;d suggest:
-  * Requiring the user to confirm full-screen mode. The dialog would describe how to get out of full-screen mode in a way that can&#39;t be blocked by the content, and how to tell that you are still in full screen mode.
-  * A 1 pixel red border around full-screen content. The content is not quite fullscreen (it loses two pixels of width, and two of height), but is close enough.
-
-I hypothesise that this should be enough to stop savvy users from being caught by UI spoofing. Less savvy users are already fooled by non-full-screen UI spoofing, so the remaining problem is not really unique to fullscreen mode.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>funThomas: that doesn&#39;t solve anything. The problem is when a malicious app is full-screen, displaying its own content but making it look like some other app.
-
-Rob: that&#39;s a good question.
-
-rushyo: &quot;There&#39;s an assumption this isn&#39;t already the case. You&#39;d be surprised.&quot; I have read plenty of security literature, and I have security researcher friends (e.g. Dawn Song) who I talk to regularly, and security research is definitely still far more about attack than defense. OK, sometimes once you see the attack the defense is obvious, but for most interesting work that isn&#39;t so.
-
-Trying to make sure &quot;no-one is emulating the browser UI&quot; sounds really hard to me, in terms of coming up with the right perceptual metrics.
-
-Blocking from controls wouldn&#39;t help at all, they can be emulated with canvas and JS if necessary.
-
-RemiB: as I suggested in paragraph 4, that&#39;s OK for video but won&#39;t work for games.
-
-Moldován, Eduárd: those suggestions won&#39;t help much; I covered them in my post.
-
-Gerv: forcing people to use Personas might indeed help. It&#39;s an interesting idea, but might be too radical.
-
-Flash getting away with it counts for something, but we have to consider the possibility that attacks just haven&#39;t become popular yet for some reason, e.g. there are currently easier methods to achieve the same ends, or simply that they haven&#39;t become fashionable yet. Remember that we knew about CSS-based history sniffing for years before it suddenly became a hot issue. Patching in a fix late sucks.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robin Berjon</div>
-<div class='content'>Assuming fullscreen can only be triggered by deliberate user action and said action immediately displays a message explaining how to exit full screen, given how difficult it is to credibly simulate a given user&#39;s UI I think it&#39;s overall fairly safe. Given the constraints I don&#39;t see how 100% security could be attained, but the cost of crafting an attack by these means compared with its odds of success seems highly prohibitive to me.</div>
-</div>
-<div class='comment'>
-<div class='author'>Gerv</div>
-<div class='content'>The goals &quot;provide a web page with the ability to control the entire screen area&quot; and &quot;make sure the user can always see security indicators&quot; are mutually exclusive. Which one do we loosen?
-
-I think, in fact, the &quot;full page&quot; spoof is going to be less common than you think. It&#39;s hard to make a web page which spoofs someone&#39;s desktop so they are not looking. Use Personas? You are pretty unspoofable? Any other desktop customization? The same.
-
-Flash has got away with the &quot;press Esc to exit full screen&quot; notice fading out for a while, and I haven&#39;t seen reports of full-screen flash spoofs in the wild. As long as people can always exit, I say we just do what they did.
-
-Gerv</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>i&#39;m fine with going full window (like some browsers do video right now) then leaving it up to the user to press F11</div>
-</div>
-<div class='comment'>
-<div class='author'>funtom</div>
-<div class='content'>I&#39;d suggest making obligation to specify resource URL at the time of calling full screen mode and display a message to the user once the URL changes.</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>People are used to having in-page UI to trigger full-screen. Relying on browser UI doesn&#39;t even solve the problems; see paragraph 4 of my post.
 
 Do people have problems &quot;getting stuck&quot; with the fullscreen API Flash offers now?</div>
-</div>
-<div class='comment'>
-<div class='author'>Moldován Eduárd</div>
-<div class='content'>How about educating the user? Show him where he is, in a non obtrusive way, like a faded minimalist browser ui. And if he is tricked, then he is tricked on his own responsability.
-This o course might be a solution next to the ones mentioned by you.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>A more realistic solution might be to disable forms and scripting related to forms whilst the user is in the full screen. Is there a use case where anyone wants to use forms in full screen? A full-screen video game invariably uses its own UI. If it wants to use web forms then it should expect the other things that come with the web... like an address bar.</div>
-</div>
-<div class='comment'>
-<div class='author'>Smylers</div>
-<div class='content'>Another common scenario for wanting full-screen is displaying presentations (using HTML as an alternative to something like Powerpoint).
-
-These require complete full-screen with no chrome (it&#39;s very distracting when presenters have bits of chrome and so on around their slides), for the presenter to be able to use the mouse pointer to point to things, and for full keyboard input to be available (many presenters script various navigation shortcuts).</div>
 </div>
 <div class='comment'>
 <div class='author'>Tommy McAnonymous</div>
@@ -153,46 +35,14 @@ These require complete full-screen with no chrome (it&#39;s very distracting whe
 Given today&#39;s vast array of screen resolutions, it&#39;s not like developers could count on &quot;full screen&quot; meaning anything with regards to resolution anyway.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Yeah but at least we can be very confident that you&#39;re looking at the screen and will be able to see the warning message we show.</div>
+<div class='author'>funtom</div>
+<div class='content'>I&#39;d suggest making obligation to specify resource URL at the time of calling full screen mode and display a message to the user once the URL changes.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robin Berjon</div>
-<div class='content'>Hey by the way it just dawned on me that I&#39;d forgotten to mention http://www.w3.org/TR/view-mode/ which may have some interest in helping to specifically style a full-screen context.</div>
-</div>
-<div class='comment'>
-<div class='author'>Josh Triplett</div>
-<div class='content'>Why not do what video fullscreen does, and don&#39;t allow scripting to initiate fullscreen at all, in response to user input or otherwise?  You&#39;d get the equivalent of the old &quot;press alt-enter if you want to play fullscreen&quot;.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>How about asking for permission to go fullscreen? Like browsers already do for other features like geolocation.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Ian: if the page navigates elsewhere we will leave full-screen automatically. But that doesn&#39;t help with spoofing issues.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>&quot;Blocking from controls wouldn&#39;t help at all, they can be emulated with canvas and JS if necessary.&quot;
+<div class='author'>Rob Sayre</div>
+<div class='content'>I&#39;m still wondering about the perceived threat. If a large percentage of users don&#39;t understand the difference between browser UI and web content, what&#39;s been made worse?
 
-Doesn&#39;t mean there not an aid though. I don&#39;t think anyone&#39;s going to come up with a silver bullet (you&#39;ve already established reasons why in your post - trust issues rarely have an explicit solution) but that doesn&#39;t mean you can&#39;t put down layers of difficulty. Malware writers ignore harder vectors if the ROI doesn&#39;t justify it.
-
-&quot;Gerv: forcing people to use Personas might indeed help. It&#39;s an interesting idea, but might be too radical.&quot;
-
-Taking a cue from Visa/Mastercard could we have a unique message/icon somewhere on the UI? We could automatically assign one (something like a Gravatar) so it wouldn&#39;t require user interaction or a particular decision.
-
-The downsides are only a study would illuminate whether this is really effective and there&#39;d need to be some measure of associated user education to maximise its utility.
-
-&quot;security research is definitely still far more about attack than defense.&quot;
-
-I still maintain that depends on the side of the fence you&#39;re on and which books you read. Independent researchers have a tendency to deal in attack. This is because in-house security researchers tend to consider themselves &#39;the defenders&#39; and don&#39;t accept nearly as much input on matters of defense. On the other hand inside every competent enterprise there&#39;s a security team that deals almost entirely in defense and very little in attack. Their literature deals very little with penetration testing and much more with handling modelling, analysis, policies, user education and defense in general.</div>
-</div>
-<div class='comment'>
-<div class='author'>Zack Weinberg</div>
-<div class='content'>There&#39;s some evidence that UI spoofing attacks work even if you aren&#39;t fullscreen -- see for instance <a href="http://mayscript.com/blog/eric/browser-ui-spoofing-attack-revisited" rel="nofollow">http://mayscript.com/blog/eric/browser-ui-spoofing-attack-revisited</a>, where a fake pop-up dialog box tricks users into entering credentials.  It&#39;s pretty easy to discover that the pop-up is a fake, but people don&#39;t bother.
-
-I think the long-term solution is BrowserID.  You can&#39;t give your credentials away if you didn&#39;t have them to begin with.</div>
+I&#39;d like to see a really good study on user awareness of browser trust boundaries. My guess is that awareness is close to 0%, but data would be awesome.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -215,10 +65,160 @@ One of my various use cases: HD TV in the front room. I want to watch the Formul
 At the risk of going somewhat application-layer gung-ho against this problem, couldn&#39;t you use the same regression testing suites that Firefox has to ensure the UI looks as intended to ensure that no-one is emulating that UI elsewhere on the page? Speed issues would be easily taken care of and there&#39;s little to no chance of a false positive. It would have to be part of a package solution though.</div>
 </div>
 <div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>A more realistic solution might be to disable forms and scripting related to forms whilst the user is in the full screen. Is there a use case where anyone wants to use forms in full screen? A full-screen video game invariably uses its own UI. If it wants to use web forms then it should expect the other things that come with the web... like an address bar.</div>
+</div>
+<div class='comment'>
+<div class='author'>RemiB</div>
+<div class='content'>like while playing a video on desktop app, while don&#39;t you show the url on mouse move ?</div>
+</div>
+<div class='comment'>
+<div class='author'>Moldován Eduárd</div>
+<div class='content'>How about educating the user? Show him where he is, in a non obtrusive way, like a faded minimalist browser ui. And if he is tricked, then he is tricked on his own responsability.
+This o course might be a solution next to the ones mentioned by you.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>How about asking for permission to go fullscreen? Like browsers already do for other features like geolocation.</div>
+</div>
+<div class='comment'>
+<div class='author'>Gerv</div>
+<div class='content'>The goals &quot;provide a web page with the ability to control the entire screen area&quot; and &quot;make sure the user can always see security indicators&quot; are mutually exclusive. Which one do we loosen?
+
+I think, in fact, the &quot;full page&quot; spoof is going to be less common than you think. It&#39;s hard to make a web page which spoofs someone&#39;s desktop so they are not looking. Use Personas? You are pretty unspoofable? Any other desktop customization? The same.
+
+Flash has got away with the &quot;press Esc to exit full screen&quot; notice fading out for a while, and I haven&#39;t seen reports of full-screen flash spoofs in the wild. As long as people can always exit, I say we just do what they did.
+
+Gerv</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>funThomas: that doesn&#39;t solve anything. The problem is when a malicious app is full-screen, displaying its own content but making it look like some other app.
+
+Rob: that&#39;s a good question.
+
+rushyo: &quot;There&#39;s an assumption this isn&#39;t already the case. You&#39;d be surprised.&quot; I have read plenty of security literature, and I have security researcher friends (e.g. Dawn Song) who I talk to regularly, and security research is definitely still far more about attack than defense. OK, sometimes once you see the attack the defense is obvious, but for most interesting work that isn&#39;t so.
+
+Trying to make sure &quot;no-one is emulating the browser UI&quot; sounds really hard to me, in terms of coming up with the right perceptual metrics.
+
+Blocking from controls wouldn&#39;t help at all, they can be emulated with canvas and JS if necessary.
+
+RemiB: as I suggested in paragraph 4, that&#39;s OK for video but won&#39;t work for games.
+
+Moldován, Eduárd: those suggestions won&#39;t help much; I covered them in my post.
+
+Gerv: forcing people to use Personas might indeed help. It&#39;s an interesting idea, but might be too radical.
+
+Flash getting away with it counts for something, but we have to consider the possibility that attacks just haven&#39;t become popular yet for some reason, e.g. there are currently easier methods to achieve the same ends, or simply that they haven&#39;t become fashionable yet. Remember that we knew about CSS-based history sniffing for years before it suddenly became a hot issue. Patching in a fix late sucks.</div>
+</div>
+<div class='comment'>
+<div class='author'>Zack Weinberg</div>
+<div class='content'>There&#39;s some evidence that UI spoofing attacks work even if you aren&#39;t fullscreen -- see for instance <a href="http://mayscript.com/blog/eric/browser-ui-spoofing-attack-revisited" rel="nofollow">http://mayscript.com/blog/eric/browser-ui-spoofing-attack-revisited</a>, where a fake pop-up dialog box tricks users into entering credentials.  It&#39;s pretty easy to discover that the pop-up is a fake, but people don&#39;t bother.
+
+I think the long-term solution is BrowserID.  You can&#39;t give your credentials away if you didn&#39;t have them to begin with.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>i&#39;m fine with going full window (like some browsers do video right now) then leaving it up to the user to press F11</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&quot;Blocking from controls wouldn&#39;t help at all, they can be emulated with canvas and JS if necessary.&quot;
+
+Doesn&#39;t mean there not an aid though. I don&#39;t think anyone&#39;s going to come up with a silver bullet (you&#39;ve already established reasons why in your post - trust issues rarely have an explicit solution) but that doesn&#39;t mean you can&#39;t put down layers of difficulty. Malware writers ignore harder vectors if the ROI doesn&#39;t justify it.
+
+&quot;Gerv: forcing people to use Personas might indeed help. It&#39;s an interesting idea, but might be too radical.&quot;
+
+Taking a cue from Visa/Mastercard could we have a unique message/icon somewhere on the UI? We could automatically assign one (something like a Gravatar) so it wouldn&#39;t require user interaction or a particular decision.
+
+The downsides are only a study would illuminate whether this is really effective and there&#39;d need to be some measure of associated user education to maximise its utility.
+
+&quot;security research is definitely still far more about attack than defense.&quot;
+
+I still maintain that depends on the side of the fence you&#39;re on and which books you read. Independent researchers have a tendency to deal in attack. This is because in-house security researchers tend to consider themselves &#39;the defenders&#39; and don&#39;t accept nearly as much input on matters of defense. On the other hand inside every competent enterprise there&#39;s a security team that deals almost entirely in defense and very little in attack. Their literature deals very little with penetration testing and much more with handling modelling, analysis, policies, user education and defense in general.</div>
+</div>
+<div class='comment'>
+<div class='author'>Smylers</div>
+<div class='content'>Another common scenario for wanting full-screen is displaying presentations (using HTML as an alternative to something like Powerpoint).
+
+These require complete full-screen with no chrome (it&#39;s very distracting when presenters have bits of chrome and so on around their slides), for the presenter to be able to use the mouse pointer to point to things, and for full keyboard input to be available (many presenters script various navigation shortcuts).</div>
+</div>
+<div class='comment'>
+<div class='author'>Ian Melven</div>
+<div class='content'>Hi Robert,
+
+a good post, it&#39;s nice to see this being discussed publicly.
+
+I agree wholeheartedly about the focus on attacks rather than defense, this was discussed pretty widely at Blackhat this year. 
+
+Personally, i like the idea of showing the URL bar if the fullscreened site navigates elsewhere. There are some edge cases here, and there&#39;s an objection the user could &#39;just miss it&#39; but I think it&#39;s not a bad compromise. 
+
+The points about spoofing being difficult because the user may have customized or non standard UI are valid, but there&#39;s so much fingerprinting possible by web content that I&#39;m not sure how solid of a mitigation this is. 
+
+As far as Flash goes, I believe many of the attacks around full screen mode involved clickjacking the Flash settings manager, which thankfully Firefox does not have to deal with :)</div>
+</div>
+<div class='comment'>
+<div class='author'>Smylers</div>
+<div class='content'>Ian, it would not be acceptable for a presentation to show the URL bar every time the speaker switches to the next next slide.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Ian: if the page navigates elsewhere we will leave full-screen automatically. But that doesn&#39;t help with spoofing issues.</div>
+</div>
+<div class='comment'>
+<div class='author'>Juan Lang</div>
+<div class='content'>Browser security people don&#39;t much like phone browsers:
+http://mu.cs.ucdavis.edu/~fhsu/papers/upsec08.pdf</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>What about restricting fullscreen to HTTP sessions? Most of the fullscreen takeover scenarios involve things like bank accounts and web shops, usually using HTTPS.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robin Berjon</div>
+<div class='content'>Assuming fullscreen can only be triggered by deliberate user action and said action immediately displays a message explaining how to exit full screen, given how difficult it is to credibly simulate a given user&#39;s UI I think it&#39;s overall fairly safe. Given the constraints I don&#39;t see how 100% security could be attained, but the cost of crafting an attack by these means compared with its odds of success seems highly prohibitive to me.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robin Berjon</div>
+<div class='content'>Hey by the way it just dawned on me that I&#39;d forgotten to mention http://www.w3.org/TR/view-mode/ which may have some interest in helping to specifically style a full-screen context.</div>
+</div>
+<div class='comment'>
+<div class='author'>Josh Cogliati</div>
+<div class='content'>This is kind of a side comment, but when I click on flash to make it full screen, I really just want it to be the full size of the tab I am browsing it in.  Unfortunately the ui usually does not give that option.  If there is a full screen api, it would be very nice if there was an option to never allow full screen to actually be the full screen.  
+
+Also, &quot;We can ensure that full-screen requests are only honoured from scripts triggered by user input (mouse clicks and keystrokes), much like requests to open popup windows. &quot;  in practice means that the web page waits until I click on the page trying to do something else (like click on a link) and instead it opens the popup window then.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Yeah but at least we can be very confident that you&#39;re looking at the screen and will be able to see the warning message we show.</div>
+</div>
+<div class='comment'>
+<div class='author'>Matt McMahon</div>
+<div class='content'>Warning messages won&#39;t work; they&#39;ll just be ignored. I&#39;d suggest a simple compromise:
+
+No matter what the page wants, no matter what preferences the user sets, what toolbar the user hides, or what plugins the user installs, the user should always be able to get their current location by moving their mouse to the top of the screen. If the browser is currently chrome-less (e.g., to play a movie) this would mean having the URL box slide down (like it does with Firefox&#39;s F11 full-screen currently). And yes, I think this should apply equally to full-screen flash (and other plugins) as it does to plain-old-html.
+
+No preference, plugin, or act of god should be allowed to disable this functionality.
+
+(Some day we may be able to figure out &quot;installing web apps&quot; and &quot;pin as app-tab&quot; well enough to avoid security issues, but that day hasn&#39;t yet arrived.)</div>
+</div>
+<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>It&#39;s not clear to me that &quot;Press Esc to exit full-screen&quot; will be ignored to the point that users don&#39;t know how to exit full-screen.
 
 Your suggestion about moving the mouse to the top of the screen would break some full-screen apps.</div>
+</div>
+<div class='comment'>
+<div class='author'>Andrew</div>
+<div class='content'>I&#39;d suggest:
+  * Requiring the user to confirm full-screen mode. The dialog would describe how to get out of full-screen mode in a way that can&#39;t be blocked by the content, and how to tell that you are still in full screen mode.
+  * A 1 pixel red border around full-screen content. The content is not quite fullscreen (it loses two pixels of width, and two of height), but is close enough.
+
+I hypothesise that this should be enough to stop savvy users from being caught by UI spoofing. Less savvy users are already fooled by non-full-screen UI spoofing, so the remaining problem is not really unique to fullscreen mode.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>good movies and trustworthy video web links, <a href="https://iterrariumtv.com" rel="nofollow">Terrarium TV App</a> PlayView, CinemaBox HD, PlayBox HD and also much more nice.</div>
 </div>
 
 </div>

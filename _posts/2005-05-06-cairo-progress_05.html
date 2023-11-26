@@ -8,32 +8,20 @@ permalink: "/2005/05/cairo-progress_05.html"
 <div class="columns">In between checking in layout patches and fixing regressions, I've been pressing on with cairo integration. I've done a couple of major things since the last update:<br/><ul><br/><li>Glitz integration. I have Mozilla builds running with Glitz. Unfortunately there are some serious bugs that would make it embarrassing to post a screenshot right now.<br/><li>Drawing text using cairo. Up till now we've been using Xft to draw text. I updated to the latest cairo version and modified our Xft-Pango code to do Xft-cairo-Pango. This means we use Xft and Pango to do glyph selection and text measurement, and use cairo just to render the actual glyphs. This seems to work quite well. Eventually we will use cairo to measure text instead of Xft. On Windows and Mac we can't use Pango (since we want everything we distribute to be MPL-compatible), so we'll have to reuse more of our existing font code.<br/><li>I also fixed various bugs in our cairo glue ... translucent images need premultiplied alpha, some clipping wasn't implemented, etc.<br/></ul><br/><br/>Next I need to fix some of the more glaring rendering bugs and then I'll start experimenting with SVG/HTML integration (but I'll have to get SVG working; it's currently broken in this build).<br/><br/>One issue which I'm putting off is the fact that native GTK2 themes don't work in cairo --- GTK themes want to draw into a GTK rendering context (naturally enough), and we don't have one. Among other things, this means that Firefox menus are transparent, because their background isn't drawn. I think we can rig something up by having nsNativeThemeGTK render to an offscreen pixmap if a GTK rendering context isn't available, then copying that pixmap to the Cairo context. (Ultimately GTK2 itself will render using cairo and hopefully then this issue will have a cleaner solution.) In any case this is not a priority right now.</div><br/><br/><div class="image"><img alt="ffcairo.png" src="/assets/images/images/ffcairo.png" width="746" height="682" /></div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>AkaXakA</div>
-<div class='content'>It looks wonderful!<br>Keep up the good work.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>I don&#39;t know. We certainly could use Uniscribe with cairo if we wanted to. IIRC we can&#39;t rely on Uniscribe 100% because we don&#39;t want to redistribute it and some Windows boxes don&#39;t have it. We could port our current Windows font code over for use with cairo, if necessary<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jungshik Shin</div>
-<div class='content'>Will Cairo on Windows use Uniscribe or Pango ported to Windows? (see bug 218887, bug 157967)<br>Pango is not an I18N library per se but a layout library with a strong I18N support (including complex script support) that is roughly on par with Uniscribe on Windows and ATSUI on Mac OS X.<br></div>
+<div class='author'>Grey Hodge</div>
+<div class='content'>What are some Pango/Windows issues? Can you briefly explain?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Pango is LGPL only. Mozilla.org has a general policy of only distributing code licensed under the MPL (and possibly other licenses). So Mozilla.org doesn&#39;t want to distribute Pango. This isn&#39;t a such a problem on Linux, where some version of Pango is probably already installed (although it might be a problem for some older distributions). It&#39;s a big problem on Windows where Pango is very unlikely to be already installed.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Owen Taylor is working on cairo, and he wrote Pango which is a really strong i18n library, so i18n needs are being taken care of. My current cairo code uses Pango so i18n is probably already at least as good as what&#39;s on the trunk.<br></div>
+<div class='author'>Caleb</div>
+<div class='content'>I&#39;d just like to congratulate you for the progress you&#39;re making in this area, I can&#39;t wait for the next Cairo report :)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>jmdesp</div>
-<div class='content'>What I read about your work of porting to Cairo really makes me think that the i18n aspect of it is a really delicate part, that you must not get wrong. The MoFo product are used in many part of the world, in many languages, and have a great support for that. Cairo must not mean a regression.<br>Make sure you synchronize with the i18n team as much as needed, it must not be an afterthought.<br>Do you about Sila ? Even if the project stopped, it included interesting change to mozilla GFX to enable powerful mechanism to support really complex scripts :<br>http://sila.mozdev.org/<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Grey Hodge</div>
-<div class='content'>What are some Pango/Windows issues? Can you briefly explain?<br></div>
+<div class='author'>AkaXakA</div>
+<div class='content'>It looks wonderful!<br>Keep up the good work.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Greg K.</div>
@@ -44,12 +32,24 @@ permalink: "/2005/05/cairo-progress_05.html"
 <div class='content'>Robert, I&#39;m curious about teh speed od the glitz enabled builds, is it any good compared to the first builds you did with cairo?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Caleb</div>
-<div class='content'>I&#39;d just like to congratulate you for the progress you&#39;re making in this area, I can&#39;t wait for the next Cairo report :)<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Greg: there is work going on to integrate ATSUI with Cairo.<br>Martijn: I haven&#39;t done any performance work yet.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>jmdesp</div>
+<div class='content'>What I read about your work of porting to Cairo really makes me think that the i18n aspect of it is a really delicate part, that you must not get wrong. The MoFo product are used in many part of the world, in many languages, and have a great support for that. Cairo must not mean a regression.<br>Make sure you synchronize with the i18n team as much as needed, it must not be an afterthought.<br>Do you about Sila ? Even if the project stopped, it included interesting change to mozilla GFX to enable powerful mechanism to support really complex scripts :<br>http://sila.mozdev.org/<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Greg: there is work going on to integrate ATSUI with Cairo.<br>Martijn: I haven&#39;t done any performance work yet.<br></div>
+<div class='content'>Owen Taylor is working on cairo, and he wrote Pango which is a really strong i18n library, so i18n needs are being taken care of. My current cairo code uses Pango so i18n is probably already at least as good as what&#39;s on the trunk.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jungshik Shin</div>
+<div class='content'>Will Cairo on Windows use Uniscribe or Pango ported to Windows? (see bug 218887, bug 157967)<br>Pango is not an I18N library per se but a layout library with a strong I18N support (including complex script support) that is roughly on par with Uniscribe on Windows and ATSUI on Mac OS X.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t know. We certainly could use Uniscribe with cairo if we wanted to. IIRC we can&#39;t rely on Uniscribe 100% because we don&#39;t want to redistribute it and some Windows boxes don&#39;t have it. We could port our current Windows font code over for use with cairo, if necessary<br></div>
 </div>
 
 </div>

@@ -8,6 +8,30 @@ permalink: "/2010/12/gpu-accelerated-video-playback-in_03.html"
 <div class="columns"><p>Now that accelerated layers have been turned on for a while in Firefox 4 betas, I want to explain what this means for HTML5 &lt;video&gt; playback in Firefox and how it compares with <a href="http://www.adobe.com/devnet/flashplayer/articles/stage_video.html">what Adobe is doing</a> in Flash 10.2.<br/><p>I've already written about our <a href="/2010/04/layers.html">layers framework</a> and how that contributes to GPU-accelerated rendering. For each frame, our video decoder libraries (libvp8, libtheora) produce a YCbCr (aka YUV) image in their output buffer in system memory. This is usually, but not always, in 4:2:0 format. In the video decode thread we wrap this buffer up into a YCbCrImage object, which makes a copy. (We have to copy here because the decoder libraries overwrite their output buffer for every frame, and we're decoding a bit ahead of the current frame to avoid jitter.) Exactly how that copy is made depends on the layers backend:<br/><ul><br/><li>For GPU backends that support multithreaded access to GPU resources (currently our D3D10 backend), the video decoder thread copies the output buffer directly into VRAM. This is the most efficient approach.<br/><li>For GPU backends that don't support multithreaded access, we copy the output buffer in system memory. The buffer is uploaded to VRAM later when we paint on the main thread.<br/><li>For CPU-only rendering, we convert the output buffer from YUV to RGB (while also scaling it to the expected output size) on the video decoder thread.<br/></ul><br/><p>Actual rendering happens on the main thread. When we composite an ImageLayer containing a YCbCrImage into the window, the GPU converts to RGB at draw time using a shader program (and also handles scaling). When we're not using the GPU, we just draw the pre-converted image (possibly with some rescaling if the output size has changed since we did the convert-and-scale step).<br/><p>This architecture seems optimal given the constraints we're currently working with, although it will need to evolve in a few directions. Other than being fast, it works well for Web authors. Unlike Adobe's "stage video", it just works without authors having to do anything. You can overlay and underlay content around the video without losing acceleration. You can wrap it in a container with CSS opacity and 2D transforms, scroll it and clip it, without losing acceleration. (Currently a few effects will cause us to deaccelerate --- if the video has an ancestor element with 'border-radius' and non-visible 'overflow', an ancestor with CSS mask, filter or clip-path, or an SVG ancestor. We'll fix those cases post-FF4 by accelerating them.)<br/><p>This design will need to evolve in a few directions. We currently don't have hardware decoders for our video formats, but that will change as hardware support for VP8 spreads, and we'll need to take advantage of it. We may need to introduce a new Image type or even a new Layer type to encapsulate hardware decoding. I hope that there will be an efficient way to get decoded video data into textures, otherwise we'll have to limit the use of hardware decoders to whatever special cases their APIs support.<br/><p>Some devices have GPUs with bad enough shader performance that doing YUV conversion with shaders is a noticeable performance hit. But some of them have native support for YUV-format textures or surfaces with dedicated hardware for YUV conversion. We should use those features. This won't require any architectural changes.<br/><p>In Fennec, we composite the layer tree in a different process to the content process that actually does the video decoding. This will later be true for desktop Firefox too. This requires us to ship our YCbCr frames through shared memory or shared VRAM buffers, but we should be able to keep the same basic architecture.<br/><p>The separate compositor process gives us one extra advantage. If the main thread of the content process is busy (e.g., running some in-page Javascript), we'll be able to deliver decoded video frames directly from the video decoder thread to the compositor process and render them on the screen. This means we'll be able to maintain smooth video playback no matter what else the browser is doing. (At least until the demands of video decoding and GPU compositing completely overwhelm your system...)</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>Dan</div>
+<div class='content'>Sounds great.  Would be better still with H.264 support.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jason</div>
+<div class='content'>Sounds neat, but given what Flash did to my computer (namely, making ATI&#39;s drivers bring down the entire computer), my main question is how easy will it be for a user to shut this off if it affects system stability?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eevee</div>
+<div class='content'>Thanks for all the hard work and all, but I want a pony.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>hunts</div>
+<div class='content'>VLC plays h.264<br>There&#39;s a vlc plugin for mozilla and firefox.<br>Could there be a way to have firefox just pass responsibility over to the vlc plugin whenever i encounters an H.264 video?<br>We get to watch  H.264, you get to keep  H.264 code out of your system. Everybody wins.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ben</div>
+<div class='content'>&gt; (We have to copy here because the decoder libraries overwrite their output buffer for every frame<br>This seems wrong. Both Theora and VP8 are formats where a new frame copies parts of old frames. You never modify old frames as part of the decoding process. You just discard them when you don&#39;t need them any longer.<br>If the decoder always gives you the frame in the same buffer (same memory address), then it&#39;s doing an extra copy of its own, which is bad.<br>Also, it shouldn&#39;t be difficult to rig the decoders so they hold onto frames as long as you need (allocate new memory for every new frame, and never automatically free old frames).<br>What Adobe is doing is useless as it requires competent authoring. Most of the video sites (everyone except YouTube actually) don&#39;t get wmode and hardware scaling right. I have no hope on solutions which require web developers to do the right thing, so the way it&#39;s done in Firefox is great.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Ben, you&#39;re mistaken. libtheora and libvpx reuse the same output buffer precisely because when part of a frame doesn&#39;t change from one frame to the next, they don&#39;t even need to touch that part of the output buffer. If they always produced new buffers, THEN they&#39;d have to internally copy from one frame to the next.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Ben</div>
 <div class='content'>I&#39;m pretty sure I&#39;m not mistaken :) Decoding frames &quot;in-place&quot; is never done in practice. For motion-compensated codecs it can&#39;t possibly work, as you&#39;d be overwriting data you could need for the next blocks. And yes, for a frame where a single block changes, the rest are copied. That&#39;s the normal process for decoding. Ask Tim Terriberry, he works there now, doesn&#39;t he?<br></div>
 </div>
@@ -20,32 +44,8 @@ permalink: "/2010/12/gpu-accelerated-video-playback-in_03.html"
 <div class='content'>Ben: yeah, Tim explained this to me.<br>Doug: solves different problem. Also, documentation for their new API is almost non-existent.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Eevee</div>
-<div class='content'>Thanks for all the hard work and all, but I want a pony.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jason</div>
-<div class='content'>Sounds neat, but given what Flash did to my computer (namely, making ATI&#39;s drivers bring down the entire computer), my main question is how easy will it be for a user to shut this off if it affects system stability?<br></div>
-</div>
-<div class='comment'>
 <div class='author'>web design Perth</div>
 <div class='content'>This is why I love using HTML5, it&#39;s compatible with other programming language and very easy to use. Thanks.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Ben, you&#39;re mistaken. libtheora and libvpx reuse the same output buffer precisely because when part of a frame doesn&#39;t change from one frame to the next, they don&#39;t even need to touch that part of the output buffer. If they always produced new buffers, THEN they&#39;d have to internally copy from one frame to the next.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Dan</div>
-<div class='content'>Sounds great.  Would be better still with H.264 support.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ben</div>
-<div class='content'>&gt; (We have to copy here because the decoder libraries overwrite their output buffer for every frame<br>This seems wrong. Both Theora and VP8 are formats where a new frame copies parts of old frames. You never modify old frames as part of the decoding process. You just discard them when you don&#39;t need them any longer.<br>If the decoder always gives you the frame in the same buffer (same memory address), then it&#39;s doing an extra copy of its own, which is bad.<br>Also, it shouldn&#39;t be difficult to rig the decoders so they hold onto frames as long as you need (allocate new memory for every new frame, and never automatically free old frames).<br>What Adobe is doing is useless as it requires competent authoring. Most of the video sites (everyone except YouTube actually) don&#39;t get wmode and hardware scaling right. I have no hope on solutions which require web developers to do the right thing, so the way it&#39;s done in Firefox is great.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>hunts</div>
-<div class='content'>VLC plays h.264<br>There&#39;s a vlc plugin for mozilla and firefox.<br>Could there be a way to have firefox just pass responsibility over to the vlc plugin whenever i encounters an H.264 video?<br>We get to watch  H.264, you get to keep  H.264 code out of your system. Everybody wins.<br></div>
 </div>
 
 </div>

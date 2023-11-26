@@ -12,28 +12,19 @@ permalink: "/2019/09/dissatisfied-with-docker.html"
 <p>No doubt these observations are old news, so I assume there are better container implementations out there. Which one do I want?
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Akihiro Suda</div>
-<div class='content'>Docker 19.03 supports rootless mode
+<div class='author'>Adam Miller</div>
+<div class='content'>Podman for single host stuff, cri-o for Kubernetes. Both are true rootless container runtimes without an all powerful daemon in play.
 
-https://get.docker.com/rootless
-https://www.slideshare.net/AkihiroSuda/dockercon-2019-hardening-docker-daemon-with-rootless-mode</div>
+https://podman.io
+https://cri-o.io</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>That&#39;s good, but I also want daemonless mode.</div>
+<div class='content'>Thanks. If I get a chance to revisit our setup I will check out podman.</div>
 </div>
 </div>
 <div class='comment'>
-<div class='author'>tgamblin</div>
-<div class='content'>Sylabs Singularity runs containers as unprivileged users, with no daemon:
-
-https://github.com/sylabs/singularity
-https://sylabs.io/singularity/
-
-You will still need privileges to *build* the container if you want to do privileged operations (like run the package manager in the container)</div>
-</div>
-<div class='comment'>
-<div class='author'>Asad Ali</div>
-<div class='content'>We are still using docker at <a href="https://ztabs.co" rel="nofollow">ZTABS </a>. hopefully we can find a new solution ?</div>
+<div class='author'>Jemma</div>
+<div class='content'>Singularity is a good choice.</div>
 </div>
 <div class='comment'>
 <div class='author'>menriquez</div>
@@ -45,13 +36,37 @@ You will still need privileges to *build* the container if you want to do privil
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>The daemon aspect is valuable because it provides API and a central place to dispatch events, logging, reattaching to consoles, managing network state, etc. Those things could be isolated to less-than-root capabilities, I suspect. The event dispatch stuff is quite powerful; check out “nginx-proxy” for an example.
+<div class='content'>LXD is a good choice https://linuxcontainers.org/lxd/</div>
+</div>
+<div class='comment'>
+<div class='author'>tgamblin</div>
+<div class='content'>Sylabs Singularity runs containers as unprivileged users, with no daemon:
 
-I agree that it would be great if more were possible without root. Right now I use the fact that cloud VMs or such are cheap to just split by user that way, but it’s not ideal.
+https://github.com/sylabs/singularity
+https://sylabs.io/singularity/
 
-Container startup feels slow if you compare it to fork(), but if you’re coming from VMs as the unit of execution then they’re a big step faster (and smaller)!
+You will still need privileges to *build* the container if you want to do privileged operations (like run the package manager in the container)</div>
+</div>
+<div class='comment'>
+<div class='author'>Akihiro Suda</div>
+<div class='content'>Docker 19.03 supports rootless mode
 
-docker-compose feels to me like it does too much magic with things like networking without giving useful facilities like “consider me up when my ports are bound, and then start dependents”.</div>
+https://get.docker.com/rootless
+https://www.slideshare.net/AkihiroSuda/dockercon-2019-hardening-docker-daemon-with-rootless-mode</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That&#39;s good, but I also want daemonless mode.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Nicholas Sweeting</div>
+<div class='content'>I would use podman in a heartbeat but it doesn&#39;t support docker-compose.
+
+I also really want to be able to run individual Docker projects out of different specified directories, instead of the whole system sharing /var/lib/docker.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>This is being worked on: https://github.com/containers/podman-compose</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>James</div>
@@ -66,37 +81,22 @@ This seems like a very useful process for those of us who want to use docker in 
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Jemma</div>
-<div class='content'>Singularity is a good choice.</div>
-</div>
-<div class='comment'>
-<div class='author'>Nicholas Sweeting</div>
-<div class='content'>I would use podman in a heartbeat but it doesn&#39;t support docker-compose.
-
-I also really want to be able to run individual Docker projects out of different specified directories, instead of the whole system sharing /var/lib/docker.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>This is being worked on: https://github.com/containers/podman-compose</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Adam Miller</div>
-<div class='content'>Podman for single host stuff, cri-o for Kubernetes. Both are true rootless container runtimes without an all powerful daemon in play.
-
-https://podman.io
-https://cri-o.io</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Thanks. If I get a chance to revisit our setup I will check out podman.</div>
-</div>
+<div class='author'>Unknown</div>
+<div class='content'>OT: don&#39;t justify the text on the comments, on mobile it is difficult to read with all those spaces inserted, on some comments it only displays tree words per row.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>LXD is a good choice https://linuxcontainers.org/lxd/</div>
+<div class='content'>The daemon aspect is valuable because it provides API and a central place to dispatch events, logging, reattaching to consoles, managing network state, etc. Those things could be isolated to less-than-root capabilities, I suspect. The event dispatch stuff is quite powerful; check out “nginx-proxy” for an example.
+
+I agree that it would be great if more were possible without root. Right now I use the fact that cloud VMs or such are cheap to just split by user that way, but it’s not ideal.
+
+Container startup feels slow if you compare it to fork(), but if you’re coming from VMs as the unit of execution then they’re a big step faster (and smaller)!
+
+docker-compose feels to me like it does too much magic with things like networking without giving useful facilities like “consider me up when my ports are bound, and then start dependents”.</div>
 </div>
 <div class='comment'>
-<div class='author'>Unknown</div>
-<div class='content'>OT: don&#39;t justify the text on the comments, on mobile it is difficult to read with all those spaces inserted, on some comments it only displays tree words per row.</div>
+<div class='author'>Asad Ali</div>
+<div class='content'>We are still using docker at <a href="https://ztabs.co" rel="nofollow">ZTABS </a>. hopefully we can find a new solution ?</div>
 </div>
 
 </div>

@@ -8,20 +8,332 @@ permalink: "/2010/01/video-freedom-and-mozilla_23.html"
 <div class="columns"><p><small>Note: below is nothing but my own opinion as a developer of video-related Mozilla code!</small><br/><p>My <a href="http://www.lca2010.org.nz/programme/schedule/view_talk/50168?day=friday">LCA talk</a> on Friday was about why open video is critically important to free software, and what Mozilla is doing about (plus a discussion of the relationship between Web standards and free software in general). Little did I know that Youtube and Vimeo would pick the day before my talk to cast a glaring spotlight on the issue!<br/><p>Youtube and Vimeo have started offering video playback using the HTML5 &lt;video&gt; element. That is good news for free software, since it means you don't need a closed-source Flash player to play the video [1]. However, they only offer video in H.264 format, and that is not good news for free software. A lot of people have noticed that Firefox doesn't support H.264, and apparently many people don't understand why, or know what the problems are with H.264. This is a good time to restate the facts and re-explain why Firefox does not support H.264. I'll be mostly recapitulating the relevant chunks of my talk. (Hopefully a full recording of my talk will become available from the LCA site next week.)<br/><p>The basic problem is simple: <strong>H.264 is encumbered by patents whose licensing is actively pursued by the MPEG-LA</strong>. If you distribute H.264 codecs in a jurisdiction where software patents are enforceable, and you haven't paid the MPEG-LA for a patent license, you are at risk of being sued.<br/><p><strong>So why doesn't Mozilla just license H.264 (like everybody else)?</strong> One big reason is that that would violate principles of free software that we strongly believe in. In particular, we believe that downstream recipients of our code should be able to modify and redistribute it without losing any functionality. This is freedom that copyleft licenses such as the GPL and LGPL (which we use for our code) are intended to ensure. It is possible to obtain patent licenses in a way which works around the letter of the GPLv2 and LGPLv2, but honoring the letter while violating the spirit is not a game we are interested in playing.<br/><p><strong>But aren't there (L)GPL implementations of H.264?</strong> Yes, but they're not as free as they appear. Their freedom has been silently stolen by patents (in jurisdictions where those patents exist and are enforceable). The software license permits you to redistribute and use the code, but the MPEG-LA can still stop you. [2]<br/><p><strong>But the MPEG-LA won't bother suing me or my project, we're not worth bothering with.</strong> Perhaps true, but I hope "remain irrelevant" is not the favoured strategy for most free software projects. It's certainly not an option for Mozilla. If we hadn't distributed Firefox to tens of millions of users --- legally --- it probably wouldn't be possible to browse the Web today using anything but IE on Windows. Plus, relying on <a href="http://en.wikipedia.org/wiki/Selective_enforcement">selective enforcement</a> is rarely a good idea.<br/><p><strong>Mozilla should just ship without licensing as a civil disobedience measure.</strong> That might be fun, but I expect an injunction would quickly force us to disable H.264 and send a hefty damages payout to the MPEG-LA. That's not a win.<br/><p><strong>Mozilla should pick up and use H.264 codecs that are already installed on the user's system.</strong> I've previously <a href="/2009/06/directshow_and.html">written</a> about a variety of reasons this would be a bad idea, especially on Windows. Really there are two main issues:<br/><ul><br/><li>Most users with Windows Vista and earlier do not have an H.264 codec installed. So for the majority of our users, this doesn't solve any problem.<br/><li>It pushes the software freedom issues from the browser (where we have leverage to possibly change the codec situation) to the platform (where there is no such leverage). You still can't have a completely free software Web client stack.<br/></ul><br/><p><strong>But I could just download gst-plugins-ugly and I'd be OK.</strong> That's a selfish attitude. Everyone should be able to browse the Web with a free software stack without having to jump through arcane hoops to download and install software (whose use is legally questionable).<br/><p><strong>The H.264 patents will expire soon, and then we'll be OK.</strong> Many H.264 patents don't expire until 2017 or later. Anyway, H.264 isn't the last word in video compression. There will be an H.265 and the same set of problems will persist.<br/><p><strong>Users just want video to work. You Mozilla people are such idealists!</strong> Yes, that is the reason for Mozilla to exist. Anyway, in the short term, our users probably won't be affected much since Flash fallback will still work. In the long term, I think freedom will ultimately benefit users (not just Firefox users, but all users).<br/><p>Apart from the issues with H.264 support in clients, <strong><em>there are also huge issues around H.264 for Web authors and content providers</em></strong>. Currently providing H.264 content on the Internet is zero-cost, but after 2010 that will almost certainly change. A couple of good articles are <a href="http://www.streaminglearningcenter.com/articles/h264-royalties-what-you-need-to-know.html">here</a> and <a href="http://www.streamingmedia.com/article.asp?id=11011">here</a>. We won't know much about the terms until the end of this month. The key issue is not exactly how much it will cost, but that if you want to publish H.264 you will probably have to hire lawyers and negotiate a license with the MPEG-LA. If you just want to put a few videos on your Web site, or add a help video to your Web application, or put a video cut-scene in your Web game, that is probably not something you want to do. Web video is not just about Youtube; mandatory licensing would cripple the use of video on the Web. (Just imagine if we had such a regime for still images...) Even if there were no patent issues on the client side, this would still be a good reason for Mozilla to push for truly free codecs.<br/><p>The honest truth is that none of us know how this is going play out. The proponents of mandatory licensing are strong, and most people don't care about software freedom. We're doing our best to make Ogg Theora rock, and I don't know what else we can do directly right now except spread the word and help people understand what's at stake here ... hence my LCA talk, and this blog post.<br/><p><small>[1] Yes, I know gnash and/or swfdec might play these videos, but in general they are not able to keep up with the latest Flash APIs offered by Adobe and used by major sites. Anyway, it's good to not have to play that game.</small><br/><p><small>[2] RANT: in many cases, free implementations of heavily patent-encumbered technology are <em>harmful</em> to the free software ecosystem, for two reasons: people are confused into thinking they have rights that they actually don't, and thus these implementations can discourage the adoption of alternatives that are free for everyone.</small></div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Lars Gunther</div>
-<div class='content'>Petition to get ogg/theora on Youtube. Please sign<br>http://www.petitionspot.com/petitions/oggandyoutube/<br></div>
+<div class='author'>Alex</div>
+<div class='content'>And unfortunately, the response of a lot of people will still be...<br>&quot;Yeah, but H.264 is better than Theora, so they should implement it&quot;<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Yigal</div>
-<div class='content'>Regarding USA vs. the world: They already have their own web. For once I want to see the rest of the world unite and teach them a lesson.<br>Many sites limit themselves to the US only (e.g. Hulu) so why should I care if the users of that site also need to pay for a codec license?<br></div>
+<div class='author'>glandium</div>
+<div class='content'>Do you think Ogg is not patent encumbered ? That&#39;s forgetting how bad/stupid patents are granted. Don&#39;t forget even the wheel is patented. Several times, even.<br>But, H264 has known patents, and even worse, they are known to be enforced.<br>That also doesn&#39;t mean everything else is patent-safe. That&#39;s hiding your head in the sand.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>kL</div>
+<div class='content'>Why not stick it to US and use H.264 in localized versions of Firefox?<br>I live in a country free from software patents and I don&#39;t want to suffer from another country&#39;s legislative problems.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jonathan Feinberg</div>
+<div class='content'>Fairly spoken, sir.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tony Arcieri</div>
+<div class='content'>I don&#39;t understand why there&#39;s so much emphasis on Ogg Theora and seemingly no attention paid to Dirac/Schrodinger...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Apreche</div>
+<div class='content'>&quot;Users just want video to work. You Mozilla people are such idealists! Yes, that is the reason for Mozilla to exist. Anyway, in the short term, our users probably won&#39;t be affected much since Flash fallback will still work. In the long term, I think freedom will ultimately benefit users (not just Firefox users, but all users).&quot;<br>Flash fallback. So it&#39;s ok to force people to go download a non-free plugin from Adobe, but not ok to force them to go download a non-free H.264 codec. Yeah, I know about things like gnash, nobody uses them, and they suck. Is Firefox going to ship with gnash included already? It will ship with H.264 before it does that.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Jan Rychter</div>
 <div class='content'>Other issues aside, I don’t understand why supporting a proprietary Flash plugin from a single vendor is better than opening support for a standardized (albeit similarly patent-encumbered) video format with open-source implementations.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Tim</div>
+<div class='content'>Keep fighting the good fight.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>blah</div>
+<div class='content'>since Flash fallback will still work<br>Ah, you see, a problem there is you think flash fallback works...  Viewing a youtube video reliably crashes 64-bit firefox (or rather the 64-bit flash plugin, so mozilla just doesn&#39;t want to know, but it&#39;s in the same process, so also takes out firefox). For the love of god, please just run plugins in separate subprocesses, a bunch of silicon in a modern CPU exists to provide an MMU for interprocess memory protection! Use it!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>antistress</div>
+<div class='content'>I love Mozilla for its decision to promote free codecs ans then free softwares. Keep on making good decisions for all<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brian Boyko</div>
+<div class='content'>Howdy.  My name is Brian Boyko - I&#39;m heading to NZ in... jeez, 24 hours - to start up a job with a company called Template Digital, mostly dealing with motion graphics in the proprietary program of AfterEffects.<br>First, as soon as I get settled, mind if I look you up to talk to you about this issue?  You can reach me at my address above.<br>For the record, I like OGG - and moving away from flash-based to browser-based video will go a long way towards pushing the standard.  The other half of the equation, though, is in encoders.  My Non Linear Editor (NLE) is Sony Vegas; problem is, I can&#39;t figure out how to render in OGG.  Pretty much every NLE is proprietary except Cinelerra and that doesn&#39;t have features I need.  Do you think it&#39;s better to develop OGG plugins to proprietary software or wait for OSS NLEs to mature?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Doctor</div>
+<div class='content'>Indeed, what if GIF were a patent nightmare!<br>Oh, wait, it was.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Stephen</div>
+<div class='content'>Thank you for speaking out against H.264 an in support of Ogg/Theora. This has already been poste to reddit but I will be sure to tweet a link to your article.<br>Also I made sure to tell google (through feedback) that I am in support of Ogg/Theora instead.<br>I sugguest others do the same.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>MrNightLifeLover</div>
+<div class='content'>&gt; Mozilla should pick up and use H.264 codecs that are already<br>&gt; installed on the user&#39;s system.<br>Yes you should. The reasons u gave not to use it sound like they come from free software extremist like Stalin..  errr Stallman.<br>Of course a problem would be that it&#39;s not available on Win XP, however it would work on Win 7 and Vista. On XP you could maybe use the one from Apple Quicktime, if it&#39;s installed. (or tell the user to install it if they want HTML 5 video support)<br>On a Mac you should be able to use Quicktime w/o any problems.<br>Consider what you are now doing: Youtube&#39;s HTML 5 video is not working with Firefox, maybe not a big issue at the moment since most people use flash anyways. But if time goes on you should ensure that html 5 videos work, otherwise u risk loosing users.<br>On the other hand: Flash is also proprietary and Firefox uses the default flash installation, so I really don&#39;t see why it shouldn&#39;t when it comes to Video codecs.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Shaver</div>
+<div class='content'>Moreover, as concerning &quot;civil disobedience&quot; or &quot;too small to sue&quot;, I don&#39;t think it&#39;s appropriate for us to encourage people to use things counter to their licensing in hopes that they won&#39;t get caught -- just as we don&#39;t encourage people to violate the terms of source code licenses because they will probably not get sued by the copyright holders.  We have built a project and community around respect for licensing terms, and should conduct ourselves appropriately, even if we find the terms themselves distasteful.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Udo Schroeter</div>
+<div class='content'>I fully agree that Mozilla should stay away from H.264, it&#39;s simply not worth it to invest energy and/or money into this.<br>However, I don&#39;t understand why video rendering of non-built-in formats is not simply deferred to the OS. For example, as an OS X user, my H.264 license is already paid for and is already part of the video codecs that ship with the machine. Why not give users the option of using whatever codecs happen to be installed on their systems? Where is the harm in that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>arun kamath</div>
+<div class='content'>I thought Chrome was open too. Can&#39;t Youtube support the codecs supported by Firefox?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>YHVH</div>
+<div class='content'>This page layout makes me feel sick :/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I hate the fact that the open source world is so USA-centric. Not everyone lives in USA, i.e. software patents don&#39;t affect everyone.<br>For example, I can distribute open source h.264 decoder and not worry about MPEG-LA suing me.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>xurfa</div>
+<div class='content'>Hi!<br>I live in jurisdiction where software patents do not exist. Why are you not giving me an option to have a firefox which can play any codec? Why should I care for some idiotic and unimportant states like USA?<br>Thanks!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alex</div>
+<div class='content'>All I can really say is THANK YOU.<br>There has got to be a time and place where we put our foot down and say no! Software patents are tearing the software community apart and for us to simply allow them because it &quot;makes life easier&quot; is no excuse.<br>I understand that a lot of the common users don&#39;t understand nor care about software freedom but that does not make it any less important. It is up to us, those that do know to fight for it.<br>Those that willingly give up software freedom for usability deserve neither.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Holy horrendous layout, Batman!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Markus</div>
+<div class='content'>Once again, someone from Mozilla is spreading FUD.<br>Claim: &quot;Mozilla should pick up and use H.264 codecs that are already installed on the user&#39;s system. I&#39;ve previously written  about a variety of reasons this would be a bad idea&quot;<br>Fact: Mozilla is working on such a solution for Firefox Mobile: https://bugzilla.mozilla.org/show_bug.cgi?id=422540<br>Claim: &quot;gst-plugins-ugly (...) whose use is legally questionable&quot;<br>Fact: Using it is perfectly legal. Even in the US. &quot;legally questionable&quot; is only the distribution, but even that is no problem if it is distributed from a jurisdiction without software patents (VideoLAN / VLC is located in France and US citizens are able to download and use VLC for 10 or so years now without ever being prosecuted for it).<br>Claim: &quot;Users just want video to work. You Mozilla people are such idealists! Yes, that is the reason for Mozilla to exist.&quot;<br>Fact: No, you are not. First you started collaborating with Google on a giant commercial data mining operation (various privacy-invading features are enabled by default) and now you are actively attacking open standards with inferior codecs.<br>Unlike Theora, Dirac is actually standardized (a subset to be exact). If you had adopted Dirac instead of Theora, you would a.) promoting an actual standard, b.) be still free of American patents, and c.) have a codec that does not totally break down at HD resolutions.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Underpass</div>
+<div class='content'>Hello, I&#39;m from the Italian Mozilla community and I wish to ask you if I can translate this enlightening post and publish it on our website.<br>I think we are facing a crucial problem and I fear that we have to give people the correct information, hoping many will follow us.<br>You can write me at the email address I left.<br>Thanks in advance. :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I apologize that my multi-column layout doesn&#39;t work well for posts of this size.<br>Thanks for all the messages of support.<br>glandium: there is a pretty huge practical difference between &quot;Someone might have patents on Theora that we don&#39;t know about, and might sue&quot; and &quot;MPEG-LA has patents on H.264 and *will* sue&quot;.<br>kL, Anonymous, xurfa: sticking to the USA might be appealing but arguing that the USA is unimportant is not a serious approach.<br>Jan, Apreche, MrNightLifeLover: I pointed out right at the beginning that reducing usage of Flash is a good step. However, completely eliminating Flash is not going to happen anytime soon. If this video codec issue was the only thing stopping us from eliminating Flash, then it might be worth trading off codec freedom for plugin freedom, but we don&#39;t have to make that decision yet. Looking at it another way, Flash is a problem that we already have to live with, so it&#39;s OK to live with it a little bit longer if that helps us pursue long-term goals.<br>blah: We are acutely aware of the need to run plugins out-of-process, and trunk Firefox can actually do it if you flip a pref. We are working furiously to stabilize and ship that feature in the next version of Firefox.<br>Tony, Markus: Dirac is great. At some point we&#39;ll probably add Dirac support. However, at typical Web bit rates, Dirac doesn&#39;t currently perform as well as Theora. The patent situation with Dirac is also currently less clear than with Theora. We&#39;ll keep an eye on it.<br>Markus: The situation on Linux/GStreamer is much less bad than Mac/Quicktime, which is in turn less bad than Windows/DirectShow. Also, Mobile Firefox is currently far less influential than desktop Firefox so it matters much less what compromises we make there. Even if we end up supporting system GStreamer codecs on desktop Firefox for Linux, that wouldn&#39;t harm our goals too much IMHO.<br>MrNightLifeLover: You are incorrect. Default installs of Windows Vista do not include an H.264 codec.<br>Brian: I don&#39;t know much about the encoder side. Ogg plugins for proprietary editors sound good to me, though.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>alma</div>
+<div class='content'>Come on (non-US-) guys. Firefox has already been forked because of a copyrighted icon. It&#39;s free software afterall.<br>Also the internet won&#39;t die because of a useless video-tag implementation.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>emmanuel</div>
+<div class='content'>It is the right path. Congratulations and I hope you succeed. Anything else would really be a disaster, even worse than the current flash status-quo (people who want to make a new browser having to pay millions of dollars of fee).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Omega X</div>
+<div class='content'>I wonder what happened to Google&#39;s acquisition of On2 for the VPx codecs? I&#39;m sure they would use that to avoid any extra wild licensing from MPEG-LA.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Brad</div>
+<div class='content'>Robert,<br>Please don&#39;t ever give in on this issue, or allow the Mozilla Foundation to succumb to the pressure of using H.264. Why did the W3C even allow it to get this far?<br>Even worse this issue has turned into Apple/Google vs Mozilla and they are going to have more money to get their way.<br>The good news is that Firefox has a lot more users, and if you don&#39;t give in then hopefully Google will finally find some sense. To help aid this please donate to the Xiph.org foundation to boost the development of Theora:<br>http://www.xiph.org/donate/<br>Why would anyone want to buy in on H.264 when Ogg Vorbis and Theora has been giving freely for so long?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Steve</div>
+<div class='content'>Thanks for breaking it down, because like you said, a lot of people don&#39;t get the implications of this decision, nor do they understand Mozilla&#39;s stance.<br>While some of the reasons Google offers for this choice do sense, such as the worry over file size, I can&#39;t help but think that it is a needle at what is one of their biggest competitors. At the very least, if it is not an intentional jab, they are likely very pleased with themselves.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anmol</div>
+<div class='content'>I would like to salute every one at Mozilla for doing the right thing. If it wasn&#39;t for you guys we would still be paying for good browser or using Internet Explorer at mercy of Microsoft and malicious stuff on Internet.<br>I cannot even imagine how bad the situation would have been on operating systems other than Windows.<br>Thank you for doing the right thing.<br>- A user of Opera browser who is grateful for being liberated by the phoenix.<br>p.s. to Google: I WANT MY WEB FREE, kindly do the right thing and dump support for proprietary stuff that breaks Internet. Please remember<br>&quot;Don&#39;t be evil&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jon Pritchard</div>
+<div class='content'>Thank you for this. I think Mozilla&#39;s stance is correct and I am disappointed that these websites, YouTube and Vimeo have had the opportunity to advance improvements in freedom and have not taken the leap.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Geoffrey</div>
+<div class='content'>Thank you for the clear information presented and the follow up comments.<br>The legal and philosophical approaches are usually more subtle than the &quot;it works!&quot; argument and greatly appreciated.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Lars Gunther</div>
+<div class='content'>Petition to get ogg/theora on Youtube. Please sign<br>http://www.petitionspot.com/petitions/oggandyoutube/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>rudd</div>
+<div class='content'>Stay strong Mozilla, keep fighting the good fight. Too many people are willing to ignore the injustice of software patents and unreasonable restrictions just to watch a few videos on Youtube; thankfully we have institutions like Mozilla willing to stand their ground.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>marcoos</div>
+<div class='content'>I already posted this comment on gandalf&#39;s blog, but in Polish, so I&#39;m going to repostt it here in English. :)<br>We, the Mozilla community, need to make Ogg Theora not suck. Just like we made web browsing not suck (let&#39;s face the sad facts - people started using Firefox because it was better, not because it was morally superior - and we didn&#39;t even talk much about this superiority either for a long time - the &quot;mission&quot; tab on Firefox homepage appeared only recently with 3.6).<br>Current solutions for Theora playback suck:<br>a) &quot;use Theora only, and use Cortado Java applet to play video in IE and Safari&quot; - sucks. Java applets are not only an obsolete technology, they are such a nightmare - because of their unacceptable performance and start-up time, and due to a lower user base than e.g. Flash. No way anyone can talk their boss into supporting Ogg Theora through a fracking Java plugin for 30-70% of the user base, when Flash solutions are better and, if your company is big enough, you can always throw some money on a h.26x license.<br>b) &quot;let&#39;s have two copies of every video file, one in Theora, the other in h.26x, and use a Flash player for IE&quot; - sucks. First - doubling the size of a few video files is not a problem, doubling the size of thousands of movies is a great problem. And, if there&#39;s a Flash plugin for h.26x, talking management into having another copy in Ogg, when the Flash plugin can handle the h.26x is - business-wise - nonsense.<br>So, what needs to be done?<br>We need two things.<br>1. A good BSD-licensed Flash-based player for Ogg Theora/Vorbis content, so that any company can steal it for their own use. So that they can send Theora to Firefox, Opera, Chrome and to the Flash-based player under Safari and IE.<br>2. An even better BSD-licensed streaming server for Theora. I&#39;m not sure whether IceCast is good enough, though, and how it compares to proprietary h.26x streamers.<br>If we have a BSD-licensed Flash-based Ogg player and a great BSD-licensed streaming server, I can easily imagine e.g. my employee (an Alexa Top 10 site in Poland) switching happily to Ogg, due to all the problems around WMV, FLV, h.26x etc. I can&#39;t imagine myself talking my employee into (a) nor (b) above, though, unless Firefox doubles it current 50% marketshare in Poland, which I don&#39;t think is gonna happen, even though I&#39;d love it to.<br>We&#39;ve got to do this. We can&#39;t sit back and wait, because everyone will just use h.26x in three years.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Fred Blasdel</div>
+<div class='content'>Since 2004, Mozilla has had baked-in support for automatically installing Flash on the first encounter if the plugin is not found. A nice little yellow infobar pops down (a brilliant UI innovation), prompting you to install it with a few clicks, even without root access on both Windows and Linux.<br>You&#39;ve also recently implemented automatic update checking for Flash. Since it&#39;s your biggest security hole, you throw up a big nasty &quot;update now&quot; warning on launch if the user has a known-vulnerable version.<br>Mozilla even initially distributed the Flash binaries under license themselves via addons.mozilla.org — is that still going on?<br>Flash is shitty, nonredistributable, closed-source, restricted-platform, proprietary, and subject to even more patents but you&#39;re willing to go to great lengths to help your users use it. Why not do the same thing for ffmpeg, which is merely patented?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>gabriel</div>
+<div class='content'>google plan:<br>1. release chrome with encumbered video support.<br>2. support that format on youtube.<br>3. turn off the fall back. everyone move to chrome<br>4. when authors realized the legal hassle after 2017, release googlevideocodec, already working on chrome and youtube.<br>5. get some fat fees from content creators to use their encoder.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>gabriel</div>
+<div class='content'>use openBSD&#39;s solution.<br>buy a server rack in Canada.<br>distribute all the software you want from there.<br>worried about your developers? only serve encrypted source code via ssh+svn for example. that way they can upload code from their oligarchical country, such as the US.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian</div>
+<div class='content'>Youtube decides to only go with  H.264, and 95% of Firefox users will on that same day switch to Chrome, Safari or whatever browser that DOES support youtube at that moment. Don&#39;t underestimate the amount of people that just want a browser that works for their standard internet needs, and couldn&#39;t care less about WHY &quot;firefox won&#39;t support youtube&quot;.<br>Big help yer shiney ideals are going to be at that time...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Zebastian Hedlund</div>
+<div class='content'>I solved it, I installed chrome!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matthew</div>
+<div class='content'>Ok, I can accept that you cant ship H.264 in the USA.<br>It isn&#39;t a problem elsewhere. Let it work in versions for other countries.<br>Is there a legal reason you cant do this? If there isn&#39;t, then you are being extremely rude to the rest of the world by attempting to force the effect of US laws on them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tyler Clendenin</div>
+<div class='content'>Some of the comments here do have a point, but I do understand the contradictions.  The ends do sometimes justify the means.  Even though it is a contradiction to rely on the flash fallback, Flash has been a reality for many years, and the flash install base is very large.  Relying on the flash fallback is just maintaining the current state, while pushing towards the ideal outcome of using open video codecs.  I am sure that google is currently working on ogg versions of youtube videos.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Samuel Bedwell</div>
+<div class='content'>About the proposal that localized releases of Firefox include h.264: The intention may be to stick-it-to-the-patent-holders, but it&#39;s important to consider that this idea punishes the users far more than the suits.<br>Where software patents do not apply, the patent holders lose nothing; where software patents apply, the patent holders lose nothing, but &quot;because you live in the US,&quot; many people who use Firefox are excluded from a potentially important feature.<br>roc: thanks for posting this breakdown. :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Pseudonymous Coward</div>
+<div class='content'>Thank you, thank you so much, Mozilla, for standing by the ideals of free software.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>abhishek manocha</div>
+<div class='content'>Your stand as pointed by many is contradictory on many fronts.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mors</div>
+<div class='content'>The amount of misinformation in these comments is ridiculously sad.<br>H.264 is not royalty-free, meaning anyone implementing/shipping a encoder/decoder has to license (pay) heavily to the MPEG-LA. This is a huge problem for interoperability and free access to content, because then one would be locking  into a single non-free codec.<br>What if each browser had to pay royalty fees to the W3C to implement HTML ? (In fact they already pay a membership fee but that is different)<br>Or in another case, look at the current de-facto monopoly that Ms Office has. People exchange MS Office documents around, out or sher ignorance, instead of using open format documents, like pdf or odf, which forces everyone to have a MS Office available, meaning that people need to **pay** Microsoft a windows and office license.<br>This is not how freedom is defended.<br>I&#39;m personally quite glad that Mozilla at least stood against h.264 with Opera, else Mozilla or Opera would be forced to license h.264 and make the MPEG-LA a huge profit, while locking other royalty free codecs out of the  market. Google licensed h.264 which makes me believe that it was a unilateral management decision, and not something discussed by the big engineering mass they have.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Scott</div>
+<div class='content'>Releasing localised versions of Firefox with H264 support wouldn&#39;t hurt US users in practice, because of course such versions would leak into the US, and at the worst Americans would have to put up with the British spelling of &quot;Colour&quot; in the browser options. It would be a patent violation, but it would be the user&#39;s violation and not Mozilla&#39;s, and I can&#39;t see much likelihood of prosecution.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Markus: regarding &quot;privacy-invading features are enabled by default&quot;, I have no idea what you&#39;re talking about, because we do no such thing. For example, the phishing-site detector uses a protocol that is very carefully engineered to conceal which sites the browser is actually visiting. If you&#39;re going to flame Mozilla on an unrelated topic to the post, at least please make your accusations specific enough to be refuted.<br>Also, do you have a legal opinion that says you definitely can&#39;t be sued for using gst-plugins-ugly in the USA? On the face of it, it seems to me MPEG-LA could successfully sue you if they chose to.<br>marcoos: I doubt you can make a Flash-based Theora player (in Actionscript, you mean?) with acceptable performance. There are Theora players for DirectShow and Quicktime, perhaps users could install those? I dunno.<br>I don&#39;t really know anything about the streaming side. Our friends have Xiph have more to say about that. Silvia Pfieffer had a tutorial about this at LCA: http://www.lca2010.org.nz/programme/schedule/view_talk/50180?day=thursday<br>Please stay in touch with Gandalf about this issue. If more sites in high-Firefox-share countries switched to Theora, that would really help us.<br>Fred Blasdel: I commented above why Flash is, in some ways, a lesser evil because it&#39;s an evil we already have to live with to be a viable browser. Given we have to live with it, we have to make the best of the situation by making sure it&#39;s up to date etc. Furthermore, there is also a pretty clear understanding on most sides that Flash (and plugins in general) are not part of the open Web platform that we are striving for. All browser vendors, except possibly Microsoft, agree that functionality needed by general Web apps should be available without resorting to proprietary plugins. The same cannot be said for encumbered codecs.<br>gabriel: I don&#39;t think OpenBSD&#39;s solution would work for us. I don&#39;t think MPEG-LA&#39;s lawyers are going to stopped by a simple workaround like that. A judge is going to see straight through it. And of course, even if such a legal hack (or any of the other legal hacks people have suggested) actually worked, it still leaves content providers and other browser vendors (current and future) at the mercy of the MPEG-LA.<br>Ian: I don&#39;t see any major site disabling Flash fallback anytime soon. If it happens, and we bleed serious market share, we certainly would have to reevaluate whether the damage is worth it. Obviously if we lose all our market share our influence vanishes and that would not be the best way to serve our mission.<br>Ben: thanks for the feedback. As you note, these are all things we&#39;re working on. I think we&#39;ll actually be able to support accelerated video rendering on a lot more platforms than Windows 7 and D3D10.<br>Matthew: How do you propose we limit functionality based on the country you&#39;re in? Also, as I noted above, if we hack around the license issue somehow for some subset of users (or even all users), we&#39;d still leave Web authors high and dry.<br>mors: thanks for the support. I want to point out that paying W3C membership fees is not required in order to implement a browser, or any W3C specs. If it was, we&#39;d kick up a huge fuss! W3C membership is basically just a donation ... membership may be needed to be a formal member of some of the spec working groups, which is unfortunate, but not too serious.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>emmanuel</div>
+<div class='content'>&gt; marcoos: I doubt you can make a Flash-based<br>&gt; Theora player (in Actionscript, you mean?) with<br>&gt; acceptable performance.<br>actually it is possible to embed C libraries in flash applications. I think the technology is called &quot;Alchemy&quot;, see for instance:<br>http://blog.debit.nl/?p=67<br>Potentially libtheora could be embedded there?<br>I also think that doing this would have a huge impact, probably much bigger than anything else that could be done at this point.<br>One thing I was wrong on previously, technically required H.264 doesn&#39;t mean making a browser means paying fees to MPEG-LA, you can get away by relying on the plugins on the computer, though this is still not OK.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Alchemy still forces your C code to run on the Flash VM. I&#39;d still be surprised if the performance is acceptable. Someone should try it, sure.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>emmanuel</div>
+<div class='content'>yes, thinking about that alchemy thing... it could probably decode theora but then there&#39;s the HW-accelerated rendering problem... it would probably become way too complicated.<br>In then end probably the only solution is a completely new browser plugin that is not offering a VM like flash but that would know to display Theora video just enough to make such a player, and nothing else. It could be almost the same code as firefox&#39;s  and  code just split out and relying on a different html syntax -based.<br>two problems:<br>1. that plugin doesn&#39;t exit<br>2. that plugin has 0% market share<br>i guess it wouldn&#39;t help much, youtube and others would say that the hurdle to install the plugin would turn away users and it&#39;s not worth it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>emmanuel</div>
+<div class='content'>ah, such a plugin would need to at least interact with JS to enable youtube and others to customize its display... which makes it suddendly a huge task.<br>i guess if there was an easy solution, it would already have been done :-(<br></div>
+</div>
+<div class='comment'>
+<div class='author'>thura</div>
+<div class='content'>Love live, mozilla ..<br></div>
+</div>
+<div class='comment'>
+<div class='author'>anon</div>
+<div class='content'>****Mozilla should pick up and use H.264 codecs that are already installed on the user&#39;s system.<br>That is the solution! It is not up to you to tell users what codec they should/should not use. Users will make the choice themselves and having the ability to use an existing system codec will open up html video to all other codecs. Please have some sense.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Funtomas</div>
+<div class='content'>What Theora really needs now to spread the world is &quot;native&quot; support from Adobe in Flash. Such a step would make Theora equally accessible to H.264 and video servers like YouTube or Vimeo could switch. The question is how to make Adobe acquiring open video standard. Perhaps making Theora better could work.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>peetee</div>
+<div class='content'>&gt;Posted by: glandium at January 23, 2010 11:52 PM<br>&gt;I live in a country free from software patents and I don&#39;t want to suffer from another country&#39;s legislative problems.<br>Yeah, really? And where is it? Because 100% it isn&#39;t in France¹:<br>FR 564,597 <br>FR 630,157 <br>FR 2,599,5773 <br>FR 1,467,491 <br>FR 1,487,113 <br>FR 1,550,219 <br>FR 0460751 <br>FR 0443676 <br>FR 1,359,769 <br>FR 1,383,338 <br>FR 1,406,453 <br>FR 1,359,767 <br>FR 1,135,934 <br>FR 1,468,566 <br>FR 1,468,567 <br>FR 0909099 <br>FR 1,401,213 <br>FR 1,742,482 <br>FR 1,742,483 <br>FR 1,742,484 <br>FR 1,387,585 <br>FR 1,406,451 <br>FR 1,424,856 <br>FR 1,450,565 <br>FR 1,452,039 <br>FR 1,478,188 <br>FR 1,499,133 <br>FR 1,515,567 <br>FR 1,596,608 <br>FR 1,739,972 <br>FR 1,739,973 <br>FR 1,742,479 <br>FR 1,742,480 <br>FR 0279053† <br>FR 580,454 <br>FR 1,246,131 <br>FR 1,510,078 <br>FR 1,596,604 <br>FR 573,665 <br>FR 598,904 <br>FR 898,426 <br>FR 907,289 <br>1 -  http://www.mpegla.com/main/programs/AVC/Pages/PatentList.aspx<br></div>
+</div>
+<div class='comment'>
+<div class='author'>John</div>
+<div class='content'>Of all the arrogance in the world. The world still don&#39;t evolve around America. The majority of countries don&#39;t have software pattens. Why the hell should we care if h.264 might be a problem for some. This is the U.S encryption laws all over again. If I want to use h.264 on my system that&#39;s my right. FF should only pass the request down to my codec of choice.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Andrewf</div>
+<div class='content'>As someone who doesn’t live in the US, shipping the (US-)patent-encumbered versions only outside the US, and providing an H.264-stripped version inside the US, would be a good way to make a point, if nothing else.<br>It’s similar to the situation with encryption back in the 1990s (or GIF images last decade).<br>I can see how that might be construed as giving aid and succour to H.264 though.<br>Given Mozilla&#39;s self-imposed constraints, the notion of making Theora (and Dirac) more palatable by encouraging Flash support for them sounds the most promising.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dennis</div>
+<div class='content'>What&#39;s wrong with a plugin? Let the plugin handle  completely and be done with it.<br>Yes, there will be some interaction with the rest of the website, but it can&#39;t be that difficult. The DOM will be set in HTML 5 ...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Johan Krüger-Haglert</div>
+<div class='content'>Jonathan Feinberg:<br>Speaking for myself all I can say simply because I didn&#39;t knew about Dirac earlier, thanks for the info.<br>I assume it may also be because ogg theora is more wellknown by name and maybe some people think people already have support for it but I doubt that. Small format noone use.<br>So well, yes, I would prefer Dirac over Theora since it seem to offer better quality.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Conor</div>
+<div class='content'>Great work! This is an inspirational read, and I hope you guys are able to turn some heads about this codec issue.<br>What can we humble users do?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ludo1243</div>
+<div class='content'>And about Dirac codec (for SD and HD videos) and Schrodinger lib?<br>Dirac is perfect for this job! You should promote it!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Johan, ludo1243: It seems you guys didn&#39;t read my earlier comment. Dirac is great at high bitrates --- for &quot;archival video&quot;, for which it was designed --- but at typical Web bitrates, which are much lower, *it is not as good as Theora*, currently.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Markus</div>
+<div class='content'>&quot;Markus: regarding &quot;privacy-invading features are enabled by default&quot;, I have no idea what you&#39;re talking about, because we do no such thing.&quot;<br>Google is the biggest data miner on the planet.<br>You send every character typed into the search bar to Google, because the &quot;suggest&quot; feature is enabled by default. Granted, after many users protested, Google now claims to store that data not as long as regular search data, but it&#39;s still stored.<br>Why is Google the default search engine anyway? You claimed in your blog post that Mozilla is an idealist&#39;s organization. If you were idealists, Forestle http://us.forestle.org/en/ would be the default, but your idealism is lead purely by money. You use Google, because Google pays most and you refuse to use AVC because some of your money may be needed to spend on licensing fees.<br>You have no problem helping Adobe install proprietary but costless plugins like Flash.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Latko</div>
+<div class='content'>This is mentioned in other comments, but you think Ogg is any better on the patent front? I&#39;m interested in your take on this.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>OK, so your problem is that we send characters typed into the search box, which has a Google logo next to it, to Google. Clicking on that logo lets you choose to send searches elsewhere with just one more click. That&#39;s not easier in any other browser, and in many (e.g. Safari and Epiphany) you can&#39;t change the search engine at all without editing config files or code. We provide more than enough choice and disclosure here, and more than any other browser.<br>Note that Epiphany doesn&#39;t get any money from Google; they use Google because that&#39;s what users want. For the same reason we made Google the default in Firefox before Google was giving us any money.<br>(I don&#39;t know what powers Forestle, but a quick test with a search for &quot;mozilla pymake&quot; shows both Google and Bing bringing up the pymake documentation page as the first hit, but it&#39;s not anywhere in the first page of Forestle&#39;s hits.)<br>Similar issues were thrashed out in this LWN thread. The comments there are worth reading.<br>http://lwn.net/Articles/346393/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Chris Latko: I replied to that in one of my comments above. There is a pretty huge practical difference between &quot;Someone might have patents on Theora that we don&#39;t know about, and might sue&quot; and &quot;MPEG-LA has patents on H.264 and *will* sue&quot;. So yes, the patent situation with Ogg Theora is obviously better.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>phayes</div>
+<div class='content'>Interesting to see so many people (still) thinking that they live in a software patent-free jurisdiction. That is highly unlikely and if you live in Europe at least, the major difference is that the EPO et al will usually &#39;lie&#39; about this issue (depending on the audience) whereas the USPTO et al will not.<br>[I put “lie” in scare quotes there because they generally don&#39;t actually lie outright - they&#39;ll typically exploit legal technical subtleties and say logically strictly true but utterly disingenuous things such as “we don&#39;t grant patents for software programs”, and “only technical inventions such as might be found in dishwashers and car braking systems are patentable”.]<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Epicanis</div>
+<div class='content'>The more this comes up the crankier it makes me.  Right now I am very cranky indeed, so please forgive this comment directed at a few commenters and probably a lot of non-commenting readers:<br>*&quot;The internet is not here to be your [INSERT VOCIFEROUS PROFANITY HERE] TV!&quot;*<br>The issue here isn&#39;t promoting &quot;easy consumption&quot;, or even &quot;sustainable&quot; or &quot;healthy&quot; consumption (thought that&#39;s a factor).  The issue here is to promote *participation*, which is the aspect of the internet most endangered by the need to bribe one&#39;s way through various proprietary licensing tollbooths before being allowed to contribute.<br>Apple, Microsoft, and even Google are trying to choke off legally-free participation precisely because *they* are running the tollbooths.  I&#39;ve read that Apple, for example, controls some of the H.264 patents.<br>The only way to keep the internet open to participation is to have at least some readily-accesible roads without tollbooths.  *That&#39;s* what this is about.<br>Sure, these metaphorical roads don&#39;t get well-maintained until they get enough use, which in this context means having a substantial amount of readily-available &quot;content&quot; in the legally-free formats.  That&#39;s presumably why everyone&#39;s obsessed with YouTube™ - if they made even a substantial part of their non-HD video available it&#39;d represent a huge jump in attention.  I don&#39;t think Google wants a large free-access road popping up next to whatever tollbooths they&#39;re working on right now, though, so they seem to be carefully &quot;harmonizing&quot; their public statements, responses to polls and feature requests, and so forth to make it seem as though Ogg Theora (and Vorbis, don&#39;t forget) don&#39;t exist, while striving to give the appearance of support for &quot;open HTML5 web standards&quot;.<br>Given how central the goal of facilitating participation has been to the philosophy behind Mozilla Firefox&#39;s development,  I&#39;m slightly baffled why anyone with an &quot;I don&#39;t care about *participation*, I just wanna *consume*&quot; folks even care what Mozilla does with Firefox &lt;video&gt; and &lt;audio&gt; - just go buy a standard Mac or Microsoft-Windows/Internet Explorer system, or perhaps an iPhone®. &quot;Consuming&quot; is pretty much what those are for.  (There&#39;s bound to be a &quot;Bread and Circuses&quot; app or two in the &quot;app store&quot;.)<br>I know that sounds facetious, but I&#39;m serious.  With the possible exception of Richard Stallman, I don&#39;t think most of us mind that &quot;consumer&quot; toll roads exist, so long as they aren&#39;t actively choking off our ability to build and use toll-free roads as well.<br>That said - &quot;Big Content™&quot; doesn&#39;t want tollbooth-free roads around, so I&#39;m cynical that any amount of pressure from small participants on the internet will have any real effect.  I think efforts might be better focussed on making it easier to create and find independent material in legally-free formats.  As an aside, supporters may want to show some love and attention to &lt;audio&gt;, too - it&#39;s a lot simpler for a hobbyist to produce audio-only content than to deal with full video production.  Since Steve Jobs will no doubt never allow &quot;Oggcasts&quot; in the iTunes® store, some alternative means of distributing and finding Ogg content will obviously be needed...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James</div>
+<div class='content'>The thing that I don&#39;t see is why, given everything you&#39;ve said, support gstreamer. It seems your answer above is that mobile doesn&#39;t matter much. But I&#39;m surprised it is needed just for mobile; IMO there are lots of things Fennec needs more than a very basic HTML5 video support. Is there a lower barrier for getting a new video backend in the main source tree if it is just for Firefox mobile? (And why won&#39;t distros use it once it&#39;s checked in and a Firefox (mobile) has shipped with it - it&#39;s been declared good enough to be called Firefox).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matthew</div>
+<div class='content'>Very well written summary to address the often-heard concerns about using open video.  Thank you for spreading the message about using open video, because when people really understand all the limitations of H.264, then they do come around to embracing free (as in freedom!) video technology.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Chris</div>
 <div class='content'>Great article btw - It seems to me that the MPEG-LA have to be more reasonable with their licensing. By that I mean that to get any reasonable performance with H.264 you need hardware acceleration. The owner of any hw supporting this has already paid necessary licensing for this - this is no different to licensing for the HDD, LCD, Processor, Wifi and everything else you can think of in your computer. Now given that regardless of the sw stack you use on your PC you have already paid some money to MPEG-LA, it should be OK for a free software stack to use the hw features, presumably with upper layers of the codec still being handled in software.<br>It would require MPEG-LA to change the royalty distribution such that the patent holders of parts not implemented in hw were compensated to license their patents in a compatible way with the GPLv3, through revenue obtained from licensing the hw IP or chips.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>James</div>
+<div class='content'>One more thought: the time to head this battle off was when WHATWG removed the requirement for Ogg because of Apple and Nokia (the first time they did it a couple years ago, not the debate about removing the comment in the spec this summer). Since you can&#39;t mandate H.264 (patent policy reasons) that should have been a red flag. That debate was about nothing or Ogg, with nothing defaulting to H.264. Now there is a much steeper climb, and marketshare and ideology is what you have going for you. I don&#39;t see what the next step is once Microsoft ships IE9 with H.264, but that&#39;s why they pay you to think about this rather than me.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ant</div>
+<div class='content'>I found it pretty amusing to find out that Youtube&#39;s HTML5 beta doesn&#39;t even work in *Google&#39;s own Chromium browser*.<br>Youtube can keep its broken H.264. In return, I&#39;ll keep my grab-url-and-use-mplayer method of watching which bypasses all their advertising and Flash.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>mania</div>
+<div class='content'>so as a web developer I really want to be able to embed video without flash. you guys are making this difficult. oddly I found this blog by searching for petition mozilla h.264 - please don&#39;t ingnore your users or they will eventually ignore you.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>anonymous</div>
+<div class='content'>Why not use your public exposure to create an easy, fast way for users to print-out, address and send &quot;template style&quot; physical letters to appropriate departments in the usa to complain about them not forcing patent owners to &quot;disclose or lose&quot; any patents which relate to any visible use by the public? -ie: no more submarine patents, -problem solved for uncertainty about free patents! - and we just keep this up untill something &quot;gives&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Like others here, I find it highly amusing that Mozilla continues to go to such great lengths to protect and promote Adobe Flash, which is horrifyingly closed and proprietary to a single vendor. Yet they turn their noses up at H.264, which is not dependent upon any one vendor. Payback for all the Tamarin code Adobe &quot;donated&quot; to you guys a while back?<br>Stop being such laughable hypocrites on this issue.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Duv</div>
+<div class='content'>@ant: Chrome and Chromium have a rather bizarre relationship with HTML5 Video (and audio). It would turn out that the media backbone (compiling ffmpeg) that they use for it happens to have have after all other format&#39;s save for the OGG family commented out of the code.<br>Simply put for every build of Chromium, H.264 and MP3/MP4 playback is disabled. And from what Google has said about problem, it&#39;s nothing that they can fix... it comes down to MPEG-LA licensing and getting a license from MPEG-LA for your own project. It not something that Google can give to the downstream. And the comments in the code itself more or less spell out &#39;If you un-comment these flags, without obtaining the proper license, you do so at your own peril.&#39;<br>I think that it&#39;s rather telling that Google, a rather large company, had to run out an BUY a license from MPEG-LA just to have H.264 and MP3/MP4 playback for Chrome.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sveinung</div>
+<div class='content'>Just wanted to say thank you for trying to keep the web open. Are there any specific patent issues around Dirac you are looking into?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>As far as I know, we haven&#39;t done any patent analysis of Dirac yet.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Emanem</div>
+<div class='content'>Actually you should delegate all the video codecs to the underlying OS.<br>Then maybe pop up a window to say &quot;Codec xyz is not free that means blah blah...&quot;, but still the  tag doesn&#39;t specify the coded, but just video, as  doesn&#39;t specifiy if jpg or png or whatever.<br>The same should apply for videos.<br>Cheers,<br></div>
 </div>
 <div class='comment'>
 <div class='author'>ac</div>
@@ -29,207 +341,187 @@ permalink: "/2010/01/video-freedom-and-mozilla_23.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Free-as-in-beer, for Internet content providers, as long as they don&#39;t charge users, for a few years, yes. A smart move on the MPEG-LA&#39;s part, to increase the chances of the Web being completely locked into H.264, but not really &quot;free&quot;.<br></div>
+<div class='content'>Theora definitely isn&#39;t the last word in unencumbered video codecs, either. It&#39;s just the best thing we have right at this moment.<br>Generally I don&#39;t like to talk about future work until that work has produced some actual results. Anything else is just empty words.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>John</div>
-<div class='content'>Of all the arrogance in the world. The world still don&#39;t evolve around America. The majority of countries don&#39;t have software pattens. Why the hell should we care if h.264 might be a problem for some. This is the U.S encryption laws all over again. If I want to use h.264 on my system that&#39;s my right. FF should only pass the request down to my codec of choice.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>TK</div>
-<div class='content'>It feels like the original intent of the  and  tags are, once again, being hijacked by corporate interests who have bullied enough people to force Ogg out of the standard.<br>For those that insist Firefox pick up a plugin to play H.264, why not the other way around??? Since H.264 is the most encumbered codec and Ogg is free to redistribute (that&#39;s the biggest point, people!!!), why don&#39;t the other browsers support Ogg natively and pick up H.264 in a plugin? What&#39;s good for the goose is good for the gander, right?<br>Honestly, I thought the original intent of these tags were to allow multimedia playback without the need for additional libraries, players, or plugins. With that in mind, it baffles me why some folks want Mozilla to give in and others think it&#39;s hypocritical of Mozilla to be OK with Flash...for now. Flash won&#39;t be built into Firefox. Firefox isn&#39;t redistributed with Flash built in (and no other browser that I know of does so, either). Again, the whole issue was initially about being able to play multimedia without plugins or external players. Flash, in this context, is considered a fallback, not endorsed as a solution.<br>Therefore, what can Mozilla distribute inside of Firefox without being tied to a known-encumbered codec and without a plugin (yet still offer that possibility later)? H.264? Is that codec really and truly redistributable with no known legal restriction? No? There&#39;s your answer. Instead of trying to find workarounds for this sticky mess in trying to force H.264 down the throats of those that simply cannot afford it, why not go with a codec that is free of such encumbrance for everyone?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Sander</div>
-<div class='content'>FWIW, this post has helped me greatly with convincing other people at Fronteers (the Dutch organization for front-end web developers) to publish the videos of our recent conference solely in Theora; thanks, and please keep writing about these things, your posts are invaluable!<br>(I also wrote a post about our decision: http://fronteers.nl/about/theora-choice )<br></div>
-</div>
-<div class='comment'>
-<div class='author'>mors</div>
-<div class='content'>The amount of misinformation in these comments is ridiculously sad.<br>H.264 is not royalty-free, meaning anyone implementing/shipping a encoder/decoder has to license (pay) heavily to the MPEG-LA. This is a huge problem for interoperability and free access to content, because then one would be locking  into a single non-free codec.<br>What if each browser had to pay royalty fees to the W3C to implement HTML ? (In fact they already pay a membership fee but that is different)<br>Or in another case, look at the current de-facto monopoly that Ms Office has. People exchange MS Office documents around, out or sher ignorance, instead of using open format documents, like pdf or odf, which forces everyone to have a MS Office available, meaning that people need to **pay** Microsoft a windows and office license.<br>This is not how freedom is defended.<br>I&#39;m personally quite glad that Mozilla at least stood against h.264 with Opera, else Mozilla or Opera would be forced to license h.264 and make the MPEG-LA a huge profit, while locking other royalty free codecs out of the  market. Google licensed h.264 which makes me believe that it was a unilateral management decision, and not something discussed by the big engineering mass they have.<br></div>
+<div class='author'>Joshua Cogliati</div>
+<div class='content'>&gt;The H.264 patents will expire soon, and then we&#39;ll be OK. Many H.264 patents don&#39;t expire until 2017.<br>The expiration date is more like 2028 in the US.<br>http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2009-July/020737.html<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Rob</div>
 <div class='content'>*** RE: Mozilla should pick up and use H.264 codecs that are already installed on the user&#39;s system.<br>After reading both this article, as well as the other linked post (which really only touched on DirectShow), I still believe you&#39;re wrong.  As much as I think that promoting software freedom is an important role, doing so at the expense of expected end-user functionality is wrong.  But instead of just disagreeing with the points for not using a system-provided codec, lets instead look at the benefits of it.<br>1. Additional video codec&#39;s.  Ya - the obvious one, right now its h.264 that all the users want, but later it&#39;ll be h.265, or something else, who knows.  The point being I don&#39;t want to have to wait for a new version of my browser to be released just because a new video codec is being used somewhere.  Codec&#39;s need to be able to be added/removed from the system without touching the browser.<br>2. Codec optimizations.  Using h.264 as an example - lets say we&#39;re watching some 1080p HD streaming content, thats going to need a lot of CPU power to decode, unless the client is on a system with a hardware offload of some type.  Do you plan to add hardware acceleration to firefox for every codec and every chip out there?  DXVA on windows, VDPAU / VA-API / XvBA on linux, Broadcom decoder chips in embedded platforms, etc.  This is probably a big part of the reason FireFox mobile would go with a system-provided codec - on a mobile device you&#39;ll never have the CPU power to decode without a device-specific module for its decoding hardware.<br>3. Promoting software freedom.  Yes - I&#39;m using that argument for the other side.  Remember all those millions of XP users that don&#39;t have a h.264 codec.  You aren&#39;t helping them either way if you use a limited built-in video support, you&#39;re pushing them back to IE.  Instead let their system pop up telling them they don&#39;t have the software required for playback.  Let them deal with paying for a license for a playback codec if thats what they need to do (and those of us in countries without stupid laws can skip the paying part).  And let them see that if the content they were after had been provided in a free format they wouldn&#39;t have had to deal with that hassle - they can start petitioning their content providers for the format they want then.<br>4. Code re-use.  I like the wording you used in the other article - &quot;But if we&#39;re going to ship our own video infrastructure ...&quot;.  That sounds like a lot of extra work, developing, testing, shipping, supporting, etc. an entire cross-platform video infrastructure.  It sure sounds a lot easier to me to re-use the video infrastructure that already exists on all those systems, and only have to develop/test/support an interface/wrapper for each one.<br>In the end, this feels to me very much against end-user freedoms.  I don&#39;t like software that tells me what do to or how to do it - its not my browsers role to tell me what video codec I should encode my home-video&#39;s in.  If I choose to use a patent-encumbered format, then thats my choice, and I expect my browser of choice to play that file still.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>ant</div>
-<div class='content'>I found it pretty amusing to find out that Youtube&#39;s HTML5 beta doesn&#39;t even work in *Google&#39;s own Chromium browser*.<br>Youtube can keep its broken H.264. In return, I&#39;ll keep my grab-url-and-use-mplayer method of watching which bypasses all their advertising and Flash.<br></div>
+<div class='author'>Chris Hubick</div>
+<div class='content'>&gt; It pushes the software freedom issues from<br>&gt; the browser (where we have leverage to<br>&gt; possibly change the codec situation) to the<br>&gt; platform (where there is no such leverage).<br>It is just bad engineering, and rude, to *intentionally* not use a modular architecture for your implementation (like GStreamer) which allows for integration with the facilities provided by the host system, as well as pluggable support for alternate or future formats.<br>If you really want to stand behind this argument, then you should also drop support for the evil and proprietary platforms like Windows and MacOSX altogether.  How many Mozilla resources are wasted on cross platform support for these closed systems?  I run GNU/Linux (for Freedom) on my desktop, so that suits me fine.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Theora definitely isn&#39;t the last word in unencumbered video codecs, either. It&#39;s just the best thing we have right at this moment.<br>Generally I don&#39;t like to talk about future work until that work has produced some actual results. Anything else is just empty words.<br></div>
+<div class='content'>We have a modular architecture. It doesn&#39;t support integration with the host system codecs at the moment. It could --- in fact, we dabbled with some prototypes that did --- we just choose not to invest there.<br>If your comment is really &quot;why aren&#39;t you idiots using GStreamer?&quot;, then that&#39;s an interesting technical discussion to have, and it probably deserves a blog post of its own. But I wouldn&#39;t be surprised if we do end up using GStreamer at some point in the future. (I wouldn&#39;t be surprised if we don&#39;t, too.)<br>If we could drop support for Windows or Mac without losing much influence, we probably would. But it&#39;s important to remember that the only reason you can browse the Web without IE today is because we shipped Firefox to tens of millions of Windows users.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Udo Schroeter</div>
-<div class='content'>I fully agree that Mozilla should stay away from H.264, it&#39;s simply not worth it to invest energy and/or money into this.<br>However, I don&#39;t understand why video rendering of non-built-in formats is not simply deferred to the OS. For example, as an OS X user, my H.264 license is already paid for and is already part of the video codecs that ship with the machine. Why not give users the option of using whatever codecs happen to be installed on their systems? Where is the harm in that?<br></div>
+<div class='author'>TK</div>
+<div class='content'>It feels like the original intent of the  and  tags are, once again, being hijacked by corporate interests who have bullied enough people to force Ogg out of the standard.<br>For those that insist Firefox pick up a plugin to play H.264, why not the other way around??? Since H.264 is the most encumbered codec and Ogg is free to redistribute (that&#39;s the biggest point, people!!!), why don&#39;t the other browsers support Ogg natively and pick up H.264 in a plugin? What&#39;s good for the goose is good for the gander, right?<br>Honestly, I thought the original intent of these tags were to allow multimedia playback without the need for additional libraries, players, or plugins. With that in mind, it baffles me why some folks want Mozilla to give in and others think it&#39;s hypocritical of Mozilla to be OK with Flash...for now. Flash won&#39;t be built into Firefox. Firefox isn&#39;t redistributed with Flash built in (and no other browser that I know of does so, either). Again, the whole issue was initially about being able to play multimedia without plugins or external players. Flash, in this context, is considered a fallback, not endorsed as a solution.<br>Therefore, what can Mozilla distribute inside of Firefox without being tied to a known-encumbered codec and without a plugin (yet still offer that possibility later)? H.264? Is that codec really and truly redistributable with no known legal restriction? No? There&#39;s your answer. Instead of trying to find workarounds for this sticky mess in trying to force H.264 down the throats of those that simply cannot afford it, why not go with a codec that is free of such encumbrance for everyone?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>glandium</div>
-<div class='content'>Do you think Ogg is not patent encumbered ? That&#39;s forgetting how bad/stupid patents are granted. Don&#39;t forget even the wheel is patented. Several times, even.<br>But, H264 has known patents, and even worse, they are known to be enforced.<br>That also doesn&#39;t mean everything else is patent-safe. That&#39;s hiding your head in the sand.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Matthew</div>
-<div class='content'>Very well written summary to address the often-heard concerns about using open video.  Thank you for spreading the message about using open video, because when people really understand all the limitations of H.264, then they do come around to embracing free (as in freedom!) video technology.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Alex</div>
-<div class='content'>All I can really say is THANK YOU.<br>There has got to be a time and place where we put our foot down and say no! Software patents are tearing the software community apart and for us to simply allow them because it &quot;makes life easier&quot; is no excuse.<br>I understand that a lot of the common users don&#39;t understand nor care about software freedom but that does not make it any less important. It is up to us, those that do know to fight for it.<br>Those that willingly give up software freedom for usability deserve neither.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>emmanuel</div>
-<div class='content'>It is the right path. Congratulations and I hope you succeed. Anything else would really be a disaster, even worse than the current flash status-quo (people who want to make a new browser having to pay millions of dollars of fee).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Markus</div>
-<div class='content'>&quot;Markus: regarding &quot;privacy-invading features are enabled by default&quot;, I have no idea what you&#39;re talking about, because we do no such thing.&quot;<br>Google is the biggest data miner on the planet.<br>You send every character typed into the search bar to Google, because the &quot;suggest&quot; feature is enabled by default. Granted, after many users protested, Google now claims to store that data not as long as regular search data, but it&#39;s still stored.<br>Why is Google the default search engine anyway? You claimed in your blog post that Mozilla is an idealist&#39;s organization. If you were idealists, Forestle http://us.forestle.org/en/ would be the default, but your idealism is lead purely by money. You use Google, because Google pays most and you refuse to use AVC because some of your money may be needed to spend on licensing fees.<br>You have no problem helping Adobe install proprietary but costless plugins like Flash.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>abhishek manocha</div>
-<div class='content'>Your stand as pointed by many is contradictory on many fronts.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Arun Raghavan</div>
-<div class='content'>Very late to comment here, but I am _really_ worried that Mozilla grossly overestimates its ability to influence what codecs the big (bad) content providers use.<br>Would it not be more expedient to use, for example GStreamer, but flash a warning when the format being played is encumbered? Possibly even link to a petition, or other forms of user action, to actually get sites to understand that users do actually care about these issues?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>I apologize that my multi-column layout doesn&#39;t work well for posts of this size.<br>Thanks for all the messages of support.<br>glandium: there is a pretty huge practical difference between &quot;Someone might have patents on Theora that we don&#39;t know about, and might sue&quot; and &quot;MPEG-LA has patents on H.264 and *will* sue&quot;.<br>kL, Anonymous, xurfa: sticking to the USA might be appealing but arguing that the USA is unimportant is not a serious approach.<br>Jan, Apreche, MrNightLifeLover: I pointed out right at the beginning that reducing usage of Flash is a good step. However, completely eliminating Flash is not going to happen anytime soon. If this video codec issue was the only thing stopping us from eliminating Flash, then it might be worth trading off codec freedom for plugin freedom, but we don&#39;t have to make that decision yet. Looking at it another way, Flash is a problem that we already have to live with, so it&#39;s OK to live with it a little bit longer if that helps us pursue long-term goals.<br>blah: We are acutely aware of the need to run plugins out-of-process, and trunk Firefox can actually do it if you flip a pref. We are working furiously to stabilize and ship that feature in the next version of Firefox.<br>Tony, Markus: Dirac is great. At some point we&#39;ll probably add Dirac support. However, at typical Web bit rates, Dirac doesn&#39;t currently perform as well as Theora. The patent situation with Dirac is also currently less clear than with Theora. We&#39;ll keep an eye on it.<br>Markus: The situation on Linux/GStreamer is much less bad than Mac/Quicktime, which is in turn less bad than Windows/DirectShow. Also, Mobile Firefox is currently far less influential than desktop Firefox so it matters much less what compromises we make there. Even if we end up supporting system GStreamer codecs on desktop Firefox for Linux, that wouldn&#39;t harm our goals too much IMHO.<br>MrNightLifeLover: You are incorrect. Default installs of Windows Vista do not include an H.264 codec.<br>Brian: I don&#39;t know much about the encoder side. Ogg plugins for proprietary editors sound good to me, though.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Epicanis</div>
-<div class='content'>The more this comes up the crankier it makes me.  Right now I am very cranky indeed, so please forgive this comment directed at a few commenters and probably a lot of non-commenting readers:<br>*&quot;The internet is not here to be your [INSERT VOCIFEROUS PROFANITY HERE] TV!&quot;*<br>The issue here isn&#39;t promoting &quot;easy consumption&quot;, or even &quot;sustainable&quot; or &quot;healthy&quot; consumption (thought that&#39;s a factor).  The issue here is to promote *participation*, which is the aspect of the internet most endangered by the need to bribe one&#39;s way through various proprietary licensing tollbooths before being allowed to contribute.<br>Apple, Microsoft, and even Google are trying to choke off legally-free participation precisely because *they* are running the tollbooths.  I&#39;ve read that Apple, for example, controls some of the H.264 patents.<br>The only way to keep the internet open to participation is to have at least some readily-accesible roads without tollbooths.  *That&#39;s* what this is about.<br>Sure, these metaphorical roads don&#39;t get well-maintained until they get enough use, which in this context means having a substantial amount of readily-available &quot;content&quot; in the legally-free formats.  That&#39;s presumably why everyone&#39;s obsessed with YouTube™ - if they made even a substantial part of their non-HD video available it&#39;d represent a huge jump in attention.  I don&#39;t think Google wants a large free-access road popping up next to whatever tollbooths they&#39;re working on right now, though, so they seem to be carefully &quot;harmonizing&quot; their public statements, responses to polls and feature requests, and so forth to make it seem as though Ogg Theora (and Vorbis, don&#39;t forget) don&#39;t exist, while striving to give the appearance of support for &quot;open HTML5 web standards&quot;.<br>Given how central the goal of facilitating participation has been to the philosophy behind Mozilla Firefox&#39;s development,  I&#39;m slightly baffled why anyone with an &quot;I don&#39;t care about *participation*, I just wanna *consume*&quot; folks even care what Mozilla does with Firefox &lt;video&gt; and &lt;audio&gt; - just go buy a standard Mac or Microsoft-Windows/Internet Explorer system, or perhaps an iPhone®. &quot;Consuming&quot; is pretty much what those are for.  (There&#39;s bound to be a &quot;Bread and Circuses&quot; app or two in the &quot;app store&quot;.)<br>I know that sounds facetious, but I&#39;m serious.  With the possible exception of Richard Stallman, I don&#39;t think most of us mind that &quot;consumer&quot; toll roads exist, so long as they aren&#39;t actively choking off our ability to build and use toll-free roads as well.<br>That said - &quot;Big Content™&quot; doesn&#39;t want tollbooth-free roads around, so I&#39;m cynical that any amount of pressure from small participants on the internet will have any real effect.  I think efforts might be better focussed on making it easier to create and find independent material in legally-free formats.  As an aside, supporters may want to show some love and attention to &lt;audio&gt;, too - it&#39;s a lot simpler for a hobbyist to produce audio-only content than to deal with full video production.  Since Steve Jobs will no doubt never allow &quot;Oggcasts&quot; in the iTunes® store, some alternative means of distributing and finding Ogg content will obviously be needed...<br></div>
+<div class='author'>Nephersir7</div>
+<div class='content'>I think that the fact that Google only enabled h.264 HTML5 video on youtube has more to do with the fact that all their videos were already encoded in that format (at 3 different resolutions), for iPhone and Android support. Therefore, it was relatively easy to just turn on the switch for beta HTML5 embedding.<br>Transcoding all those videos to Ogg Theora (with multiple copies for SD, HQ and HD) would require a major computing effort and storage space availability, that, sadly, just isn’t worth it at this point. Remember, it took MONTHS in 2007 for youtube to transcode all of their h.263 FLV videos to h.264 mp4&#39;s for iPhone support. And that was before Youtube added 720p and 1080p HD video support. They&#39;d literally have to double their datacenters&#39; storage space!!<br>Also, Apple should be blamed for being the only browser vendor refusing to feature Theora support for its video tag support.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>まつお</div>
 <div class='content'>I think the reason why youtube and vimeo use non-free codec is because there is a problem of copyright in the video which is hosted on those sites.<br>May be Mozilla should make a plugin one like flash so it would be possible to play these video on firefox. If you think about it, chrome and safari are both nonfree browsers (chrome is open sourced as chromium but chrome has few functionality which doesn&#39;t exist in chromium)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>James</div>
-<div class='content'>The thing that I don&#39;t see is why, given everything you&#39;ve said, support gstreamer. It seems your answer above is that mobile doesn&#39;t matter much. But I&#39;m surprised it is needed just for mobile; IMO there are lots of things Fennec needs more than a very basic HTML5 video support. Is there a lower barrier for getting a new video backend in the main source tree if it is just for Firefox mobile? (And why won&#39;t distros use it once it&#39;s checked in and a Firefox (mobile) has shipped with it - it&#39;s been declared good enough to be called Firefox).<br></div>
+<div class='author'>wilsonics</div>
+<div class='content'>Re: Joshua Cogliati<br>&quot;Mozilla should pick up and use H.264 codecs that are already installed on the user&#39;s system.&quot;<br>I&#39;m with you Josh.  I&#39;m a heavy Mac user, and I personally would prefer h.264 over the ogg/vorbis argument. (ducks for the tossed tomatoes)<br>I do love my Firefox, however I would just like Firefox to allow the video to pass through even when I&#39;m on my Win7 machines.  I always have quicktime installed, so codecs are not a problem.<br>Firefox should not be making the judgement call on what we choose to view on the web.<br>There will always be some sites the push out h.264 and some may push out ogg in the future.<br>However, the Mozilla community is keeping us in the dark (I&#39;m a US user) by forcing us to have one over the other.<br>Personally, I would like to have my cake and eat it too.<br>Anyone with me?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Anmol</div>
-<div class='content'>I would like to salute every one at Mozilla for doing the right thing. If it wasn&#39;t for you guys we would still be paying for good browser or using Internet Explorer at mercy of Microsoft and malicious stuff on Internet.<br>I cannot even imagine how bad the situation would have been on operating systems other than Windows.<br>Thank you for doing the right thing.<br>- A user of Opera browser who is grateful for being liberated by the phoenix.<br>p.s. to Google: I WANT MY WEB FREE, kindly do the right thing and dump support for proprietary stuff that breaks Internet. Please remember<br>&quot;Don&#39;t be evil&quot;.<br></div>
+<div class='author'>Ben Bucksch</div>
+<div class='content'>&quot;[2] RANT: in many cases, free implementations of heavily patent-encumbered technology are harmful to the free software ecosystem&quot;<br>I want to disagree here. Without free implementations of MPEG2/4, I would not be able to play videos on my desktop. Not even per YouTube download tricks, simply nothing. It would be a severe problem for the free desktop in general, because fun is important.<br>Also, without free implementations of MPEG2/4, I would not be able to use MythTV, nor be able to write my own alternative to it. I would still be slave to TV schedules. (TiVo and similar never reached Europe.) This is an area where open source can really innovate and we&#39;re almost a whole decade ahead. Without MPEG, no TV (DVB), no DVD, nothing.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>anonymous</div>
-<div class='content'>Why not use your public exposure to create an easy, fast way for users to print-out, address and send &quot;template style&quot; physical letters to appropriate departments in the usa to complain about them not forcing patent owners to &quot;disclose or lose&quot; any patents which relate to any visible use by the public? -ie: no more submarine patents, -problem solved for uncertainty about free patents! - and we just keep this up untill something &quot;gives&quot;.<br></div>
+<div class='author'>Matthew</div>
+<div class='content'>What do you see as the outcome of all this mess, 5 years down the road? Is Mozilla capable of exerting enough pressure?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Samuel Bedwell</div>
-<div class='content'>About the proposal that localized releases of Firefox include h.264: The intention may be to stick-it-to-the-patent-holders, but it&#39;s important to consider that this idea punishes the users far more than the suits.<br>Where software patents do not apply, the patent holders lose nothing; where software patents apply, the patent holders lose nothing, but &quot;because you live in the US,&quot; many people who use Firefox are excluded from a potentially important feature.<br>roc: thanks for posting this breakdown. :)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Apreche</div>
-<div class='content'>&quot;Users just want video to work. You Mozilla people are such idealists! Yes, that is the reason for Mozilla to exist. Anyway, in the short term, our users probably won&#39;t be affected much since Flash fallback will still work. In the long term, I think freedom will ultimately benefit users (not just Firefox users, but all users).&quot;<br>Flash fallback. So it&#39;s ok to force people to go download a non-free plugin from Adobe, but not ok to force them to go download a non-free H.264 codec. Yeah, I know about things like gnash, nobody uses them, and they suck. Is Firefox going to ship with gnash included already? It will ship with H.264 before it does that.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Markus</div>
-<div class='content'>Once again, someone from Mozilla is spreading FUD.<br>Claim: &quot;Mozilla should pick up and use H.264 codecs that are already installed on the user&#39;s system. I&#39;ve previously written  about a variety of reasons this would be a bad idea&quot;<br>Fact: Mozilla is working on such a solution for Firefox Mobile: https://bugzilla.mozilla.org/show_bug.cgi?id=422540<br>Claim: &quot;gst-plugins-ugly (...) whose use is legally questionable&quot;<br>Fact: Using it is perfectly legal. Even in the US. &quot;legally questionable&quot; is only the distribution, but even that is no problem if it is distributed from a jurisdiction without software patents (VideoLAN / VLC is located in France and US citizens are able to download and use VLC for 10 or so years now without ever being prosecuted for it).<br>Claim: &quot;Users just want video to work. You Mozilla people are such idealists! Yes, that is the reason for Mozilla to exist.&quot;<br>Fact: No, you are not. First you started collaborating with Google on a giant commercial data mining operation (various privacy-invading features are enabled by default) and now you are actively attacking open standards with inferior codecs.<br>Unlike Theora, Dirac is actually standardized (a subset to be exact). If you had adopted Dirac instead of Theora, you would a.) promoting an actual standard, b.) be still free of American patents, and c.) have a codec that does not totally break down at HD resolutions.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>MarkyMark</div>
-<div class='content'>As wonderful as this discussion may be about the merits of various codecs, their supportability, their cost, and their moral imperatives, I have yet to see a porn clip encoded in Ogg format.  The popular choices seem to be WMV, DivX, Flash, h.264 (as MP4), and occasionaly there are variations of the ghastly Real format.  Some of these formats may be more suitable for downloads than for streaming, but there is plenty of embedded content of this type out there.  You should not forget this popular market segment when deciding what standards to support.  Not everyone cares about YouTube videos of cats playing the piano.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Funtomas</div>
-<div class='content'>What Theora really needs now to spread the world is &quot;native&quot; support from Adobe in Flash. Such a step would make Theora equally accessible to H.264 and video servers like YouTube or Vimeo could switch. The question is how to make Adobe acquiring open video standard. Perhaps making Theora better could work.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Peter</div>
-<div class='content'>Politics and Programming Do Not Mix.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Duv</div>
-<div class='content'>@ant: Chrome and Chromium have a rather bizarre relationship with HTML5 Video (and audio). It would turn out that the media backbone (compiling ffmpeg) that they use for it happens to have have after all other format&#39;s save for the OGG family commented out of the code.<br>Simply put for every build of Chromium, H.264 and MP3/MP4 playback is disabled. And from what Google has said about problem, it&#39;s nothing that they can fix... it comes down to MPEG-LA licensing and getting a license from MPEG-LA for your own project. It not something that Google can give to the downstream. And the comments in the code itself more or less spell out &#39;If you un-comment these flags, without obtaining the proper license, you do so at your own peril.&#39;<br>I think that it&#39;s rather telling that Google, a rather large company, had to run out an BUY a license from MPEG-LA just to have H.264 and MP3/MP4 playback for Chrome.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Johan Krüger-Haglert</div>
-<div class='content'>Jonathan Feinberg:<br>Speaking for myself all I can say simply because I didn&#39;t knew about Dirac earlier, thanks for the info.<br>I assume it may also be because ogg theora is more wellknown by name and maybe some people think people already have support for it but I doubt that. Small format noone use.<br>So well, yes, I would prefer Dirac over Theora since it seem to offer better quality.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Alex</div>
-<div class='content'>And unfortunately, the response of a lot of people will still be...<br>&quot;Yeah, but H.264 is better than Theora, so they should implement it&quot;<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Conor</div>
-<div class='content'>Great work! This is an inspirational read, and I hope you guys are able to turn some heads about this codec issue.<br>What can we humble users do?<br></div>
+<div class='author'>pd</div>
+<div class='content'>What is your position on x264:<br>http://en.wikipedia.org/wiki/X264<br>?<br>&quot;... a free software library for encoding video streams into the H.264/MPEG-4 AVC format. ... released under the GNU General Public License.&quot;<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Paul, see http://www.schleef.org/blog/2009/11/11/theora-on-ti-c64x-dsp-and-omap3/<br></div>
-</div>
-<div class='comment'>
-<div class='author'>antistress</div>
-<div class='content'>I love Mozilla for its decision to promote free codecs ans then free softwares. Keep on making good decisions for all<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Holy horrendous layout, Batman!<br></div>
+<div class='content'>pd: x264 sounds like great technology. Overall it&#39;s probably a good thing, since you can use it freely in many jurisdictions. I get annoyed by x264 advocates who push the arguments I refuted in this post, though. In the USA and probably in Europe, your freedom to use and redistribute x264 (without fear of being sued) is curtailed by patents, and x264 advocates are in denial about it.<br>Matthew: I have no idea. The only thing I&#39;m sure of is that in the next few years there will be some large unexpected events that will invalidate any predictions I could make now :-). Our job is simply to keep pointing in the right direction, do our best, and be ready to seize any unexpected opportunities that come along.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>JohnP</div>
 <div class='content'>First, I applaud Mozilla for taking this stand for all of us.  Please don&#39;t give in. You are finally of the size where your decisions to or not to support proprietary solutions matter.<br>Second, I&#39;m very disappointed with Google/YouTube for defaulting to a proprietary codec. Very disappointed.  They could have made the decision towards open codecs &quot;done.&quot;<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Pseudonymous Coward</div>
-<div class='content'>Thank you, thank you so much, Mozilla, for standing by the ideals of free software.<br></div>
+<div class='author'>Sander</div>
+<div class='content'>FWIW, this post has helped me greatly with convincing other people at Fronteers (the Dutch organization for front-end web developers) to publish the videos of our recent conference solely in Theora; thanks, and please keep writing about these things, your posts are invaluable!<br>(I also wrote a post about our decision: http://fronteers.nl/about/theora-choice )<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Frank</div>
-<div class='content'>Where software patents do not apply, the patent holders lose nothing; where software patents apply, the patent holders lose nothing, but &quot;because you live in the US,&quot; many people who use Firefox are excluded from a potentially important feature.<br>Ok time to write to your congress man and start to have a minimal reasonable law on software patents, do we most of the rest of the world rule for you ?? you really have all my support. if it&#39;s anything we can do, just tell<br>and you&#39;re wrong, do you think patent holders doesn`t waste pretty ammount of Euros in loobies at Europe, they REALY lose, they do...<br></div>
+<div class='author'>Peter</div>
+<div class='content'>Politics and Programming Do Not Mix.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>MrNightLifeLover</div>
-<div class='content'>&gt; Mozilla should pick up and use H.264 codecs that are already<br>&gt; installed on the user&#39;s system.<br>Yes you should. The reasons u gave not to use it sound like they come from free software extremist like Stalin..  errr Stallman.<br>Of course a problem would be that it&#39;s not available on Win XP, however it would work on Win 7 and Vista. On XP you could maybe use the one from Apple Quicktime, if it&#39;s installed. (or tell the user to install it if they want HTML 5 video support)<br>On a Mac you should be able to use Quicktime w/o any problems.<br>Consider what you are now doing: Youtube&#39;s HTML 5 video is not working with Firefox, maybe not a big issue at the moment since most people use flash anyways. But if time goes on you should ensure that html 5 videos work, otherwise u risk loosing users.<br>On the other hand: Flash is also proprietary and Firefox uses the default flash installation, so I really don&#39;t see why it shouldn&#39;t when it comes to Video codecs.<br></div>
+<div class='author'>Peter</div>
+<div class='content'>There seem to be some misinderstandments in the comments about some things:<br>x264 is an encoder, it is NOT able to DECODE video!<br>You can only use it to encode video to h264, not play it. There for it&#39;s useless anyway, even without patents.<br>About dirac, Dirac is actually a format.<br>But dirac-research and schrodinger are IMPLEMENTATIONS(=codec) of that format.<br>While they aren&#39;t optimized for low-bitrate web-oriented video. What&#39;s stopping you to have a look at the possibilities to improve these codec to have low-bitrate optimizations?<br>And Mozilla, for pointing to the issue of codecs.<br>You should build a short text with a link to a more complete explanation of this issue that comes up every time the user tries to play a h264 video. This way average joe understands the reasons and knows that something called MPEG-LA is responsible for his uncomfortability. This ain&#39;t the blame game. This is letting users know why it doesn&#39;t work. You really should do something like this. It would inform users about the problems and maybe they will ask more for ogg theora video&#39;s. There is nothing stopping you from saying MPEG-LA is asking unreasonable licence fees for everyone.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Like others here, I find it highly amusing that Mozilla continues to go to such great lengths to protect and promote Adobe Flash, which is horrifyingly closed and proprietary to a single vendor. Yet they turn their noses up at H.264, which is not dependent upon any one vendor. Payback for all the Tamarin code Adobe &quot;donated&quot; to you guys a while back?<br>Stop being such laughable hypocrites on this issue.<br></div>
+<div class='author'>sdrgdrsg</div>
+<div class='content'>Please support aside the ogg container also the mkv CONTAINER.<br>It&#39;s being used a lot.<br>e.g. HandBrake transcodes theora and vorbis in that format.<br>It&#39;s a very nice Open Source multimedia conTAINER.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian Monroe</div>
+<div class='content'>As an American myself, I actually do like the idea of non-US localized Firefox including H264. Whats the point of all the protests against EU software patents if Europe lives under the yoke of US patent law?<br>And what a perfect demonstration of the harm software patents do by sending crippled software to the US. It would be a real learning experience for millions of Firefox users. It would be a stain on our national geek pride. :)<br>...assuming that&#39;s legally possible. I&#39;ve heard it claim that if you distribute to the US, then you have to pay patent royalties even on stuff you distribute in Europe. But IANAL and this was hearsay from a NAL. But I do think this technique should be seriously thought about.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Iain Collins</div>
+<div class='content'>I agree with other posters who have noted &quot;the Flash fallback works&quot; commentary isn&#39;t really true in many cases.<br>In practice Flash is horribly bug ridden on Mac OS/Linux/BSD/Solaris and cripplingly slow on slower computers running Windows (older computers, or netbooks). So much so that Apple intentionally ship an older (more stable) version of Flash with Mac OS 10.6, and of course continue to refuse to allow an implementation on the iPhone OS (a situation which I am personally quite happy with).<br>Perhaps more importantly I don&#39;t think it&#39;s fair to hold that it&#39;s an ideologically a better option to force users to depend on Flash for embedded video. I&#39;m a lot more concerned about how proprietary and troublesome the widespread use of Flash is than about the licence behind a specific video code (which is not to say that it&#39;s not a valid concern, but I do think it&#39;s the lesser of two evils).<br>The net effect of refusing to budge from this position of resistance will be to stifle the roll out of HTML 5 video, to bolster the case for continued use of Flash and to provide another reason for people to choose a browser like Google Chrome over Firefox.<br>The position outlined above on H.264 seems idiosyncratic at best, but hey it&#39;s ultimately up to the Mozilla developers.  I would dare suggest though, unless they are determined to stick to the decision to not implement it till the bitter end, it would be less damaging for the perception of Firefox to do it sooner rather than later.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sean McCann</div>
+<div class='content'>Robert<br>I came across this article quite by accident. Kudos for raising the issue and explaining it in fairly concrete terms. I think that Mozilla is doing the right thing. We need open standards that are not patent encumbered. Keep fighting the good fight. Like many things its going to take the few that understand the issue to fight on the many that don&#39;t.<br>Sean<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Paul Clark</div>
+<div class='content'>Just to note that your final point about the possibility of MPEG-LA royalties for distribution (as opposed to encoding/decoding) of H.264 has been addressed - at least for the next 6 or so years:<br>http://www.mpegla.com/main/Pages/Media.aspx<br>This doesn&#39;t address the issues with the codec itself, of course, but given the weight of pressure for H.264 (in hardware) from the mobile, broadcast and IPTV industries I think it&#39;s going to be hard to resist.  I do understand your rationale here, and it&#39;s a fine one, but I&#39;m afraid this might be a battle you can&#39;t win.<br>It&#39;s probably just worth adding that we are seeing IPTV set-top boxes using Webkit for UI very effectively now, and of course given they are sub-$100 low-power devices they are doing all the H.264 in hardware.  At the moment they all have different proprietary ways of creating video players which means a lot of pain for us user interface developers.  It would be great if we could develop to a standard HTML5  API.  If this could then also work on the desktop _with the same content encoding_ then we&#39;re in heaven.<br>This might just seem like a developer&#39;s dream world, but there is a serious point to this:  In the UK at least, nearly 50% of households don&#39;t have Internet access at all.  I think to enable those people to benefit from all the Web brings is going to require using the other two of the &quot;3 screens&quot; (TV and mobile), and if the same content can work seamlessly across all three, that goes a long way to enabling that.<br>Put another way, there is a downside to insisting on a (currently) software-only codec - you are forcing people into using high-power, expensive general-purpose computers rather than cheap hardware to access it.  Realistically, H.264 is the only codec with a chance of having that kind of hardware support for the forseeable future - and even getting that (instead of MPEG-2) took years.<br>Best wishes<br>Paul<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Paul, see http://www.schleef.org/blog/2009/11/11/theora-on-ti-c64x-dsp-and-omap3/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joe Stevens</div>
+<div class='content'>http://www.mpegla.com/main/Pages/Media.aspx<br>H.264 is going to remain free for the next couple of years. In the interest of killing Flash I think you guys should go the same route as Google and implement .ogg and H.264.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Free-as-in-beer, for Internet content providers, as long as they don&#39;t charge users, for a few years, yes. A smart move on the MPEG-LA&#39;s part, to increase the chances of the Web being completely locked into H.264, but not really &quot;free&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>emmanuel</div>
+<div class='content'>a progress?<br>http://www.atoker.com/blog/2010/02/04/html5-theora-video-codec-for-silverlight/<br>silverlight doesn&#39;t have flash&#39;s market share and we want to get rid of those plugins... but it would at least remove the h.264 problem. one thing at a time...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>MarkyMark</div>
+<div class='content'>As wonderful as this discussion may be about the merits of various codecs, their supportability, their cost, and their moral imperatives, I have yet to see a porn clip encoded in Ogg format.  The popular choices seem to be WMV, DivX, Flash, h.264 (as MP4), and occasionaly there are variations of the ghastly Real format.  Some of these formats may be more suitable for downloads than for streaming, but there is plenty of embedded content of this type out there.  You should not forget this popular market segment when deciding what standards to support.  Not everyone cares about YouTube videos of cats playing the piano.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>fĺossy</div>
+<div class='content'>This is why I like mozilla, they care about freedom!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>BobChao</div>
+<div class='content'>&quot;You should build a short text with a link to a more complete explanation of this issue that comes up every time the user tries to play a h264 video.&quot;<br>We don&#39;t blam at user when they are browsing a non-standard HTML page right?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Peter</div>
 <div class='content'>@flossy<br>I&#39;m talking about a screen that blames MPEG-LA, not the user!?! Where do you get that moronic idea that I would propose that the user gets a screen that says they are wrong. NO, I&#39;m talking about a screen that says: &quot;Because of those bad decisions... we can&#39;t offer support for that in a way it was supposed to be done. Feel free to tease the content owner about it. &quot;<br>Why do you think nobody knows what the problems are. Because nobody ever tells the user WHY they can&#39;t do something.<br>The moment this retarded secrecy ideology is abandoned the better. This goes against the Open Source because you are actually helping bad people hiding their bugs. (See what happens in aliens)<br>Again, this ain&#39;t the blame game, this is pointing where the problems are coming from for the user. This means that the user will be educated and eventually will react in a better way for an FOSS-ecosystem. Because they know what it means and what the alternative will mean.<br>You do realize who are now seen as the stubborn or bad guys that don&#39;t integrate now? Gues you don&#39;t.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Stephen</div>
-<div class='content'>Thank you for speaking out against H.264 an in support of Ogg/Theora. This has already been poste to reddit but I will be sure to tweet a link to your article.<br>Also I made sure to tell google (through feedback) that I am in support of Ogg/Theora instead.<br>I sugguest others do the same.<br></div>
+<div class='author'>Anyeos</div>
+<div class='content'>Brian Boyko, first the company for what you work have a big problem: They depend exclusively of a closed source software.<br>That limit you a lot.<br>You just said that Cinelerra does not give you what you expect. That will not be a problem if your company just pay a developer to implement the functionality what you need in cinelerra. And, why not? Extra functionality that the other software(Sony Vegas) actually does not include for your needs.<br>Because the nature of Free Software, you can do that.<br>So now, I ask you: Can you do the same with Sony Vegas or another propietary software? The answer is: No.<br>So I ask you too: Are you free to work with propietary software? The answer: No, using propietary software your company are limited to the conditions of the developers of that software.<br>So now I can say you: Don&#39;t wait OSS NLE to mature, just adapt it to your needs!<br>That is because we prefer to use OGG Theora instead of patent issued software because you will be persecuted for using your natural righs of freedom. That sounds stupid, not? But is the reality.<br>Bye<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Brad</div>
-<div class='content'>Robert,<br>Please don&#39;t ever give in on this issue, or allow the Mozilla Foundation to succumb to the pressure of using H.264. Why did the W3C even allow it to get this far?<br>Even worse this issue has turned into Apple/Google vs Mozilla and they are going to have more money to get their way.<br>The good news is that Firefox has a lot more users, and if you don&#39;t give in then hopefully Google will finally find some sense. To help aid this please donate to the Xiph.org foundation to boost the development of Theora:<br>http://www.xiph.org/donate/<br>Why would anyone want to buy in on H.264 when Ogg Vorbis and Theora has been giving freely for so long?<br></div>
+<div class='author'>Ryo</div>
+<div class='content'>It&#39;s a great move from Mozilla to take a tough stand against this Trojan Horse HTML5/H.264 and support HTML5/Theora. If Google releases a patent-free Codec, you should think about to implement this together with Theora.<br>But, please No H.264. As long as Firefox strictly support free codecs only, I support Mozilla.<br>If Firefox ever can use H.264 for HTML5 I instantly would switch to another browser or fork which does not. Freedom of the Internet is more important.<br>Keep the stance for freedom and free software. You&#39;re doing good.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Tony Arcieri</div>
-<div class='content'>I don&#39;t understand why there&#39;s so much emphasis on Ogg Theora and seemingly no attention paid to Dirac/Schrodinger...<br></div>
+<div class='author'>Anony</div>
+<div class='content'>stop whining and give the people freedom. freedom of CHOICE, so that we can choose to use non-free codecs.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>wilsonics</div>
-<div class='content'>Re: Joshua Cogliati<br>&quot;Mozilla should pick up and use H.264 codecs that are already installed on the user&#39;s system.&quot;<br>I&#39;m with you Josh.  I&#39;m a heavy Mac user, and I personally would prefer h.264 over the ogg/vorbis argument. (ducks for the tossed tomatoes)<br>I do love my Firefox, however I would just like Firefox to allow the video to pass through even when I&#39;m on my Win7 machines.  I always have quicktime installed, so codecs are not a problem.<br>Firefox should not be making the judgement call on what we choose to view on the web.<br>There will always be some sites the push out h.264 and some may push out ogg in the future.<br>However, the Mozilla community is keeping us in the dark (I&#39;m a US user) by forcing us to have one over the other.<br>Personally, I would like to have my cake and eat it too.<br>Anyone with me?<br></div>
+<div class='author'>iamronen</div>
+<div class='content'>Thank you for this post and the previous one about activex.<br>For the record: in Israel (where I live) the government online payment service (which is facilitated by all government offices) does not work on Firefox (or other browsers I&#39;ve tried)... it seems to only work with Internet Explorer...<br>this means that I cannot make government payments from my linux (Ubuntu) based computers... I have to have access to a Windows + Internet Explorer computer to make these payments! so much for democracy, freedom and such...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Alex</div>
-<div class='content'>Looks like all this might be changing now...<br></div>
+<div class='author'>Mike</div>
+<div class='content'>As a video professional I think Mozilla is wrong here. Theora is not a format taken seriously at all by video professionals or amateurs using a mac or windows PC. In fact most people have never heard of it. Our software tools don&#39;t even give us the option to encode to Theora. It&#39;s an older format that doesn&#39;t produce as good of results compared to H.264. So we have no reason to pay it any mind.<br>When I search popular professional video boards, I get one or two results for &quot;Theora&quot; that are several years old without any replies. Because nobody knows and nobody cares.<br>Meanwhile H.264 is a standardized format we all use every day. More and more cameras are being released that capture to H.264. The AVCHD format is based on H.264. All of these new HDSLR&#39;s capture H.264. Every new smartphone comes with H.264 hardware decoding and you&#39;re starting to see PC&#39;s and netbooks with the same hardware decoding capabilities. Even Blu-ray plays back H.264. Add to that YouTube and Vimeo on the web.<br>Video on the internet will be consumed on many different devices going forward. From desktops, laptops, smartphones, pmp&#39;s, web tablets and internet enabled TV&#39;s. So as a video professional we want to make sure that the videos we put out there can be consumed by as many people as possible. The format of choice is H.264. The video community has already decided this. We&#39;ve already been working with this format for the last few years. This format is both compatible with current flash based video players and HTML5 browsers, sans firefox and opera (but nobody cares about opera).<br>The idea that one open source software company is suddenly going to change all of that simply because of their principles, well that&#39;s just silly. Especially when the entire video industry is already on top of H.264 and top browsers like IE, Chrome, Safari, Android and iPhone browsers all support H.264.<br>I&#39;m sorry but you&#39;re going to lose here. I&#39;m not saying I don&#39;t agree with your basis. I think it&#39;s notable. But it&#39;s not reality. Right now the only thing you are doing is holding back the HTML5 video tag from being used more widely. This will become even more apparent when IE9 comes out. Because I&#39;ll tell you right now, I&#39;m not going through the time(equals money) and trouble to render out two versions of a video.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Chris Latko</div>
-<div class='content'>This is mentioned in other comments, but you think Ogg is any better on the patent front? I&#39;m interested in your take on this.<br></div>
+<div class='author'>Arun Raghavan</div>
+<div class='content'>Very late to comment here, but I am _really_ worried that Mozilla grossly overestimates its ability to influence what codecs the big (bad) content providers use.<br>Would it not be more expedient to use, for example GStreamer, but flash a warning when the format being played is encumbered? Possibly even link to a petition, or other forms of user action, to actually get sites to understand that users do actually care about these issues?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Yigal</div>
+<div class='content'>Regarding USA vs. the world: They already have their own web. For once I want to see the rest of the world unite and teach them a lesson.<br>Many sites limit themselves to the US only (e.g. Hulu) so why should I care if the users of that site also need to pay for a codec license?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Frank</div>
+<div class='content'>Where software patents do not apply, the patent holders lose nothing; where software patents apply, the patent holders lose nothing, but &quot;because you live in the US,&quot; many people who use Firefox are excluded from a potentially important feature.<br>Ok time to write to your congress man and start to have a minimal reasonable law on software patents, do we most of the rest of the world rule for you ?? you really have all my support. if it&#39;s anything we can do, just tell<br>and you&#39;re wrong, do you think patent holders doesn`t waste pretty ammount of Euros in loobies at Europe, they REALY lose, they do...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Andrei</div>
+<div class='content'>Unfortunately for an average user, they just want their video to work. They won&#39;t care for software freedom if the video they want to see doesn&#39;t work in Firefox, they will switch to IE and continue their simple existence.<br>I hope that they&#39;ll be able to sort out the licensing and standardize codecs for HTML5 that will be open source compliant but let’s face it, if worse come to worst, folks will jump the ship. Simplicity is the key for most users.<br>I&#39;ll fight the good fight though :).<br></div>
 </div>
 <div class='comment'>
 <div class='author'>WalterBonono</div>
 <div class='content'>I think all the jibber jabber here is just zealot non-sense.  I have used Firefox, IE, Safari and Chrome and frankly I find Firefox to be mediocre at best.<br>I think it is pitiful people are unwilling to pay for anything software related.  Developing is not free!  Some poor bloke spent his time and money developing and just like any other product or service that is created, if it has value, I see no issue whatsoever in trying to make a business around it.  Last time I checked Mozilla doesn&#39;t keep it&#39;s doors open with people that work for free or for the goodwill of mankind (let&#39;s be real please!)<br>I really hate cheap asses who are unwilling to pay for anything that is digital. License the codecs and move on...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Underpass</div>
-<div class='content'>Hello, I&#39;m from the Italian Mozilla community and I wish to ask you if I can translate this enlightening post and publish it on our website.<br>I think we are facing a crucial problem and I fear that we have to give people the correct information, hoping many will follow us.<br>You can write me at the email address I left.<br>Thanks in advance. :-)<br></div>
+<div class='author'>Tim</div>
+<div class='content'>This is ridiculous.<br>It is *not* ridiculous to want open source software. It is *not* ridiculous to promote Theora over H.264. It is *not* ridiculous to be concerned about the huge legal problems of H.264&#39;s patents.<br>It is however *extremely* ridiculous to ignore the video processing abilities of the underlying OS. No matter how closed-source or obscure the codec is, if my OS has that codec available, I want the ability to make use of it.<br>By all means, warn me about security risks before playing a video. Whitelist and blacklist to your heart&#39;s content. But never take this decision away from the user.<br>I switched to Firefox because I really enjoy the Add-ons. In other words, I like the decisions I can make with it. If the developers insist on taking away my freedom of choice, no matter how noble their cause may be, I&#39;m going to switch to Chrome or Safari.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Matthew</div>
-<div class='content'>Ok, I can accept that you cant ship H.264 in the USA.<br>It isn&#39;t a problem elsewhere. Let it work in versions for other countries.<br>Is there a legal reason you cant do this? If there isn&#39;t, then you are being extremely rude to the rest of the world by attempting to force the effect of US laws on them.<br></div>
+<div class='author'>ABC</div>
+<div class='content'>Mozilla &amp; Co. keep up the good work! You are the best!<br></div>
 </div>
 <div class='comment'>
-<div class='author'>blah</div>
-<div class='content'>since Flash fallback will still work<br>Ah, you see, a problem there is you think flash fallback works...  Viewing a youtube video reliably crashes 64-bit firefox (or rather the 64-bit flash plugin, so mozilla just doesn&#39;t want to know, but it&#39;s in the same process, so also takes out firefox). For the love of god, please just run plugins in separate subprocesses, a bunch of silicon in a modern CPU exists to provide an MMU for interprocess memory protection! Use it!<br></div>
+<div class='author'>Alex</div>
+<div class='content'>Looks like all this might be changing now...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>krazyjakee</div>
+<div class='content'>I think the mozilla reasoning here is rediculous, the codecs are ALREADY on my computer, so why won&#39;t it just use those??<br>Gotta be a loophole here somewhere. Couldn&#39;t you stream the mp3 file packets, translate to ogg and then playback to the user, thus not breaking rules? Just an under-educated suggestion.<br>Chrome is now my default, sorry :S<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Carlos</div>
+<div class='content'>The arrogance in thinking you guys know best what we the users should or should not be using is appalling. The whole HTML5 video is starting to remind me of the bad old days where a site was best viewed with Internet Explorer or Netscape.  Here are some reasons for me starting to take a hard look at what I use for video on the web (and I know I&#39;m not the only one going through these kinds of decisions)<br>1. You&#39;re forcing content creators to encode video material multiple times to accomodate your &quot;freedom&quot; ideals.  In a limited server storage and development time world this is hard and forces people to decide what formats to use, usually ending up with the one that is supported by the most browsers/devices.<br>2. You also don&#39;t consider the need to teach others what to use to encode the video makes it even harder. What do we use? How do we teach people to create the content?<br>3. I&#39;ve read all the arguments against using what&#39;s already installed on their systems. Isn&#39;t that the user&#39;s decision?  From an end user perspective the browser should provide the technology to make my life easier not dictate what I should use to accomplish my goals.<br>4. I have a ton of content already on mp4. By denying me the ability to play it natively in Firefox/Seamonkey you make it hard for me or my team to use open standards and promote the adoption of HTML5 videos since I&#39;m already required to use Firefox as a supported browser where I work. My users just want the video to play, not  have to worry about encoding and storage space for the new versions we&#39;d have to create in order to accomodate Firefox or any open/free browser<br>Freedom goes beyond using &quot;free&quot; technologies. It is about creating a user experience that doesn&#39;t limit or restrain what we do on the web. By limiting what you can do in &quot;free browsers&quot; like Firefox you&#39;re just limiting the market adoption of the technologies or the browsers themselves.<br>It is a good theoretical exercise and I&#39;ve created cross browser video displays. I am just not going to recommend it as a solution to my users as I don&#39;t want to increase my workload by an order of magnitude.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse</div>
+<div class='content'>Agree here with Mozilla generally but wish they would fix the memory leak in FF4, had to switch back to 3.6 which is a shame.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Tom</div>
@@ -248,300 +540,8 @@ In my mind, it&#39;s not a question of whether Mozilla delivers codec support di
 The lack of support for industry standard codecs can only hurt FF.  Those of us who develop rich media players and library managers will be forced to abandon Gecko in favor of Webkit as our embedding vehicle.</div>
 </div>
 <div class='comment'>
-<div class='author'>Iain Collins</div>
-<div class='content'>I agree with other posters who have noted &quot;the Flash fallback works&quot; commentary isn&#39;t really true in many cases.<br>In practice Flash is horribly bug ridden on Mac OS/Linux/BSD/Solaris and cripplingly slow on slower computers running Windows (older computers, or netbooks). So much so that Apple intentionally ship an older (more stable) version of Flash with Mac OS 10.6, and of course continue to refuse to allow an implementation on the iPhone OS (a situation which I am personally quite happy with).<br>Perhaps more importantly I don&#39;t think it&#39;s fair to hold that it&#39;s an ideologically a better option to force users to depend on Flash for embedded video. I&#39;m a lot more concerned about how proprietary and troublesome the widespread use of Flash is than about the licence behind a specific video code (which is not to say that it&#39;s not a valid concern, but I do think it&#39;s the lesser of two evils).<br>The net effect of refusing to budge from this position of resistance will be to stifle the roll out of HTML 5 video, to bolster the case for continued use of Flash and to provide another reason for people to choose a browser like Google Chrome over Firefox.<br>The position outlined above on H.264 seems idiosyncratic at best, but hey it&#39;s ultimately up to the Mozilla developers.  I would dare suggest though, unless they are determined to stick to the decision to not implement it till the bitter end, it would be less damaging for the perception of Firefox to do it sooner rather than later.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>sdrgdrsg</div>
-<div class='content'>Please support aside the ogg container also the mkv CONTAINER.<br>It&#39;s being used a lot.<br>e.g. HandBrake transcodes theora and vorbis in that format.<br>It&#39;s a very nice Open Source multimedia conTAINER.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Steve</div>
-<div class='content'>Thanks for breaking it down, because like you said, a lot of people don&#39;t get the implications of this decision, nor do they understand Mozilla&#39;s stance.<br>While some of the reasons Google offers for this choice do sense, such as the worry over file size, I can&#39;t help but think that it is a needle at what is one of their biggest competitors. At the very least, if it is not an intentional jab, they are likely very pleased with themselves.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>gabriel</div>
-<div class='content'>google plan:<br>1. release chrome with encumbered video support.<br>2. support that format on youtube.<br>3. turn off the fall back. everyone move to chrome<br>4. when authors realized the legal hassle after 2017, release googlevideocodec, already working on chrome and youtube.<br>5. get some fat fees from content creators to use their encoder.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>anon</div>
-<div class='content'>****Mozilla should pick up and use H.264 codecs that are already installed on the user&#39;s system.<br>That is the solution! It is not up to you to tell users what codec they should/should not use. Users will make the choice themselves and having the ability to use an existing system codec will open up html video to all other codecs. Please have some sense.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Tim</div>
-<div class='content'>Keep fighting the good fight.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>pd: x264 sounds like great technology. Overall it&#39;s probably a good thing, since you can use it freely in many jurisdictions. I get annoyed by x264 advocates who push the arguments I refuted in this post, though. In the USA and probably in Europe, your freedom to use and redistribute x264 (without fear of being sued) is curtailed by patents, and x264 advocates are in denial about it.<br>Matthew: I have no idea. The only thing I&#39;m sure of is that in the next few years there will be some large unexpected events that will invalidate any predictions I could make now :-). Our job is simply to keep pointing in the right direction, do our best, and be ready to seize any unexpected opportunities that come along.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Geoffrey</div>
-<div class='content'>Thank you for the clear information presented and the follow up comments.<br>The legal and philosophical approaches are usually more subtle than the &quot;it works!&quot; argument and greatly appreciated.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ian Monroe</div>
-<div class='content'>As an American myself, I actually do like the idea of non-US localized Firefox including H264. Whats the point of all the protests against EU software patents if Europe lives under the yoke of US patent law?<br>And what a perfect demonstration of the harm software patents do by sending crippled software to the US. It would be a real learning experience for millions of Firefox users. It would be a stain on our national geek pride. :)<br>...assuming that&#39;s legally possible. I&#39;ve heard it claim that if you distribute to the US, then you have to pay patent royalties even on stuff you distribute in Europe. But IANAL and this was hearsay from a NAL. But I do think this technique should be seriously thought about.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Tim</div>
-<div class='content'>This is ridiculous.<br>It is *not* ridiculous to want open source software. It is *not* ridiculous to promote Theora over H.264. It is *not* ridiculous to be concerned about the huge legal problems of H.264&#39;s patents.<br>It is however *extremely* ridiculous to ignore the video processing abilities of the underlying OS. No matter how closed-source or obscure the codec is, if my OS has that codec available, I want the ability to make use of it.<br>By all means, warn me about security risks before playing a video. Whitelist and blacklist to your heart&#39;s content. But never take this decision away from the user.<br>I switched to Firefox because I really enjoy the Add-ons. In other words, I like the decisions I can make with it. If the developers insist on taking away my freedom of choice, no matter how noble their cause may be, I&#39;m going to switch to Chrome or Safari.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>krazyjakee</div>
-<div class='content'>I think the mozilla reasoning here is rediculous, the codecs are ALREADY on my computer, so why won&#39;t it just use those??<br>Gotta be a loophole here somewhere. Couldn&#39;t you stream the mp3 file packets, translate to ogg and then playback to the user, thus not breaking rules? Just an under-educated suggestion.<br>Chrome is now my default, sorry :S<br></div>
-</div>
-<div class='comment'>
-<div class='author'>mania</div>
-<div class='content'>so as a web developer I really want to be able to embed video without flash. you guys are making this difficult. oddly I found this blog by searching for petition mozilla h.264 - please don&#39;t ingnore your users or they will eventually ignore you.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Brian Boyko</div>
-<div class='content'>Howdy.  My name is Brian Boyko - I&#39;m heading to NZ in... jeez, 24 hours - to start up a job with a company called Template Digital, mostly dealing with motion graphics in the proprietary program of AfterEffects.<br>First, as soon as I get settled, mind if I look you up to talk to you about this issue?  You can reach me at my address above.<br>For the record, I like OGG - and moving away from flash-based to browser-based video will go a long way towards pushing the standard.  The other half of the equation, though, is in encoders.  My Non Linear Editor (NLE) is Sony Vegas; problem is, I can&#39;t figure out how to render in OGG.  Pretty much every NLE is proprietary except Cinelerra and that doesn&#39;t have features I need.  Do you think it&#39;s better to develop OGG plugins to proprietary software or wait for OSS NLEs to mature?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anyeos</div>
-<div class='content'>Brian Boyko, first the company for what you work have a big problem: They depend exclusively of a closed source software.<br>That limit you a lot.<br>You just said that Cinelerra does not give you what you expect. That will not be a problem if your company just pay a developer to implement the functionality what you need in cinelerra. And, why not? Extra functionality that the other software(Sony Vegas) actually does not include for your needs.<br>Because the nature of Free Software, you can do that.<br>So now, I ask you: Can you do the same with Sony Vegas or another propietary software? The answer is: No.<br>So I ask you too: Are you free to work with propietary software? The answer: No, using propietary software your company are limited to the conditions of the developers of that software.<br>So now I can say you: Don&#39;t wait OSS NLE to mature, just adapt it to your needs!<br>That is because we prefer to use OGG Theora instead of patent issued software because you will be persecuted for using your natural righs of freedom. That sounds stupid, not? But is the reality.<br>Bye<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mike Shaver</div>
-<div class='content'>Moreover, as concerning &quot;civil disobedience&quot; or &quot;too small to sue&quot;, I don&#39;t think it&#39;s appropriate for us to encourage people to use things counter to their licensing in hopes that they won&#39;t get caught -- just as we don&#39;t encourage people to violate the terms of source code licenses because they will probably not get sued by the copyright holders.  We have built a project and community around respect for licensing terms, and should conduct ourselves appropriately, even if we find the terms themselves distasteful.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Joe Stevens</div>
-<div class='content'>http://www.mpegla.com/main/Pages/Media.aspx<br>H.264 is going to remain free for the next couple of years. In the interest of killing Flash I think you guys should go the same route as Google and implement .ogg and H.264.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>fĺossy</div>
-<div class='content'>This is why I like mozilla, they care about freedom!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Markus: regarding &quot;privacy-invading features are enabled by default&quot;, I have no idea what you&#39;re talking about, because we do no such thing. For example, the phishing-site detector uses a protocol that is very carefully engineered to conceal which sites the browser is actually visiting. If you&#39;re going to flame Mozilla on an unrelated topic to the post, at least please make your accusations specific enough to be refuted.<br>Also, do you have a legal opinion that says you definitely can&#39;t be sued for using gst-plugins-ugly in the USA? On the face of it, it seems to me MPEG-LA could successfully sue you if they chose to.<br>marcoos: I doubt you can make a Flash-based Theora player (in Actionscript, you mean?) with acceptable performance. There are Theora players for DirectShow and Quicktime, perhaps users could install those? I dunno.<br>I don&#39;t really know anything about the streaming side. Our friends have Xiph have more to say about that. Silvia Pfieffer had a tutorial about this at LCA: http://www.lca2010.org.nz/programme/schedule/view_talk/50180?day=thursday<br>Please stay in touch with Gandalf about this issue. If more sites in high-Firefox-share countries switched to Theora, that would really help us.<br>Fred Blasdel: I commented above why Flash is, in some ways, a lesser evil because it&#39;s an evil we already have to live with to be a viable browser. Given we have to live with it, we have to make the best of the situation by making sure it&#39;s up to date etc. Furthermore, there is also a pretty clear understanding on most sides that Flash (and plugins in general) are not part of the open Web platform that we are striving for. All browser vendors, except possibly Microsoft, agree that functionality needed by general Web apps should be available without resorting to proprietary plugins. The same cannot be said for encumbered codecs.<br>gabriel: I don&#39;t think OpenBSD&#39;s solution would work for us. I don&#39;t think MPEG-LA&#39;s lawyers are going to stopped by a simple workaround like that. A judge is going to see straight through it. And of course, even if such a legal hack (or any of the other legal hacks people have suggested) actually worked, it still leaves content providers and other browser vendors (current and future) at the mercy of the MPEG-LA.<br>Ian: I don&#39;t see any major site disabling Flash fallback anytime soon. If it happens, and we bleed serious market share, we certainly would have to reevaluate whether the damage is worth it. Obviously if we lose all our market share our influence vanishes and that would not be the best way to serve our mission.<br>Ben: thanks for the feedback. As you note, these are all things we&#39;re working on. I think we&#39;ll actually be able to support accelerated video rendering on a lot more platforms than Windows 7 and D3D10.<br>Matthew: How do you propose we limit functionality based on the country you&#39;re in? Also, as I noted above, if we hack around the license issue somehow for some subset of users (or even all users), we&#39;d still leave Web authors high and dry.<br>mors: thanks for the support. I want to point out that paying W3C membership fees is not required in order to implement a browser, or any W3C specs. If it was, we&#39;d kick up a huge fuss! W3C membership is basically just a donation ... membership may be needed to be a formal member of some of the spec working groups, which is unfortunate, but not too serious.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>gabriel</div>
-<div class='content'>use openBSD&#39;s solution.<br>buy a server rack in Canada.<br>distribute all the software you want from there.<br>worried about your developers? only serve encrypted source code via ssh+svn for example. that way they can upload code from their oligarchical country, such as the US.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Carlos</div>
-<div class='content'>The arrogance in thinking you guys know best what we the users should or should not be using is appalling. The whole HTML5 video is starting to remind me of the bad old days where a site was best viewed with Internet Explorer or Netscape.  Here are some reasons for me starting to take a hard look at what I use for video on the web (and I know I&#39;m not the only one going through these kinds of decisions)<br>1. You&#39;re forcing content creators to encode video material multiple times to accomodate your &quot;freedom&quot; ideals.  In a limited server storage and development time world this is hard and forces people to decide what formats to use, usually ending up with the one that is supported by the most browsers/devices.<br>2. You also don&#39;t consider the need to teach others what to use to encode the video makes it even harder. What do we use? How do we teach people to create the content?<br>3. I&#39;ve read all the arguments against using what&#39;s already installed on their systems. Isn&#39;t that the user&#39;s decision?  From an end user perspective the browser should provide the technology to make my life easier not dictate what I should use to accomplish my goals.<br>4. I have a ton of content already on mp4. By denying me the ability to play it natively in Firefox/Seamonkey you make it hard for me or my team to use open standards and promote the adoption of HTML5 videos since I&#39;m already required to use Firefox as a supported browser where I work. My users just want the video to play, not  have to worry about encoding and storage space for the new versions we&#39;d have to create in order to accomodate Firefox or any open/free browser<br>Freedom goes beyond using &quot;free&quot; technologies. It is about creating a user experience that doesn&#39;t limit or restrain what we do on the web. By limiting what you can do in &quot;free browsers&quot; like Firefox you&#39;re just limiting the market adoption of the technologies or the browsers themselves.<br>It is a good theoretical exercise and I&#39;ve created cross browser video displays. I am just not going to recommend it as a solution to my users as I don&#39;t want to increase my workload by an order of magnitude.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Edit picture</div>
 <div class='content'>I like Mozilla for the variety of its free add-ons and its high speed. But video loading can be sometimes a very long process. Seriously I was thinking it depended on the speed of my Internet connection, but it turns out that it&#39;s not only that. Thank you for the valuable information.</div>
-</div>
-<div class='comment'>
-<div class='author'>Mike</div>
-<div class='content'>As a video professional I think Mozilla is wrong here. Theora is not a format taken seriously at all by video professionals or amateurs using a mac or windows PC. In fact most people have never heard of it. Our software tools don&#39;t even give us the option to encode to Theora. It&#39;s an older format that doesn&#39;t produce as good of results compared to H.264. So we have no reason to pay it any mind.<br>When I search popular professional video boards, I get one or two results for &quot;Theora&quot; that are several years old without any replies. Because nobody knows and nobody cares.<br>Meanwhile H.264 is a standardized format we all use every day. More and more cameras are being released that capture to H.264. The AVCHD format is based on H.264. All of these new HDSLR&#39;s capture H.264. Every new smartphone comes with H.264 hardware decoding and you&#39;re starting to see PC&#39;s and netbooks with the same hardware decoding capabilities. Even Blu-ray plays back H.264. Add to that YouTube and Vimeo on the web.<br>Video on the internet will be consumed on many different devices going forward. From desktops, laptops, smartphones, pmp&#39;s, web tablets and internet enabled TV&#39;s. So as a video professional we want to make sure that the videos we put out there can be consumed by as many people as possible. The format of choice is H.264. The video community has already decided this. We&#39;ve already been working with this format for the last few years. This format is both compatible with current flash based video players and HTML5 browsers, sans firefox and opera (but nobody cares about opera).<br>The idea that one open source software company is suddenly going to change all of that simply because of their principles, well that&#39;s just silly. Especially when the entire video industry is already on top of H.264 and top browsers like IE, Chrome, Safari, Android and iPhone browsers all support H.264.<br>I&#39;m sorry but you&#39;re going to lose here. I&#39;m not saying I don&#39;t agree with your basis. I think it&#39;s notable. But it&#39;s not reality. Right now the only thing you are doing is holding back the HTML5 video tag from being used more widely. This will become even more apparent when IE9 comes out. Because I&#39;ll tell you right now, I&#39;m not going through the time(equals money) and trouble to render out two versions of a video.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Omega X</div>
-<div class='content'>I wonder what happened to Google&#39;s acquisition of On2 for the VPx codecs? I&#39;m sure they would use that to avoid any extra wild licensing from MPEG-LA.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>OK, so your problem is that we send characters typed into the search box, which has a Google logo next to it, to Google. Clicking on that logo lets you choose to send searches elsewhere with just one more click. That&#39;s not easier in any other browser, and in many (e.g. Safari and Epiphany) you can&#39;t change the search engine at all without editing config files or code. We provide more than enough choice and disclosure here, and more than any other browser.<br>Note that Epiphany doesn&#39;t get any money from Google; they use Google because that&#39;s what users want. For the same reason we made Google the default in Firefox before Google was giving us any money.<br>(I don&#39;t know what powers Forestle, but a quick test with a search for &quot;mozilla pymake&quot; shows both Google and Bing bringing up the pymake documentation page as the first hit, but it&#39;s not anywhere in the first page of Forestle&#39;s hits.)<br>Similar issues were thrashed out in this LWN thread. The comments there are worth reading.<br>http://lwn.net/Articles/346393/<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Chris Hubick</div>
-<div class='content'>&gt; It pushes the software freedom issues from<br>&gt; the browser (where we have leverage to<br>&gt; possibly change the codec situation) to the<br>&gt; platform (where there is no such leverage).<br>It is just bad engineering, and rude, to *intentionally* not use a modular architecture for your implementation (like GStreamer) which allows for integration with the facilities provided by the host system, as well as pluggable support for alternate or future formats.<br>If you really want to stand behind this argument, then you should also drop support for the evil and proprietary platforms like Windows and MacOSX altogether.  How many Mozilla resources are wasted on cross platform support for these closed systems?  I run GNU/Linux (for Freedom) on my desktop, so that suits me fine.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>As far as I know, we haven&#39;t done any patent analysis of Dirac yet.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>phayes</div>
-<div class='content'>Interesting to see so many people (still) thinking that they live in a software patent-free jurisdiction. That is highly unlikely and if you live in Europe at least, the major difference is that the EPO et al will usually &#39;lie&#39; about this issue (depending on the audience) whereas the USPTO et al will not.<br>[I put “lie” in scare quotes there because they generally don&#39;t actually lie outright - they&#39;ll typically exploit legal technical subtleties and say logically strictly true but utterly disingenuous things such as “we don&#39;t grant patents for software programs”, and “only technical inventions such as might be found in dishwashers and car braking systems are patentable”.]<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jonathan Feinberg</div>
-<div class='content'>Fairly spoken, sir.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Zebastian Hedlund</div>
-<div class='content'>I solved it, I installed chrome!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ian</div>
-<div class='content'>Youtube decides to only go with  H.264, and 95% of Firefox users will on that same day switch to Chrome, Safari or whatever browser that DOES support youtube at that moment. Don&#39;t underestimate the amount of people that just want a browser that works for their standard internet needs, and couldn&#39;t care less about WHY &quot;firefox won&#39;t support youtube&quot;.<br>Big help yer shiney ideals are going to be at that time...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>marcoos</div>
-<div class='content'>I already posted this comment on gandalf&#39;s blog, but in Polish, so I&#39;m going to repostt it here in English. :)<br>We, the Mozilla community, need to make Ogg Theora not suck. Just like we made web browsing not suck (let&#39;s face the sad facts - people started using Firefox because it was better, not because it was morally superior - and we didn&#39;t even talk much about this superiority either for a long time - the &quot;mission&quot; tab on Firefox homepage appeared only recently with 3.6).<br>Current solutions for Theora playback suck:<br>a) &quot;use Theora only, and use Cortado Java applet to play video in IE and Safari&quot; - sucks. Java applets are not only an obsolete technology, they are such a nightmare - because of their unacceptable performance and start-up time, and due to a lower user base than e.g. Flash. No way anyone can talk their boss into supporting Ogg Theora through a fracking Java plugin for 30-70% of the user base, when Flash solutions are better and, if your company is big enough, you can always throw some money on a h.26x license.<br>b) &quot;let&#39;s have two copies of every video file, one in Theora, the other in h.26x, and use a Flash player for IE&quot; - sucks. First - doubling the size of a few video files is not a problem, doubling the size of thousands of movies is a great problem. And, if there&#39;s a Flash plugin for h.26x, talking management into having another copy in Ogg, when the Flash plugin can handle the h.26x is - business-wise - nonsense.<br>So, what needs to be done?<br>We need two things.<br>1. A good BSD-licensed Flash-based player for Ogg Theora/Vorbis content, so that any company can steal it for their own use. So that they can send Theora to Firefox, Opera, Chrome and to the Flash-based player under Safari and IE.<br>2. An even better BSD-licensed streaming server for Theora. I&#39;m not sure whether IceCast is good enough, though, and how it compares to proprietary h.26x streamers.<br>If we have a BSD-licensed Flash-based Ogg player and a great BSD-licensed streaming server, I can easily imagine e.g. my employee (an Alexa Top 10 site in Poland) switching happily to Ogg, due to all the problems around WMV, FLV, h.26x etc. I can&#39;t imagine myself talking my employee into (a) nor (b) above, though, unless Firefox doubles it current 50% marketshare in Poland, which I don&#39;t think is gonna happen, even though I&#39;d love it to.<br>We&#39;ve got to do this. We can&#39;t sit back and wait, because everyone will just use h.26x in three years.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Matthew</div>
-<div class='content'>What do you see as the outcome of all this mess, 5 years down the road? Is Mozilla capable of exerting enough pressure?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Chris Latko: I replied to that in one of my comments above. There is a pretty huge practical difference between &quot;Someone might have patents on Theora that we don&#39;t know about, and might sue&quot; and &quot;MPEG-LA has patents on H.264 and *will* sue&quot;. So yes, the patent situation with Ogg Theora is obviously better.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mike Scott</div>
-<div class='content'>Releasing localised versions of Firefox with H264 support wouldn&#39;t hurt US users in practice, because of course such versions would leak into the US, and at the worst Americans would have to put up with the British spelling of &quot;Colour&quot; in the browser options. It would be a patent violation, but it would be the user&#39;s violation and not Mozilla&#39;s, and I can&#39;t see much likelihood of prosecution.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Sean McCann</div>
-<div class='content'>Robert<br>I came across this article quite by accident. Kudos for raising the issue and explaining it in fairly concrete terms. I think that Mozilla is doing the right thing. We need open standards that are not patent encumbered. Keep fighting the good fight. Like many things its going to take the few that understand the issue to fight on the many that don&#39;t.<br>Sean<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Peter</div>
-<div class='content'>There seem to be some misinderstandments in the comments about some things:<br>x264 is an encoder, it is NOT able to DECODE video!<br>You can only use it to encode video to h264, not play it. There for it&#39;s useless anyway, even without patents.<br>About dirac, Dirac is actually a format.<br>But dirac-research and schrodinger are IMPLEMENTATIONS(=codec) of that format.<br>While they aren&#39;t optimized for low-bitrate web-oriented video. What&#39;s stopping you to have a look at the possibilities to improve these codec to have low-bitrate optimizations?<br>And Mozilla, for pointing to the issue of codecs.<br>You should build a short text with a link to a more complete explanation of this issue that comes up every time the user tries to play a h264 video. This way average joe understands the reasons and knows that something called MPEG-LA is responsible for his uncomfortability. This ain&#39;t the blame game. This is letting users know why it doesn&#39;t work. You really should do something like this. It would inform users about the problems and maybe they will ask more for ogg theora video&#39;s. There is nothing stopping you from saying MPEG-LA is asking unreasonable licence fees for everyone.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Sveinung</div>
-<div class='content'>Just wanted to say thank you for trying to keep the web open. Are there any specific patent issues around Dirac you are looking into?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>YHVH</div>
-<div class='content'>This page layout makes me feel sick :/<br></div>
-</div>
-<div class='comment'>
-<div class='author'>alma</div>
-<div class='content'>Come on (non-US-) guys. Firefox has already been forked because of a copyrighted icon. It&#39;s free software afterall.<br>Also the internet won&#39;t die because of a useless video-tag implementation.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>BobChao</div>
-<div class='content'>&quot;You should build a short text with a link to a more complete explanation of this issue that comes up every time the user tries to play a h264 video.&quot;<br>We don&#39;t blam at user when they are browsing a non-standard HTML page right?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>emmanuel</div>
-<div class='content'>&gt; marcoos: I doubt you can make a Flash-based<br>&gt; Theora player (in Actionscript, you mean?) with<br>&gt; acceptable performance.<br>actually it is possible to embed C libraries in flash applications. I think the technology is called &quot;Alchemy&quot;, see for instance:<br>http://blog.debit.nl/?p=67<br>Potentially libtheora could be embedded there?<br>I also think that doing this would have a huge impact, probably much bigger than anything else that could be done at this point.<br>One thing I was wrong on previously, technically required H.264 doesn&#39;t mean making a browser means paying fees to MPEG-LA, you can get away by relying on the plugins on the computer, though this is still not OK.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>We have a modular architecture. It doesn&#39;t support integration with the host system codecs at the moment. It could --- in fact, we dabbled with some prototypes that did --- we just choose not to invest there.<br>If your comment is really &quot;why aren&#39;t you idiots using GStreamer?&quot;, then that&#39;s an interesting technical discussion to have, and it probably deserves a blog post of its own. But I wouldn&#39;t be surprised if we do end up using GStreamer at some point in the future. (I wouldn&#39;t be surprised if we don&#39;t, too.)<br>If we could drop support for Windows or Mac without losing much influence, we probably would. But it&#39;s important to remember that the only reason you can browse the Web without IE today is because we shipped Firefox to tens of millions of Windows users.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jesse</div>
-<div class='content'>Agree here with Mozilla generally but wish they would fix the memory leak in FF4, had to switch back to 3.6 which is a shame.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Nephersir7</div>
-<div class='content'>I think that the fact that Google only enabled h.264 HTML5 video on youtube has more to do with the fact that all their videos were already encoded in that format (at 3 different resolutions), for iPhone and Android support. Therefore, it was relatively easy to just turn on the switch for beta HTML5 embedding.<br>Transcoding all those videos to Ogg Theora (with multiple copies for SD, HQ and HD) would require a major computing effort and storage space availability, that, sadly, just isn’t worth it at this point. Remember, it took MONTHS in 2007 for youtube to transcode all of their h.263 FLV videos to h.264 mp4&#39;s for iPhone support. And that was before Youtube added 720p and 1080p HD video support. They&#39;d literally have to double their datacenters&#39; storage space!!<br>Also, Apple should be blamed for being the only browser vendor refusing to feature Theora support for its video tag support.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>kL</div>
-<div class='content'>Why not stick it to US and use H.264 in localized versions of Firefox?<br>I live in a country free from software patents and I don&#39;t want to suffer from another country&#39;s legislative problems.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>emmanuel</div>
-<div class='content'>ah, such a plugin would need to at least interact with JS to enable youtube and others to customize its display... which makes it suddendly a huge task.<br>i guess if there was an easy solution, it would already have been done :-(<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Johan, ludo1243: It seems you guys didn&#39;t read my earlier comment. Dirac is great at high bitrates --- for &quot;archival video&quot;, for which it was designed --- but at typical Web bitrates, which are much lower, *it is not as good as Theora*, currently.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>xurfa</div>
-<div class='content'>Hi!<br>I live in jurisdiction where software patents do not exist. Why are you not giving me an option to have a firefox which can play any codec? Why should I care for some idiotic and unimportant states like USA?<br>Thanks!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>ludo1243</div>
-<div class='content'>And about Dirac codec (for SD and HD videos) and Schrodinger lib?<br>Dirac is perfect for this job! You should promote it!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Alchemy still forces your C code to run on the Flash VM. I&#39;d still be surprised if the performance is acceptable. Someone should try it, sure.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>ABC</div>
-<div class='content'>Mozilla &amp; Co. keep up the good work! You are the best!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Tyler Clendenin</div>
-<div class='content'>Some of the comments here do have a point, but I do understand the contradictions.  The ends do sometimes justify the means.  Even though it is a contradiction to rely on the flash fallback, Flash has been a reality for many years, and the flash install base is very large.  Relying on the flash fallback is just maintaining the current state, while pushing towards the ideal outcome of using open video codecs.  I am sure that google is currently working on ogg versions of youtube videos.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>iamronen</div>
-<div class='content'>Thank you for this post and the previous one about activex.<br>For the record: in Israel (where I live) the government online payment service (which is facilitated by all government offices) does not work on Firefox (or other browsers I&#39;ve tried)... it seems to only work with Internet Explorer...<br>this means that I cannot make government payments from my linux (Ubuntu) based computers... I have to have access to a Windows + Internet Explorer computer to make these payments! so much for democracy, freedom and such...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Andrewf</div>
-<div class='content'>As someone who doesn’t live in the US, shipping the (US-)patent-encumbered versions only outside the US, and providing an H.264-stripped version inside the US, would be a good way to make a point, if nothing else.<br>It’s similar to the situation with encryption back in the 1990s (or GIF images last decade).<br>I can see how that might be construed as giving aid and succour to H.264 though.<br>Given Mozilla&#39;s self-imposed constraints, the notion of making Theora (and Dirac) more palatable by encouraging Flash support for them sounds the most promising.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anony</div>
-<div class='content'>stop whining and give the people freedom. freedom of CHOICE, so that we can choose to use non-free codecs.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Doctor</div>
-<div class='content'>Indeed, what if GIF were a patent nightmare!<br>Oh, wait, it was.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ben Bucksch</div>
-<div class='content'>&quot;[2] RANT: in many cases, free implementations of heavily patent-encumbered technology are harmful to the free software ecosystem&quot;<br>I want to disagree here. Without free implementations of MPEG2/4, I would not be able to play videos on my desktop. Not even per YouTube download tricks, simply nothing. It would be a severe problem for the free desktop in general, because fun is important.<br>Also, without free implementations of MPEG2/4, I would not be able to use MythTV, nor be able to write my own alternative to it. I would still be slave to TV schedules. (TiVo and similar never reached Europe.) This is an area where open source can really innovate and we&#39;re almost a whole decade ahead. Without MPEG, no TV (DVB), no DVD, nothing.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Dennis</div>
-<div class='content'>What&#39;s wrong with a plugin? Let the plugin handle  completely and be done with it.<br>Yes, there will be some interaction with the rest of the website, but it can&#39;t be that difficult. The DOM will be set in HTML 5 ...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>emmanuel</div>
-<div class='content'>a progress?<br>http://www.atoker.com/blog/2010/02/04/html5-theora-video-codec-for-silverlight/<br>silverlight doesn&#39;t have flash&#39;s market share and we want to get rid of those plugins... but it would at least remove the h.264 problem. one thing at a time...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>thura</div>
-<div class='content'>Love live, mozilla ..<br></div>
-</div>
-<div class='comment'>
-<div class='author'>arun kamath</div>
-<div class='content'>I thought Chrome was open too. Can&#39;t Youtube support the codecs supported by Firefox?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>rudd</div>
-<div class='content'>Stay strong Mozilla, keep fighting the good fight. Too many people are willing to ignore the injustice of software patents and unreasonable restrictions just to watch a few videos on Youtube; thankfully we have institutions like Mozilla willing to stand their ground.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jon Pritchard</div>
-<div class='content'>Thank you for this. I think Mozilla&#39;s stance is correct and I am disappointed that these websites, YouTube and Vimeo have had the opportunity to advance improvements in freedom and have not taken the leap.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Andrei</div>
-<div class='content'>Unfortunately for an average user, they just want their video to work. They won&#39;t care for software freedom if the video they want to see doesn&#39;t work in Firefox, they will switch to IE and continue their simple existence.<br>I hope that they&#39;ll be able to sort out the licensing and standardize codecs for HTML5 that will be open source compliant but let’s face it, if worse come to worst, folks will jump the ship. Simplicity is the key for most users.<br>I&#39;ll fight the good fight though :).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>pd</div>
-<div class='content'>What is your position on x264:<br>http://en.wikipedia.org/wiki/X264<br>?<br>&quot;... a free software library for encoding video streams into the H.264/MPEG-4 AVC format. ... released under the GNU General Public License.&quot;<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Fred Blasdel</div>
-<div class='content'>Since 2004, Mozilla has had baked-in support for automatically installing Flash on the first encounter if the plugin is not found. A nice little yellow infobar pops down (a brilliant UI innovation), prompting you to install it with a few clicks, even without root access on both Windows and Linux.<br>You&#39;ve also recently implemented automatic update checking for Flash. Since it&#39;s your biggest security hole, you throw up a big nasty &quot;update now&quot; warning on launch if the user has a known-vulnerable version.<br>Mozilla even initially distributed the Flash binaries under license themselves via addons.mozilla.org — is that still going on?<br>Flash is shitty, nonredistributable, closed-source, restricted-platform, proprietary, and subject to even more patents but you&#39;re willing to go to great lengths to help your users use it. Why not do the same thing for ffmpeg, which is merely patented?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>peetee</div>
-<div class='content'>&gt;Posted by: glandium at January 23, 2010 11:52 PM<br>&gt;I live in a country free from software patents and I don&#39;t want to suffer from another country&#39;s legislative problems.<br>Yeah, really? And where is it? Because 100% it isn&#39;t in France¹:<br>FR 564,597 <br>FR 630,157 <br>FR 2,599,5773 <br>FR 1,467,491 <br>FR 1,487,113 <br>FR 1,550,219 <br>FR 0460751 <br>FR 0443676 <br>FR 1,359,769 <br>FR 1,383,338 <br>FR 1,406,453 <br>FR 1,359,767 <br>FR 1,135,934 <br>FR 1,468,566 <br>FR 1,468,567 <br>FR 0909099 <br>FR 1,401,213 <br>FR 1,742,482 <br>FR 1,742,483 <br>FR 1,742,484 <br>FR 1,387,585 <br>FR 1,406,451 <br>FR 1,424,856 <br>FR 1,450,565 <br>FR 1,452,039 <br>FR 1,478,188 <br>FR 1,499,133 <br>FR 1,515,567 <br>FR 1,596,608 <br>FR 1,739,972 <br>FR 1,739,973 <br>FR 1,742,479 <br>FR 1,742,480 <br>FR 0279053† <br>FR 580,454 <br>FR 1,246,131 <br>FR 1,510,078 <br>FR 1,596,604 <br>FR 573,665 <br>FR 598,904 <br>FR 898,426 <br>FR 907,289 <br>1 -  http://www.mpegla.com/main/programs/AVC/Pages/PatentList.aspx<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Joshua Cogliati</div>
-<div class='content'>&gt;The H.264 patents will expire soon, and then we&#39;ll be OK. Many H.264 patents don&#39;t expire until 2017.<br>The expiration date is more like 2028 in the US.<br>http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2009-July/020737.html<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Emanem</div>
-<div class='content'>Actually you should delegate all the video codecs to the underlying OS.<br>Then maybe pop up a window to say &quot;Codec xyz is not free that means blah blah...&quot;, but still the  tag doesn&#39;t specify the coded, but just video, as  doesn&#39;t specifiy if jpg or png or whatever.<br>The same should apply for videos.<br>Cheers,<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ryo</div>
-<div class='content'>It&#39;s a great move from Mozilla to take a tough stand against this Trojan Horse HTML5/H.264 and support HTML5/Theora. If Google releases a patent-free Codec, you should think about to implement this together with Theora.<br>But, please No H.264. As long as Firefox strictly support free codecs only, I support Mozilla.<br>If Firefox ever can use H.264 for HTML5 I instantly would switch to another browser or fork which does not. Freedom of the Internet is more important.<br>Keep the stance for freedom and free software. You&#39;re doing good.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I hate the fact that the open source world is so USA-centric. Not everyone lives in USA, i.e. software patents don&#39;t affect everyone.<br>For example, I can distribute open source h.264 decoder and not worry about MPEG-LA suing me.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>emmanuel</div>
-<div class='content'>yes, thinking about that alchemy thing... it could probably decode theora but then there&#39;s the HW-accelerated rendering problem... it would probably become way too complicated.<br>In then end probably the only solution is a completely new browser plugin that is not offering a VM like flash but that would know to display Theora video just enough to make such a player, and nothing else. It could be almost the same code as firefox&#39;s  and  code just split out and relying on a different html syntax -based.<br>two problems:<br>1. that plugin doesn&#39;t exit<br>2. that plugin has 0% market share<br>i guess it wouldn&#39;t help much, youtube and others would say that the hurdle to install the plugin would turn away users and it&#39;s not worth it.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Paul Clark</div>
-<div class='content'>Just to note that your final point about the possibility of MPEG-LA royalties for distribution (as opposed to encoding/decoding) of H.264 has been addressed - at least for the next 6 or so years:<br>http://www.mpegla.com/main/Pages/Media.aspx<br>This doesn&#39;t address the issues with the codec itself, of course, but given the weight of pressure for H.264 (in hardware) from the mobile, broadcast and IPTV industries I think it&#39;s going to be hard to resist.  I do understand your rationale here, and it&#39;s a fine one, but I&#39;m afraid this might be a battle you can&#39;t win.<br>It&#39;s probably just worth adding that we are seeing IPTV set-top boxes using Webkit for UI very effectively now, and of course given they are sub-$100 low-power devices they are doing all the H.264 in hardware.  At the moment they all have different proprietary ways of creating video players which means a lot of pain for us user interface developers.  It would be great if we could develop to a standard HTML5  API.  If this could then also work on the desktop _with the same content encoding_ then we&#39;re in heaven.<br>This might just seem like a developer&#39;s dream world, but there is a serious point to this:  In the UK at least, nearly 50% of households don&#39;t have Internet access at all.  I think to enable those people to benefit from all the Web brings is going to require using the other two of the &quot;3 screens&quot; (TV and mobile), and if the same content can work seamlessly across all three, that goes a long way to enabling that.<br>Put another way, there is a downside to insisting on a (currently) software-only codec - you are forcing people into using high-power, expensive general-purpose computers rather than cheap hardware to access it.  Realistically, H.264 is the only codec with a chance of having that kind of hardware support for the forseeable future - and even getting that (instead of MPEG-2) took years.<br>Best wishes<br>Paul<br></div>
-</div>
-<div class='comment'>
-<div class='author'>James</div>
-<div class='content'>One more thought: the time to head this battle off was when WHATWG removed the requirement for Ogg because of Apple and Nokia (the first time they did it a couple years ago, not the debate about removing the comment in the spec this summer). Since you can&#39;t mandate H.264 (patent policy reasons) that should have been a red flag. That debate was about nothing or Ogg, with nothing defaulting to H.264. Now there is a much steeper climb, and marketshare and ideology is what you have going for you. I don&#39;t see what the next step is once Microsoft ships IE9 with H.264, but that&#39;s why they pay you to think about this rather than me.<br></div>
 </div>
 
 </div>

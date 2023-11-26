@@ -8,30 +8,6 @@ permalink: "/2008/02/best-of-intentions_08.html"
 <div class="columns"><p>I've been working on <a href="http://www.w3.org/TR/SVG/filters.html">SVG filters</a>, trying to get the <a href="http://ejohn.org/blog/the-world-of-ecmascript/">World Of Ecmascript</a> <a href="http://ejohn.org/files/ecma-cloud.svg">SVG version</a> to not suck when you load it in Firefox 3. There are some interesting lessons in how <em>not</em> to write a spec for the Web.<br/><p>Basically, the SVG Working Group tried to "help" implementors by having the filter markup describe the bounds of the region that the filter will operate on (the <a href="http://www.w3.org/TR/SVG/filters.html#FilterEffectsRegion">filter effects region</a> and the <a href="http://www.w3.org/TR/SVG/filters.html#FilterPrimitiveSubRegion">filter primitive subregions</a>). This puts a burden on authors and their tools, but it should help us browser developers, right? Unfortunately no. What has happened is that some tools generate bad markup; in particular <a href="http://www.omnigroup.com/applications/omnigraffle/">Omnigraffle</a> has produced markup that basically says the shadow of every object in <a href="http://ejohn.org/blog/the-world-of-ecmascript/">W.O.E.</a> is the size of the viewport! Our naive filter implementation follows that "advice" and applies filter effects to enormous filter buffers, which is of course incredibly slow and wasteful.<br/><p>Dealing with bad markup is what browsers do, and in this case it's not hard in principle. We just have to ignore the markup hints and compute reasonable bounding boxes for the temporary surfaces required by each filter effect. I have a patch that does just that, and it turns W.O.E. from "hangs the browser" to "almost snappy". The problem is that the filter attributes specifying the filter effects region are now an unnecessary burden on authors. In fact, it's worse than that; the spec says that the renderer must clip rendering to the filter effects region and the filter primitive subregions, so we have to go ahead and compute them from the markup (not trivial) just so we can clip filter effects as per spec ... clipping the author probably doesn't want anyway.<br/><p>This is a classic case where well-intentioned spec authors have made life unnecessarily difficult for everyone. Specifying "hints for the implementation" can be useful --- e.g. CSS 'text-rendering' which we support in FF3 --- but you have to be sure that if the author (or her tools) gives the wrong hint, the results are not disastrous. You also have to be sure that implementations are allowed to completely ignore the hints if taking advantage of the hints would be more trouble than it's worth.<br/><p>I should mention that although this is an example of where the SVG spec kinda sucks, it's also an example of the utility of SVG that we've able to render vector graphics exported by applications like Omnigraffle.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>SVG&#39;s kind of over-the-top crazy in a bad way. I agree with James that someone has to take charge to make a sane version.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Lars: just file the bug, do your best to describe it and CC roc@ocallahan.org. We can have a conversation in the bug if your description isn&#39;t clear enough.<br>Evan: a few major issues: PDF isn&#39;t XML-based, has no CSS integration, and has no DOM API.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Evan Jones</div>
-<div class='content'>I&#39;ve never understood this: Why don&#39;t we just use PDF as a vector graphics format for the web? At this point, Mac OS X and Linux have half-decent PDF libraries, at it would be possible to ship one for Windows. PDF is widely supported by vector graphics tools, and is relatively well documented. Would this be better than SVG? Worse?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ted Mielczarek</div>
-<div class='content'>Just in case anyone is wondering: he&#39;s not kidding about the &quot;hang your browser&quot; part. I just forcibly closed Firefox after being curious.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Lars: the problem with your page is that you&#39;re using very small pixel font sizes, and strange things happen when you ask the OS for a 0.65px font. Try scaling everything up so you&#39;re using 65px fonts, then it should look fine.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jim Battle</div>
-<div class='content'>I&#39;m still using FF 2, so maybe this issue is already addressed on FF 3, but I thought I&#39;d mention it anyway.<br>FF has the useful behavior that if an image is larger than the window, it gets resized, the cursor turns into a + sign, and clicking on the image allows going back to full resolution (and back again with another click).<br>It would be nice if SVG-based images had this same property.  I had a look at the W.O.E. svg on FF2 and it is much larger than my screen.<br>Having SVG-generated images behave like all the other image formats would be a nice desuckification of SVG support.  A web author could choose to export an svg or a precomputed image of the svg without it grossly changing behavior.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Paul</div>
 <div class='content'>Why does Omnigraffle get a pass on this?  It sounds like they were lazy and took a shortcut, and now Mozilla, gets cruftier in order to deal with it.<br>Wouldn&#39;t an alternative have been to let them know that they are not doing things correctly and warn them that their files are going to suck in Firefox?  I&#39;m sure that would more than enough impetus to get them to fix their SVG generator fairly promptly.<br>Being flexible with interpreting dodgy input is<br>of course the best approach usually, but I can&#39;t help but think that this is kind of taking it a step too far...<br></div>
 </div>
@@ -40,12 +16,36 @@ permalink: "/2008/02/best-of-intentions_08.html"
 <div class='content'>It sounds like every web or browser developer who touches SVG ends up hating parts of it.  Would it make any sense for the WHATWG to rewrite SVG, or make a new &quot;WebSVG&quot; dialect, that would be more sane, kind of like what they did with HTML5?  Any realistic chance of that happening?  SVG is much younger than HTML and not nearly as widely adopted on the web, so maybe there would still be time to fix the spec.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Lars Gunther</div>
-<div class='content'>Hi Robert<br>I am intending to submit an SVG bug to Bugzilla, but since this is new territory to me could you advice how I am supposed to describe it. It is shown at http://keryx.se/dev/svg/geckobug-08-01/<br></div>
+<div class='author'>Ted Mielczarek</div>
+<div class='content'>Just in case anyone is wondering: he&#39;s not kidding about the &quot;hang your browser&quot; part. I just forcibly closed Firefox after being curious.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jim Battle</div>
+<div class='content'>I&#39;m still using FF 2, so maybe this issue is already addressed on FF 3, but I thought I&#39;d mention it anyway.<br>FF has the useful behavior that if an image is larger than the window, it gets resized, the cursor turns into a + sign, and clicking on the image allows going back to full resolution (and back again with another click).<br>It would be nice if SVG-based images had this same property.  I had a look at the W.O.E. svg on FF2 and it is much larger than my screen.<br>Having SVG-generated images behave like all the other image formats would be a nice desuckification of SVG support.  A web author could choose to export an svg or a precomputed image of the svg without it grossly changing behavior.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Paul: someone should tell Omnigraffle as well, but you really can&#39;t stop poorly-written documents from proliferating. (Well, the spec should require browsers to reject genuinely *invalid* documents, which will stop those.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>SVG&#39;s kind of over-the-top crazy in a bad way. I agree with James that someone has to take charge to make a sane version.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Lars Gunther</div>
+<div class='content'>Hi Robert<br>I am intending to submit an SVG bug to Bugzilla, but since this is new territory to me could you advice how I am supposed to describe it. It is shown at http://keryx.se/dev/svg/geckobug-08-01/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Evan Jones</div>
+<div class='content'>I&#39;ve never understood this: Why don&#39;t we just use PDF as a vector graphics format for the web? At this point, Mac OS X and Linux have half-decent PDF libraries, at it would be possible to ship one for Windows. PDF is widely supported by vector graphics tools, and is relatively well documented. Would this be better than SVG? Worse?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Lars: just file the bug, do your best to describe it and CC roc@ocallahan.org. We can have a conversation in the bug if your description isn&#39;t clear enough.<br>Evan: a few major issues: PDF isn&#39;t XML-based, has no CSS integration, and has no DOM API.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Lars: the problem with your page is that you&#39;re using very small pixel font sizes, and strange things happen when you ask the OS for a 0.65px font. Try scaling everything up so you&#39;re using 65px fonts, then it should look fine.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Adam</div>

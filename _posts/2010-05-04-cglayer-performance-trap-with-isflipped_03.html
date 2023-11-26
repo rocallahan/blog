@@ -13,7 +13,7 @@ permalink: "/2010/05/cglayer-performance-trap-with-isflipped_03.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>cairo-gl is still quite slow for many things.<br></div>
+<div class='content'>It&#39;s completely clear. I&#39;ve thought of it myself. It&#39;s a little more complicated than that for us because we can scroll horizontally so we&#39;d need a &quot;virtual top-left point&quot; and sometimes use 4 blits to the screen. But where it gets a bit more complicated --- and slower --- is when we need to repaint an area that spans the actual edges of the buffer...<br>I&#39;m trying to avoid methods that require tradeoffs like that.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>modeless</div>
@@ -21,7 +21,7 @@ permalink: "/2010/05/cglayer-performance-trap-with-isflipped_03.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>It&#39;s completely clear. I&#39;ve thought of it myself. It&#39;s a little more complicated than that for us because we can scroll horizontally so we&#39;d need a &quot;virtual top-left point&quot; and sometimes use 4 blits to the screen. But where it gets a bit more complicated --- and slower --- is when we need to repaint an area that spans the actual edges of the buffer...<br>I&#39;m trying to avoid methods that require tradeoffs like that.<br></div>
+<div class='content'>cairo-gl is still quite slow for many things.<br></div>
 </div>
 
 </div>

@@ -8,12 +8,12 @@ permalink: "/2009/06/whitespace-begone_24.html"
 <div class="columns"><p>I just landed on trunk a small improvement to page-load performance. Typical HTML documents contain a lot of markup like<br/><pre>&lt;body&gt;<br/>&lt;div&gt;<br/>&lt;b&gt;Hello World&lt;/b&gt;<br/>&lt;/div&gt;<br/>&lt;/body&gt;</pre><br/><p>In the DOM, there are four text nodes which contain only whitespace. Up until now, in Gecko we created one "text frame" to render each text node. However, this is a waste, since whitespace-only text nodes before or after a block boundary don't affect the rendering; they are collapsed away (unless CSS <code>white-space:pre</code> or certain other unusual conditions apply).<br/><p>So I did some measurements of our page-load-performance test suite (basically, versions of the front pages of popular Web sites) with an instrumented Gecko build to see how much could be saved if we avoid creating frames for those whitespace DOM nodes. It turns out that in those pages, 65% of all whitespace-only text frames were adjacent to a block boundary (i.e., the first child of a block, the last child of a block, or the next or previous sibling is not inline) and don't need a frame. That's 30% of all text frames, and 11% of all layout frames!<br/><p>Actually suppressing the frames was pretty easy to implement --- it helped that Boris Zbarsky has recently done some magnificent hacking to make nsCSSFrameConstructor more sane. Handling dynamic changes correctly was a little tricky and actually took most of the development time. Our test suite, which is pretty huge now, caught some subtle bugs. But the patch is on trunk and seems to be a 1-2% improvement in average page load time. It's also a small reduction in memory usage. It also makes dumps of the layout frame tree much easier to read because a lot of pointless frames are gone.<br/><p>What's probably more important than all that is that this makes it easier to separate our implementation of blocks into "blocks that contain only blocks" and "blocks (possibly anonymous) that contain only inlines" without regressing performance, because we won't have to create anonymous blocks just to contain irrelevant whitespace.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>blindtrust</div>
-<div class='content'>Ok, speaking of HTML performance, I&#39;m using a document for testing this and there Opera, Safari and Chromium outperform Firefox by a factor of 8.<br>This is huge, it contains lots of tables and not really a day-to-day example, but still I find that embarrassing: http://secfilings.nasdaq.com/edgar_conv_html/2004/03/08/0001047469-04-006934.html<br>Or what about DOM performance? FF (just tested current trunk nightly) gets stomped by Safari 4 in nearly every of Dromaeos DOM tests (e.g. DOM Modification 84 runs/s vs. 230 runs/s).<br>So I agree that each percent speed improvement is nice and precious. But the rub must be somewhere else.<br></div>
+<div class='author'>Dave Hyatt</div>
+<div class='content'>Yeah, WebKit has this optimization also.  It&#39;s a nice improvement.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Boris</div>
-<div class='content'>anon, please file bugs on any benchmarks that you come across that show &quot;Firefox way behind the competition in those areas&quot;.  Add &quot;:bz&quot; to the cc list of those bugs.  I&#39;ve seen some benchmarks that show us slightly behind, an some benchmarks that don&#39;t actually correctly measure the rendering time that show us to be way behind (due to comparing apples to oranges).  I&#39;d be interested in benchmarks comparing apples to apples that show us way behind...<br></div>
+<div class='author'>dexter</div>
+<div class='content'>Impressive. Which bug number is this?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>anon</div>
@@ -24,44 +24,44 @@ permalink: "/2009/06/whitespace-begone_24.html"
 <div class='content'>anon: there is no meta bug, but there is work going on, for example, the work I blogged about here.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Boris</div>
-<div class='content'>blindtrust, I filed https://bugzilla.mozilla.org/show_bug.cgi?id=501847 and https://bugzilla.mozilla.org/show_bug.cgi?id=501848 on the two issues that pageload shows.  Fixing them or working around them in a way that&#39;s reasonable on this page but not in general reduces the pageload time by a factor of 12 or so...<br>Bug 501848 in particular can easily be biting other pages, and I&#39;m glad you brought it to my attention!<br></div>
+<div class='author'>pd</div>
+<div class='content'>This sounds like a very nice optimisation. Congratulations.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Boris</div>
-<div class='content'>blindtrust, assuming that I do want to be looking at pageload I do see one problem with that page that could cause us to spend a long time loading it.  It has nothing to do with tables, but everything to do with the random  tags scattered in the page, and in particular with them containing block-level elements.  Due to the way we handle such a situation, we end up redoing a lot of the work over and over again as we load the page.  The slower your connection, the worse the behavior will be....<br>Thanks for pointing me to this page; I&#39;ll look into how we can make this faster.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>blindtrust</div>
-<div class='content'>Being a user I can&#39;t judge if what makes the pageload so bad is very untypical for most pages. If it is and the fix too costly, I&#39;d understand that it&#39;s not worth it.<br>But thank you for looking into it, Boris.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>blindtrust</div>
-<div class='content'>Yes, on that document I&#39;m aiming at the pageload. A drastic example but one far from the JS arena most people seem to look todays.<br>And I see that synthetic benchmarks are always to be read carefully and need some background knowledge.<br>I&#39;m not interested in &quot;here and here FF is 10% behind, so it&#39;s a bad browser&quot;. Though with such &quot;tests&quot; I as a user end up with when trying to pinpoint a bottleneck. All tests I&#39;m running not for themselves but to find out what makes FF just feel slower in real everyday usage.<br></div>
+<div class='content'>anon, please file bugs on any benchmarks that you come across that show &quot;Firefox way behind the competition in those areas&quot;.  Add &quot;:bz&quot; to the cc list of those bugs.  I&#39;ve seen some benchmarks that show us slightly behind, an some benchmarks that don&#39;t actually correctly measure the rendering time that show us to be way behind (due to comparing apples to oranges).  I&#39;d be interested in benchmarks comparing apples to apples that show us way behind...<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Funtomas</div>
 <div class='content'>Boris, how about this one:<br>http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Dave Hyatt</div>
-<div class='content'>Yeah, WebKit has this optimization also.  It&#39;s a nice improvement.<br></div>
+<div class='author'>Boris</div>
+<div class='content'>Funtomas, what about that one?  That graph shows the difference between a page with a &quot;simple&quot; selector and one with a &quot;complex&quot; selector in various browsers.  Over here, the difference is bigger in Gecko (current trunk) than in Safari 4, which is what that graph shows.  But on both testcases Gecko is a lot faster than Safari 4 is.  It&#39;s just that on the simple one it&#39;s 4x faster while on the complex one it&#39;s only 2x faster.  I checked a recent-ish trunk webkit, and it performs about as well as Safari 4 does on those testcases.<br>Are you seeing something different?  If so, with what setup?  I&#39;m on OS X 10.5 here; the results might theoretically be different on other OS X versions or on Windows.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>pd</div>
-<div class='content'>This sounds like a very nice optimisation. Congratulations.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>dexter</div>
-<div class='content'>Impressive. Which bug number is this?<br></div>
+<div class='author'>blindtrust</div>
+<div class='content'>Ok, speaking of HTML performance, I&#39;m using a document for testing this and there Opera, Safari and Chromium outperform Firefox by a factor of 8.<br>This is huge, it contains lots of tables and not really a day-to-day example, but still I find that embarrassing: http://secfilings.nasdaq.com/edgar_conv_html/2004/03/08/0001047469-04-006934.html<br>Or what about DOM performance? FF (just tested current trunk nightly) gets stomped by Safari 4 in nearly every of Dromaeos DOM tests (e.g. DOM Modification 84 runs/s vs. 230 runs/s).<br>So I agree that each percent speed improvement is nice and precious. But the rub must be somewhere else.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Boris</div>
 <div class='content'>blindtrust, what should I be doing with that document to replicate the HTML performance issue you describe?  Just timing the pageload, I assume?<br>As far as Dromaeo goes, there are some known issues where it&#39;s not really measuring the DOM performance in some cases (e.g. measuring JS interpreter overhead because the harness is designed in a way that Tracemonkey doesn&#39;t trace currently), as well as some known issues where Safari 4 defers some work on DOM modifications that we do eagerly (so if you make the same modification a bunch of times in a row the time they need doesn&#39;t scale linearly with the number of times you do it).  We&#39;re looking into doing some of the same things; they&#39;ll help benchmark numbers a lot and actual applications and web pages a lot less...<br>And to be clear, I really do appreciate the examples; I _did_ ask for them, after all.  We&#39;re definitely slower than Safari in various cases, and we need to fix those.  It&#39;s just that we know what a lot of them are, and in most of the rest the comparison is being done in a ... hamhanded way.  See http://weblogs.mozillazine.org/bz/archives/020099.html for a typical example.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>blindtrust</div>
+<div class='content'>Yes, on that document I&#39;m aiming at the pageload. A drastic example but one far from the JS arena most people seem to look todays.<br>And I see that synthetic benchmarks are always to be read carefully and need some background knowledge.<br>I&#39;m not interested in &quot;here and here FF is 10% behind, so it&#39;s a bad browser&quot;. Though with such &quot;tests&quot; I as a user end up with when trying to pinpoint a bottleneck. All tests I&#39;m running not for themselves but to find out what makes FF just feel slower in real everyday usage.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Boris</div>
-<div class='content'>Funtomas, what about that one?  That graph shows the difference between a page with a &quot;simple&quot; selector and one with a &quot;complex&quot; selector in various browsers.  Over here, the difference is bigger in Gecko (current trunk) than in Safari 4, which is what that graph shows.  But on both testcases Gecko is a lot faster than Safari 4 is.  It&#39;s just that on the simple one it&#39;s 4x faster while on the complex one it&#39;s only 2x faster.  I checked a recent-ish trunk webkit, and it performs about as well as Safari 4 does on those testcases.<br>Are you seeing something different?  If so, with what setup?  I&#39;m on OS X 10.5 here; the results might theoretically be different on other OS X versions or on Windows.<br></div>
+<div class='content'>blindtrust, assuming that I do want to be looking at pageload I do see one problem with that page that could cause us to spend a long time loading it.  It has nothing to do with tables, but everything to do with the random  tags scattered in the page, and in particular with them containing block-level elements.  Due to the way we handle such a situation, we end up redoing a lot of the work over and over again as we load the page.  The slower your connection, the worse the behavior will be....<br>Thanks for pointing me to this page; I&#39;ll look into how we can make this faster.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>blindtrust, I filed https://bugzilla.mozilla.org/show_bug.cgi?id=501847 and https://bugzilla.mozilla.org/show_bug.cgi?id=501848 on the two issues that pageload shows.  Fixing them or working around them in a way that&#39;s reasonable on this page but not in general reduces the pageload time by a factor of 12 or so...<br>Bug 501848 in particular can easily be biting other pages, and I&#39;m glad you brought it to my attention!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>blindtrust</div>
+<div class='content'>Being a user I can&#39;t judge if what makes the pageload so bad is very untypical for most pages. If it is and the fix too costly, I&#39;d understand that it&#39;s not worth it.<br>But thank you for looking into it, Boris.<br></div>
 </div>
 
 </div>

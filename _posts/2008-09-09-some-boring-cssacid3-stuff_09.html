@@ -8,12 +8,12 @@ permalink: "/2008/09/some-boring-cssacid3-stuff_09.html"
 <div class="columns"><p>I landed the fix to bug 243519 last night. This fixes our treatment of the root element in CSS. The main thing it does is make the viewport (or more precisely, the "initial containing block"), not the root element, the default containing block for absolutely positioned elements. This was the last layout bug affecting the display of Acid3. The last remaining visual Acid3 bug is support for CSS @font-face downloadable fonts (which is well under way!).<br/><p>As a side effect, since it was pretty easy to do I enabled absolute, fixed and relative positioning of the root element. This is optional according to CSS but since Opera and Webkit do it, it's the right thing to do for interop. I haven't really thought of a use for it though. As a bonus we also got -moz-columns working on the root element, hooray!</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Philippe</div>
-<div class='content'>Columns on the root element. Sexy ;-) It actually works in recent WebKit/Mac builds as well, although Gecko and WebKit disagree on the placement of a no-repeat background-image on .<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Dave Hyatt</div>
 <div class='content'>I haven&#39;t tested columns on WebKit&#39;s root element.  I wonder if it works. :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Philippe</div>
+<div class='content'>Columns on the root element. Sexy ;-) It actually works in recent WebKit/Mac builds as well, although Gecko and WebKit disagree on the placement of a no-repeat background-image on .<br></div>
 </div>
 <div class='comment'>
 <div class='author'>flash tekkie</div>

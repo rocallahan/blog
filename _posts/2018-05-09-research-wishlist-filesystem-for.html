@@ -14,7 +14,7 @@ permalink: "/2018/05/research-wishlist-filesystem-for.html"
 <div class='content'>Is VirtIO (https://wiki.libvirt.org/page/Virtio) not a solution? Or maybe just not for your VM...</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Thanks, that is interesting! Might be a pain to configure but indeed it might be possible, though I guess you&#39;d end up replicating data in memory.</div>
+<div class='content'>Unfortunately virtio&#39;s block driver isn&#39;t helpful here. It gives the guest efficient access to block storage, but the host and guest can&#39;t share a writeable filesystem in those blocks --- filesystem implementations assume they have exclusive access to the storage (unless the storage is read-only to all of them).</div>
 </div>
 <div class='comment'>
 <div class='author'>Unknown</div>
@@ -22,7 +22,7 @@ permalink: "/2018/05/research-wishlist-filesystem-for.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Unfortunately virtio&#39;s block driver isn&#39;t helpful here. It gives the guest efficient access to block storage, but the host and guest can&#39;t share a writeable filesystem in those blocks --- filesystem implementations assume they have exclusive access to the storage (unless the storage is read-only to all of them).</div>
+<div class='content'>Thanks, that is interesting! Might be a pain to configure but indeed it might be possible, though I guess you&#39;d end up replicating data in memory.</div>
 </div>
 </div>
 

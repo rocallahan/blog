@@ -12,24 +12,24 @@ permalink: "/2009/06/native-widgets-begone_24.html"
 <div class='content'>I&#39;ll give the win32 build a shot tonight. Out of curiosity, would you expect this to help with scrolling performance in the fixed background case?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>RyanVM</div>
-<div class='content'>I can reproduce sayrer&#39;s comments about GMail redrawing issues as well. That said, once again, scrolling is noticeably smoother when reading an email conversation (whereas before where multiple messages expanded in an email thread would slow scrolling down massively). Very encouraging!<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>RyanVM: fixed backgrounds? Hmm, depends on the page. On some pages it might help, on others it&#39;s a pure gfx performance issue.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Rob Sayre</div>
 <div class='content'>I tried the mac build. It mostly works, but there seem to be some invalidation problems. The most obvious ones I found were scrolling with a scrollwheel on gmail (the left side menus don&#39;t redraw well) and Google Analytics, where selecting date ranges doesn&#39;t update the calendar.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>David Bolter</div>
-<div class='content'>So far so good (via MarcoZ) for accessibility.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>RyanVM: fixed backgrounds? Hmm, depends on the page. On some pages it might help, on others it&#39;s a pure gfx performance issue.<br></div>
+<div class='author'>RyanVM</div>
+<div class='content'>FWIW, scrolling on a Twitter page with a fixed background feels noticeably less laggy with your tryserver build vs. 3.5RC2.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>RyanVM</div>
-<div class='content'>FWIW, scrolling on a Twitter page with a fixed background feels noticeably less laggy with your tryserver build vs. 3.5RC2.<br></div>
+<div class='content'>I can reproduce sayrer&#39;s comments about GMail redrawing issues as well. That said, once again, scrolling is noticeably smoother when reading an email conversation (whereas before where multiple messages expanded in an email thread would slow scrolling down massively). Very encouraging!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Bolter</div>
+<div class='content'>So far so good (via MarcoZ) for accessibility.<br></div>
 </div>
 
 </div>

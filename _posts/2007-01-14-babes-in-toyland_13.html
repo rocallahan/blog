@@ -8,16 +8,28 @@ permalink: "/2007/01/babes-in-toyland_13.html"
 <div class="columns">I have a new Macbook Pro courtesy of the Mozilla Corporation. Somehow I've never grown out of the thrill of unpacking a shiny new machine, celebrating it as "the best yet!" (mostly thanks to Moore's Law), and then setting it up "just right".<br/><br/>Last time I bought a Mac, one of the first things I saw after turning it on was an Apple nag dialog asking me to pay $60 or so to upgrade to Quicktime Pro. Having just shelled out thousands of dollars for the "superior Apple experience", that dialog was most aggrieving. Fortunately that hasn't happened this time. Has Apple figured out what a turn-off that was?<br/><br/>I requested a Macbook mainly because via virtualization I will be able to run Mac, Windows and Linux all in the same machine. That will be very very useful. For too long I'm stumbled along doing all my work in Linux (and before that, all in Windows) and having to beg for help whenever I encounter bugs on other platforms. That was lame, and it's over.<br/><br/>In fact, I've already installed OpenSUSE 10.2 under Parallels. Parallels doesn't have good Linux guest integration so I'm stuck with crappy manual transfer of mouse control from Linux to MacOS. And there's something slightly weird going on with networking; almost everything works, except openssh can't resolve any DNS addresses properly. I wonder what openssh does differently from apps like Firefox. But otherwise it seems to work well, and fast, so I think this is going to be a winner.<br/><br/>One problem with virtualization is communication between the VMs. It's going to be annoying to copy patches or trees around between them. However I've managed to set up file sharing (CIFS shares actually) so that Linux can mount my Mac homedir directly. It would be interesting to try keeping all my trees in the Mac file system and building from them directly in Linux, putting the results in an objdir in the Linux file system. I suspect that the bazillion stat() calls performed by 'make' will be dog-slow over CIFS, making this untenable, but it'd be cool if it wasn't too bad. Then I could edit all my files in native Mac apps and just use Linux and Windows to build and test. And I also wouldn't have to juggle as many trees. I'll give it a go.<br/><br/><strong>Update</strong> I "fixed" my openssh address resolution problem by setting "AddressFamily inet" in my ssh_config. I guess the problem was related to IPv6.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>Diego</div>
+<div class='content'>What about &quot;publishing&quot; the build tree in a file that contains a filesystem, and then &quot;mounting&quot; it as a (read-only?) hard-disk in Parallels (if parallels can do that)?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert B</div>
+<div class='content'>Have you looked at Apple&#39;s developer tools CD?  I&#39;m just curious as to what you thought of them.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>William Swanson</div>
+<div class='content'>Isn&#39;t the keyboard a problem? I still can&#39;t get used to the position of the Ctrl/Alt/Command keys when I run other OS&#39;s on my MacBook Pro.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Smokey Ardisson</div>
 <div class='content'>That QuickTime Pro nag dialogue annoys everyone, and it&#39;s a shame Apple hasn&#39;t given up on it.  I imagine you&#39;ll encounter it when you first launch QuickTime Player :(<br>One thing to keep in mind: if you&#39;re going to have a local mirror of the Mozilla cvs repository on your Mac (like bz does), the default filesystem is case-insensitive (but case preserving), and this was problematic when checking out from the local repo.  &quot;HFSX&quot; (HFS Extended Case-Sensitive) is a supported filesystem, but you either have to reformat the disk or a partition, or use a disk image (which seemed to cause some sleep problems for bz).<br></div>
 </div>
 <div class='comment'>
-<div class='author'>thirdhand</div>
-<div class='content'>Just forget about QuickTime (which doesn&#39;t even have fullscreen in the free version), and use NicePlayer ( http://niceplayer.sourceforge.net/ ) instead. Uses the QuickTime API (or Xine via a plugin), and is really nice to use.<br></div>
+<div class='author'>Peter</div>
+<div class='content'>I had a problem with OpenSSH on Linux not too long where it segfaulted when trying to do a DNS lookup.  It turned out that it was using the wrong OpenSSL library version. More details that you probably don&#39;t find too interesting are in this thread:<br>http://groups.google.de/group/alt.os.linux.gentoo/browse_frm/thread/12593545963c6d8c/be0634275d8c5458?tvc=1#be0634275d8c5458<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Boris</div>
-<div class='content'>Actually, the sleep issue was just a hardware problem.  After replacing the sleep switch and magnet it&#39;s all good.<br>The command I used to create the repository disk image is:<br>hdiutil create -size 4g -fs &quot;Case-sensitive HFS+&quot; -stretch 4g -volname &quot;Mozilla CVS Repository&quot; -type UDIF ~/cvs-mirror.dmg<br>and then dragged that disk image into my startup items list in system config and symlinked /cvsroot to /Volumes/Mozilla CVS Repository<br>Looking at the hdiutil manpage now, however, it looks like they changed the options around; you may want -fs HSFX.<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Diego: I&#39;m not sure what you mean but the idea is to edit files on the Mac and have them show up immediately in Windows and Linux, so that probably won&#39;t work.<br>Robert: I haven&#39;t really used the XCode environment.<br>William: I&#39;ll probably be able to adjust :-)<br>Smokey: That&#39;s good to know. I could keep the mirror in Linux, or I might just put it on a Linux machine in the office.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Dave Miller</div>
@@ -25,19 +37,23 @@ permalink: "/2007/01/babes-in-toyland_13.html"
 </div>
 <div class='comment'>
 <div class='author'>Boris</div>
+<div class='content'>Actually, the sleep issue was just a hardware problem.  After replacing the sleep switch and magnet it&#39;s all good.<br>The command I used to create the repository disk image is:<br>hdiutil create -size 4g -fs &quot;Case-sensitive HFS+&quot; -stretch 4g -volname &quot;Mozilla CVS Repository&quot; -type UDIF ~/cvs-mirror.dmg<br>and then dragged that disk image into my startup items list in system config and symlinked /cvsroot to /Volumes/Mozilla CVS Repository<br>Looking at the hdiutil manpage now, however, it looks like they changed the options around; you may want -fs HSFX.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
 <div class='content'>Oh, one more thing.  Linking&#39;s been pretty painful here (with 2GB of RAM).  A lot slower than the P4-3.6 desktop I use as my main devel machine...  Apple&#39;s ld may need some love.  :(<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Peter</div>
-<div class='content'>I had a problem with OpenSSH on Linux not too long where it segfaulted when trying to do a DNS lookup.  It turned out that it was using the wrong OpenSSL library version. More details that you probably don&#39;t find too interesting are in this thread:<br>http://groups.google.de/group/alt.os.linux.gentoo/browse_frm/thread/12593545963c6d8c/be0634275d8c5458?tvc=1#be0634275d8c5458<br></div>
+<div class='author'>thirdhand</div>
+<div class='content'>Just forget about QuickTime (which doesn&#39;t even have fullscreen in the free version), and use NicePlayer ( http://niceplayer.sourceforge.net/ ) instead. Uses the QuickTime API (or Xine via a plugin), and is really nice to use.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert Loomans</div>
 <div class='content'>You might want to try NFS rather than CIFS....<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Diego</div>
-<div class='content'>What about &quot;publishing&quot; the build tree in a file that contains a filesystem, and then &quot;mounting&quot; it as a (read-only?) hard-disk in Parallels (if parallels can do that)?<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>But will NFS work as well as CIFS for the Windows VM?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert Loomans</div>
@@ -46,22 +62,6 @@ permalink: "/2007/01/babes-in-toyland_13.html"
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>I switched from a ThinkPad (which I actually liked better hardware-wise) to a MacBook Pro in August for the same reason.<br>I actually live in my 1GB RAM/40GB HD Linux VM, switching over to my Windows VM and Mac host only when I want to compile and test certain changes (or for the occasional platform-specific app).<br>I keep separate trees in each OS at the moment.  I guess I could use a shared folder between Mac and Windows, but it seems like more trouble than it&#39;s worth.  Hmm, but I just saw your followup post on the performance cost of building in Linux from files served over CIFS from the Mac.  Maybe I&#39;ll try that.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>But will NFS work as well as CIFS for the Windows VM?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert B</div>
-<div class='content'>Have you looked at Apple&#39;s developer tools CD?  I&#39;m just curious as to what you thought of them.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Diego: I&#39;m not sure what you mean but the idea is to edit files on the Mac and have them show up immediately in Windows and Linux, so that probably won&#39;t work.<br>Robert: I haven&#39;t really used the XCode environment.<br>William: I&#39;ll probably be able to adjust :-)<br>Smokey: That&#39;s good to know. I could keep the mirror in Linux, or I might just put it on a Linux machine in the office.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>William Swanson</div>
-<div class='content'>Isn&#39;t the keyboard a problem? I still can&#39;t get used to the position of the Ctrl/Alt/Command keys when I run other OS&#39;s on my MacBook Pro.<br></div>
 </div>
 
 </div>

@@ -9,14 +9,6 @@ permalink: "/2013/08/mozilla-code-reviews-talk-on-air-mozilla.html"
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
 <div class='author'>Chris Jones</div>
-<div class='content'>On the subject of reviews, here are two techniques that have worked for me in the past but weren&#39;t mentioned in the video:
-
-&quot;Starter patch&quot;: the reviewer / module owner writes an initial patch with the interface / headers / impl skeleton / etc. they want to see.  Then the author bases the 90% &quot;real work&quot; on that.  That 10% design work for a nontrivial patch disproportionately consumes the majority of review time (for me anyway), and design can be pretty open ended.  So what better way to get a fast r+ than to let your reviewer stamp their own code ;).  And if the initial idea doesn&#39;t work out, the delta for the revised patch can be communicated efficiently to the reviewer, because they already have the initial model in their head.
-
-&quot;Divine intervention&quot;: if prose review comments get considerably more complex or ambiguous than changing the code would be, download and edit the patch and use the edited patch as the review comment.</div>
-</div>
-<div class='comment'>
-<div class='author'>Chris Jones</div>
 <div class='content'>Thanks for posting!  I was referred to a few times in passing, so I feel somewhat obliged to comment (defend myself?) :).
 
 I couldn&#39;t agree more with all the comments about &quot;design review&quot;, &quot;have to understand what the patch is trying to do&quot; etc.  To that I&#39;d add that I&#39;ve seen a kind of review paradox: simple, well-documented patches sometimes result in more work for the author than obscurantist, poorly-documented patches.  Not because the simple and well-documented patches are more work (though maybe they are a bit initially).  Rather because, like understandable vs. obscure presentations, people are more likely to comment on things they understand.  That translates to more review requests and more iterations for the author.  With obscure patches, I&#39;ve seen reviewers just stamp things (with style nits) instead of take the time to figure out what&#39;s going on.  (That might stem from reviewers not wanting to admit they don&#39;t understand the patch; I dunno.)  And no, I&#39;m not going to cite examples ;).
@@ -30,6 +22,14 @@ Another complaint floated was large amounts of code being adding to module X by 
 <div class='author'>Robert</div>
 <div class='content'>I totally agree with all those comments!</div>
 </div>
+</div>
+<div class='comment'>
+<div class='author'>Chris Jones</div>
+<div class='content'>On the subject of reviews, here are two techniques that have worked for me in the past but weren&#39;t mentioned in the video:
+
+&quot;Starter patch&quot;: the reviewer / module owner writes an initial patch with the interface / headers / impl skeleton / etc. they want to see.  Then the author bases the 90% &quot;real work&quot; on that.  That 10% design work for a nontrivial patch disproportionately consumes the majority of review time (for me anyway), and design can be pretty open ended.  So what better way to get a fast r+ than to let your reviewer stamp their own code ;).  And if the initial idea doesn&#39;t work out, the delta for the revised patch can be communicated efficiently to the reviewer, because they already have the initial model in their head.
+
+&quot;Divine intervention&quot;: if prose review comments get considerably more complex or ambiguous than changing the code would be, download and edit the patch and use the edited patch as the review comment.</div>
 </div>
 
 </div>

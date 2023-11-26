@@ -8,28 +8,40 @@ permalink: "/2010/03/nightmare-on-infinite-loop_03.html"
 <div class="columns"><p>This Apple patent attack on HTC is very bad news. Like Microsoft's attack on Tomtom, it's a offensive lawsuit based largely on software patents. Unlike Microsoft's attack, it seems to be not about licensing deals but about shutting down the competition, and many of the patents involved are for obvious, fundamental and very general software techniques. LWN has <a href="https://lwn.net/Articles/376793/">a good article</a> with links to the specific patents involved.<br/><p>Consider the first claim of <a href="http://www.google.com/patents/about?id=XTKpAAAAEBAJ&dq=7362331">patent 7,362,331</a>:<br/><blockquote style='white-space:pre-wrap'>1. A method for moving an object in a graphical user interface, comprising the steps of:<br/>a) determining a path of movement for the object along at least one axis, and a period of time for the movement along said path;<br/>b) establishing a non-constant velocity function along said axis for said period of time;<br/>c) calculating an instantaneous position for the object along said path in accordance with said function and the relationship of a current time value to said period of time;<br/>d) displaying said object at said calculated position; and<br/>e) iteratively repeating steps (c) and (d) during said period of time.</blockquote><br/>It was filed in 2001 and issued in 2008. (The other claims are mostly restatements of the same idea.) So when Jobs <a href="http://www.apple.com/pr/library/2010/03/02patents.html">says</a><br/><blockquote>"We think competition is healthy, but competitors should create their own original technology, not steal ours."</blockquote><br/>not only does he believe that in 2000 Apple was the first company to invent the idea of time-based animation of objects with non-constant velocity, but he also believes that they deserve a monopoly on use of that idea until 2021, and that anyone else using the idea until then is stealing from Apple. All three beliefs are ludicrous and shameful.<br/><p>It's worth noting that any implementation of CSS transitions would infringe patent 7,362,331. I hope Apple isn't planning to sue implementers of CSS transitions for "stealing" their "technology".<br/><p>That patent was just the first one in LWN's list. Some of the others look worse.<br/><p>I'm very glad I don't work for Apple.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>Eike Hein</div>
+<div class='content'>Hmm, it&#39;s interesting that you point out that any implementation of CSS transitions would infringe that particular patent, considering that WebKit&#39;s implementation was contributed by Apple and that WebKit&#39;s LGPL license contains an implied patent license.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>qFox</div>
 <div class='content'>Anyone in the tech world would (or should?) agree with this. The problem is that the majority of the users of Mac products don&#39;t even know this sort of stuff is happening, let alone care about it. That&#39;s exactly why they will get away with it. Much like Google gets away with staying in China after all, business as usual, and all the other things we techies get worked up about...<br>But yeah, the US Supreme Court should sort these software patents out and rule against them. And soon.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>No-one is forcing Apple to use these patents offensively. In fact, no other company feels compelled to behave the way Apple is.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Greg</div>
-<div class='content'>Regarding your oft voiced objections to software patents, perhaps it&#39;s time to put you money where your mouth is and switch over to using Linux on a daily basis... The community could do with some more high-profile users.<br>The Gnome 3 UI is starting to look shiny, and the graphics stack is getting a makeover.<br>How about it, aye?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>glandium</div>
 <div class='content'>Guess where 3 of the 4 editors of the CSS Transition draft work?<br>And how about http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Obligations , which the group producing the draft is supposed to operate under?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Eike Hein</div>
-<div class='content'>Hmm, it&#39;s interesting that you point out that any implementation of CSS transitions would infringe that particular patent, considering that WebKit&#39;s implementation was contributed by Apple and that WebKit&#39;s LGPL license contains an implied patent license.<br></div>
+<div class='author'>lakshmanan</div>
+<div class='content'>Now I realize the true meaning and harmful effects of Software Patents system<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>And I&#39;m very glad I don&#39;t own an Apple product.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Colby Russell</div>
+<div class='content'>But you&#39;re missing the point. It seems you fail to see how amazing it is to be able to take any B student&#39;s work in a high school physics course and obtain a patent for it when you use in commercially-released software. Genius!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Greg</div>
+<div class='content'>Regarding your oft voiced objections to software patents, perhaps it&#39;s time to put you money where your mouth is and switch over to using Linux on a daily basis... The community could do with some more high-profile users.<br>The Gnome 3 UI is starting to look shiny, and the graphics stack is getting a makeover.<br>How about it, aye?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Pietist</div>
 <div class='content'>I think it is evil to make patents on math algorithms or lemmas. These kind of &quot;patents&quot; should be banned and cleared<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Jakobs</div>
+<div class='content'>can you say &quot;Sprites&quot;?? I wonder how many game developers have written functions that could be described in very similar words back on the Amiga or even on the C=64.<br>BS!<br>pj<br></div>
 </div>
 <div class='comment'>
 <div class='author'>rob Anderson</div>
@@ -37,35 +49,23 @@ permalink: "/2010/03/nightmare-on-infinite-loop_03.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>I choose my words carefully. I did not say that &quot;no other company is using patents in an offensive way&quot;.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>I quoted two conditions in the original post:<br>1) Unlike Microsoft&#39;s suit against Tomtom (and almost all others, including Nokia&#39;s GSM patent suit against Apple, AFAIK), it seems to be not about licensing deals but about shutting down the competition.<br>2) Many of the patents involved are for obvious, fundamental and very general software techniques.<br>I&#39;m not aware of a comparable case that satisfies both of those conditions.<br>Regarding &quot;No-one is forcing Apple&quot;, I agree with you. I was responding to Rob Anderson who seemed to be suggesting that &quot;the patent system&quot; was forcing Apple to file offsensive lawsuits, or something like that.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Colby Russell</div>
-<div class='content'>But you&#39;re missing the point. It seems you fail to see how amazing it is to be able to take any B student&#39;s work in a high school physics course and obtain a patent for it when you use in commercially-released software. Genius!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>lakshmanan</div>
-<div class='content'>Now I realize the true meaning and harmful effects of Software Patents system<br></div>
+<div class='content'>No-one is forcing Apple to use these patents offensively. In fact, no other company feels compelled to behave the way Apple is.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Krioni</div>
 <div class='content'>&quot;No other company&quot; is using patents in an offensive way? That&#39;s a ridiculous comment that shows you are either not aware of reality or are being dishonest. Many big tech companies sue each other for patent infringement. Apple is being sued right now by Nokia under claims some call dubious.<br>That said, I certainly hope the U.S. Supreme Court can do something to deal with the current mess in patent law. We&#39;ll see what they say about the Bilski case. Something needs to be done to reduce the amount of time and energy companies spend obtaining, deploying, and/or defending from low-quality patents.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I choose my words carefully. I did not say that &quot;no other company is using patents in an offensive way&quot;.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Krioni</div>
 <div class='content'>OK. I&#39;ll try to look at exactly what you said, since you object to my attempt to address the meaning of what you said.<br>&quot;No-one is forcing Apple to use these patents offensively.&quot;<br>Of course not. How could someone force Apple to enforce its own patent rights, apart from some kind of exclusive licensing deal? Is that what you meant?<br>&quot;In fact, no other company feels compelled to behave the way Apple is.&quot;<br>What company &quot;feels&quot; anything? Corporations are legal fictions, not people with feelings. As far as behavior, I&#39;m sure many visitors to this website could come up with examples of companies that behave &quot;the way Apple is.&quot; Unless, of course, you mean _exactly_, as in suing someone for these specific low-quality patents. That, of course, would be impossible, since the undefined &quot;other company&quot; doesn&#39;t own Apple&#39;s patents. If, however, you meant that &quot;no other company&quot; uses patents of dubious quality to weaken competitors, then my original complaint to your comment stands.<br>So, since I perhaps did not understand your original comment, can you explain exactly what behavior you were referring to that no other company engages in? I thought it was clear that you meant using patents of dubious quality to attack a competitor, which is actually fairly common. It seems that you are saying you meant something else. Please explain, since I think my impression of your meaning is what most people would assume you meant (perhaps I am wrong on that, too?).<br></div>
 </div>
 <div class='comment'>
-<div class='author'>David</div>
-<div class='content'>And I&#39;m very glad I don&#39;t own an Apple product.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Peter Jakobs</div>
-<div class='content'>can you say &quot;Sprites&quot;?? I wonder how many game developers have written functions that could be described in very similar words back on the Amiga or even on the C=64.<br>BS!<br>pj<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I quoted two conditions in the original post:<br>1) Unlike Microsoft&#39;s suit against Tomtom (and almost all others, including Nokia&#39;s GSM patent suit against Apple, AFAIK), it seems to be not about licensing deals but about shutting down the competition.<br>2) Many of the patents involved are for obvious, fundamental and very general software techniques.<br>I&#39;m not aware of a comparable case that satisfies both of those conditions.<br>Regarding &quot;No-one is forcing Apple&quot;, I agree with you. I was responding to Rob Anderson who seemed to be suggesting that &quot;the patent system&quot; was forcing Apple to file offsensive lawsuits, or something like that.<br></div>
 </div>
 
 </div>

@@ -8,52 +8,40 @@ permalink: "/2010/07/coding-style-as-failure-of-language_21.html"
 <div class="columns"><p>Variance in coding style is a huge problem. Reading code where the style varies all over the place is painful. Moving code from one place to another and having to restyle it is awful. Constantly adjusting the style in which you're writing code to conform to the local style of the project, module, file, function or line you're modifying is miring.<br/><p>Therefore projects adopt style rules to encourage and enforce a uniform style for the project's code. However, these rules still have to be learned, and adherence to them checked and corrected, usually by humans. This takes a lot of time and effort, and imperfect enforcement means code style consistency gradually decays over time. And even if it were not so, code moving between projects looks out of place because style rules are rarely identical between projects --- unless you reformat it all, in which case you damage the relationship with the original code.<br/><p>I see this as a failure of language design. Languages already make rules about syntax that are somewhat arbitrary. Projects imposing additional syntax restrictions indicate that the language did not constrain the syntax enough; if the language syntax was sufficiently constrained, projects would not feel the need to do it. Syntax would be uniform within and across projects, and developers would not need to learn multiple variants of the same language. More syntactic restrictions would be checked and enforced by the compiler, reducing the need for human (or even tool-assisted) review. IDE assistance could be more precise.<br/><p>Two major counter-arguments arise. People will argue that coding style is a personal preference and therefore diversity should be allowed. This is true if you only participate in particularly small projects, but if you work in a large project then --- unless you are exceptionally fortunate --- you will have to deal with a coding style that is not your preference, no matter what. (Maciej Stachowiak once said that willingness to subjugate one's personal preferences to a project's preferences is a useful barometer of character, and I agree!)<br/><p>A more interesting counter-argument is that many coding style rules aren't sufficiently formalized so as to be machine-checkable, and might even be very difficult to formalize at all. This is true; for example, line-breaking rules or variable naming rules might be very difficult to formalize. So I relax my thesis to claim that at least those rules which can be formalized should be baked into the language.<br/><p>(Figuring out exactly which rules can be formalized, and exploring alternative syntax designs that maximize automatic style checkability while still being nice syntax, sound like fun research! Programming language syntax is one of those areas that I think has been greatly under-researched, especially from the HCI point of view.)</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Eamon Nerbonne</div>
-<div class='content'>@Callum, Paul: More structured and abstracted program notation is definitely a good step toward the solution.<br>@ROC: you say that structured editing is a failed experiment that&#39;s no longer used; but it&#39;s just a matter of perspective.  Almost everyone uses syntax highlighting and that&#39;s just a limited form of structured editing.  IDE&#39;s do various source code transforms&amp; refactorings for your, including partial layouting - that&#39;s structured editing that again almost every IDE supports and most people use.  Auto-complete or intellisense are simply variants of structured editing that most people appreciate.  Code folding is common in IDE&#39;s and definitely in XML editing tools - that&#39;s structured editing.<br>These things just need to be taken further; having a comprehensible language serialization (i.e. source code) is important, but that doesn&#39;t mean the view needs to be the fixed width terminal-style character matrix it is now.<br>It&#39;s not an all-or-nothing feature; and it&#39;s pretty clear which direction the arrow of time is pointing - and a good thing too.  How much work would it be to have a large project where each contributor views and edits with his own spacing, indent, newline &amp; bracketing style yet behind the scenes a code-formatter ensures a standardized format is actually exchanged via source control?  That&#39;s possible with some hassle today...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Matthew Holloway</div>
-<div class='content'>Languages that use &quot;;&quot; and meaningless whitespace have a redundant syntax. You&#39;re supposed to indent with whitespace to express yourself to others, but then there&#39;s another syntactic layer for the compiler, and when the whitespace and the &quot;;&quot; gets out of sync it creates confusing code. It&#39;s ridiculous that we have languages with redundant syntax.<br>Python is the closest we&#39;ve got so far, but it needs to go further. The &quot;:&quot; at the end of an if/for should be removed... it&#39;s implied by the indentation on the following line. As others have said they need to choose from tabs or spaces too. Tabs feel more semantically correct but, in my experience, spaces don&#39;t get as mangled in large projects.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Alexandr Ciornii</div>
-<div class='content'>There are automated tools that reformat code according to specified rules, so maybe solution is to do reformatting before comitting.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>There&#39;s a huge difference between what modern IDEs do and what the old structured editors did: in the modern IDEs, the ground truth is text files. In spite of the assistance the IDE gives you, you can enter whatever text you want in the file, you can save that text, and even check it in, whether the IDE thinks it&#39;s valid or not. The IDE may keep around an AST or other data structures, but at the end of the day the AST is constructed from the text file, not the other way around. That is fundamentally important.<br></div>
+<div class='author'>Screwtape</div>
+<div class='content'>The obvious response is &quot;Way to go, Python&quot;, except that even Python&#39;s syntax is flexible enough to beget style guides, and not just for variable-naming reasons. The official style guide, PEP 8, is fairly comprehensive but doesn&#39;t touch on things *I* consider important to code readability, like how to indent expressions wrapped onto multiple lines.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>RichB</div>
 <div class='content'>&gt; A more interesting counter-argument is that many coding style<br>&gt; rules aren&#39;t sufficiently formalized so as to be machine-<br>&gt; checkable, and might even be very difficult to formalize at all.<br>I think that something like StyleCop (stylecop.codeplex.com) shows that for some languages - even C heritage languages - this can be done.<br>I can&#39;t find an HTML formatted StyleCop rules list - only a .chm list :-( But trust me the list is extensive.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>fantasai</div>
-<div class='content'>@David Python&#39;s forced-indentation doesn&#39;t bother me, but the lack of visible end-of-block delimiters does. It makes it hard to see what&#39;s going on when multiple blocks end simultaneously. Which encourages the 4-space indent to make it at least somewhat easier to see, which eats up more of my 80-char limit than I&#39;d like...<br></div>
+<div class='author'>David</div>
+<div class='content'>The fact of project coding styles has always been a reason that I&#39;ve not been able to understand why people get so worked up about Python&#39;s significant indentation.<br>Pretty much any formalized coding style I&#39;ve worked with requires that you lay out your code pretty much exactly how Python tells you to, without mixing tabs and spaces randomly. So it&#39;s requiring you to write code how you&#39;re going to have to write it anyway, and you&#39;re near-guaranteed to be able to follow the style of any code you read by other people... and yet it&#39;s one of the first complaints you hear about the language.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Justin Watt</div>
-<div class='content'>Reminds me of this:<br>&quot;an API is not about programming, data structures, or algorithms—an API is a user interface, just as much as a GUI. The user at the using end of the API is a programmer—that is, a human being. Even though we tend to think of APIs as machine interfaces, they are not: they are human-machine interfaces.&quot;<br>http://cacm.acm.org/magazines/2009/5/24646-api-design-matters/fulltext<br></div>
+<div class='author'>Tony Mechelynck</div>
+<div class='content'>...g nesting got one additional 8-character hard tab, and the result was ugly. Depending on the overall nesting, 4, 2 or even 1 space per indent level will be better.<br>And sorry for hitting tab-enter too early, so an unfinished comment (above) posted itself.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Callum Prentice</div>
-<div class='content'>I&#39;ve been thinking about a solution to this problem where code isn&#39;t just plain text anymore - more of a structured format in XML perhaps. That way, the IDE in conjunction with developer specific prefs, can lay it out however you like. Maybe even variable names get a level of indirection so you don&#39;t have to worry about mName/_Name or sztcnString/str issues too. I suspect the downsides would far outweigh the benefits for most projects though.<br></div>
+<div class='author'>Tony Mechelynck</div>
+<div class='content'>Coding style is not only a question of personal preference. If it were only that, there would be no question that the project leader, or the initial project leader, should impose his (her) preference on the whole project, and in fact, some leaders of well-known projects, for instance Linus Torvalds and Bram Moolenaar, have done just that.<br>But coding style may sometimes vary according to the underlying &quot;logic style&quot; of one or another file. I&#39;ve seen HTML (in spam mail, usually ;-) ) where each level of tag nesting got one additional 8-column hard tab, and the result was ugly. Depending on the structure of the page, 4, 2, or even 1 space per indent level is sometimes better.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Good point. Reminded me of this article by Ken Arnold:<br>http://www.artima.com/weblogs/viewpost.jsp?thread=74230<br>Came across it some time ago when reading Spolsky&#39;s &quot;Best Software Writing&quot;.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Neil, the issues you talk about are higher level than most of the rules found in style guides. I agree those are unlikely to be formalizable in a useful way.<br>But there are lots of rules in project style guides, for example about indentation, or brace placement, that are.<br></div>
+<div class='author'>Lino</div>
+<div class='content'>Python.<br>Pretty much everyone, every project and every book there uses the style suggested by PEP 8.<br>Often complemented by the Google Python Style Guide if someone wants even more details.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Python&#39;s good, but as Screwtape pointed out it doesn&#39;t go far enough. As much as possible, violations of the &quot;style guide&quot; should just be syntax errors in the parser.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Tony Mechelynck</div>
-<div class='content'>...g nesting got one additional 8-character hard tab, and the result was ugly. Depending on the overall nesting, 4, 2 or even 1 space per indent level will be better.<br>And sorry for hitting tab-enter too early, so an unfinished comment (above) posted itself.<br></div>
+<div class='author'>Chris Double</div>
+<div class='content'>It would be interesting to see how compiler forced style rules would work out in practice. I&#39;m cautiously optimistic that it would work out to be a good idea. It would make reviews easier in some places.<br>Maybe someone working on a new experimental language could try the idea out :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>I&#39;m very big on tabs over spaces as a semantic rather than presentational representation of indentation (yay, Go), but I would have much preferred if Python just chose an indent token and stuck with it, even if it was something silly like &#39;4 spaces&#39;.<br>What about the gofmt-style solution? Seems like a good practical approach to the problem.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Havvy</div>
@@ -64,60 +52,72 @@ permalink: "/2010/07/coding-style-as-failure-of-language_21.html"
 <div class='content'>If you find the answer or just come across some interesting research be sure to let us know.<br>I guess really the problem is that it&#39;s all just plain text until it hits the compiler/interpreter.<br>Perhaps something like working on a editor formatted view (to your preference) over a style independent source (something like an AST maybe). Then perhaps the only rules could be naming conventions, or at least not things regarding whitespace.<br>But people like being able to use whatever editor they like (vi, emacs, notepad) to code in.<br>We&#39;ve already got various code reformatting tools in IDE&#39;s or standalone, perhaps they could be improved and integrated with a compiler like clang as a project policy and allow other tools like diff, merge to work at a style independent level.<br>How do you manage exceptions to the rules, e.g. per line character limit? Set a soft limit of say 80 chars and hard limit of 100 the prevent things being awkwardly reformatted for the sake of a couple of characters.<br>If it&#39;s a new language and the source can be stored in a machine friendly text format then surely thing get a lot simpler, but would anyone use it?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>David</div>
-<div class='content'>The fact of project coding styles has always been a reason that I&#39;ve not been able to understand why people get so worked up about Python&#39;s significant indentation.<br>Pretty much any formalized coding style I&#39;ve worked with requires that you lay out your code pretty much exactly how Python tells you to, without mixing tabs and spaces randomly. So it&#39;s requiring you to write code how you&#39;re going to have to write it anyway, and you&#39;re near-guaranteed to be able to follow the style of any code you read by other people... and yet it&#39;s one of the first complaints you hear about the language.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>I don&#39;t have a canned style set, no.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Lino</div>
-<div class='content'>Python.<br>Pretty much everyone, every project and every book there uses the style suggested by PEP 8.<br>Often complemented by the Google Python Style Guide if someone wants even more details.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Justin: totally agree.<br>Aryeh: yes, I&#39;m sure it would rub some people the wrong way. But those people would probably not get along with project style guides either. See my quote from Maciej. I think you&#39;d have a better chance of pulling this off in a new language since with existing languages people are used to coding any way they want.<br>Callum, Paul: &quot;structured editing&quot;, where the source code is no longer plain text, was tried extensively in the 70s and 80s (see for example CMU&#39;s Gandalf project). Those efforts failed. I think there are very good reasons for preferring plain text: you can save &quot;bad&quot; intermediate states, and you can continue using existing editors, and version control systems, and bazillions of other tools that process text.<br>voracity: gofmt sounds like a step in the right direction but I think a slightly harder line is warranted. If you require that gofmt be run before checking in and before presenting code for review, why not before you run the compiler as well?<br>Havvy: personally I&#39;d rather focus my creativity on what the program does rather than on where I put my curly brackets. By analogy, I&#39;m much more productive writing plain text than in a WYSIWYG editor like Word, since in Word there&#39;s the temptation to fiddle with formatting instead of just write.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>voracity</div>
-<div class='content'>I&#39;m very big on tabs over spaces as a semantic rather than presentational representation of indentation (yay, Go), but I would have much preferred if Python just chose an indent token and stuck with it, even if it was something silly like &#39;4 spaces&#39;.<br>What about the gofmt-style solution? Seems like a good practical approach to the problem.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Chris Double</div>
-<div class='content'>It would be interesting to see how compiler forced style rules would work out in practice. I&#39;m cautiously optimistic that it would work out to be a good idea. It would make reviews easier in some places.<br>Maybe someone working on a new experimental language could try the idea out :)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Henri Sivonen</div>
-<div class='content'>Do you happen to have proper Mozilla code style formatter settings for Eclipse? (I find that the &quot;Mozilla&quot; setting bundled with CDT don&#39;t actually match the Mozilla style. Well, to the extent the is &quot;the&quot; style.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Matt Smith</div>
-<div class='content'>I&#39;m not sure how well this would work in practice.<br>I have a feeling it might be more realistic to make the feature optional.  You could either have a an option in the compiler or some kind of strict keyword that would enforce a certain style for projects that want it, and still let other people choose their own styles if they wanted to for their own projects.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Tony Mechelynck</div>
-<div class='content'>Coding style is not only a question of personal preference. If it were only that, there would be no question that the project leader, or the initial project leader, should impose his (her) preference on the whole project, and in fact, some leaders of well-known projects, for instance Linus Torvalds and Bram Moolenaar, have done just that.<br>But coding style may sometimes vary according to the underlying &quot;logic style&quot; of one or another file. I&#39;ve seen HTML (in spam mail, usually ;-) ) where each level of tag nesting got one additional 8-column hard tab, and the result was ugly. Depending on the structure of the page, 4, 2, or even 1 space per indent level is sometimes better.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>题叶</div>
-<div class='content'>I think the solution should be like http://cirru.org/ . In a future you save programs with a syntax tree, but edit code with you own editor.</div>
-</div>
-<div class='comment'>
-<div class='author'>Neil Conway</div>
-<div class='content'>Any syntactic check will miss stylistic abuses, and furthermore is likely to prevent code that is actually written with good style. For example, how should functions be named? LongAndVeryDescriptive(), and short and concise? I think that partly depends on the purpose and usage of the function, and seems infeasible to enforce in the language design. Similarly, should a function have multiple return statements or a single return? The right choice is often dependent on the nature of the function and the amount of cleanup/etc. that needs to be done before returning. Requiring a single return would be perfectly possible, but not very useful, either. For yet another example, how long should functions be? Depending on the nature of the problem, long function bodies might well be the clearest way to express the solution, even if we might prefer small functions in general.<br>It seems clear to me that good programming style is simply a matter of taste and experience, and can&#39;t be encoded in a syntactic constraint.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Screwtape</div>
-<div class='content'>The obvious response is &quot;Way to go, Python&quot;, except that even Python&#39;s syntax is flexible enough to beget style guides, and not just for variable-naming reasons. The official style guide, PEP 8, is fairly comprehensive but doesn&#39;t touch on things *I* consider important to code readability, like how to indent expressions wrapped onto multiple lines.<br></div>
+<div class='author'>Callum Prentice</div>
+<div class='content'>I&#39;ve been thinking about a solution to this problem where code isn&#39;t just plain text anymore - more of a structured format in XML perhaps. That way, the IDE in conjunction with developer specific prefs, can lay it out however you like. Maybe even variable names get a level of indirection so you don&#39;t have to worry about mName/_Name or sztcnString/str issues too. I suspect the downsides would far outweigh the benefits for most projects though.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Aryeh Gregor</div>
 <div class='content'>Enough people hate Python because of how it already forces them to write according to the official style. If it started throwing syntax errors if you put the wrong amount of whitespace around an operator, people would go ballistic. :)<br>But you&#39;d think this would be a good option to have, at least, no? Kind of like the old -tt option, but much more comprehensive. I wonder if anyone&#39;s suggested it before. Some syntax like &quot;import __strict__&quot;, perhaps.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>fantasai</div>
+<div class='content'>@David Python&#39;s forced-indentation doesn&#39;t bother me, but the lack of visible end-of-block delimiters does. It makes it hard to see what&#39;s going on when multiple blocks end simultaneously. Which encourages the 4-space indent to make it at least somewhat easier to see, which eats up more of my 80-char limit than I&#39;d like...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Justin Watt</div>
+<div class='content'>Reminds me of this:<br>&quot;an API is not about programming, data structures, or algorithms—an API is a user interface, just as much as a GUI. The user at the using end of the API is a programmer—that is, a human being. Even though we tend to think of APIs as machine interfaces, they are not: they are human-machine interfaces.&quot;<br>http://cacm.acm.org/magazines/2009/5/24646-api-design-matters/fulltext<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Justin: totally agree.<br>Aryeh: yes, I&#39;m sure it would rub some people the wrong way. But those people would probably not get along with project style guides either. See my quote from Maciej. I think you&#39;d have a better chance of pulling this off in a new language since with existing languages people are used to coding any way they want.<br>Callum, Paul: &quot;structured editing&quot;, where the source code is no longer plain text, was tried extensively in the 70s and 80s (see for example CMU&#39;s Gandalf project). Those efforts failed. I think there are very good reasons for preferring plain text: you can save &quot;bad&quot; intermediate states, and you can continue using existing editors, and version control systems, and bazillions of other tools that process text.<br>voracity: gofmt sounds like a step in the right direction but I think a slightly harder line is warranted. If you require that gofmt be run before checking in and before presenting code for review, why not before you run the compiler as well?<br>Havvy: personally I&#39;d rather focus my creativity on what the program does rather than on where I put my curly brackets. By analogy, I&#39;m much more productive writing plain text than in a WYSIWYG editor like Word, since in Word there&#39;s the temptation to fiddle with formatting instead of just write.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matt Smith</div>
+<div class='content'>I&#39;m not sure how well this would work in practice.<br>I have a feeling it might be more realistic to make the feature optional.  You could either have a an option in the compiler or some kind of strict keyword that would enforce a certain style for projects that want it, and still let other people choose their own styles if they wanted to for their own projects.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Mook</div>
 <div class='content'>Havvy:<br>I recall that, just a bit over a decade ago, some Mac based Pascal environment (sorry, I don&#39;t remember the name) had the auto-formatting pretty well done.  So it&#39;s probably possible, at least, even with an introductory language - it relieves the new programmer the need to figure out coding style.<br>--<br>The problem with forcing coding style is that sometimes you need to bend the rules for clarity; for example, most of the time various projects tend to try to go for a certain maximum line width (80, 120, whatever), but often it also comes with a caveat that just a bit over is fine too.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Neil Conway</div>
+<div class='content'>Any syntactic check will miss stylistic abuses, and furthermore is likely to prevent code that is actually written with good style. For example, how should functions be named? LongAndVeryDescriptive(), and short and concise? I think that partly depends on the purpose and usage of the function, and seems infeasible to enforce in the language design. Similarly, should a function have multiple return statements or a single return? The right choice is often dependent on the nature of the function and the amount of cleanup/etc. that needs to be done before returning. Requiring a single return would be perfectly possible, but not very useful, either. For yet another example, how long should functions be? Depending on the nature of the problem, long function bodies might well be the clearest way to express the solution, even if we might prefer small functions in general.<br>It seems clear to me that good programming style is simply a matter of taste and experience, and can&#39;t be encoded in a syntactic constraint.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Neil, the issues you talk about are higher level than most of the rules found in style guides. I agree those are unlikely to be formalizable in a useful way.<br>But there are lots of rules in project style guides, for example about indentation, or brace placement, that are.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Henri Sivonen</div>
+<div class='content'>Do you happen to have proper Mozilla code style formatter settings for Eclipse? (I find that the &quot;Mozilla&quot; setting bundled with CDT don&#39;t actually match the Mozilla style. Well, to the extent the is &quot;the&quot; style.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I don&#39;t have a canned style set, no.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matthew Holloway</div>
+<div class='content'>Languages that use &quot;;&quot; and meaningless whitespace have a redundant syntax. You&#39;re supposed to indent with whitespace to express yourself to others, but then there&#39;s another syntactic layer for the compiler, and when the whitespace and the &quot;;&quot; gets out of sync it creates confusing code. It&#39;s ridiculous that we have languages with redundant syntax.<br>Python is the closest we&#39;ve got so far, but it needs to go further. The &quot;:&quot; at the end of an if/for should be removed... it&#39;s implied by the indentation on the following line. As others have said they need to choose from tabs or spaces too. Tabs feel more semantically correct but, in my experience, spaces don&#39;t get as mangled in large projects.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eamon Nerbonne</div>
+<div class='content'>@Callum, Paul: More structured and abstracted program notation is definitely a good step toward the solution.<br>@ROC: you say that structured editing is a failed experiment that&#39;s no longer used; but it&#39;s just a matter of perspective.  Almost everyone uses syntax highlighting and that&#39;s just a limited form of structured editing.  IDE&#39;s do various source code transforms&amp; refactorings for your, including partial layouting - that&#39;s structured editing that again almost every IDE supports and most people use.  Auto-complete or intellisense are simply variants of structured editing that most people appreciate.  Code folding is common in IDE&#39;s and definitely in XML editing tools - that&#39;s structured editing.<br>These things just need to be taken further; having a comprehensible language serialization (i.e. source code) is important, but that doesn&#39;t mean the view needs to be the fixed width terminal-style character matrix it is now.<br>It&#39;s not an all-or-nothing feature; and it&#39;s pretty clear which direction the arrow of time is pointing - and a good thing too.  How much work would it be to have a large project where each contributor views and edits with his own spacing, indent, newline &amp; bracketing style yet behind the scenes a code-formatter ensures a standardized format is actually exchanged via source control?  That&#39;s possible with some hassle today...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>There&#39;s a huge difference between what modern IDEs do and what the old structured editors did: in the modern IDEs, the ground truth is text files. In spite of the assistance the IDE gives you, you can enter whatever text you want in the file, you can save that text, and even check it in, whether the IDE thinks it&#39;s valid or not. The IDE may keep around an AST or other data structures, but at the end of the day the AST is constructed from the text file, not the other way around. That is fundamentally important.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Good point. Reminded me of this article by Ken Arnold:<br>http://www.artima.com/weblogs/viewpost.jsp?thread=74230<br>Came across it some time ago when reading Spolsky&#39;s &quot;Best Software Writing&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alexandr Ciornii</div>
+<div class='content'>There are automated tools that reformat code according to specified rules, so maybe solution is to do reformatting before comitting.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>题叶</div>
+<div class='content'>I think the solution should be like http://cirru.org/ . In a future you save programs with a syntax tree, but edit code with you own editor.</div>
 </div>
 
 </div>

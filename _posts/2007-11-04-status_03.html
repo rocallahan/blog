@@ -8,16 +8,36 @@ permalink: "/2007/11/status_03.html"
 <div class="columns"><p>Lately at work I've been focused on driving down the layout blocker-bug list, the bugs that we want fixed in Firefox 3/Gecko 1.9. These bugs are mostly regressions due to work done during the 1.9 cycle. At this point most of the bugs that are "obviously" mine, such as regressions from my text work, have been fixed, or have fixes waiting for review or landing, or depend on other such fixes. Now I'm picking off unowned layout blockers to work on. That unowned bug list is down to 46 bugs and falling quickly, which I think is very good news. The bad news is that some of those unowned bugs have been shunned for a reason...<br/><p>One reason is that it seems in just the last couple of weeks, the usually-constant flow of obscure crashers and regressions detected by our demonic duo Martijn and Jesse has shrunk to almost nothing. Apparently they're still alive and working, so maybe this means we're over the hump? I hope so!<br/><p>As regular readers will know, I've also been spending time looking for new office space to accommodate our growing team. This has been frustrating. We've expanded our search to Newmarket and have a couple of promising opportunities there. Hopefully I'll have good news to report soon.<br/><p>Speaking of the team, here's what the other guys have been doing:<br/><ul><br/><li>Karl Tomlinson has accepted the challenge of getting MathML on its feet again for the Firefox 3 release, after a severe lack of maintenance. Good luck Karl!<br/><li>Chris Double has continued working on video. He has a patch which is almost ready to land (disabled!) on trunk.<br/><li>New guy Chris Pearce has been working on blocker bugs, mainly text and editor bugs so far.<br/><li>Even newer guy Matthew Gregan fixed a bad old Linux bug, worked on a crashtest harness, and is now working on layout bugs.<br/><li>Michael Ventnor is currently still studying (I think) but he's planning to join us in Auckland for a summer internship! He'll probably be working on GTK themes and Firefox front-end issues.<br/></ul><br/>And we're still looking for more people!<br/><p>A word about Chris's video work... The WHATWG video spec changed a lot --- actually, grew considerably --- over the last few months. We don't want to make developers' lives hard by shipping a half-baked implementation of that spec so it will probably be necessary to delay enabling video support until after Firefox 3. We'll see how it goes.<br/><p>We're in a similar situation with offline apps. There is a WHATWG spec now and it's somewhat different to what we've implemented. We definitely aren't interested in pushing a sole agenda so we're working out what we can ship in Firefox 3 that's aligned with the WHATWG spec.<br/><p>These are tough calls, but our commitment to Web standards trumps checking boxes in the Firefox 3 feature list.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>John Drinkwater</div>
+<div class='content'>I know you probably can�t give any definitive answers, but would it mean video &amp; offline support would be part of the 1.9 branch (maybe for Firefox 3.5(?)) or would it have to be pushed back further, maybe onto trunk?<br>Really hoping to see video support soon�<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Martijn</div>
+<div class='content'>Well, I wouldn&#39;t say shrunk to zero, there are still some crash bugs that could use patching. There are also quite a few that have patches, but need review and needs to be landed. Then I can see what happens after those got in.<br>Great that Karl is fixing MathML, the MathML bug is getting almost 2 years old now.<br>It&#39;s great that Chris P. is fixing editor bugs, too.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Michael Ventnor</div>
 <div class='content'>You&#39;re correct about me, its exam period right now but I still try to watch the bugs where I can. :-)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Ralph Giles</div>
-<div class='content'>On the topic of the Stix fonts, they now have a beta up, and it looks like it&#39;s under the full license, so Mozilla could redistribute it.<br>They have a clickthrough on their download though, so you can&#39;t get the latest from them automagically.<br>http://www.aip.org/stixfonts/<br></div>
+<div class='author'>Edouard</div>
+<div class='content'>On the MathML front - the comments in http://bitquabit.com/2007/11/01/browser-stupidity/ seems pertinent, at least from a UI perspective.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Edouard: my understanding is that those fonts are not &quot;free enough&quot; for us to automatically download them. The new STIX fonts might solve this problem.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&quot;it will probably be necessary to delay enabling video support until after Firefox 3&quot;<br>Nooooooooooooooooooooooooooooo. :-(<br></div>
 </div>
 <div class='comment'>
 <div class='author'>skierpage</div>
 <div class='content'>No, no, no.  Name whatever you have half-working for &lt;video&gt; &quot;LivingMotionFire&quot;, announce it with big fanfare as part of Firefox 3, and then actively work to subvert the evolving WHATWG and HTML5 specifications!  Have you learned nothing from That Other Browser Supplier?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian Bevan</div>
+<div class='content'>Is that Chris Double of ex-ACC fame? Say hello from me if so :)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
@@ -28,28 +48,8 @@ permalink: "/2007/11/status_03.html"
 <div class='content'>I just downloaded prism on my windows machine. I love it, such a cool idea, it&#39;s great also because it stops me getting distracted by other browser tabs.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Martijn</div>
-<div class='content'>Well, I wouldn&#39;t say shrunk to zero, there are still some crash bugs that could use patching. There are also quite a few that have patches, but need review and needs to be landed. Then I can see what happens after those got in.<br>Great that Karl is fixing MathML, the MathML bug is getting almost 2 years old now.<br>It&#39;s great that Chris P. is fixing editor bugs, too.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>John Drinkwater</div>
-<div class='content'>I know you probably can�t give any definitive answers, but would it mean video &amp; offline support would be part of the 1.9 branch (maybe for Firefox 3.5(?)) or would it have to be pushed back further, maybe onto trunk?<br>Really hoping to see video support soon�<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Edouard</div>
-<div class='content'>On the MathML front - the comments in http://bitquabit.com/2007/11/01/browser-stupidity/ seems pertinent, at least from a UI perspective.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>&quot;it will probably be necessary to delay enabling video support until after Firefox 3&quot;<br>Nooooooooooooooooooooooooooooo. :-(<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Edouard: my understanding is that those fonts are not &quot;free enough&quot; for us to automatically download them. The new STIX fonts might solve this problem.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ian Bevan</div>
-<div class='content'>Is that Chris Double of ex-ACC fame? Say hello from me if so :)<br></div>
+<div class='author'>Ralph Giles</div>
+<div class='content'>On the topic of the Stix fonts, they now have a beta up, and it looks like it&#39;s under the full license, so Mozilla could redistribute it.<br>They have a clickthrough on their download though, so you can&#39;t get the latest from them automagically.<br>http://www.aip.org/stixfonts/<br></div>
 </div>
 
 </div>

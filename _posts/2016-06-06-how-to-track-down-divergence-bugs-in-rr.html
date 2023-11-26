@@ -39,16 +39,16 @@ Anyway, thanks for sharing your experiences. I have only seen a small amount of 
 If QEMU could run rr with record-and-replay support that would be pretty useful to me, but AFAIK performance counters aren&#39;t supported unless you use KVM.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>In general yes that would be very difficult, but emulating just the conditional branch counter would not be very difficult. The behavior rr expects, and usually gets, is exactly what you&#39;d expect: it increments once for each jcc, loop(e,ne) and jcxz instruction retired.
-
-I think having two practical, orthogonally-implemented record-and-replay systems and debugging each one with the other could be really great!</div>
-</div>
-<div class='comment'>
 <div class='author'>Brendan Dolan-Gavitt</div>
 <div class='content'>Yes, I didn&#39;t know about rr last time I had to debug PANDA, but I&#39;m currently staring down ~500 failed replays (replaying 50,000 malware samples will do that...) and planning on giving it a try.
 
 Unfortunately you&#39;re correct that QEMU doesn&#39;t emulate performance counters with the fidelity you&#39;re looking for. I think it would not be too hard to add support for retired branches, but matching the behavior of the real hardware performance counters bug-for-bug sounds difficult.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>In general yes that would be very difficult, but emulating just the conditional branch counter would not be very difficult. The behavior rr expects, and usually gets, is exactly what you&#39;d expect: it increments once for each jcc, loop(e,ne) and jcxz instruction retired.
+
+I think having two practical, orthogonally-implemented record-and-replay systems and debugging each one with the other could be really great!</div>
 </div>
 </div>
 

@@ -15,20 +15,20 @@ permalink: "/2012/05/accelerated-scrolling-in-firefox-past.html"
 <p>The other pending important scrolling improvement is asynchronous scrolling, i.e., the ability to trigger a smooth scroll and have it happen immediately at a constant frame rate without jerkiness, even if the thread running the Web content is blocked due to Javascript execution or whatever. We've already developed most of this for Mobile Firefox (and B2G), but it needs to be made to work on desktop as well, which is not trivial. It requires enabling <a href="http://benoitgirard.wordpress.com/2012/05/15/off-main-thread-compositing-omtc-and-why-it-matters/">asynchronous compositing</a> on all our platforms, and teaching the compositor a bit about scrolling. Once that's done, because we're able to layer-ize scrolling in almost every situation, we'll be in extremely good shape.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robin</div>
-<div class='content'>Robert, firefox is currently so much behind other browsers in terms of smooth scrolling, it&#39;s just jerky, choppy, jumpy ... whatever bad words you can throw at firefox&#39;s smooth scrolling are simply the truth of where firefox is right now, I wish you guys can address this issue and come up with a fix.</div>
-</div>
-<div class='comment'>
-<div class='author'>Jesse Ruderman</div>
-<div class='content'>The border-radius fix was https://bugzilla.mozilla.org/show_bug.cgi?id=716439</div>
-</div>
-<div class='comment'>
 <div class='author'>Jim B</div>
 <div class='content'>Robert, thanks for this post.  I know writing things up takes time away from doing other things, but those of us in the peanut gallery appreciate hearing about progress and some of the details of the process.</div>
 </div>
 <div class='comment'>
 <div class='author'>Asa Dotzler</div>
 <div class='content'>Robert, can we make Windows 8 the first target for migrating this work to Desktop Firefox? Scrolling there will often be, like on Mobile Firefox, direct manipulation gesture based and so will be most sensitive to not having these improvements, I think.</div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>The border-radius fix was https://bugzilla.mozilla.org/show_bug.cgi?id=716439</div>
+</div>
+<div class='comment'>
+<div class='author'>Robin</div>
+<div class='content'>Robert, firefox is currently so much behind other browsers in terms of smooth scrolling, it&#39;s just jerky, choppy, jumpy ... whatever bad words you can throw at firefox&#39;s smooth scrolling are simply the truth of where firefox is right now, I wish you guys can address this issue and come up with a fix.</div>
 </div>
 
 </div>

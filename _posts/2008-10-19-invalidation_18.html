@@ -8,24 +8,24 @@ permalink: "/2008/10/invalidation_18.html"
 <div class="columns"><p>Whenever content or style changes, Gecko has to ensure that the necessary regions of the window are repainted. This is generally done by calling nsIFrame::Invalidate to request the repainting of a rectangle relative to a particular frame. Each of these operations is nontrivial; these rectangles have to be translated up the frame tree into window coordinate space, which is tricky if there's an ancestor element using CSS transforms, or there's an SVG foreignObject ancestor. Ancestor with SVG filter effects can even cause the invalidation area to grow in tricky ways. I've always been surprised that Invalidate doesn't show up in profiles very often.<br/><p>Worse than the performance issue, though, is that these Invalidate calls are smeared through layout and consequently there are lots of bugs --- mostly where we invalidate too little and leave "rendering turds" in windows, but also where we invalidate too much and do unnecessary repainting that slows things down. Part of the problem is that Gecko's invariants about who is responsible for invalidating what are complex and, in some cases, just plain wrong. However the problem is also fundamental: invalidation is in some sense duplication of information and code, because we already have code to paint, and in principle you could derive what needs to be invalidated from that code.<br/><p>So, I've been tossing around the idea of doing just that. We already create <a href="/2005/11/frame_display_lists.html">frame display lists</a> representing what needs to be rendered in a window. So in theory we can just keep around a copy of the display list for the window; whenever we need to repaint we can just create a new display list for the window, diff it against the old display list to see what's changed, and repaint that area.<br/><p>There are a few problems that make it not so easy. First, we need to know when we may need to repaint the window. In most cases that's fairly easy, we should do a repaint after every reflow or style change with a "repaint" hint. A few other cases, such as animated images, would need to signal their repainting needs explicitly. We'd have to deal with maintaining the "currently visible" display list in the face of content it refers to being deleted. We'd also need to update that display list to take account of scrolling.<br/><p>The big question is performance. Display list construction is typically very cheap, but in pathological cases (when huge numbers of elements are visible at once), it can be slow, so small visual changes to such pages could get significantly slower than they are now. On the other hand, when most of the page area is changing this scheme should be faster than what we today, because the costs of invalidation will go away and we have to build a display list for the whole window at each paint anyway.<br/><p>Another option is to do some kind of hybrid scheme where we make a little effort to keep track of what's changed --- perhaps just the frame subtree that was affected, possibly via dirty bits in the frames themselves --- and use that to bound the display list (re)construction.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Is there any debug mode where Gecko points out somehow which parts are being invalidated? It&#39;d be useful to diagnose performance.<br>I was thinking about a blinking rectangle or something of that sort.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Monty</div>
-<div class='content'>My &quot;what if...&quot; search landed on your weblog and my thinking perfectly coincides with yours about the power of gradient SVG for CSS background-image et cetera.  I&#39;m also amazed to encounter a Kiwi so well traveled :), well my Aussie friends biased me but you&#39;re opening my eyes! ;) Thanks for your kind contributions to open source.<br></div>
+<div class='author'>plam</div>
+<div class='content'>Fascinating. I think I should chat with you at some point about these interesting data structure invariants in the Gecko code. Of course they&#39;re well beyond what I can statically analyze these days.<br>Too bad I&#39;m no longer at MIT...<br></div>
 </div>
 <div class='comment'>
 <div class='author'>FP</div>
 <div class='content'>OT: If I keep resizing this page so that it changes between two columns and three columns, eventually it gets into a state where the bottom is cut off and I have to hit reload to see the entire thing. I&#39;m not sure if that&#39;s already a known bug.<br>Using:<br>Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1b2pre) Gecko/20081019 Minefield/3.1b2pre<br></div>
 </div>
 <div class='comment'>
-<div class='author'>plam</div>
-<div class='content'>Fascinating. I think I should chat with you at some point about these interesting data structure invariants in the Gecko code. Of course they&#39;re well beyond what I can statically analyze these days.<br>Too bad I&#39;m no longer at MIT...<br></div>
+<div class='author'>Anonymous</div>
+<div class='content'>Is there any debug mode where Gecko points out somehow which parts are being invalidated? It&#39;d be useful to diagnose performance.<br>I was thinking about a blinking rectangle or something of that sort.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>http://ejohn.org/blog/browser-paint-events/<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Monty</div>
+<div class='content'>My &quot;what if...&quot; search landed on your weblog and my thinking perfectly coincides with yours about the power of gradient SVG for CSS background-image et cetera.  I&#39;m also amazed to encounter a Kiwi so well traveled :), well my Aussie friends biased me but you&#39;re opening my eyes! ;) Thanks for your kind contributions to open source.<br></div>
 </div>
 
 </div>

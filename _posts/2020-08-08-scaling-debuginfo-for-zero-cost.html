@@ -8,14 +8,14 @@ permalink: "/2020/08/scaling-debuginfo-for-zero-cost.html"
 <p>Suppose we have a non-inline function F calling non-inline function G, at K sites, each time via a stack of N inline trivial wrapper functions I<sub>1</sub> ... I<sub>N</sub>. Zero-cost abstraction means this compiles to the same code as F calling G directly K times. However, correct DWARF debuginfo for F must contain KxN explicit <tt>DW_TAG_inlined_subroutine</tt>s, one for each instance of an inlined function :-(. Tracking and then emitting all this debuginfo will necessarily slow down the build, and make it slower as you add more layers of abstraction. Maybe this isn't (yet) a problem in practice compared to the cost of optimizations, but it is a fundamental limitation. Fixing it would probably require changing the debuginfo format so that, at least for the "minimal optimizations for fast debuggable builds" mode, the debuginfo for an inline function can be emitted just once and then parameterized for each call site where it is inlined. I don't have a clear idea of how that would work! This probably means the format and emission of debuginfo needs to be carefully codesigned with the optimizer to achieve fast debuggable builds with zero-cost abstractions.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>Seems you want no-inline flags!? And, linker can merge duplicated functions, so as their debug info.</div>
+</div>
+<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>No, we need inlining because without inlining &quot;zero-cost abstractions&quot; aren&#39;t zero-cost.
 
 Unfortunately linkers don&#39;t modify debuginfo at all during linking, so merging identical functions doesn&#39;t merge their debuginfo. Anyway that won&#39;t help since in my example there are no duplicate functions to merge.</div>
-</div>
-<div class='comment'>
-<div class='author'>Unknown</div>
-<div class='content'>Seems you want no-inline flags!? And, linker can merge duplicated functions, so as their debug info.</div>
 </div>
 <div class='comment'>
 <div class='author'>Stephen Kell</div>

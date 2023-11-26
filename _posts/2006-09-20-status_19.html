@@ -8,20 +8,20 @@ permalink: "/2006/09/status_19.html"
 <div class="columns">I've been working my way through a backlog of stuff. Most noticeably, to some anyway, I've caught up on my reviews. I currently know of no outstanding review requests where the ball is still in my court. If I've missed something, let me know.<br/><br/>Lately I've been working on the new textframe code in bug 333659, that reorganizes text layout around the new gfxTextRun abstraction. I've written all the new layout parts, almost completely replacing nsTextTransform.cpp and nsTextFrame.cpp. There's still a lot of work to do to implement gfxTextRun on all platforms. I'm starting first with the Pango-based implementation, but that's stalled while I wait for masayuki's rewrite of our existing Pango code to land. The new code feels nice to me. It handles combining characters and clusters everywhere and seems a lot simpler than the old code. Hopefully it will perform better too, now that we can retain glyph conversion and placement between layout and painting. Only testing can tell.<br/><br/>The dependencies surrounding this code are quite complex at the moment. The new textframe depends on changes to inline layout that I have filed as a separate patch. But the inline layout changes actually break the computation of minimum width for text containing words of more than one element (e.g., &lt;b&gt;H&lt;/b&gt;ello). Fixing that really needs the reflow branch. Turns out that the reflow branch is also broken in the same way and fixing it could use these inline layout changes! On top of all that, the new textframe code is really needed to help improve performance with cairo, so the complete cairo switchover needs this code. Sigh...<br/><br/>Timeless prodded me to work on scrolling performance, which has regressed on trunk a bit, especially for certain sites such as Gmail. We found a few issues and I have patches to fix those that I should check in tomorrow. They're all to do with "scroll analysis", how we determine when and where it is safe to scroll a window using "bitblit" (just copying pixels from one place to another on the screen). A full explanation deserves a blog entry of its own.<br/><br/>Next I think I'll shoot down a few random bugs. Maybe fix the file input control so that the textfield is operable again, but typing into it brings up the filechooser dialog. Soon I plan to dive into the ubrowser patches and try to get it running on Linux and ready to land in Mozilla CVS somewhere.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Yeah, I should have mentioned that the new textframe code supports soft hyphens.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>wg</div>
-<div class='content'>Robert is my hacker hero. I want to be like him when I grow up. :-)<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>Will your new textframe code make soft hyphens usable in Gecko?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robin</div>
 <div class='content'>You sound like you&#39;ve got your work cut out for you!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>wg</div>
+<div class='content'>Robert is my hacker hero. I want to be like him when I grow up. :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Yeah, I should have mentioned that the new textframe code supports soft hyphens.<br></div>
 </div>
 
 </div>

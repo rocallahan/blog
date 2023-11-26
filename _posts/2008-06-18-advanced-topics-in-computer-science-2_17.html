@@ -8,36 +8,36 @@ permalink: "/2008/06/advanced-topics-in-computer-science-2_17.html"
 <div class="columns"><p>A while ago I <a href="/2008/01/string-theory_08.html">wrote about</a> the deep computer science problems of strings. Now I need to talk about another poorly understood data structure: rectangles. There are a couple of issues.<br/><p><strong>x1,y1,x2,y2 vs x,y,width,height</strong> Windows uses the former, most other libraries that I know of use the latter. If you mostly work with coordinates relative to the rectangle origin, then you'll probably prefer width+height, but otherwise I actually think Windows got this right! A lot of rectangle operations, such as union, intersection, and point containment are simpler in the x2+y2 format.<br/><p><strong>Union of empty rectangles</strong> Should the 'union' operation ignore empty rectangles or include them in the calculations? For example, what is the union of (100,100)-(100,200) with (100,100)-(200,100)? It depends on the use-case and is quite subtle. When the rectangle represents a set of pixels, for example a damage area that needs to be repainted, then you want 'union' to ignore empty rectangles, so the result in my example could be any empty rectangle. But when the rectangle represents the bounds of a set of points, then you want to return a non-empty rectangle in this case --- (100,100)-(200,200). (The difference between a pixel and a point is that a pixel has area, usually a 1x1 square, but a point is a mathematical point of zero size.) An example of this latter usage is when you're computing the bounds of a set of CSS boxes in order to determine how big a container must be to include them all.<br/><p>So we want two forms of 'union' operator, or perhaps better still we should have two entirely different data structures for these two tasks. For pixel-set rectangles, there is only one logical "empty rectangle" --- all rectangles with zero width or height should be considered equal. For point-set rectangles, even if the width is zero the height and top-left can still be significant, and vice versa for height. This suggests we should separate the concepts.<br/><p>The problem with having two data structures is that very often we need to convert one to the other --- to find the set of pixels that cover a point-set rectangle. (Off the top of my head, I can't think of situations where we need to convert pixel-sets to point-sets.) It would also be rather confusing for developers since I'm not aware of any libraries that make this distinction. Also, in Gecko, rectangles like the "overflow areas" are used to mean <em>both</em> pixel-sets and point-sets. For now, we'll just stick with different 'union' operators.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>No, space is important, not just for memory usage but also cache footprint.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>deimo</div>
-<div class='content'>i want to knwo more about computer science<br></div>
+<div class='author'>James Justin Harrell</div>
+<div class='content'>Ideally, you shouldn&#39;t have to know how the rectangle is implemented.<br>You could have getters for information like topY, rightX, bottomY, leftX, centerY, centerX, width, and height all on the same type. You just take whatever you want and don&#39;t worry about how it&#39;s implemented. Built-in support for getters, like in JavaScript or C#, would make this much nicer.<br>You could then measure which properties are accessed the most, and choose an implementation that provides the best average performance.<br>Of course, you&#39;d also then want multiple constructors that each take four numbers. Since most languages don&#39;t support named constructors, you&#39;d probably end up using something really messy and/or slow, like factory methods or a RectangleArgumentsFormat enum. Yuck.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Yeah, you can hide the implementation choice, but you still have to choose an implementation. That&#39;s what I&#39;m interested in.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Artyom Shalkhakov</div>
-<div class='content'>Hey, an interesting blog you have here. :)<br>At this point I&#39;m struggling with problems akin to those you have described in the post.<br>How to represent rectangles? Which useful operations on rectangles are there?<br>I suppose one can use just one representation, say (x,y,w,h) and make width and height inclusive. Then you&#39;d define a few constructors and selectors (&quot;getters&quot;, but we are talking in terms of CS here, right?) and be done with it! :)<br>The answer to the question posed would be something like &quot;do empty rectangles count?&quot; (sometimes they do, sometimes not)<br>How about this solution? Please tell me how you solved your problem.<br></div>
+<div class='author'>dan</div>
+<div class='content'>assuming the rectangle properties are read a whole lot more then they are written you could store both.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>No, space is important, not just for memory usage but also cache footprint.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Eamon Nerbonne</div>
 <div class='content'>I think the important question is rather which bounds are inclusive and which exclusive.  As most people quickly note writing for-loops, it&#39;s very handy to have an upper bound which is exclusive.  I&#39;d lean toward the x1,y1,x2,y2 representation with x2 and y2 exclusive upper bounds.  As long as that&#39;s a firm requirement, the union distinction you describe doesn&#39;t apply:<br>Even if the rectangle describes bounds on a set of points, a zero-size rectangle can be ignored since no points can fall within it, whether &quot;mathematical&quot; or 1x1 pixels.  The distribution of zero-size points should (ideally?) then too be described by a non-zero size rectangle, even if you&#39;re only interested in the bound on one dimension.<br>It sounds like the bounds of the &quot;mathematical&quot; point cloud in question aren&#39;t really rectangular but one-dimensional (i.e. the bounds apply to each dimension individually rather than to the point-cloud as a whole), in which case the &quot;union&quot; model probably isn&#39;t the best anyhow - then you&#39;d probably want the rectangle whose bounds in each dimension are the union of the bounds in that dimension - which in turn is exactly the &quot;union&quot; operator you describe...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>dan</div>
-<div class='content'>assuming the rectangle properties are read a whole lot more then they are written you could store both.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Adam</div>
 <div class='content'>Perhaps have a data structure:<br>x1,<br>y1,<br>x2,<br>y2,<br>bool x1_inclusive,<br>bool y1_inclusive,<br>bool x2_inclusive,<br>bool y2_inclusive<br>Then you don&#39;t have to worry about which sides are inclusive, and you can choose to ignore the inclusivity on a function-level basis for when you do or don&#39;t care.<br>It&#39;d be interesting to think of a case where you&#39;d only want some of them inclusive, though, so this might not make sense...<br>Maybe just have a bool in the structure indicating it&#39;s a pixel-set: you only ever treat it all as inclusive or not (unless you&#39;d want some advanced filter situation?).<br></div>
 </div>
 <div class='comment'>
-<div class='author'>James Justin Harrell</div>
-<div class='content'>Ideally, you shouldn&#39;t have to know how the rectangle is implemented.<br>You could have getters for information like topY, rightX, bottomY, leftX, centerY, centerX, width, and height all on the same type. You just take whatever you want and don&#39;t worry about how it&#39;s implemented. Built-in support for getters, like in JavaScript or C#, would make this much nicer.<br>You could then measure which properties are accessed the most, and choose an implementation that provides the best average performance.<br>Of course, you&#39;d also then want multiple constructors that each take four numbers. Since most languages don&#39;t support named constructors, you&#39;d probably end up using something really messy and/or slow, like factory methods or a RectangleArgumentsFormat enum. Yuck.<br></div>
+<div class='author'>deimo</div>
+<div class='content'>i want to knwo more about computer science<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Artyom Shalkhakov</div>
+<div class='content'>Hey, an interesting blog you have here. :)<br>At this point I&#39;m struggling with problems akin to those you have described in the post.<br>How to represent rectangles? Which useful operations on rectangles are there?<br>I suppose one can use just one representation, say (x,y,w,h) and make width and height inclusive. Then you&#39;d define a few constructors and selectors (&quot;getters&quot;, but we are talking in terms of CS here, right?) and be done with it! :)<br>The answer to the question posed would be something like &quot;do empty rectangles count?&quot; (sometimes they do, sometimes not)<br>How about this solution? Please tell me how you solved your problem.<br></div>
 </div>
 
 </div>

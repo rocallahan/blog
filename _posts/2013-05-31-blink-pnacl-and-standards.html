@@ -39,11 +39,101 @@ PNaCl and Pepper aren't on that dashboard, but if they were, they'd be a very, v
 <p>The disconnect is alarming. Unfortunately it appears Blink's principles only apply to Blink, not Chrome as a whole. I'm sad, because this seriously undermines the value of the Blink team's good intentions; a Google team that doesn't want to be a good Web citizen can probably find a way to be "not Blink" and run roughshod over the Blink team's good work :-(.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>It&#39;s sad to see that Mozilla has become a company that has no grand vision for the web. This is clearly demonstrated by something like asm.js which is a really cheap attempt at fixing a fundamental problem with the web platform, that being how to make web apps faster and more scalable. If developers have to choose between dart+simd vs asm.js for games I have no doubt they will opt for something like dart, and it won&#39;t be because google is forcing it on them either, instead it will be because dart provides a structured workflow and great tools. All google is doing with dart is hedging their bets on the web platform. For years people at mozilla have said that javascript can be evolved into something that isn&#39;t a total mess, and yet nobody at mozilla has provided a shred of evidence that these kinds of statements are true, and they sure as hell can&#39;t provide a time frame for when that will happen. When it come to the question of whether javascript can be fixed the burden of proof lies entirely on mozilla. Google has emphasised they will continue to help improve javascript however given how much they have invested into the web platform I believe they have earned the right to hedge their bets, it would be silly not to.</div>
+<div class='author'>Benoit Jacob</div>
+<div class='content'>Worth pointing our that the idea of LLVM IR as a platform&#39;s IR has been discouraged by a LLVM developer: http://lists.cs.uiuc.edu/pipermail/llvmdev/2011-October/043719.html</div>
+</div>
+<div class='comment'>
+<div class='author'>jrk</div>
+<div class='content'>A serious question, which I have never seen answered: other browser developers are outright hostile to PNaCl, which doesn&#39;t bode well for adoption, but *why*?</div>
+<div class='comment'>
+<div class='author'>azakai</div>
+<div class='content'>I think this has been answered several times on various mailing lists, but here is my personal take on things:
+
+1. NaCl is CPU-specific. That&#39;s not suitable for the web.
+2. PNaCl is in theory portable, so it is potentially worth considering.
+3. However there is no spec for PNaCl, and standardizing it would take an extreme amount of effort: It means standardizing a subset of LLVM IR, which is quite rich and complex, as well as the Pepper plugin API. This is an enormous amount of work that has not even been begun by Google AFAIK.
+4. A specific issue is that there are worries about the Pepper API duplicating things that are already done by standardized web APIs. That makes it hard to reach consensus on standardization.
+5. There has been no public indication of interest whatsoever from Apple or Microsoft, without which this can&#39;t go forward.
+6. A large new technology like PNaCl (which requires LLVM) has a large surface area, and ensuring it is secure is challenging.
+7. Finally, if PNaCl-like performance can be achieved by other means, then all the effort and risk is even more worrying (while that is not yet clear either way, there are positive indications that it might).
+</div>
+</div>
+<div class='comment'>
+<div class='author'>JF</div>
+<div class='content'>A small correction on 6: PNaCl has no more security surface area than NaCl has. The LLVM translator itself is SFI-sandboxed, and the executables it produces are SFI-sandboxed. All of these are validated (small verifiable validator, see the NaCl paper), and then executed within another sandbox.
+
+Furthermore, there are quite compelling security features that PNaCl offers on top of what NaCl has.
+
+I&#39;d make the argument that PNaCl is more appealing from a security point of view than compile-once-run-everywhere (e.g. NaCl) as well as traditional language VMs.</div>
+</div>
+<div class='comment'>
+<div class='author'>Enu</div>
+<div class='content'>Your last two paragraphs smell of arrogance.  If you are going to defend something, don&#39;t say “I could argue” and proceed to give naked advocacy without bothering to give your arguments.</div>
+</div>
+<div class='comment'>
+<div class='author'>kripken</div>
+<div class='content'>&gt; A small correction on 6: PNaCl has no more security surface area than NaCl has.
+
+Yes, sorry for my mistake, what I wanted to say was that adding either NaCl or PNaCl to a browser will increase the surface area, compared to not having them at all and just running apps in JS. I forgot that you use the same sandbox for LLVM, so NaCl and PNaCl are basically equivalent.
+</div>
+</div>
+<div class='comment'>
+<div class='author'>JF</div>
+<div class='content'>Enu, I purposefully didn&#39;t pursue that argument because it wasn&#39;t my point. I wanted to correct one of Alon&#39;s points, not argue over it.
+
+Discussing the security of traditional VMs versus SFI VMs is a pretty lengthy subject that would require its own writeup, not a comment on an unrelated blog post. At that point you&#39;d probably also want to go into implementation details of NaCl&#39;s runtime versus SpiderMonkey as well as each of their browser&#39;s sandboxing and other mitigations.
+
+I hope you&#39;ll reconsider what I wrote as a concise, to the point, reply instead of arrogance.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>In addition to what Alon said, the Pepper APIs are also a significant increase in surface area. One of the successful p0wnium attacks used (in part) a vulnerability in Pepper.</div>
+</div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>ActiveX, vbscript... Yay!!</div>
+<div class='content'>Any browser that supports NPAPI but not PPAPI has no real basis for claiming that PPAPI is worse off. The whole design of NPAPI is fundamentally flawed from a security perspective and is the entire reason why PPAPI was created in the first place.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Your reasoning is incorrect. The choice is not &quot;NPAPI vs PPAPI&quot;, the choice is &quot;NPAPI vs &quot;NPAPI + PPAPI&quot;, and the latter can (and is) certainly an increase in surface area.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Peter Kasting</div>
+<div class='content'>roc, I think your concerns are legitimate, but somewhat premature.  (Disclaimer: While I am a Chromium developer, I have no connection to the PNaCl or Pepper teams.)
+
+PNaCl and Pepper are, by virtue of what they&#39;re trying to do, large.  It seems reasonable for other vendors to remain on the sidelines while market testing demonstrates whether their benefits are worth the effort of cross-browser implementation and standardization, but it also seems reasonable for Google to pursue getting these technologies to the public so that that testing can happen.
+
+It&#39;s not as if there is no interest in feedback.  PNaCl is a direct response to the (legitimate) complaints that NaCl baked in the x86 architecture in a way incompatible with the cross-platform nature of the web.
+
+Furthermore, Pepper is hardly just a layer for [P]NaCl executables to touch the web.  Its proper name, PPAPI, makes it clear that it is a next-generation replacement for NPAPI, which is both necessary and desirable for a multi-process browser that wants to implement plugins in a sandboxable and performant fashion.  The fact that other vendors have not taken PPAPI (or begun working on similar efforts, or given feedback about what they want to see change) is, to me, more an indication that Chrome is the only browser which has to this date implemented sandboxing for e.g. Flash.
+
+To me, the PNaCl folks have reason to believe that there are compelling wins if they can ship their product, and reason to believe that if they can demonstrate those compelling wins, other vendors may reconsider.  At that point I cannot imagine Google not going to the trouble of proper standardization along with assistance to other vendors who wish to implement these technologies.  For now, as those vendors reasonably sit on the sidelines, such activities should not be a priority.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>You ignore the point of my post, which is that Blink lays out best practices for the implementation/standardization dance, and PNaCl/Pepper completely violates them. Those Blink principles aren&#39;t arbitrary, they&#39;ve been learned from bitter experience. We know full well that once you expose PNaCl/Pepper to the public Web, if there&#39;s uptake the features will quickly become immutable for compatibility reasons and the standardization process will amount to documenting every quirk in the Chrome implementation. This is more true the more complex the feature, so Blink&#39;s principles are *more* important for complex features, not less (as the Blink page makes clear).
+
+Regarding feedback, years ago I had a telecon with Google people where I explained that Pepper duplicates standard Web APIs and NaCl should instead reuse the standard APIs in some way, and this would be a blocker for us. I was of course ignored.
+
+Mozilla has no interest in a &quot;next generation replacement for NPAPI&quot;. Flash is dying quickly. To support legacy Flash content we are investing in Shumway. Other plugins are used much less and that usage is also declining. We don&#39;t expect or want new plugins to become important. None of this should be news to Google at large.
+
+I&#39;m sure every Google team working on a Web-facing feature believes &quot;there are compelling wins if they can ship their product&quot;. If that&#39;s a free pass to bypass Blink&#39;s principles, they have no value.</div>
+</div>
+<div class='comment'>
+<div class='author'>YABE Yuji</div>
+<div class='content'>Flash is dying? YOU are killing it.
+
+And your product Shumway is useless other than simple bunners (10 times slower than the native Flash Player) so it can&#39;t exterminate Flash. Probably Shumway (and pdf.js) will be needed to recreate from scratch using asm.js by serious performance issues.
+
+I feel Mozilla people never admit their mistakes. You were saying JavaScript should be enough for all tasks just half a year ago, Of course it was WRONG because you are now pushing asm.js like crazy. If asm.js is not welcomed as you thought, I think it might be by the faithless of Mozilla guys. Think that you might be making another mistake by asm.js.
+
+From my perspective Google and Mozilla are not different much. All browser vendors suck. Google loves their PNaCl/Dart and Mozilla loves their asm.js/JavaScript. That&#39;s all. Hence I dislike the unproductive web platform and love native development.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I&#39;d like to take credit for killing Flash, but it wasn&#39;t me (or us).
+
+asm.js is JS. That&#39;s the point.</div>
 </div>
 </div>
 <div class='comment'>
@@ -62,48 +152,6 @@ My take on these tech&#39;s has usually been that they&#39;re too large and comp
 </div>
 </div>
 <div class='comment'>
-<div class='author'>greggman</div>
-<div class='content'>This seems awfully hypocritical. 
-
-Sure Blink should live up to their standards they&#39;ve declared but what about Mozilla? What standards body was asm.js proposed at so other browser vendors could have input into the primitives before mozilla shipped it? Was the Audio Data API any different? My recollection is you just shipped it with no input from anyone. Parallel js? How about the myriad of moz only APIs documented on mdn?
-
-One of Mozilla&#39;s principles is: Transparent community-based processes promote participation, accountability, and trust.
-
-Yet as far as I can see none of the above features were done transparently.
-
-Should Mozilla operate on a different set of rules?</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>&gt; What standards body was asm.js proposed at so other browser
-&gt; vendors could have input into the primitives before mozilla
-&gt; shipped it?
-
-It was discussed at TC39 and there was informal support. asm.js is designed to work in all browsers even if they don&#39;t add explicit support, so having a spec for it is not so important. Having said that, unlike Pepper/PNaCl, asm.js does have a spec.
-
-&gt; Was the Audio Data API any different?
-
-We discussed the design and implementation of the Audio Data API in public and solicited feedback. Google&#39;s (belated) response was to reveal Web Audio, which they&#39;d been developing in secret. For various reasons (some good, some bad) Web Audio won out so we deprecated Audio Data without ever making it into a formal spec. It was always prefixed, which used to be best practices for experimental stuff. If we were doing it again we&#39;d make it behind a pref, disabled by default.
-
-Comparing Audio Data to PNaCl/Pepper is a bit ridiculous though. Audio Data is trivial to implement, PNaCl/Pepper not at all.
-
-Parallel JS was originally proposed by Intel (Rivertrail), not Mozilla. It&#39;s experimental and we definitely will not enable it by default without a standardization story.
-
-&gt; Should Mozilla operate on a different set of rules?
-
-Definitely not. We try to do the right thing, but we don&#39;t always get it right, so your attention is appreciated.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>ActiveG, GBScript... Yay!?
-
-Apparently.
-
-See also http://blog.tojicode.com/2013/06/a-tale-of-two-web-technologies.html.
-
-/be</div>
-</div>
-<div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>Google&#39;s trying new things—this is how progress is made. As a consumer and developer I&#39;m glad they&#39;re trying things such as this, same thing with SPDY, Chrome and Blink, etc.</div>
 <div class='comment'>
@@ -113,127 +161,6 @@ See also http://blog.tojicode.com/2013/06/a-tale-of-two-web-technologies.html.
 SPDY is rather different to NaCl/Pepper. Mozilla and Opera expressed support for the SPDY work early on, implemented it themselves, and provided a lot of feedback. SPDY is also just better than NaCl/Pepper, e.g. it doesn&#39;t duplicate existing Web standards (one reason we supported it).
 
 &quot;Trying new things&quot; is good, but there are good and bad ways to do it, and some of the bad ways are very bad for the Web.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Wondering how relevant this post is now in 2015 that Chrome has disabled support for NPAPI.  Has anything changed/improved with the outlook for PPAPI?</div>
-</div>
-<div class='comment'>
-<div class='author'>Peter Kasting</div>
-<div class='content'>roc, I think your concerns are legitimate, but somewhat premature.  (Disclaimer: While I am a Chromium developer, I have no connection to the PNaCl or Pepper teams.)
-
-PNaCl and Pepper are, by virtue of what they&#39;re trying to do, large.  It seems reasonable for other vendors to remain on the sidelines while market testing demonstrates whether their benefits are worth the effort of cross-browser implementation and standardization, but it also seems reasonable for Google to pursue getting these technologies to the public so that that testing can happen.
-
-It&#39;s not as if there is no interest in feedback.  PNaCl is a direct response to the (legitimate) complaints that NaCl baked in the x86 architecture in a way incompatible with the cross-platform nature of the web.
-
-Furthermore, Pepper is hardly just a layer for [P]NaCl executables to touch the web.  Its proper name, PPAPI, makes it clear that it is a next-generation replacement for NPAPI, which is both necessary and desirable for a multi-process browser that wants to implement plugins in a sandboxable and performant fashion.  The fact that other vendors have not taken PPAPI (or begun working on similar efforts, or given feedback about what they want to see change) is, to me, more an indication that Chrome is the only browser which has to this date implemented sandboxing for e.g. Flash.
-
-To me, the PNaCl folks have reason to believe that there are compelling wins if they can ship their product, and reason to believe that if they can demonstrate those compelling wins, other vendors may reconsider.  At that point I cannot imagine Google not going to the trouble of proper standardization along with assistance to other vendors who wish to implement these technologies.  For now, as those vendors reasonably sit on the sidelines, such activities should not be a priority.</div>
-<div class='comment'>
-<div class='author'>YABE Yuji</div>
-<div class='content'>Flash is dying? YOU are killing it.
-
-And your product Shumway is useless other than simple bunners (10 times slower than the native Flash Player) so it can&#39;t exterminate Flash. Probably Shumway (and pdf.js) will be needed to recreate from scratch using asm.js by serious performance issues.
-
-I feel Mozilla people never admit their mistakes. You were saying JavaScript should be enough for all tasks just half a year ago, Of course it was WRONG because you are now pushing asm.js like crazy. If asm.js is not welcomed as you thought, I think it might be by the faithless of Mozilla guys. Think that you might be making another mistake by asm.js.
-
-From my perspective Google and Mozilla are not different much. All browser vendors suck. Google loves their PNaCl/Dart and Mozilla loves their asm.js/JavaScript. That&#39;s all. Hence I dislike the unproductive web platform and love native development.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>You ignore the point of my post, which is that Blink lays out best practices for the implementation/standardization dance, and PNaCl/Pepper completely violates them. Those Blink principles aren&#39;t arbitrary, they&#39;ve been learned from bitter experience. We know full well that once you expose PNaCl/Pepper to the public Web, if there&#39;s uptake the features will quickly become immutable for compatibility reasons and the standardization process will amount to documenting every quirk in the Chrome implementation. This is more true the more complex the feature, so Blink&#39;s principles are *more* important for complex features, not less (as the Blink page makes clear).
-
-Regarding feedback, years ago I had a telecon with Google people where I explained that Pepper duplicates standard Web APIs and NaCl should instead reuse the standard APIs in some way, and this would be a blocker for us. I was of course ignored.
-
-Mozilla has no interest in a &quot;next generation replacement for NPAPI&quot;. Flash is dying quickly. To support legacy Flash content we are investing in Shumway. Other plugins are used much less and that usage is also declining. We don&#39;t expect or want new plugins to become important. None of this should be news to Google at large.
-
-I&#39;m sure every Google team working on a Web-facing feature believes &quot;there are compelling wins if they can ship their product&quot;. If that&#39;s a free pass to bypass Blink&#39;s principles, they have no value.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I&#39;d like to take credit for killing Flash, but it wasn&#39;t me (or us).
-
-asm.js is JS. That&#39;s the point.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Mozilla is a company that likes to complain based on standards rather than work to improve things. This is the second post I read from Mozilla complaining someone doesn&#39;t follow the standards therefore they are &quot;wrong&quot;. I will expecting a concrete reason to switch back to their browser.</div>
-</div>
-<div class='comment'>
-<div class='author'>greggman</div>
-<div class='content'>What kind if support was at TC39? Are there notes to see? I only see Mozilla names on the spec. What input did other browser vendors have? Did thay have input into the primitives supported? Did they have input into the method of implementation? Did they have input into how asm.js code is identified? Did they have input into how to transfer data to/from JavaScript and asm.js?
-
-To be honest I think asm.js is a neat idea and I&#39;m glad Mozilla implemented it to show its potential. Rather than see Blink or Mozilla hobbled by design by committee I think they should both continue what they&#39;ve BOTH been doing. Shipping new features and proposing them as possible new standards. I believe that leads to moving the web forward faster than waiting for standards committees to hammer out agreements.
-
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I don&#39;t think you can cleanly separate (P)NaCl and PPAPI that way. The security features of PPAPI depend on (P)NaCl.
-
-Yes, bundling a plugin --- any plugin --- that exposes non-standard platform API to Web pages is a problem, just as exposing non-standard APIs in other ways is a problem. It doesn&#39;t matter whether we call the implementation a &quot;plugin&quot; or not; the effect is the same.
-
-You&#39;re going to ask: &quot;Chrome already bundles Flash so what&#39;s new?&quot; Flash is a problem and if we made Flash usage disappear from the Web tonight I think browser vendors would all cheer. Flash bundling can only be justified because Flash is already ubiquitous on desktops and widely used on sites, so bundling causes minimal additional harm.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I don&#39;t know the details of what happened at TC39, and I&#39;m not in a position to know all the feedback we&#39;ve received. But Google has at least provided indirect feedback --- they praised asm.js at Google I/O, and indicated they&#39;ll optimize V8 for it but without using a specialized front-end triggered by the &quot;use asm&quot; directive, like we do. So most of those issues you raise are not relevant to them.
-
-Unfortunately Apple and Microsoft people are choosy about what they provide feedback on. They often implement specs without ever having provided any feedback.
-
-We do avoid being hobbled by committees by implementing and shipping experimental features. That&#39;s fine, but there has to be a bright line between experimental features which are not standardized and should not be used by production sites, and the actual Web platform. Current Gecko and Blink policy is to enforce that line by disabling-by-default experimental features in release builds. That is the line PNaCl/Pepper is going to cross, hence this blog post.
-
-Implementing a feature, shipping it enabled in releases, encouraging sites to depend on it, and THEN thinking about standardizing it is a recipe for disaster. Web Audio is going through this right now.</div>
-</div>
-<div class='comment'>
-<div class='author'>greggman</div>
-<div class='content'>Like I said I think there are different points of view. PPAPI and PNaCl are two separate features. Just like NPAPI and Flash are two separate features.
-
-PPAPI is a plugin system. It is better than NPAPI in at least 3 ways:
-
-1) It is designed to run plugins out of process only
-2) It provides cross platform OS level features
-3) It&#39;s design to be more secure than NPAPI
-
-All of those are valid enough reasons to ship PPAPI regardless of what other browser vendors do (in my personal opinion). Protecting users from the #1 area of exploit (NPAPI) is important. Giving them a better experience by requiring out-of-process plugins is also important. Providing a cross platform API surface is arguably also important is it let&#39;s the browser give a uniform API for plugins (devs don&#39;t have to learn N OSes) and it let&#39;s the browser limit what a plugin can call and how it can call it.
-
-Separately someone (Google) has written a plugin called PNaCl. It runs native code securely. It&#39;s similar to Flash (which runs ActionScript) or Silverlight (which runs .NET languages) or Unity3D (which runs .NET languages through Mono integration).
-
-Just like the Flash plugin downloads .swf and executes them, the Unity3D plugin downloads .unity3D files and executes them, Silverlight downloads ?? files and executes them, the PNaCl plugin downloads .pexe files and executes them. 
-
-So, from a certain POV, the basic complaint then is that Google is bundling a plugin. If Google announced tomorrow they were bundling the Unity3D plugin would that be just as upsetting would people be happy that Unity3D was able to negotiate bundling? Google is already bundling the Flash plugin and Unity&#39;s growth is huge. I&#39;m not suggesting Google will ever do that. Only point out how that hypothetical situation is analogous to the PNaCL situation.
-
-I understand there&#39;s another POV which says &quot;because it&#39;s Google and because it&#39;s Chrome which has a large market share that it&#39;s not cool to bundle yet another plugin because suddenly XX% of the net will have access to some new feature and possibly become dependent on it.
-
-I&#39;m not saying that pov is invalid, only that the other POV that it&#39;s just a plugin is also valid.
-
-In any case, please consider not conflating PPAPI and PNaCl. They are 2 completely separate techs. There are already 2 other PPAPI plugins. There&#39;s the PPAPI Flash which is far more secure than NPAPI flash and has been known not to be vulnerable to some of the exploits of NPAPI flash. There&#39;s also Chrome&#39;s PPAPI PDF viewer.
-
-So, PPAPI is not going away. Chrome requires it at this point to secure Flash and provide PDF support.
-
-Separately, there&#39;s a new plugin, PNaCl.</div>
-</div>
-<div class='comment'>
-<div class='author'>greggman</div>
-<div class='content'>Google giving feedback AFTER you shipped is not an example of the &quot;best behavior&quot; you&#39;re seeking from blink unless I&#39;m mis-understanding.
-
-I see your point about PPAPI/PNaCl. I think the difference of view point there is that PPAPI is a plugin API and PNaCL is a PPAPI plugin and plugins, to some people, don&#39;t seem to fall under the same umbrella of standards. 
-
-Companies can ship any plugins they want (Flash, Unity3D, ...). NPAPI is arguably insecure and the largest single hole for exploits. PPAPI is an attempt to make it possible to fix that hole while recognizing that plugins, while usage might be going down, still have many years of life left in them. 
-
-Telling Blink they can&#39;t ship a more secure plugin API to protect their users seems out of line. Telling someone they can&#39;t ship a plugin (which anyone can do) also seems like telling someone they can&#39;t write JavaScript. I&#39;m not saying your point is invalid. Only pointing out there&#39;s another way of looking at it.
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>asm.js has not shipped yet. It&#39;s currently in our beta branch.
-
-If the goal for PNaCl/PPAPI was only to replace existing usage of NPAPI with a more secure alternative, I&#39;d be more sympathetic --- but still concerned, since we have a spec (of sorts) for NPAPI, and a public multi-vendor process for updating it, and replacing it with something lacking those virtues is a step backwards in some dimensions. But in any case, PNaCl/PPAPI&#39;s goals are clearly much broader than that, otherwise Google would be limiting the attack surface by whitelisting specific plugins that matter and not encouraging people to build new ones.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>pkasting points out on chromium-dev that NPAPI plugins have always had a reasonably high installation barrier (or else were specifically bundled with the browser or other non-Web products). As I understand it, the plan for PNaCl/Pepper is to eliminate that barrier as it&#39;s no longer a security requirement --- making it a much broader platform than NPAPI.</div>
 </div>
 </div>
 <div class='comment'>
@@ -283,64 +210,137 @@ Is this kind of code likely to become common? I would expect and hope not. It mi
 </div>
 </div>
 <div class='comment'>
-<div class='author'>jrk</div>
-<div class='content'>A serious question, which I have never seen answered: other browser developers are outright hostile to PNaCl, which doesn&#39;t bode well for adoption, but *why*?</div>
+<div class='author'>greggman</div>
+<div class='content'>This seems awfully hypocritical. 
+
+Sure Blink should live up to their standards they&#39;ve declared but what about Mozilla? What standards body was asm.js proposed at so other browser vendors could have input into the primitives before mozilla shipped it? Was the Audio Data API any different? My recollection is you just shipped it with no input from anyone. Parallel js? How about the myriad of moz only APIs documented on mdn?
+
+One of Mozilla&#39;s principles is: Transparent community-based processes promote participation, accountability, and trust.
+
+Yet as far as I can see none of the above features were done transparently.
+
+Should Mozilla operate on a different set of rules?</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>In addition to what Alon said, the Pepper APIs are also a significant increase in surface area. One of the successful p0wnium attacks used (in part) a vulnerability in Pepper.</div>
+<div class='content'>&gt; What standards body was asm.js proposed at so other browser
+&gt; vendors could have input into the primitives before mozilla
+&gt; shipped it?
+
+It was discussed at TC39 and there was informal support. asm.js is designed to work in all browsers even if they don&#39;t add explicit support, so having a spec for it is not so important. Having said that, unlike Pepper/PNaCl, asm.js does have a spec.
+
+&gt; Was the Audio Data API any different?
+
+We discussed the design and implementation of the Audio Data API in public and solicited feedback. Google&#39;s (belated) response was to reveal Web Audio, which they&#39;d been developing in secret. For various reasons (some good, some bad) Web Audio won out so we deprecated Audio Data without ever making it into a formal spec. It was always prefixed, which used to be best practices for experimental stuff. If we were doing it again we&#39;d make it behind a pref, disabled by default.
+
+Comparing Audio Data to PNaCl/Pepper is a bit ridiculous though. Audio Data is trivial to implement, PNaCl/Pepper not at all.
+
+Parallel JS was originally proposed by Intel (Rivertrail), not Mozilla. It&#39;s experimental and we definitely will not enable it by default without a standardization story.
+
+&gt; Should Mozilla operate on a different set of rules?
+
+Definitely not. We try to do the right thing, but we don&#39;t always get it right, so your attention is appreciated.</div>
+</div>
 </div>
 <div class='comment'>
-<div class='author'>JF</div>
-<div class='content'>A small correction on 6: PNaCl has no more security surface area than NaCl has. The LLVM translator itself is SFI-sandboxed, and the executables it produces are SFI-sandboxed. All of these are validated (small verifiable validator, see the NaCl paper), and then executed within another sandbox.
+<div class='author'>greggman</div>
+<div class='content'>What kind if support was at TC39? Are there notes to see? I only see Mozilla names on the spec. What input did other browser vendors have? Did thay have input into the primitives supported? Did they have input into the method of implementation? Did they have input into how asm.js code is identified? Did they have input into how to transfer data to/from JavaScript and asm.js?
 
-Furthermore, there are quite compelling security features that PNaCl offers on top of what NaCl has.
+To be honest I think asm.js is a neat idea and I&#39;m glad Mozilla implemented it to show its potential. Rather than see Blink or Mozilla hobbled by design by committee I think they should both continue what they&#39;ve BOTH been doing. Shipping new features and proposing them as possible new standards. I believe that leads to moving the web forward faster than waiting for standards committees to hammer out agreements.
 
-I&#39;d make the argument that PNaCl is more appealing from a security point of view than compile-once-run-everywhere (e.g. NaCl) as well as traditional language VMs.</div>
-</div>
-<div class='comment'>
-<div class='author'>JF</div>
-<div class='content'>Enu, I purposefully didn&#39;t pursue that argument because it wasn&#39;t my point. I wanted to correct one of Alon&#39;s points, not argue over it.
-
-Discussing the security of traditional VMs versus SFI VMs is a pretty lengthy subject that would require its own writeup, not a comment on an unrelated blog post. At that point you&#39;d probably also want to go into implementation details of NaCl&#39;s runtime versus SpiderMonkey as well as each of their browser&#39;s sandboxing and other mitigations.
-
-I hope you&#39;ll reconsider what I wrote as a concise, to the point, reply instead of arrogance.</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Your reasoning is incorrect. The choice is not &quot;NPAPI vs PPAPI&quot;, the choice is &quot;NPAPI vs &quot;NPAPI + PPAPI&quot;, and the latter can (and is) certainly an increase in surface area.</div>
-</div>
-<div class='comment'>
-<div class='author'>Enu</div>
-<div class='content'>Your last two paragraphs smell of arrogance.  If you are going to defend something, don&#39;t say “I could argue” and proceed to give naked advocacy without bothering to give your arguments.</div>
-</div>
-<div class='comment'>
-<div class='author'>kripken</div>
-<div class='content'>&gt; A small correction on 6: PNaCl has no more security surface area than NaCl has.
+<div class='content'>I don&#39;t know the details of what happened at TC39, and I&#39;m not in a position to know all the feedback we&#39;ve received. But Google has at least provided indirect feedback --- they praised asm.js at Google I/O, and indicated they&#39;ll optimize V8 for it but without using a specialized front-end triggered by the &quot;use asm&quot; directive, like we do. So most of those issues you raise are not relevant to them.
 
-Yes, sorry for my mistake, what I wanted to say was that adding either NaCl or PNaCl to a browser will increase the surface area, compared to not having them at all and just running apps in JS. I forgot that you use the same sandbox for LLVM, so NaCl and PNaCl are basically equivalent.
+Unfortunately Apple and Microsoft people are choosy about what they provide feedback on. They often implement specs without ever having provided any feedback.
+
+We do avoid being hobbled by committees by implementing and shipping experimental features. That&#39;s fine, but there has to be a bright line between experimental features which are not standardized and should not be used by production sites, and the actual Web platform. Current Gecko and Blink policy is to enforce that line by disabling-by-default experimental features in release builds. That is the line PNaCl/Pepper is going to cross, hence this blog post.
+
+Implementing a feature, shipping it enabled in releases, encouraging sites to depend on it, and THEN thinking about standardizing it is a recipe for disaster. Web Audio is going through this right now.</div>
+</div>
+<div class='comment'>
+<div class='author'>greggman</div>
+<div class='content'>Google giving feedback AFTER you shipped is not an example of the &quot;best behavior&quot; you&#39;re seeking from blink unless I&#39;m mis-understanding.
+
+I see your point about PPAPI/PNaCl. I think the difference of view point there is that PPAPI is a plugin API and PNaCL is a PPAPI plugin and plugins, to some people, don&#39;t seem to fall under the same umbrella of standards. 
+
+Companies can ship any plugins they want (Flash, Unity3D, ...). NPAPI is arguably insecure and the largest single hole for exploits. PPAPI is an attempt to make it possible to fix that hole while recognizing that plugins, while usage might be going down, still have many years of life left in them. 
+
+Telling Blink they can&#39;t ship a more secure plugin API to protect their users seems out of line. Telling someone they can&#39;t ship a plugin (which anyone can do) also seems like telling someone they can&#39;t write JavaScript. I&#39;m not saying your point is invalid. Only pointing out there&#39;s another way of looking at it.
 </div>
 </div>
 <div class='comment'>
-<div class='author'>azakai</div>
-<div class='content'>I think this has been answered several times on various mailing lists, but here is my personal take on things:
+<div class='author'>Robert</div>
+<div class='content'>asm.js has not shipped yet. It&#39;s currently in our beta branch.
 
-1. NaCl is CPU-specific. That&#39;s not suitable for the web.
-2. PNaCl is in theory portable, so it is potentially worth considering.
-3. However there is no spec for PNaCl, and standardizing it would take an extreme amount of effort: It means standardizing a subset of LLVM IR, which is quite rich and complex, as well as the Pepper plugin API. This is an enormous amount of work that has not even been begun by Google AFAIK.
-4. A specific issue is that there are worries about the Pepper API duplicating things that are already done by standardized web APIs. That makes it hard to reach consensus on standardization.
-5. There has been no public indication of interest whatsoever from Apple or Microsoft, without which this can&#39;t go forward.
-6. A large new technology like PNaCl (which requires LLVM) has a large surface area, and ensuring it is secure is challenging.
-7. Finally, if PNaCl-like performance can be achieved by other means, then all the effort and risk is even more worrying (while that is not yet clear either way, there are positive indications that it might).
+If the goal for PNaCl/PPAPI was only to replace existing usage of NPAPI with a more secure alternative, I&#39;d be more sympathetic --- but still concerned, since we have a spec (of sorts) for NPAPI, and a public multi-vendor process for updating it, and replacing it with something lacking those virtues is a step backwards in some dimensions. But in any case, PNaCl/PPAPI&#39;s goals are clearly much broader than that, otherwise Google would be limiting the attack surface by whitelisting specific plugins that matter and not encouraging people to build new ones.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>pkasting points out on chromium-dev that NPAPI plugins have always had a reasonably high installation barrier (or else were specifically bundled with the browser or other non-Web products). As I understand it, the plan for PNaCl/Pepper is to eliminate that barrier as it&#39;s no longer a security requirement --- making it a much broader platform than NPAPI.</div>
+</div>
+<div class='comment'>
+<div class='author'>greggman</div>
+<div class='content'>Like I said I think there are different points of view. PPAPI and PNaCl are two separate features. Just like NPAPI and Flash are two separate features.
+
+PPAPI is a plugin system. It is better than NPAPI in at least 3 ways:
+
+1) It is designed to run plugins out of process only
+2) It provides cross platform OS level features
+3) It&#39;s design to be more secure than NPAPI
+
+All of those are valid enough reasons to ship PPAPI regardless of what other browser vendors do (in my personal opinion). Protecting users from the #1 area of exploit (NPAPI) is important. Giving them a better experience by requiring out-of-process plugins is also important. Providing a cross platform API surface is arguably also important is it let&#39;s the browser give a uniform API for plugins (devs don&#39;t have to learn N OSes) and it let&#39;s the browser limit what a plugin can call and how it can call it.
+
+Separately someone (Google) has written a plugin called PNaCl. It runs native code securely. It&#39;s similar to Flash (which runs ActionScript) or Silverlight (which runs .NET languages) or Unity3D (which runs .NET languages through Mono integration).
+
+Just like the Flash plugin downloads .swf and executes them, the Unity3D plugin downloads .unity3D files and executes them, Silverlight downloads ?? files and executes them, the PNaCl plugin downloads .pexe files and executes them. 
+
+So, from a certain POV, the basic complaint then is that Google is bundling a plugin. If Google announced tomorrow they were bundling the Unity3D plugin would that be just as upsetting would people be happy that Unity3D was able to negotiate bundling? Google is already bundling the Flash plugin and Unity&#39;s growth is huge. I&#39;m not suggesting Google will ever do that. Only point out how that hypothetical situation is analogous to the PNaCL situation.
+
+I understand there&#39;s another POV which says &quot;because it&#39;s Google and because it&#39;s Chrome which has a large market share that it&#39;s not cool to bundle yet another plugin because suddenly XX% of the net will have access to some new feature and possibly become dependent on it.
+
+I&#39;m not saying that pov is invalid, only that the other POV that it&#39;s just a plugin is also valid.
+
+In any case, please consider not conflating PPAPI and PNaCl. They are 2 completely separate techs. There are already 2 other PPAPI plugins. There&#39;s the PPAPI Flash which is far more secure than NPAPI flash and has been known not to be vulnerable to some of the exploits of NPAPI flash. There&#39;s also Chrome&#39;s PPAPI PDF viewer.
+
+So, PPAPI is not going away. Chrome requires it at this point to secure Flash and provide PDF support.
+
+Separately, there&#39;s a new plugin, PNaCl.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t think you can cleanly separate (P)NaCl and PPAPI that way. The security features of PPAPI depend on (P)NaCl.
+
+Yes, bundling a plugin --- any plugin --- that exposes non-standard platform API to Web pages is a problem, just as exposing non-standard APIs in other ways is a problem. It doesn&#39;t matter whether we call the implementation a &quot;plugin&quot; or not; the effect is the same.
+
+You&#39;re going to ask: &quot;Chrome already bundles Flash so what&#39;s new?&quot; Flash is a problem and if we made Flash usage disappear from the Web tonight I think browser vendors would all cheer. Flash bundling can only be justified because Flash is already ubiquitous on desktops and widely used on sites, so bundling causes minimal additional harm.</div>
 </div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>Any browser that supports NPAPI but not PPAPI has no real basis for claiming that PPAPI is worse off. The whole design of NPAPI is fundamentally flawed from a security perspective and is the entire reason why PPAPI was created in the first place.</div>
+<div class='content'>It&#39;s sad to see that Mozilla has become a company that has no grand vision for the web. This is clearly demonstrated by something like asm.js which is a really cheap attempt at fixing a fundamental problem with the web platform, that being how to make web apps faster and more scalable. If developers have to choose between dart+simd vs asm.js for games I have no doubt they will opt for something like dart, and it won&#39;t be because google is forcing it on them either, instead it will be because dart provides a structured workflow and great tools. All google is doing with dart is hedging their bets on the web platform. For years people at mozilla have said that javascript can be evolved into something that isn&#39;t a total mess, and yet nobody at mozilla has provided a shred of evidence that these kinds of statements are true, and they sure as hell can&#39;t provide a time frame for when that will happen. When it come to the question of whether javascript can be fixed the burden of proof lies entirely on mozilla. Google has emphasised they will continue to help improve javascript however given how much they have invested into the web platform I believe they have earned the right to hedge their bets, it would be silly not to.</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>ActiveX, vbscript... Yay!!</div>
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Benoit Jacob</div>
-<div class='content'>Worth pointing our that the idea of LLVM IR as a platform&#39;s IR has been discouraged by a LLVM developer: http://lists.cs.uiuc.edu/pipermail/llvmdev/2011-October/043719.html</div>
+<div class='author'>Anonymous</div>
+<div class='content'>ActiveG, GBScript... Yay!?
+
+Apparently.
+
+See also http://blog.tojicode.com/2013/06/a-tale-of-two-web-technologies.html.
+
+/be</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Mozilla is a company that likes to complain based on standards rather than work to improve things. This is the second post I read from Mozilla complaining someone doesn&#39;t follow the standards therefore they are &quot;wrong&quot;. I will expecting a concrete reason to switch back to their browser.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Wondering how relevant this post is now in 2015 that Chrome has disabled support for NPAPI.  Has anything changed/improved with the outlook for PPAPI?</div>
 </div>
 
 </div>

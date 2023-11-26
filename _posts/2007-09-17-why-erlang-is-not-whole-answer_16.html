@@ -8,24 +8,24 @@ permalink: "/2007/09/why-erlang-is-not-whole-answer_16.html"
 <div class="columns"><p>When discussing the problems of concurrency and parallelism, remarkably often someone pipes up with "You should just use <strong>Erlang</strong>!" This is frustrating.<br/><p>I think by "Erlang" they mainly mean no-shared-memory, message passing processes. That is definitely a good way to structure many systems --- it avoids the pit of all evil, concurrency with unrestricted shared memory. But for many problems it is not a good fit. Many problems are fundamentally about concurrent updates to shared state, for example:<br/><ol><br/><li>Transfers between bank accounts<br/><li>Object interactions in a virtual world<br/><li>Scripts manipulating the DOM in a parallel browser<br/></ol><br/><p>The right abstraction for these problems is atomic updates, a.k.a. transactions. In each transaction we want to read multiple values, do some computation, and update multiple values. We want the program behaviour to be as if transactions happen one at a time (atomicity), but we actually want updates to execute in parallel when they do not interfere.<br/><p>This does not map well to pure message-passing systems in general. You can implement ad-hoc solutions to these transactional problems in most languages, including Erlang. You can even <a href="http://armstrongonsoftware.blogspot.com/2006/09/pure-and-simple-transaction-memories.html">implement some sort of transactional memory in Erlang</a>. But the language --- message passing in particular --- isn't helping you here. To cleanly express solutions to these problems we need a language (or if we're lucky, a library) which can directly describe shared state and atomicity, and implement them with some degree of parallelism.<br/><p>Transactions are no panacea either! The point is just that message passing is often not the best way to express concurrency, and therefore the ideal system for parallel programming will contain more concurrency features than just message passing.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Ben Tremblay</div>
-<div class='content'>Five big words: &quot;we actually want updates to execute in parallel when they do not interfere&quot;<br>Rules?<br>I found myself thinking back to days when I was concerned by such as NMIRQ.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>loufoque</div>
-<div class='content'>If you want transactions, just use databases.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Chris Double</div>
 <div class='content'>Have you seen the Vodka language? It&#39;s the project of someone working on their thesis on building a highly concurrent language based on the Join Calculus and Petri Nets:<br>http://vodka.nachtlicht-media.de/<br>It&#39;s got some interesting ideas, and many concepts can be built as libraries, for example, transactions:<br>http://vodka.nachtlicht-media.de/tutBankaccount.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Sounds cool. However, for performance-critical code I&#39;m always going to be wary of languages like this (and Haskell) that rely on clever encodings of state. To get really good code, the compiler will have to work really hard to ensure that high-level state abstractions are compiled into plain hardware state with no extra rubbish. Maybe it can be done, but it adds a lot of complexity and uncertainty to the implementation story.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Mitch</div>
 <div class='content'>I&#39;ve seen some of Brendan Eich&#39;s blogs about concurrency and javascript, but I&#39;m still wondering: what are the chances of fitting STM into  JS?<br>When doing DOM manipulation in JS I&#39;ve often wished for a suspendRedraw like SVG has; it seems to me that STM transactions would work for that and provide a host of other benefits besides.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Sounds cool. However, for performance-critical code I&#39;m always going to be wary of languages like this (and Haskell) that rely on clever encodings of state. To get really good code, the compiler will have to work really hard to ensure that high-level state abstractions are compiled into plain hardware state with no extra rubbish. Maybe it can be done, but it adds a lot of complexity and uncertainty to the implementation story.<br></div>
+<div class='author'>loufoque</div>
+<div class='content'>If you want transactions, just use databases.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ben Tremblay</div>
+<div class='content'>Five big words: &quot;we actually want updates to execute in parallel when they do not interfere&quot;<br>Rules?<br>I found myself thinking back to days when I was concerned by such as NMIRQ.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>niahoo</div>

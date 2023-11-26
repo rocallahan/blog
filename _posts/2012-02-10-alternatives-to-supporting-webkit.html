@@ -18,16 +18,6 @@ permalink: "/2012/02/alternatives-to-supporting-webkit.html"
 <p>Meanwhile, to the people who think the solution is for Mozilla and others to just "work harder" at evangelism, or implementation, or standards work --- I cast aspersions in your direction. You have no idea how hard we work. I personally have never worked harder in my life, and I know that's true for many other Mozilla people. We hire more people, but the workload increases even faster. Meanwhile, Apple <a href="http://lists.w3.org/Archives/Public/www-style/2012Feb/0356.html">won't even hire a single full-time standards editor</a> to help their proposed CSS properties reach standardization, which is a large part of what got us into this mess in the first place.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Neil Rashbrook</div>
-<div class='content'>Indeed, a non-temporary prefix is as bad as any other non-standard addition. If only prefixes were versioned so that they would automatically time out...</div>
-</div>
-<div class='comment'>
-<div class='author'>AV</div>
-<div class='content'>it happens with most of the demos around for animations and 3d transforms. Keep us updated with these problems.
-1)Is possible to see the date the page (or the CSS) is written? Otherwise non webkit browser could support -webkit- (when the syntax is equal to -moz-) only for old pages, precedent to the implementation. For example for 3d css it would be only for pages old a month.
-2)Or introduce little bugs, for 3d transforms it would be something like incredibly ugly aliasing, the page still works but a decent developer should think why is incredibly bad...</div>
-</div>
-<div class='comment'>
 <div class='author'>squib</div>
 <div class='content'>Comedy solution: support -webkit prefixes but make it trigger a notification of some kind telling the user to berate the website owner for writing bad CSS.</div>
 <div class='comment'>
@@ -36,12 +26,10 @@ permalink: "/2012/02/alternatives-to-supporting-webkit.html"
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Dr. Insano</div>
-<div class='content'>Vendor prefixes have completely failed. What is the point of adding something &quot;temporary&quot; that will never be removed? It just makes life more difficult for developers and forces you to write ugly code. 
-
-Sadly, this has also affected JavaScript API&#39;s lately. Thank god that this did not happen a couple of years ago or we would all be writing &quot;new MozXMLHttpRequest();&quot; etc
-
-It is time to get rid of vendor prefixes. This would force developers to really update websites if the specification would change (how often does this happen anyway).</div>
+<div class='author'>AV</div>
+<div class='content'>it happens with most of the demos around for animations and 3d transforms. Keep us updated with these problems.
+1)Is possible to see the date the page (or the CSS) is written? Otherwise non webkit browser could support -webkit- (when the syntax is equal to -moz-) only for old pages, precedent to the implementation. For example for 3d css it would be only for pages old a month.
+2)Or introduce little bugs, for 3d transforms it would be something like incredibly ugly aliasing, the page still works but a decent developer should think why is incredibly bad...</div>
 </div>
 <div class='comment'>
 <div class='author'>jto</div>
@@ -60,8 +48,16 @@ It is time to get rid of vendor prefixes. This would force developers to really 
 Of course none of this has the slightest thing to do with reality.</div>
 </div>
 <div class='comment'>
-<div class='author'>Yuhong Bao</div>
-<div class='content'>The funny thing is that the idea of vendor prefixes dates back to Q3 1998 (from the URLs on the http://hsivonen.iki.fi/doctype/ page), just after HTML 4.0 became a recommendation, for example.</div>
+<div class='author'>Dr. Insano</div>
+<div class='content'>Vendor prefixes have completely failed. What is the point of adding something &quot;temporary&quot; that will never be removed? It just makes life more difficult for developers and forces you to write ugly code. 
+
+Sadly, this has also affected JavaScript API&#39;s lately. Thank god that this did not happen a couple of years ago or we would all be writing &quot;new MozXMLHttpRequest();&quot; etc
+
+It is time to get rid of vendor prefixes. This would force developers to really update websites if the specification would change (how often does this happen anyway).</div>
+</div>
+<div class='comment'>
+<div class='author'>Neil Rashbrook</div>
+<div class='content'>Indeed, a non-temporary prefix is as bad as any other non-standard addition. If only prefixes were versioned so that they would automatically time out...</div>
 </div>
 <div class='comment'>
 <div class='author'>thinsoldier</div>
@@ -81,6 +77,10 @@ http://felipe.wordpress.com/2012/02/02/a-proposal-to-drop-browser-vendor-prefixe
 
 I prefer Felipe&#39;s but I imagine the alpha/beta way would be much quicker and easier to implement.</div>
 </div>
+</div>
+<div class='comment'>
+<div class='author'>Yuhong Bao</div>
+<div class='content'>The funny thing is that the idea of vendor prefixes dates back to Q3 1998 (from the URLs on the http://hsivonen.iki.fi/doctype/ page), just after HTML 4.0 became a recommendation, for example.</div>
 </div>
 
 </div>

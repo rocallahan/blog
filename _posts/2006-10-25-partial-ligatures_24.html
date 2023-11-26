@@ -8,44 +8,8 @@ permalink: "/2006/10/partial-ligatures_24.html"
 <div class="image"><img src="/assets/images/PartialLigatures.png" width="807" height="281"></div><br/><div class="columns">One of the features of the new text code is the ability to lay out a string of content and then render any substring using the whole-string layout. This is important because, for example, the user should be able to select any substring, and we need to draw that substring using the current selection colors. But it's hard because fancy fonts want to use <em>ligatures</em>, i.e., render certain combinations of adjacent characters using a single specially designed glyph.<br/><p>The screenshot shows some text in <a href="http://dejavu.sourceforge.net/wiki/index.php/Main_Page">DejaVu Sans</a> using my text code and Pango 1.14. "fl" and "fi" are being rendered as ligatures. I'm selecting inside "fl" to show how that works. Basically it's a hack --- a ligature with N characters is divided into N vertical strips of equal width which I pretend are "pseudocharacters", and then I use clipping to draw the individual pseudocharacters. This seems to work OK.<br/><p>The screenshot also shows another feature of the new text code: our text layout objects (gfxTextRuns) can span DOM node boundaries. In this example the textrun spans the boundary of an &lt;a&gt; element. This enables us to form ligatures across those boundaries but thanks to partial ligature support, we can still style the link element correctly. Not just ligatures but also kerning and shaping benefit from cross-node text layout.<br/><p><span style="text-transform:small-caps;">Note</span>: When I said above that any substring should be selectable, that was a lie. Multiple Unicode characters can combine to form "clusters", for example a character with an accent, and selection should always be restricted to cluster boundaries. More consistent support for honouring cluster boundaries is another feature of the new text code. However, I currently don't support clusters spanning DOM node boundaries, because we really have no way to render those, not even a hack.<br/><p>By the way, I noticed the hairline crack in the fi ligature. It's probably a rounding error that I need to track down.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Justin Kerk</div>
-<div class='content'>Odd, usually fonts with ligatures have an ffl ligature, but the word &quot;Affluent&quot; there seems to be rendered f + fl.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Christopher Blizzard</div>
-<div class='content'>Pango, and I imagine other complex text rendering systems, support the idea of cursor positions for selection.  I added that code to the pango support in Gecko a couple of years ago and selection in complex text languages did support clusters and it&#39;s been shipping with the Red Hat firefox for just about as long (with lots of positive feedback from our Indian and Arabic users!)  I&#39;m not sure how what you&#39;re doing is any different than that?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Fredrik</div>
-<div class='content'>Sorry, that was my comment that was anonymized by me--clicking before thinking apparently.<br>I can fully understand non-presentational XML attributes on spans not affecting the visual aspects of the layout.<br>My reasoning is that a ligature glyph is perhaps in itself is a character. It&#39;s a replacement for two characters that have some relation to eachother, yes, but when it comes to formatting it should perhaps be seen as a single character.<br>If the same formatting applies to both characters that make up the glyph, then there is no problem, but if the formattings of the two differ, it would be like trying to paint e.g. the letter A with half the one formatting, half the other.<br>It would have the ramifications you mention, for example &quot;fi&quot; not always being the same width depending on the formatting of &quot;f&quot; and &quot;i&quot; and therefore changing the layout.<br>I don&#39;t take issue with the way it&#39;s currently implemented in any way. I&#39;m just curious, that&#39;s all.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Is there a defined &quot;standard&quot; way of dealing with the cases where two letters that would normally form a ligature actually differ in their formatting?<br>By &quot;standard&quot; I mean guidelines that typesetters and graphics designers use when they layout type in magazines or similar manually.<br>My thinking is that if there is a font size difference, I assume the ligature would be broken apart into the separate characters. So is font size then a special case or just another type of formatting (along with color and decoration, for example)?<br>I can see how these &quot;pseudocharacters&quot; are necessary for selection, but should they be used for formatting as well, or should the ligature glyps be replaced by the separate characters and formatting be applied to those?<br>I guess I&#39;m just curious of the rationale behind the technique presented in this post.<br>(Is a &quot;font&quot; technically not just the font face but the font size as well, perhaps? Arial 12pt and Arial 13pt are two different &quot;fonts&quot; from the layout perspective, even though the basic font face is the same.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Dao: too bad.<br>Anonymous: I don&#39;t know if there&#39;s a better strategy. Pango does what I&#39;m doing. I&#39;m not aware of any OpenType font data that would help us do anything smarter. The good news is that if someone *does* come up with a better strategy on some platform, it can be incorporated into the gfxTextRun implementation without changing any interfaces.<br>We allow textruns to combine whenever there&#39;s adjacent text with the same font and size. One reason this is a good idea is that changing other attributes of text, such as its color, *should not* change its layout, from the user&#39;s perspective. (Imagine if you&#39;re using the HTML editor.) Even more so if you&#39;re doing something with no other visible effect, such as breaking a text node into several spans so you can set non-presentational XML attributes on the spans.<br>Chris: I&#39;m not sure what you mean by &quot;cursor positions for selection&quot;. Pango converts character indices to coordinates using the same ligature-breakup strategy as I&#39;m doing here. We do call pango_break to find cluster boundaries via is_cursor_position, just as your existing code does.<br>Compared to your Pango nsFontMetrics code, this code doesn&#39;t provide much new functionality except for text runs spanning DOM nodes (which is actually pretty huge from an implementation point of view). It&#39;s more a refactoring to redesign everything around a richer abstraction that fits better with Pango/Uniscribe etc, so we no longer have to grapple with a bazillion poorly-tested code paths in nsTextFrame. And probably more importantly, gfxTextRuns persist so we can (and do) cache shaped glyphs and their geometry, and the gfxTextRun APIs push expensive operations (such as &quot;find where to break this text&quot;) down into per-platform textrun code for maximum optimization possibilities. The performance of your Pango code was never very good, at SuSE we had to disable it for most locales.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Tom Flowers</div>
-<div class='content'>In reading old texts, I often come across the ligature AR. How does one create this ligature on the computer (via unicode)?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Jeremy: that&#39;s a good idea.<br>Screwtape: that is very interesting. I wonder if any fonts provide that data...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Screwtape</div>
-<div class='content'>Apparently there&#39;s an OpenType feature called &quot;LigatureCaretList&quot; (Part of the &quot;Glyph Definition Table&quot;) that tells you where the letter-divisions are in a ligature, rather than having to assume &quot;N vertical strips of equal width&quot;.<br>There&#39;s a reference to it on this page: http://anakin.ncst.ernet.in/~aparna/consolidated/x1427.html<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jeremy Lea</div>
-<div class='content'>You might want to consider looking up the width of each individual character in the ligature, take the sum and make each strip = char width / total width * ligature width.  It would make the code more complex, but I think it would give a slightly more visually appealing look than the example.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>jmdesp: That&#39;s because none of this code is landed yet. I plan to land it soon but it still won&#39;t be turned on for a while.<br></div>
+<div class='author'>Dao</div>
+<div class='content'>&gt; a ligature with N characters is divided into N vertical strips of equal width which I pretend are &quot;pseudocharacters&quot;, and then I use clipping to draw the individual pseudocharacters. This seems to work OK.<br>Um ... What if it&#39;s not &quot;fi&quot; but &quot;Wi&quot;?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>monk.e.boy</div>
@@ -56,6 +20,42 @@ permalink: "/2006/10/partial-ligatures_24.html"
 <div class='content'>Nice work! :-)<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Is there a defined &quot;standard&quot; way of dealing with the cases where two letters that would normally form a ligature actually differ in their formatting?<br>By &quot;standard&quot; I mean guidelines that typesetters and graphics designers use when they layout type in magazines or similar manually.<br>My thinking is that if there is a font size difference, I assume the ligature would be broken apart into the separate characters. So is font size then a special case or just another type of formatting (along with color and decoration, for example)?<br>I can see how these &quot;pseudocharacters&quot; are necessary for selection, but should they be used for formatting as well, or should the ligature glyps be replaced by the separate characters and formatting be applied to those?<br>I guess I&#39;m just curious of the rationale behind the technique presented in this post.<br>(Is a &quot;font&quot; technically not just the font face but the font size as well, perhaps? Arial 12pt and Arial 13pt are two different &quot;fonts&quot; from the layout perspective, even though the basic font face is the same.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Christopher Blizzard</div>
+<div class='content'>Pango, and I imagine other complex text rendering systems, support the idea of cursor positions for selection.  I added that code to the pango support in Gecko a couple of years ago and selection in complex text languages did support clusters and it&#39;s been shipping with the Red Hat firefox for just about as long (with lots of positive feedback from our Indian and Arabic users!)  I&#39;m not sure how what you&#39;re doing is any different than that?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Dao: too bad.<br>Anonymous: I don&#39;t know if there&#39;s a better strategy. Pango does what I&#39;m doing. I&#39;m not aware of any OpenType font data that would help us do anything smarter. The good news is that if someone *does* come up with a better strategy on some platform, it can be incorporated into the gfxTextRun implementation without changing any interfaces.<br>We allow textruns to combine whenever there&#39;s adjacent text with the same font and size. One reason this is a good idea is that changing other attributes of text, such as its color, *should not* change its layout, from the user&#39;s perspective. (Imagine if you&#39;re using the HTML editor.) Even more so if you&#39;re doing something with no other visible effect, such as breaking a text node into several spans so you can set non-presentational XML attributes on the spans.<br>Chris: I&#39;m not sure what you mean by &quot;cursor positions for selection&quot;. Pango converts character indices to coordinates using the same ligature-breakup strategy as I&#39;m doing here. We do call pango_break to find cluster boundaries via is_cursor_position, just as your existing code does.<br>Compared to your Pango nsFontMetrics code, this code doesn&#39;t provide much new functionality except for text runs spanning DOM nodes (which is actually pretty huge from an implementation point of view). It&#39;s more a refactoring to redesign everything around a richer abstraction that fits better with Pango/Uniscribe etc, so we no longer have to grapple with a bazillion poorly-tested code paths in nsTextFrame. And probably more importantly, gfxTextRuns persist so we can (and do) cache shaped glyphs and their geometry, and the gfxTextRun APIs push expensive operations (such as &quot;find where to break this text&quot;) down into per-platform textrun code for maximum optimization possibilities. The performance of your Pango code was never very good, at SuSE we had to disable it for most locales.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Justin Kerk</div>
+<div class='content'>Odd, usually fonts with ligatures have an ffl ligature, but the word &quot;Affluent&quot; there seems to be rendered f + fl.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Fredrik</div>
+<div class='content'>Sorry, that was my comment that was anonymized by me--clicking before thinking apparently.<br>I can fully understand non-presentational XML attributes on spans not affecting the visual aspects of the layout.<br>My reasoning is that a ligature glyph is perhaps in itself is a character. It&#39;s a replacement for two characters that have some relation to eachother, yes, but when it comes to formatting it should perhaps be seen as a single character.<br>If the same formatting applies to both characters that make up the glyph, then there is no problem, but if the formattings of the two differ, it would be like trying to paint e.g. the letter A with half the one formatting, half the other.<br>It would have the ramifications you mention, for example &quot;fi&quot; not always being the same width depending on the formatting of &quot;f&quot; and &quot;i&quot; and therefore changing the layout.<br>I don&#39;t take issue with the way it&#39;s currently implemented in any way. I&#39;m just curious, that&#39;s all.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeremy Lea</div>
+<div class='content'>You might want to consider looking up the width of each individual character in the ligature, take the sum and make each strip = char width / total width * ligature width.  It would make the code more complex, but I think it would give a slightly more visually appealing look than the example.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Screwtape</div>
+<div class='content'>Apparently there&#39;s an OpenType feature called &quot;LigatureCaretList&quot; (Part of the &quot;Glyph Definition Table&quot;) that tells you where the letter-divisions are in a ligature, rather than having to assume &quot;N vertical strips of equal width&quot;.<br>There&#39;s a reference to it on this page: http://anakin.ncst.ernet.in/~aparna/consolidated/x1427.html<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Jeremy: that&#39;s a good idea.<br>Screwtape: that is very interesting. I wonder if any fonts provide that data...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tom Flowers</div>
+<div class='content'>In reading old texts, I often come across the ligature AR. How does one create this ligature on the computer (via unicode)?<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>If the font specifies an &quot;ar&quot; ligature, it will be used automatically when text contains &quot;ar&quot;.<br></div>
 </div>
@@ -64,8 +64,8 @@ permalink: "/2006/10/partial-ligatures_24.html"
 <div class='content'>Roc, it&#39;s great to see you finally included some many feature WRT what you were apparently intending to do last february.<br>But I notice once thing, it&#39;s that the http://www.catch22.net/tuts/editor12.asp case is somehow still not correct even with the recent builds ?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Dao</div>
-<div class='content'>&gt; a ligature with N characters is divided into N vertical strips of equal width which I pretend are &quot;pseudocharacters&quot;, and then I use clipping to draw the individual pseudocharacters. This seems to work OK.<br>Um ... What if it&#39;s not &quot;fi&quot; but &quot;Wi&quot;?<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>jmdesp: That&#39;s because none of this code is landed yet. I plan to land it soon but it still won&#39;t be turned on for a while.<br></div>
 </div>
 
 </div>

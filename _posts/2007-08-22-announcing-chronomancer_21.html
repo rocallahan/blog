@@ -8,36 +8,28 @@ permalink: "/2007/08/announcing-chronomancer_21.html"
 <div class="columns"><p>I'm very pleased to announce the release of <a href="http://code.google.com/p/chronomancer/">Chronomancer</a>, an Eclipse-based UI for Chronicle. I'm releasing it under MPL 1.1. Thanks to Mozilla for letting me do this.<br/><p>As I mentioned in my last post, we successfully used Chronomancer last week to track down a bug in Gecko's <a href="http://blog.mozilla.com/graydon/2007/01/05/cycle-collector-landed/">cycle collector</a>. I think that means this is the right time to release it in the hope that other people will find it useful or interesting, even though it is still far from complete. Release early, release often and all that. I also hope that people will be interested in contributing, since I certainly don't have enough time to do a lot of work on it.<br/><p>I have posted a <a href="http://people.mozilla.com/~roc/chronomancer-demo.swf">screencast</a> of Chronomancer in action, debugging the cycle collector bug. I apologise in advance for my mumbling and backtracking and the general roughness of the demo; I don't have time to make it great. I hope it communicates the power of the tool.<br/><p>Chronomancer has the following features:<br/><ul><br/><li>A <em>Timeline</em> view that shows events of interest, such as function calls and memory writes; time increases from top to bottom. Function calls display their parameter values. Clicking on an event makes it the "current event".<br/><li>The Timeline contains two buttons, one to connect to a Chronicle database and another to close the connection.<br/><li>The Timeline's dropdown menu lets the user add new queries to the timeline. Currently the only available query is to find invocations of a named function.<br/><li>A <em>Call Stack</em> view that implements <a href="/2007/04/history_based_s.html">history-based stack reconstruction</a> to display a stack for the current event. Each stack frame shows the parameters to the call at the time when the function was invoked. Double clicking on a stack frame adds the start and end of the function call to the timeline, and also adds a "caller" event to the timeline and selects that so you see the context in which the function was called.<br/><li>A <em>Locals</em> view shows the values of local variables (including parameter values) for the currently-executed function.<br/><li>A <em>Data</em> view shows the values of chosen variables in memory. Double-clicking on a pointer in any view will add the target of that pointer to the Data pane. Whenever the current event changes the Data pane updates to show the values of the variables at the chosen time.<br/><li>The context menu for variable values includes "Find Last Write" and "Find Next Write" commands. Currently these commands only work on variables in the Data pane (fixing that isn't too hard but I haven't gotten to it yet).<br/><li>Chronomancer will open source windows to show the current line, if you create an Eclipse project containing the source files. (You can do this fairly easily for most C/C++ projects, and you don't have to use Eclipse to build or edit your code; see <a href="http://code.google.com/p/chronomancer/wiki/GettingStarted">Getting Started</a> in the Chronomancer wiki for more information.) The current line is highlighted in green. Other lines in the function that were executed in the same function invocation are highlighted in amber. For function invocations containing loops, the loop head is highlighted in red and only the annotations for the current (or nearest) iteration are displayed. (It would be easy to add commands to display other iterations but I haven't gotten to that yet.)<br/><li>The context menu for the vertical ruler in source panes has two new commands. "Show Callees" adds all callees for the executed line to the timeline so you can work with them. Chronomancer automatically descends into the first callee. "Set Current Line" adds the executed line to the timeline and makes it the current event; this is handy for displaying the values of variables at that point. (Stepping --- in either direction --- is obsolete!)<br/><li>The dropdown menu for all Chronomancer views contains a "Copy Contents" command that copies the view contents to the clipboard as text --- invaluable when you want to copy a stack trace to Bugzilla, for example, although with a bit more work copying a Timeline or Data pane to Bugzilla would also be interesting.<br/></ul><br/><p>There is some interesting stuff under the hood. There's an <tt>org.ocallahan.chronicle</tt> package which provides a convenient Java binding to the Chronicle engine. It does most of the query wrangling on a worker thread so we can run algorithms like call stack reconstruction without blocking the UI. There's a core <tt>org.ocallahan.chronomancer</tt> package which manages the core Chronomancer state; most of the views and commands are just extensions that plug into that infrastructure. Chronomancer also offers two new kinds of extension points:<br/><ul><br/><li><em>Queries</em>: The only query currently available is finding calls to a named function, but new types can be plugged in via an Eclipse extension point. This allows for project-specific queries (e.g., "Find XPCOM Assertion Failures").<br/><li><em>Type Renderers</em>: Plugins can register renderers for specific C/C++ types. All the current variable rendering is done this way; for example Chronomancer currently includes a custom renderer for <tt>PRUnichar*</tt> (although this should really be broken out into a Mozilla-specific Chronomancer extension). Type renderers can create arbitrary Eclipse Draw2D widgets, which can offer their own custom UI.<br/></ul><br/><p>There's so much that could be fixed or added; this was the bare minimum I could do to make something I felt was compelling. I won't even bother trying to list the possibilities right now. Maybe later I'll blog about some of the things that could be done.<br/><p>Obligatory screenshot:</div><br/><div class="image"><img alt="Chronomancer UI screenshot" src="/assets/images/Chronomancer.png" width="1127" height="808" /></div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Andrew Sutherland</div>
-<div class='content'>Chronomancer, get out of my dreams and into my debugging toolbox!<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Jonathan Watt</div>
 <div class='content'>Woo-hoo!<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Rich Dougherty</div>
-<div class='content'>Nice one! This could also be really helpful for learning/understanding how a particular piece of code works.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>All you have to do is port Valgrind to your desired platform...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>It&#39;s certainly colorful!<br></div>
+<div class='author'>shaver</div>
+<div class='content'>This is game-changing, humbling, killer stuff.  Truly amazing.  Where were you when I still wrote C code for a living? :)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Steve K</div>
 <div class='content'>After spending a day in gdb, my eyes welled up watching the screencast.  Bravo!<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Ian: didn&#39;t really think about that. GPL doesn&#39;t make a lot of sense because Eclipse isn&#39;t GPL-compatible. LGPL and MPL are not all that different; I can only see LGPL helping if someone wants to incorporate this code into an LGPL project. But thanks to Eclipse&#39;s pluggability it&#39;s probably just as easy to keep the projects separate. What scenarios were you thinking of?<br>Andrew: pinch yourself, you&#39;re awake! PS I heard you know dbaron.<br></div>
+<div class='author'>Mossop</div>
+<div class='content'>So excited about how much easier this would make my life, till I saw Chronicle only works on Linux, Noooooooooooooooooooooooooooooo!<br></div>
 </div>
 <div class='comment'>
-<div class='author'>shaver</div>
-<div class='content'>This is game-changing, humbling, killer stuff.  Truly amazing.  Where were you when I still wrote C code for a living? :)<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>All you have to do is port Valgrind to your desired platform...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rich Dougherty</div>
+<div class='content'>Nice one! This could also be really helpful for learning/understanding how a particular piece of code works.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Allan Beaufour</div>
@@ -52,8 +44,16 @@ permalink: "/2007/08/announcing-chronomancer_21.html"
 <div class='content'>Just wondering, why not the usual Mozilla MPL/LGPL/GPL tri-license?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Mossop</div>
-<div class='content'>So excited about how much easier this would make my life, till I saw Chronicle only works on Linux, Noooooooooooooooooooooooooooooo!<br></div>
+<div class='author'>Andrew Sutherland</div>
+<div class='content'>Chronomancer, get out of my dreams and into my debugging toolbox!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Ian: didn&#39;t really think about that. GPL doesn&#39;t make a lot of sense because Eclipse isn&#39;t GPL-compatible. LGPL and MPL are not all that different; I can only see LGPL helping if someone wants to incorporate this code into an LGPL project. But thanks to Eclipse&#39;s pluggability it&#39;s probably just as easy to keep the projects separate. What scenarios were you thinking of?<br>Andrew: pinch yourself, you&#39;re awake! PS I heard you know dbaron.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>It&#39;s certainly colorful!<br></div>
 </div>
 
 </div>

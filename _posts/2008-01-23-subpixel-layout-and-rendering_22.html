@@ -8,16 +8,28 @@ permalink: "/2008/01/subpixel-layout-and-rendering_22.html"
 <div class="columns"><p>John Resig <a href="http://ejohn.org/blog/sub-pixel-problems-in-css/">has discovered</a> that Gecko does subpixel layout and rounds coordinates to device pixels for rendering.<br/><p>He's right that in some sense, when you have to render a CSS layout to a screen with discrete pixels, all the options are imperfect and browsers are choosing different imperfect options. However I think we need to explain the big picture a little better.<br/><p>Gecko intentionally supports <em>subpixel layout</em> because for high resolution output devices, especially printers but also high-DPI screens that will become more common, one CSS "px" should be mapped to many device pixels, so you can in fact do sub-CSS-pixel rendering. For those devices, rounding layout units to CSS pixels is actually throwing away information and giving you a strictly worse layout than Gecko will give. For example, try printing John's <a href="http://dev.jquery.com/~john/ticket/ff3-offset/">example</a> in FF3 beta. You should see that in the printout (or generated PDF), no rounding has occurred and each child DIV looks identical.<br/><p>Because we think this is important and we don't want layout to vary unnecessarily across devices, we do subpixel layout on all devices. When we have to draw to a regular-DPI screen, we then have to round the edges of drawn objects to the nearest screen pixel. This explains the results John sees. Note that our approach of rounding at drawing time is optimal for avoiding gross layout changes due to rounding; it limits the impact of rounding to moving object edges by one pixel in some direction. It avoids gross layout changes like IE moving a DIV to the next line, or Safari leaving a 2px strip vacant at the end of the line. Thus I believe our approach is better than the alternatives in important ways.<br/><p>The preceding paragraph is actually a slight oversimplification. We do have to do some rounding during layout simply due to the fact that computer arithmetic has limited precision. So during layout we round measurements to the nearest 1/60th of a CSS pixel. This number was chosen so that common fractions of a CSS pixel can be represented exactly --- for gory details, check out <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=177805">the great "units" bug</a> and <a href="/2007/02/units_patch_lan.html">my comments about its landing</a>. Note that rounding to 1/60th of a CSS pixel is far more benign than rounding to CSS pixels; 1/60th of a CSS pixel is approximately 1/5760th of an inch, not something most people are going to worry about!<br/><p>In practice, we have seen very few Web compatibility issues caused by this scheme. Web authors should just not worry about the rounding we do, and should not attempt to round coordinates themselves. The new <tt>getBoundingClientRect</tt> and <tt>getClientRects</tt> APIs in FF3 can return fractional coordinates, just go with the flow. Feel free to position elements at those fractional boundaries, they will line up visually. If you insist on consistent rendering down to the pixel, then the only way to go is to specify px values for everything, including line-heights, and avoid percentage units. Or better still, use SVG. Or a PNG.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>gandalf</div>
-<div class='content'>Same as Sander and Boris, and it disappeared on refresh<br></div>
+<div class='author'>Justin Dolske</div>
+<div class='content'>Rounding to 1/60th of a CSS pixel is also useful for drawing to Sumerian clay tablets. Hooray for sexagesimal number systems!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RichB</div>
+<div class='content'>Reminds me very much of the platform differences of the font rendering technologies:<br>http://antigrain.com/research/font_rasterization/index.html<br>Whereas with fonts, it&#39;s acceptable to have a little blur - but with CSS box borders it&#39;s not acceptable.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sander</div>
+<div class='content'>Hrm. Gecko trunk (WinXP, 2008011403, 1280x1024 screen) shows the end of your entry &quot;still, use SVG. Or a PNG.&quot; underneath the first column, rather than ending the third column. Regression since the 1.8 branch.<br>Before I go track down a regression range, any idea if that&#39;s filed already?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jon Smirl</div>
+<div class='content'>How about subpixel rendering/positioning on LCDs for objects as well as text? MS Cleartype subpixel positions the text, I don&#39;t believe Cairo/Pango subpixel position, they only subpixel render.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Sander: I don&#39;t think it is!<br>Jon: actually that reminds me --- we do use horizontal subpixel offsets for text rendering on Mac and GTK. We have to round vertical offsets for tricky reasons to do with underlines. And yes, in theory we could have subpixel rendering of everything, but it wouldn&#39;t look good since we don&#39;t want fringing on horizontal or vertical object edges and there are hardly any other kinds of edges in most Web content.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Justin Dolske</div>
-<div class='content'>Rounding to 1/60th of a CSS pixel is also useful for drawing to Sumerian clay tablets. Hooray for sexagesimal number systems!<br></div>
+<div class='author'>Sander</div>
+<div class='content'>roc: it actually disappeared on the reload right after posting (I _thought_ I&#39;d reloaded the page before posting, but apparently not (or something was cached quite well)), and I haven&#39;t been able to reproduce since. It&#39;s still weird, but with no reproducible test case or way to test regression range, I guess we&#39;ll have to leave it at that. (I&#39;ll keep my eye out for it re-appearing, though.)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>starwed</div>
@@ -28,28 +40,16 @@ permalink: "/2008/01/subpixel-layout-and-rendering_22.html"
 <div class='content'>For what it&#39;s worth, I&#39;ve also seen the problem Sander is describing...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Nox</div>
-<div class='content'>Happened here to; also, when I tried to zoom (ctrl+wheel) the homepage shrunk to half it&#39;s height. Disappeared after reload.<br>Screen of the first problem<br>http://phoenix.nox.googlepages.com/Fx3B2008012104Columns.png<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jon Smirl</div>
-<div class='content'>How about subpixel rendering/positioning on LCDs for objects as well as text? MS Cleartype subpixel positions the text, I don&#39;t believe Cairo/Pango subpixel position, they only subpixel render.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Sander</div>
-<div class='content'>roc: it actually disappeared on the reload right after posting (I _thought_ I&#39;d reloaded the page before posting, but apparently not (or something was cached quite well)), and I haven&#39;t been able to reproduce since. It&#39;s still weird, but with no reproducible test case or way to test regression range, I guess we&#39;ll have to leave it at that. (I&#39;ll keep my eye out for it re-appearing, though.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Sander</div>
-<div class='content'>Hrm. Gecko trunk (WinXP, 2008011403, 1280x1024 screen) shows the end of your entry &quot;still, use SVG. Or a PNG.&quot; underneath the first column, rather than ending the third column. Regression since the 1.8 branch.<br>Before I go track down a regression range, any idea if that&#39;s filed already?<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Jon Smirl</div>
 <div class='content'>Fringing is getting really hard to see on current generation LCDs. I have to use a magnifying glass to see it on my $200 22in monitors.<br>Sometimes people will complain about fringing when the real problem is that they don&#39;t have an RGB panel, it may be BGR or vertically oriented. Use the display control widget to set the correct pixel orientation for your monitor. If this is set wrong fringing will be visible.<br>Look at the bottom of this page and you can see microscope photos of subpixel rendering.<br>http://en.wikipedia.org/wiki/Subpixel_rendering<br>Click on the photos and they get bigger.<br>Note that the OPLC uses PenTile.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>RichB</div>
-<div class='content'>Reminds me very much of the platform differences of the font rendering technologies:<br>http://antigrain.com/research/font_rasterization/index.html<br>Whereas with fonts, it&#39;s acceptable to have a little blur - but with CSS box borders it&#39;s not acceptable.<br></div>
+<div class='author'>gandalf</div>
+<div class='content'>Same as Sander and Boris, and it disappeared on refresh<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nox</div>
+<div class='content'>Happened here to; also, when I tried to zoom (ctrl+wheel) the homepage shrunk to half it&#39;s height. Disappeared after reload.<br>Screen of the first problem<br>http://phoenix.nox.googlepages.com/Fx3B2008012104Columns.png<br></div>
 </div>
 
 </div>

@@ -8,28 +8,20 @@ permalink: "/2008/07/svg-paint-servers-for-html_08.html"
 <div class="columns"><p>I've done some more work on applying SVG effects to HTML. This time I've made SVG paint servers (i.e., gradients and patterns) usable as CSS 'background' images.</div><br/><div class="image"><img alt="HTML with SVG gradients and patterns" src="/assets/images/svg-paint-servers-html.png" width="869" height="508"/><br/></div><br/>Here's the markup:<br/><pre>&lt;html xmlns="http://www.w3.org/1999/xhtml"<br/>xmlns:svg="http://www.w3.org/2000/svg"&gt;<br/>&lt;head&gt;<br/>&lt;style&gt;<br/>h1 { background:url(#h); }<br/>p { background:url(#p); }<br/>span { background:url(#h); }<br/>&lt;/style&gt;<br/>&lt;/head&gt;<br/>&lt;body&gt;<br/>&lt;h1 style="width:95%;"&gt;Heading&lt;/h1&gt;<br/>&lt;p style="width:90%; border:1px solid black; margin-left:2em;"&gt;<br/>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor<br/>incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud<br/>exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute<br/>irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla<br/>pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia<br/>deserunt mollit anim id est laborum."<br/>&lt;/p&gt;<br/>&lt;div style="width:200px;"&gt;"Lorem ipsum dolor sit amet,<br/>&lt;span&gt;consectetur adipisicing elit, sed do eiusmod&lt;/span&gt;<br/>tempor incididunt ut labore et dolore magna aliqua.&lt;/div&gt;<br/>&lt;svg:svg style="height:0"&gt;<br/>&lt;svg:linearGradient id="h" x2="1" y2="0"&gt;<br/>&lt;svg:stop stop-color="yellow" offset="0"/&gt;<br/>&lt;svg:stop stop-color="yellow" stop-opacity="0" offset="1"/&gt;<br/>&lt;/svg:linearGradient&gt;<br/>&lt;svg:pattern id="p" patternUnits="userSpaceOnUse"<br/>x="0" y="0" width="50" height="50"<br/>viewBox="-1 -1 9 5.5" &gt;<br/>&lt;svg:path d="M 0 0 L 7 0 L 3.5 7 z" fill="red" stroke="blue" opacity="0.3"/&gt;<br/>&lt;/svg:pattern&gt;<br/>&lt;/svg:svg&gt;<br/>&lt;/body&gt;<br/>&lt;/html&gt;</pre><br/><div class="columns"><p>This is very straightforward. The gradient or pattern is painted over the CSS "background-origin" area. All CSS background features are supported, such as "background-attachment:fixed" and "background-repeat". Backgrounds are striped over inline elements just like normal background images, as shown in the example. Repeating backgrounds can be a little confusing since the pattern or gradient is rendered to the background-origin area and then repeated according to CSS, so you can have repetition at the pattern or gradient level (including repetition in non-axis-aligned directions) then repetition of the rendered rectangle. But this won't matter much since unless the author is being tricky, the gradient or pattern will fill the background-origin area and only one tile will be visible.<br/><p>"userSpaceOnUse" units in the paint server are defined to be CSS pixels with the background-origin area as the viewport. "objectBoundingBox" units are just the background-origin area.<br/><p>I've pushed my changes to my public <a href="http://hg.mozilla.org/users/rocallahan_mozilla.com/svg-integration/">Mercurial repository</a> and prepared try-server builds for <a href="https://build.mozilla.org/tryserver-builds/2008-07-07_18:19-rocallahan@mozilla.com-1215479886/rocallahan@mozilla.com-1215479886-firefox-try-mac.dmg">Mac</a>, <a href="https://build.mozilla.org/tryserver-builds/2008-07-07_22:53-rocallahan@mozilla.com-1215496379/rocallahan@mozilla.com-1215496379-firefox-try-linux.tar.bz2">Linux</a> and <a href="https://build.mozilla.org/tryserver-builds/2008-07-07_18:19-rocallahan@mozilla.com-1215479886/rocallahan@mozilla.com-1215479886-firefox-try-win32.installer.exe">Windows installer</a>/<a href="https://build.mozilla.org/tryserver-builds/2008-07-07_18:19-rocallahan@mozilla.com-1215479886/rocallahan@mozilla.com-1215479886-firefox-try-win32.zip">Windows ZIP</a>. I didn't update the branch to trunk so the rest of the code is a few weeks old. I've also published <a href="http://people.mozilla.com/~roc/paint-servers.xhtml">the above example</a>. (As I mentioned a while ago the changes in this branch are gradually trickling into the trunk.)<br/><p>These builds have another very cool feature which deserves a post of its own. Stay tuned!<br/><p><strong>Update</strong> The Linux build had a pretty bad bug in it (actually an existing bug that my code exposed). I've updated the link to point to a build that should work without displaying garbage much of the time.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Question</div>
-<div class='content'>That&#39;s awesome to mix HTML and SVG, and even treat svg as an image.<br>What about the performance here?<br></div>
+<div class='author'>Jeff Schiller</div>
+<div class='content'>Awesome awesome stuff - very much looking forward to this.  I assume the ability to reference external SVG entities is not the &#39;very cool feature&#39; that you&#39;re talking about either.  Think that will make Firefox 3.1?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>tube</div>
-<div class='content'>super.. but İnternet exlorer 7 tab got som nice SVG support. like background ad font looking to www.DenizTube.com<br></div>
-</div>
-<div class='comment'>
-<div class='author'>pel</div>
-<div class='content'>This is SO FRICK&#39;N COOL!<br>I /really/ hope that some other browser starts working on svg support - but I&#39;m not holding my breath.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>filim izle</div>
-<div class='content'>Yes :=) İnternet exlorer 7 tab got som nice SVG support<br></div>
+<div class='author'>dan</div>
+<div class='content'>way cool,<br>keep em coming<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Jeff: yeah, I haven&#39;t implemented that. I would really like that to make Firefox 3.1 but the person who would be best to implement it might be overloaded.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Video izle</div>
-<div class='content'>I assume the ability to reference external SVG entities is not the &#39;very cool feature&#39; that you&#39;re talking about either. Think that will make Firefox 3.1?<br></div>
+<div class='author'>Question</div>
+<div class='content'>That&#39;s awesome to mix HTML and SVG, and even treat svg as an image.<br>What about the performance here?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
@@ -48,16 +40,24 @@ permalink: "/2008/07/svg-paint-servers-for-html_08.html"
 <div class='content'>an0n1 m0us: hey, you might even see CSS3 border-radius in Gecko 1.9.1.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>pel</div>
+<div class='content'>This is SO FRICK&#39;N COOL!<br>I /really/ hope that some other browser starts working on svg support - but I&#39;m not holding my breath.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>E</div>
 <div class='content'>Opera 9.5 got som nice SVG support. like background: url(fo.svg).<br>more info on the SVG suport currently in the newes version is here http://dev.opera.com/articles/view/opera-9-5-the-next-generation-of-web-s/#svg<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Jeff Schiller</div>
-<div class='content'>Awesome awesome stuff - very much looking forward to this.  I assume the ability to reference external SVG entities is not the &#39;very cool feature&#39; that you&#39;re talking about either.  Think that will make Firefox 3.1?<br></div>
+<div class='author'>tube</div>
+<div class='content'>super.. but İnternet exlorer 7 tab got som nice SVG support. like background ad font looking to www.DenizTube.com<br></div>
 </div>
 <div class='comment'>
-<div class='author'>dan</div>
-<div class='content'>way cool,<br>keep em coming<br></div>
+<div class='author'>Video izle</div>
+<div class='content'>I assume the ability to reference external SVG entities is not the &#39;very cool feature&#39; that you&#39;re talking about either. Think that will make Firefox 3.1?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>filim izle</div>
+<div class='content'>Yes :=) İnternet exlorer 7 tab got som nice SVG support<br></div>
 </div>
 
 </div>

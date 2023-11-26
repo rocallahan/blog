@@ -11,20 +11,20 @@ permalink: "/2017/05/should-debuggers-report-idempotent.html"
 <p>On the other hand, <a href="https://en.wikipedia.org/wiki/G._K._Chesterton#Chesterton.27s_fence">I'm cautious</a>. There may be some good reason to ignore idempotent writes that we just haven't figured out yet. It could possibly involve optimization &mdash; an optimizing compiler is free to introduce spurious writes if it knows they'll be idempotent &mdash; but I haven't seen or thought of a plausible example where this would be a problem.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Unknown</div>
-<div class='content'>I think ignoring them is plain wrong and a strange decision on the part of gdb.  Maybe a long time a go redundant writes were more common (inside a single line of code/expression)?  To explain what code is doing, showing each write to a variable or dynamically-allocated memory location makes the most sense.  That is what the code does, after all... And for performance, lots of identical writes might be very interesting to see how the coed handles shared variables or locks or similar.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Other cases where idempotent writes should be reported are hardware registers where when reading you&#39;re getting register X and when writing you&#39;re using register Y. This is quite typical of IRQ status (reading)/clear (writing) registers. When writing, only the interrupts with a bit set when doing the write are cleared. This is to ensure that the clearing operation is atomic.</div>
+<div class='author'>Nicholas</div>
+<div class='content'>You have an example case where idempotent writes should be reported. You don&#39;t have clear cases where they should not be reported. Chesterton&#39;s Fence aside, the obvious/cautious approach would be to record them, but be prepared to re-evaluate this decision based on future experience.</div>
 </div>
 <div class='comment'>
 <div class='author'>Jeff Muizelaar</div>
 <div class='content'>FWIW, here&#39;s a gdb bug I filed about this: https://sourceware.org/bugzilla/show_bug.cgi?id=19221.  No one&#39;s posted a reason that it&#39;s a bad idea.</div>
 </div>
 <div class='comment'>
-<div class='author'>Nicholas</div>
-<div class='content'>You have an example case where idempotent writes should be reported. You don&#39;t have clear cases where they should not be reported. Chesterton&#39;s Fence aside, the obvious/cautious approach would be to record them, but be prepared to re-evaluate this decision based on future experience.</div>
+<div class='author'>Anonymous</div>
+<div class='content'>Other cases where idempotent writes should be reported are hardware registers where when reading you&#39;re getting register X and when writing you&#39;re using register Y. This is quite typical of IRQ status (reading)/clear (writing) registers. When writing, only the interrupts with a bit set when doing the write are cleared. This is to ensure that the clearing operation is atomic.</div>
+</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>I think ignoring them is plain wrong and a strange decision on the part of gdb.  Maybe a long time a go redundant writes were more common (inside a single line of code/expression)?  To explain what code is doing, showing each write to a variable or dynamically-allocated memory location makes the most sense.  That is what the code does, after all... And for performance, lots of identical writes might be very interesting to see how the coed handles shared variables or locks or similar.</div>
 </div>
 
 </div>

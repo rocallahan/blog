@@ -8,8 +8,32 @@ permalink: "/2008/02/rounding-towards-or-away-from-zero_12.html"
 <div class="columns"><p>Operations that round towards zero are quite common. For example, C and C++ float-to-integer casts round towards zero. This means that -49.5 rounds to -49 and 49.5 rounds to 49. Operations that round away from zero are also quite common; the libc <tt>round</tt> function and its variants round away from zero, so -49.5 rounds to -50 and 49.5 rounds to 50.<br/><p>Unfortunately both of these behaviours can get us into all kinds of trouble when we're rounding values for use in graphics. Suppose we're drawing an element that is an integer N pixels wide and its nominal position is X pixels from the origin, where X might be fractional, and we want to align it with pixel boundaries. Normally, if we round the left edge and right edges to their nearest pixel boundaries, we get something that's still exactly N pixels wide, no matter what X is. This is great, it means as long as elements have integer widths, they'll be consistently drawn with those widths on the screen.<br/><p>But it falls down in one particular case: when we're rounding towards zero and the left edge ends up negative and the right edge is positive. Say the left edge is at -1.5 and the right edge is at 1.5. When we round them both towards zero we end up drawing an element 2 pixels wide instead of 3, just in this one unlucky region! If we round away from zero we draw 4 pixels wide instead. Oh dear.<br/><p>Basically we need to avoid both of these behaviours and as much as possible just use floor(X + 0.5) or ceil(X + 0.5) to convert to integers.<br/><p>(More formally, for a rounding function F, F(X + N) - F(X) = N for all real X and integer N is a very useful property to have...)<br/><p>We recognized this issue in the general rendering code a little while ago, but it's just bitten me again in the SVG filter code so now I'm exasperated enough to blog about it.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>Eamon Nerbonne</div>
+<div class='content'>A very similar misdesigned CPU-operation is modulo:<br>it&#39;s generally much simpler to design an algorithm with a modulo variant which guarantees that x mod n is in the range [0..n-1].  Instead, modern CPU&#39;s implement modulo to return in the range [-(n-1)..(n-1)], and that&#39;s just unhandy.<br>For example, if you encounter a statement setting y to (x div 5) in a loop iterating over x (i.e. increasing x once each loop-step), you&#39;d be reasonable in assuming that y increases once every 5 loop steps... except it doesn&#39;t around 0, and your loop might break in unexpected ways.<br>I feel your exasperation.  You&#39;d think computers can, well, compute accurately!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I just hit that modulus issue in the SVG filter code too!<br></div>
+</div>
+<div class='comment'>
 <div class='author'>anne ô nyme</div>
 <div class='content'>Should you have *not* this problem with IEEE-754 double precision floating point ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Neil</div>
+<div class='content'>It seems to me that rounding to zero is a very strange default, as you would need special (micro)code to detect the condition.<br>In the common case where the value is between 1 and 2^31-2 then the floor function simply needs to shift off the bits to the right of the binary point. To correctly round away from zero you then only need to add on any carry (the last bit shifted off the end), which will be set for values of the form n+½ ≤ x &lt; n+1.<br>If you can use twos-complement arithmetic then this algorithm will instead round to infinity which makes it a useful rounding algorithm.<br>I&#39;m reminded of the ZX Spectrum which had a bug in its floating-point/integer conversion routines which resulted in INT(-32768) becoming -1.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Walden</div>
+<div class='content'>No, you&#39;d have it with IEEE 754 as well, since IEEE 754 uses round-to-nearest-even, which basically means you round up half the time and down half the time (unless I&#39;m just misremembering and this only applies to arithmetic truncations, not explicit rounding).  This is convenient for numerical stability, because multiple errors tend not to accumulate as much, but it means here that the value of N will affect your result (about half the time it won&#39;t be what you want).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Edouard</div>
+<div class='content'>I know that frustration - the standard behavior is clearly documented, but, also stupid. See, as an example, twenty years of strcpy() bugs. It&#39;s such a pain having to always work around some poorly thought-out behavior. It just one more place that a programmer will make a mistake. Maybe not this year, maybe not next year, but eventually, no matter how good they are.<br>I&#39;ve grown to hate the inane number handling of the C inspired languages. Want to add two numbers together? Sure. What if those two numbers are 1.5 billion? Sure. You&#39;ll have the wrong answer. And no, we won&#39;t tell you. Can&#39;t imagine that would cause any problems in your application. Have a nice day!<br>There is an entire raft decisions that were driven by particular hardware platforms some language writer was using in the 1970&#39;s, and a perceived need for &quot;performance&quot; back in those long gone days, that are still causing massive problems today. And almost everyone I know just accepts that that is the way the world is, and many even would hazard, the way the world should be.<br>Smalltalk solved these problems, what, 25 or more years ago? But still we soldier on with languages that have limitations driven by decisions make about 30+ year old hardware.<br>Obj-somewhat-on-topic: Smalltalk&#39;s ceiling and floor methods in the Number hierarchy round to positive and negative infinity. As they should. &quot;truncated&quot; rounds towards zero.<br>(For some truly perverse numerical problems, you should see what denormalised numbers do on some x86 chips - I had some of those in a real-time thread once, and it quickly became a non-real-time thread, which was &quot;not good&quot;.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Sted</div>
+<div class='content'>You meant ceil(X - 0.5), don&#39;t you?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Dijkstra</div>
@@ -20,32 +44,8 @@ permalink: "/2008/02/rounding-towards-or-away-from-zero_12.html"
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>I just hit that modulus issue in the SVG filter code too!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Sted</div>
-<div class='content'>You meant ceil(X - 0.5), don&#39;t you?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jeff Walden</div>
-<div class='content'>No, you&#39;d have it with IEEE 754 as well, since IEEE 754 uses round-to-nearest-even, which basically means you round up half the time and down half the time (unless I&#39;m just misremembering and this only applies to arithmetic truncations, not explicit rounding).  This is convenient for numerical stability, because multiple errors tend not to accumulate as much, but it means here that the value of N will affect your result (about half the time it won&#39;t be what you want).<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Peter Moulder</div>
 <div class='content'>Choosing to round n.5 in a consistent direction addresses the case when the two coordinates are both of form N.5, but fails to address similar cases such as when the two coordinates differ by say 0.98: depending on the coordinate values, the resulting line can have width 0 instead of the usually-desired width 1.<br>This isn&#39;t a pathalogical example: it&#39;s actually fairly common if the input image was formed by slightly scaling down another image.<br>I&#39;ve never implemented auto-hinting, but I suppose the solution (subject to CPU constraints) involves choosing hinted coordinates that minimize changes of any width (whether black or white) by a large proportion.<br>This is computationally harder to do well than it sounds, e.g. in the case of two ~parallel lines where the endpoints differ such as in the upward line of the letter K, where the width of this stroke isn&#39;t directly available from the corner points of the outline, so merely considering x and y coordinates of corner points independently won&#39;t give the desired guarantee for this case, which starts to make the problem look like n² in general instead of n log n (even if it can probably be made fast for most cases).  Thus, anyone who wants to do it well should look around (citeseer say) for good algorithms.  For anyone too lazy to look for good algorithms, I suppose the n log n approach would still give most of the benefit, and is fairly easy to implement &amp; understand.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Edouard</div>
-<div class='content'>I know that frustration - the standard behavior is clearly documented, but, also stupid. See, as an example, twenty years of strcpy() bugs. It&#39;s such a pain having to always work around some poorly thought-out behavior. It just one more place that a programmer will make a mistake. Maybe not this year, maybe not next year, but eventually, no matter how good they are.<br>I&#39;ve grown to hate the inane number handling of the C inspired languages. Want to add two numbers together? Sure. What if those two numbers are 1.5 billion? Sure. You&#39;ll have the wrong answer. And no, we won&#39;t tell you. Can&#39;t imagine that would cause any problems in your application. Have a nice day!<br>There is an entire raft decisions that were driven by particular hardware platforms some language writer was using in the 1970&#39;s, and a perceived need for &quot;performance&quot; back in those long gone days, that are still causing massive problems today. And almost everyone I know just accepts that that is the way the world is, and many even would hazard, the way the world should be.<br>Smalltalk solved these problems, what, 25 or more years ago? But still we soldier on with languages that have limitations driven by decisions make about 30+ year old hardware.<br>Obj-somewhat-on-topic: Smalltalk&#39;s ceiling and floor methods in the Number hierarchy round to positive and negative infinity. As they should. &quot;truncated&quot; rounds towards zero.<br>(For some truly perverse numerical problems, you should see what denormalised numbers do on some x86 chips - I had some of those in a real-time thread once, and it quickly became a non-real-time thread, which was &quot;not good&quot;.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Eamon Nerbonne</div>
-<div class='content'>A very similar misdesigned CPU-operation is modulo:<br>it&#39;s generally much simpler to design an algorithm with a modulo variant which guarantees that x mod n is in the range [0..n-1].  Instead, modern CPU&#39;s implement modulo to return in the range [-(n-1)..(n-1)], and that&#39;s just unhandy.<br>For example, if you encounter a statement setting y to (x div 5) in a loop iterating over x (i.e. increasing x once each loop-step), you&#39;d be reasonable in assuming that y increases once every 5 loop steps... except it doesn&#39;t around 0, and your loop might break in unexpected ways.<br>I feel your exasperation.  You&#39;d think computers can, well, compute accurately!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Neil</div>
-<div class='content'>It seems to me that rounding to zero is a very strange default, as you would need special (micro)code to detect the condition.<br>In the common case where the value is between 1 and 2^31-2 then the floor function simply needs to shift off the bits to the right of the binary point. To correctly round away from zero you then only need to add on any carry (the last bit shifted off the end), which will be set for values of the form n+½ ≤ x &lt; n+1.<br>If you can use twos-complement arithmetic then this algorithm will instead round to infinity which makes it a useful rounding algorithm.<br>I&#39;m reminded of the ZX Spectrum which had a bug in its floating-point/integer conversion routines which resulted in INT(-32768) becoming -1.<br></div>
 </div>
 
 </div>

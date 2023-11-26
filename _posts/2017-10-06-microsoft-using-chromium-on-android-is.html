@@ -11,12 +11,48 @@ permalink: "/2017/10/microsoft-using-chromium-on-android-is.html"
 <p>(Of course Edge uses Webkit on iOS, and that's also bad, but it's Apple's ongoing decision to force browsers to use <a href="https://betanews.com/2017/09/22/safari-more-vulnerable-than-chrome-firefox-edge/">the least secure engine</a>, so nothing new there.)
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>Fabrice Desré</div>
+<div class='content'>Note that Mozilla is also using Chromium in their new Focus browser, which gets more PR push than Gecko based Fennec.</div>
+</div>
+<div class='comment'>
 <div class='author'>ClassicHasClass</div>
 <div class='content'>I was really disappointed by Microsoft&#39;s decision. I get that it&#39;s the path of least resistance, but I was looking forward to a third choice of layout engines on my Pixel (of course I use Android Firefox normally).</div>
 </div>
 <div class='comment'>
-<div class='author'>Fabrice Desré</div>
-<div class='content'>Note that Mozilla is also using Chromium in their new Focus browser, which gets more PR push than Gecko based Fennec.</div>
+<div class='author'>Murdej Ukrutný</div>
+<div class='content'>blink is not the only rendering engine on android https://www.youtube.com/watch?v=ZPW1BFNpG5Q</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Haha. But seriously, Gecko is on Android too.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>wooosh-o-mat</div>
+<div class='content'>Is it only me or did you link a GDB tutorial page as a source?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Oops. Fixed. Thanks!</div>
+</div>
+<div class='comment'>
+<div class='author'>Jamie R</div>
+<div class='content'>While I do agree with Edge using Chromium/Webkit is bad for the web, the article you linked to about Safari being the least secure is a total clickbait article if you read the last paragraph:
+
+&quot;The security researcher goes on to stress the fact that this test focuses on a single component of the browsers, namely their DOM engine, and, as such, does not reflect how secure they are as a whole. Still, it is an interesting test, as, according to Fratric, &quot;DOM engines have been one of the largest sources of web browser bugs.&quot;&quot;
+
+So is the least secure or the least secure on one section the DOM or just buggy and not necessarily less secure</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s not a slam-dunk case, but it&#39;s not total clickbait either. It&#39;s evidence.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>khc</div>
+<div class='content'>So when&#39;s the Google Play version of Firefox Focus switching to gecko? Also, I couldn&#39;t post a comment from Firefox 57 beta on Android when using the mobile version of your site. </div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I don&#39;t agree with everything Mozilla does, but at least Firefox on Android uses Gecko.</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>A Man</div>
@@ -40,14 +76,6 @@ Another problem is that when underlying technology evolves and you want to make 
 Servo and Quantum are good examples here. Web standards let Mozilla make radical changes to the implementation and still run existing Web content. That&#39;s huge.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Rewriting the style system in Rust, aka Stylo/Quantum CSS. Google doesn&#39;t want to depend on Rust so doing this in Chromium would have meant maintaining an out-of-tree fork of the style system indefinitely, which would be untenable.
-
-With a single platform implementation, a bug in that implementation is likely to be relied on by some downstream user, since it works consistently in all implementations. So, fixing that bug means breaking downstream users.
-
-In contrast, you see Chromium engineers considering whether it&#39;s safe to fix a bug and using the logic &quot;Firefox doesn&#39;t have this bug, therefore major sites probably don&#39;t rely on it&quot; to justify that the fix is safe.</div>
-</div>
-<div class='comment'>
 <div class='author'>A Man</div>
 <div class='content'>What are examples of such changes that could not have started as custom extensions?
 
@@ -55,41 +83,13 @@ The vast majority of things doesn&#39;t fall into that category.
 
 And why would the bugs become unfixable?</div>
 </div>
-</div>
-<div class='comment'>
-<div class='author'>Murdej Ukrutný</div>
-<div class='content'>blink is not the only rendering engine on android https://www.youtube.com/watch?v=ZPW1BFNpG5Q</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Haha. But seriously, Gecko is on Android too.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Oops. Fixed. Thanks!</div>
-</div>
-<div class='comment'>
-<div class='author'>Jamie R</div>
-<div class='content'>While I do agree with Edge using Chromium/Webkit is bad for the web, the article you linked to about Safari being the least secure is a total clickbait article if you read the last paragraph:
+<div class='content'>Rewriting the style system in Rust, aka Stylo/Quantum CSS. Google doesn&#39;t want to depend on Rust so doing this in Chromium would have meant maintaining an out-of-tree fork of the style system indefinitely, which would be untenable.
 
-&quot;The security researcher goes on to stress the fact that this test focuses on a single component of the browsers, namely their DOM engine, and, as such, does not reflect how secure they are as a whole. Still, it is an interesting test, as, according to Fratric, &quot;DOM engines have been one of the largest sources of web browser bugs.&quot;&quot;
+With a single platform implementation, a bug in that implementation is likely to be relied on by some downstream user, since it works consistently in all implementations. So, fixing that bug means breaking downstream users.
 
-So is the least secure or the least secure on one section the DOM or just buggy and not necessarily less secure</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>It&#39;s not a slam-dunk case, but it&#39;s not total clickbait either. It&#39;s evidence.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>wooosh-o-mat</div>
-<div class='content'>Is it only me or did you link a GDB tutorial page as a source?</div>
-</div>
-<div class='comment'>
-<div class='author'>khc</div>
-<div class='content'>So when&#39;s the Google Play version of Firefox Focus switching to gecko? Also, I couldn&#39;t post a comment from Firefox 57 beta on Android when using the mobile version of your site. </div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I don&#39;t agree with everything Mozilla does, but at least Firefox on Android uses Gecko.</div>
+In contrast, you see Chromium engineers considering whether it&#39;s safe to fix a bug and using the logic &quot;Firefox doesn&#39;t have this bug, therefore major sites probably don&#39;t rely on it&quot; to justify that the fix is safe.</div>
 </div>
 </div>
 

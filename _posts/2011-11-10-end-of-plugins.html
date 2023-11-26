@@ -11,29 +11,37 @@ permalink: "/2011/11/end-of-plugins.html"
 <p>Hooray!
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Yes it&#39;s good news, but not quite &quot;effectively giving up on Flash on the Web altogether&quot;. Macromedia then Adobe struggled for a decade to get Flash on phones (2003 &quot;We&#39;re big in Japan on Docomo&quot;, 2004 &quot;Flash Lite for Windows Mobile!&quot;, 2005 &quot;we&#39;re talking to carriers&quot;, etc.); that&#39;s over but Flash player is still the most popular software on PCs and for now is on many Android devices.
-
-Flash will become a niche and legacy plug-in, joining Shockwave player (still going, http://www.adobe.com/products/shockwaveplayer/ ). I hope there will be some way to sandbox or virtualize an old-school browser with plug-in support at the browser or OS level, otherwise all that old Shockwave and Flash (and VRML, Java applets, etc.) content will be lost to future archivists.</div>
-</div>
-<div class='comment'>
-<div class='author'>RyanVM</div>
-<div class='content'>Would emscripten allow you to convert the c++ code to js in a meaningful fashion?</div>
-</div>
-<div class='comment'>
 <div class='author'>-</div>
 <div class='content'>I just came here to say 
 Hooray!</div>
 </div>
 <div class='comment'>
-<div class='author'>Mook</div>
-<div class='content'>Robert: Hah, we&#39;re awesome - we&#39;re an in-process windowed plugin, yay! ;)  This is Komodo, where the text editor component - scintilla - started by emulating the Win32 RichEdit APIs; everything is done via window messages.  I expect there <em>is</em> going to be transition pain for us whatever we do; so if there&#39;s an API that&#39;s designated as being the goal we should head towards, it should cut down on wasted effort.
+<div class='author'>Anonymous</div>
+<div class='content'>Does this mean https://wiki.mozilla.org/Plugins:AdvancedKeyHandling will no longer be invested in, even though it would fix https://bugzilla.mozilla.org/show_bug.cgi?id=78414 that is over 10 years old?
 
-Skimming the code we have right now, we&#39;re doing <a href="http://grok.openkomodo.com/source/xref/openkomodo/trunk/contrib/scintilla/win32/PlatWin.cxx" rel="nofollow">things</a> with HDCs like ::FillRect.  Since it&#39;s got a platform abstraction layer of sorts already, we&#39;d probably need to write a &quot;Mozilla&quot; version of that and use it from ctypes.  Does ctypes support using typed arrays yet?  I don&#39;t see us being able to pump data fast enough otherwise... (mostly because we&#39;re occasionally horribly inefficient, just not bad enough to be noticeable yet.)
+By the way, your comment form doesn&#39;t warn about cookies being disabled preventing the captcha from working.</div>
+</div>
+<div class='comment'>
+<div class='author'>dbcooper</div>
+<div class='content'>So, how will Firefox achieve hardware decoded/processed HTML5 video playback now?
 
-At least we&#39;ve already started on reimplementing bits in XUL instead of letting Scintilla do its native widget thing, mostly for extensibility.
+On my AMD E-350 based netbook flash HD video playback (hardware h264 decoding) is fine, but webm stutters etc.</div>
+</div>
+<div class='comment'>
+<div class='author'>Stephan Sokolow</div>
+<div class='content'>@dbcooper: The same way Flash does, by writing code which offloads some of the work to the GPU.
 
-P.S. Following the name listed in the comments instead of going by your IRC nick feels odd ;)</div>
+There&#39;s nothing magical about what Flash does to accelerate H.264 playback. The Firefox guys just haven&#39;t written the code to do it for WebM yet.</div>
+</div>
+<div class='comment'>
+<div class='author'>dbcooper</div>
+<div class='content'>@Stephan Sokolow
+
+Well the thing is, that almost all GPU&#39;s now have dedicated H.264 support in their dedicated media decoding/processing modules. Using the API&#39;s for them is a lot simpler than writing your own Open-CL programs to be executed on the various GPU&#39;s.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I agree that this is a big step forward towards getting rid of plug-ins. However, this is also a big challenge for browser/app manufactures: wherever HTML5 offers a choice, they have to agree on the same subset. For example: providing video/audio content with flash is of course easier then in HTML5, where you are faced with several more or less exclusive alternatives (e.g. Mozilla supporting WebM/OggVorbis, Apple supporting H.264/AAC). As long as the situation there does not improve towards a consensus, I don&#39;t see the end of plug-ins...</div>
 </div>
 <div class='comment'>
 <div class='author'>flying sheep</div>
@@ -44,10 +52,8 @@ also, i find “hardware-accelerated” somehow funny: everything on your pc is 
 @blog entry: i love these news! i tried surfing without flash, and i can say that it will be really nice once youtube transcodes all vids to webm instantly: i hate it when i can watch every vid except this certain new one for which i browsed to youtube in the first place. oh, and newgrounds will be missed, too.</div>
 </div>
 <div class='comment'>
-<div class='author'>dbcooper</div>
-<div class='content'>@Stephan Sokolow
-
-Well the thing is, that almost all GPU&#39;s now have dedicated H.264 support in their dedicated media decoding/processing modules. Using the API&#39;s for them is a lot simpler than writing your own Open-CL programs to be executed on the various GPU&#39;s.</div>
+<div class='author'>Hay</div>
+<div class='content'>This is great news indeed. I just hope this means browser makers will invest more time in bringing HTML5 audio/video up to par with the current Flash performance. For example, on Android (2.3)  performance is buggy and Flash is the better alternative.</div>
 </div>
 <div class='comment'>
 <div class='author'>Daniel Cater</div>
@@ -60,10 +66,6 @@ Even on my desktop it&#39;s better in Flash, but bearable in HTML5 so I stick wi
 Prioritising hardware accelerated video everywhere (and hardware accelerated layers on Linux where it is still not enabled) would be a good way to speed up the deprecation of Flash I think.</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Great. So the web will look like it&#39;s 1999 all over again.</div>
-</div>
-<div class='comment'>
 <div class='author'>Franklin Chen</div>
 <div class='content'>Good news indeed, the imminent end of plugins!
 
@@ -71,19 +73,7 @@ Next: will closed app stores ever die?</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>Does this mean https://wiki.mozilla.org/Plugins:AdvancedKeyHandling will no longer be invested in, even though it would fix https://bugzilla.mozilla.org/show_bug.cgi?id=78414 that is over 10 years old?
-
-By the way, your comment form doesn&#39;t warn about cookies being disabled preventing the captcha from working.</div>
-</div>
-<div class='comment'>
-<div class='author'>Stephan Sokolow</div>
-<div class='content'>@dbcooper: The same way Flash does, by writing code which offloads some of the work to the GPU.
-
-There&#39;s nothing magical about what Flash does to accelerate H.264 playback. The Firefox guys just haven&#39;t written the code to do it for WebM yet.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I agree that this is a big step forward towards getting rid of plug-ins. However, this is also a big challenge for browser/app manufactures: wherever HTML5 offers a choice, they have to agree on the same subset. For example: providing video/audio content with flash is of course easier then in HTML5, where you are faced with several more or less exclusive alternatives (e.g. Mozilla supporting WebM/OggVorbis, Apple supporting H.264/AAC). As long as the situation there does not improve towards a consensus, I don&#39;t see the end of plug-ins...</div>
+<div class='content'>What you say sounds to good to be true, and makes a lot of assumptions on how the future will actually look. I hope you&#39;re right, but I&#39;ll only believe it when Flash crashes and hangs are not a problem I worry about every day any more.</div>
 </div>
 <div class='comment'>
 <div class='author'>Mook</div>
@@ -92,10 +82,10 @@ There&#39;s nothing magical about what Flash does to accelerate H.264 playback. 
 (No, whatever HTML/JS based solution will not be useful, unfortunately.  Legacy code.)</div>
 </div>
 <div class='comment'>
-<div class='author'>dbcooper</div>
-<div class='content'>So, how will Firefox achieve hardware decoded/processed HTML5 video playback now?
+<div class='author'>Anonymous</div>
+<div class='content'>Yes it&#39;s good news, but not quite &quot;effectively giving up on Flash on the Web altogether&quot;. Macromedia then Adobe struggled for a decade to get Flash on phones (2003 &quot;We&#39;re big in Japan on Docomo&quot;, 2004 &quot;Flash Lite for Windows Mobile!&quot;, 2005 &quot;we&#39;re talking to carriers&quot;, etc.); that&#39;s over but Flash player is still the most popular software on PCs and for now is on many Android devices.
 
-On my AMD E-350 based netbook flash HD video playback (hardware h264 decoding) is fine, but webm stutters etc.</div>
+Flash will become a niche and legacy plug-in, joining Shockwave player (still going, http://www.adobe.com/products/shockwaveplayer/ ). I hope there will be some way to sandbox or virtualize an old-school browser with plug-in support at the browser or OS level, otherwise all that old Shockwave and Flash (and VRML, Java applets, etc.) content will be lost to future archivists.</div>
 </div>
 <div class='comment'>
 <div class='author'>Mook</div>
@@ -106,16 +96,8 @@ Sounds like we need to move (our local Gecko-based app, not a website) off NPAPI
 Hopefully there will be a useful replacement.  I think I had a second point here last time, but can&#39;t remember what it was.</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Wishful thinking! Mobile != Desktop. The reason Adobe stopped mobile flash because it was consuming too much battery power and has been continuously dropped by the vendors. Although the CPU power and memory on mobile devices advance fast, battery technology is still where it was 5 years ago with fractional improvements. On the desktop, plugins are here to stay. They are established too deep in. Microsoft metro browsing is targeted at low power touch pads that would run Windows 8 as the operating  system. That said I dont think NPAPI would put too much of a burden to browser vendors.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>What you say sounds to good to be true, and makes a lot of assumptions on how the future will actually look. I hope you&#39;re right, but I&#39;ll only believe it when Flash crashes and hangs are not a problem I worry about every day any more.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Sounds like you could create a DIB HDC and draw your window into that and then make the DIB data buffer available to JS to draw into a canvas.</div>
+<div class='author'>RyanVM</div>
+<div class='content'>Would emscripten allow you to convert the c++ code to js in a meaningful fashion?</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -124,8 +106,26 @@ Hopefully there will be a useful replacement.  I think I had a second point here
 What do you use to draw into your HWND today? Can you paint the contents of your window into an RGBA in-memory buffer, get that using JS-ctypes and draw it to a canvas from JS?</div>
 </div>
 <div class='comment'>
-<div class='author'>Hay</div>
-<div class='content'>This is great news indeed. I just hope this means browser makers will invest more time in bringing HTML5 audio/video up to par with the current Flash performance. For example, on Android (2.3)  performance is buggy and Flash is the better alternative.</div>
+<div class='author'>Mook</div>
+<div class='content'>Robert: Hah, we&#39;re awesome - we&#39;re an in-process windowed plugin, yay! ;)  This is Komodo, where the text editor component - scintilla - started by emulating the Win32 RichEdit APIs; everything is done via window messages.  I expect there <em>is</em> going to be transition pain for us whatever we do; so if there&#39;s an API that&#39;s designated as being the goal we should head towards, it should cut down on wasted effort.
+
+Skimming the code we have right now, we&#39;re doing <a href="http://grok.openkomodo.com/source/xref/openkomodo/trunk/contrib/scintilla/win32/PlatWin.cxx" rel="nofollow">things</a> with HDCs like ::FillRect.  Since it&#39;s got a platform abstraction layer of sorts already, we&#39;d probably need to write a &quot;Mozilla&quot; version of that and use it from ctypes.  Does ctypes support using typed arrays yet?  I don&#39;t see us being able to pump data fast enough otherwise... (mostly because we&#39;re occasionally horribly inefficient, just not bad enough to be noticeable yet.)
+
+At least we&#39;ve already started on reimplementing bits in XUL instead of letting Scintilla do its native widget thing, mostly for extensibility.
+
+P.S. Following the name listed in the comments instead of going by your IRC nick feels odd ;)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Sounds like you could create a DIB HDC and draw your window into that and then make the DIB data buffer available to JS to draw into a canvas.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Wishful thinking! Mobile != Desktop. The reason Adobe stopped mobile flash because it was consuming too much battery power and has been continuously dropped by the vendors. Although the CPU power and memory on mobile devices advance fast, battery technology is still where it was 5 years ago with fractional improvements. On the desktop, plugins are here to stay. They are established too deep in. Microsoft metro browsing is targeted at low power touch pads that would run Windows 8 as the operating  system. That said I dont think NPAPI would put too much of a burden to browser vendors.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Great. So the web will look like it&#39;s 1999 all over again.</div>
 </div>
 <div class='comment'>
 <div class='author'>taxilian</div>

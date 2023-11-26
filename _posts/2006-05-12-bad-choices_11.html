@@ -7,52 +7,52 @@ permalink: "/2006/05/bad-choices_11.html"
 <div class="columns">I was reading an interesting <a href="http://blogs.gnome.org/view/uraeus/2006/05/11/0">critique of the KDE Phonon framework</a> and its comments. Without taking sides in that particular debate (although adding a layer of abstraction over complex frameworks that themselves are basically the same sort of abstraction over other components gives me a very queasy feeling), I do feel like ranting about comments like this:<br/><br/><blockquote>It also lets the user choose whatever he or she wants. If a user likes Xine more than GStreamer, he or she can choose to use it.</blockquote><br/><br/>ALERT! Most "users" have no idea what a multimedia framework IS. They don't know which one they're using,  or which one they should be using. Pretty much everyone just wants something that works out of the box. If the user is ever forced to understand multimedia frameworks and choose one, just to get things to work, then something has gone catastrophically wrong.<br/><br/>I sometimes hear the slogan "Free software" (or "Linux") "is all about choice" used to defend this kind of diversity. That is a very misleading statement. Free software gives you all kinds of choices about what you can do with code, but a lot of those choices are <strong>bad</strong> ones. Sharing code  has many advantages over forking or duplicating --- mainly avoiding wastage of development resources, but also simplifying deployment and support, and avoiding the need to pile on abstraction layers like Phonon which have their own costs. You shouldn't fork or duplicate unless you have a <em>very</em> good reason. Interestingly, we see very few forking decisions, and those we see seem to have good reasons behind them. Sadly, we see a lot of duplication decisions and mostly their justifications don't convince me.<br/><br/>[It could be that there are actually a lot of forking decisions but forks get resolved quickly (by all but one of the forks dying or merging back), while duplications don't. I wonder...]<br/><br/>This is particularly important when dealing with libraries and frameworks which other components depend on. If we have five MP3 players, that's not a terribly big deal. But if we have five GUI toolkits, then every GUI app has to choose one of those toolkits which encourages the creation of four clones of that app, i.e. more fragmentation.<br/><br/>Anyway, offering users a choice of which largely-equivalent desktop to use, or which multimedia framework to use, or which of five dozen crappy text editors to use*, isn't doing anyone any good compared to what could have been if those developers had pooled their efforts. It's far too late for the KDE/GNOME breach to ever be healed, but I still wish for consolidation in other areas of effort.<br/><br/>[* I have yet to find one Linux text editor with all the features I want. If the authors of some of the dozens of text editors out there had instead contributed to an existing editor, I think I'd have a better chance.]</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Alfonso</div>
-<div class='content'>I think that I understand exactly what you mean.<br>Having choices it&#39;s good, but it isn&#39;t good when you see two programs that fulfill almost the same function but each one has some points that it is missing in the other one, so someone thinks that the solution it is to create from scratch a third program with the best ideas of each one.<br>Instead of working to improve existing code too many people chooses to rewrite the same ideas and fix the same problems that have been fixed previously wasting time just because there&#39;s something in the previous program that they don&#39;t like or the learning curve is too step so you end up with a gazillion of useless programs instead of just a few good ones.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>David Smith</div>
-<div class='content'>also, the users don&#39;t understand what they are or why they need them, only that the computer is asking for them.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Bram!</div>
-<div class='content'>Most users have no idea what a browser is yet we want to bother them with the choice they have in it.<br>This choice is probably not meant for the end-users, as a linux distributor picks the default framework for them.<br>I guess KDE wants to use the choice to make switching the &quot;backend-framework&quot; easier if the currently supported one(s) become unmaintained. This seems reasonable to me for the &quot;beep on new message&quot; kind of &quot;multimedia&quot; and given their experience with aRTS<br>Having said that I feel the same (without even knowing what queasy means) on the &quot;abstracton of an abstraction&quot; thing. Also, implicitly calling the fabolous Vim crappy isn&#39;t a nice thing to say :)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Gijs</div>
-<div class='content'>So, a bit of &#39;hear hear&#39; from me - I use Linux on a fairly regular basis, but I&#39;m definitely not an expert. I&#39;m still struggling to figure out how on earth I&#39;m going to get some sound out of Mozilla (my laptop has alsa configured, but not esd which is what Mozilla uses IIRC), how I&#39;m going to get Quicktime or Realplayer movies/audio to play, and why half the Windows Media files simply won&#39;t play at all either. I have Totem, mplayer, xine and a bunch of other stuff installed, and have so far failed to get a good solution. Caveat here is that I&#39;m using Debian stable for everything except my browser, IRC client and my wireless drivers, so that may very well be part of the problem.<br>As for the editors, a sigh of relief from me... I thought I was the only Linux user who hated both vim and emacs, and didn&#39;t find all the features they wanted in KWrite/GEdit/NEdit/what-have-you.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Gusar</div>
-<div class='content'>My take on this is, that for the casual users, the choice will be made by the distro. However, the people who do know different multimedia frameworks and their capabilities, they will be able to choose.<br>Also, in this particular case, KDE made a decision for a framework in the past and got burnt because they got stuck with this particular framework (which went unmaintained, has design issues etc.) So they decided not to make the same mistake again and have now created the possibility to switch frameworks without breaking ABI compatibility.<br></div>
+<div class='author'>ant</div>
+<div class='content'>Most non-technical users I&#39;ve seen do know what a multimedia framework is - after all, if they want to use websites with multimedia properly they&#39;re forced to install WMP 10, then Realplayer, then Quicktime (hello SFx)...<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Those are really codecs, although some of them are tied to particular frameworks.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Matt Smith</div>
-<div class='content'>Phonon was made because everyone agreed ARTS had to go, but no one could agree what should replace it.  After it became clear that all the different sides were entrenched and unlikely to agree, a compromise was made so that any backend could be used.<br>I&#39;m not really sure whether it will end up being good or bad, but it does have some good points.  It is being maintained by the KDE project, so all their apps can pretty much assume it will be good thoughout the KDE 4 lifetime.  Plus no one wants another situation like ARTS where you are stuck with it because of API compatibility.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>ant</div>
-<div class='content'>Most non-technical users I&#39;ve seen do know what a multimedia framework is - after all, if they want to use websites with multimedia properly they&#39;re forced to install WMP 10, then Realplayer, then Quicktime (hello SFx)...<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Sebastian Redl</div>
 <div class='content'>What irritates me most about these comments is this constant question: &quot;What if GStreamer dies?&quot;<br>What if Phonon dies? Every bit of software could die, and I agree with many commenters that Phonon is more likely than GStreamer to lose support.<br>In either case, apps have to be rewritten.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bram!</div>
+<div class='content'>Most users have no idea what a browser is yet we want to bother them with the choice they have in it.<br>This choice is probably not meant for the end-users, as a linux distributor picks the default framework for them.<br>I guess KDE wants to use the choice to make switching the &quot;backend-framework&quot; easier if the currently supported one(s) become unmaintained. This seems reasonable to me for the &quot;beep on new message&quot; kind of &quot;multimedia&quot; and given their experience with aRTS<br>Having said that I feel the same (without even knowing what queasy means) on the &quot;abstracton of an abstraction&quot; thing. Also, implicitly calling the fabolous Vim crappy isn&#39;t a nice thing to say :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>David Smith</div>
+<div class='content'>also, the users don&#39;t understand what they are or why they need them, only that the computer is asking for them.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Simon</div>
 <div class='content'>You suppose that the developers actually care about the &quot;users&quot; (and not just for themselves and maybe other devs). In the open source world this seems more often than not not to be the case. Of course: why should they? They&#39;re usually not paid for what they produce - and pride motivates you only so far...<br>P.S.: Last I heard, creating toolkits was quite fun - even OpenOffice and Mozilla work on their own.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Rob</div>
-<div class='content'>It&#39;s easy to agree with you, except for the editor part :-P There is this saying here in .at that &quot;too many chefs spoil the mash&quot;. A text editor is a rather small project, so have a dozen developers add features would hardly do any good.<br>That said, recent GEdit with its pile of useful (developer oriented) plugins works well for me.<br></div>
+<div class='author'>Gusar</div>
+<div class='content'>My take on this is, that for the casual users, the choice will be made by the distro. However, the people who do know different multimedia frameworks and their capabilities, they will be able to choose.<br>Also, in this particular case, KDE made a decision for a framework in the past and got burnt because they got stuck with this particular framework (which went unmaintained, has design issues etc.) So they decided not to make the same mistake again and have now created the possibility to switch frameworks without breaking ABI compatibility.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alfonso</div>
+<div class='content'>I think that I understand exactly what you mean.<br>Having choices it&#39;s good, but it isn&#39;t good when you see two programs that fulfill almost the same function but each one has some points that it is missing in the other one, so someone thinks that the solution it is to create from scratch a third program with the best ideas of each one.<br>Instead of working to improve existing code too many people chooses to rewrite the same ideas and fix the same problems that have been fixed previously wasting time just because there&#39;s something in the previous program that they don&#39;t like or the learning curve is too step so you end up with a gazillion of useless programs instead of just a few good ones.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Gregor J. Rothfuss</div>
 <div class='content'>quite sad to still hear this library choice nonsense in 2006. no wonder every new year has to be pronounced &#39;year of linux on the desktop&#39; because it failed to the year before..<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matt Smith</div>
+<div class='content'>Phonon was made because everyone agreed ARTS had to go, but no one could agree what should replace it.  After it became clear that all the different sides were entrenched and unlikely to agree, a compromise was made so that any backend could be used.<br>I&#39;m not really sure whether it will end up being good or bad, but it does have some good points.  It is being maintained by the KDE project, so all their apps can pretty much assume it will be good thoughout the KDE 4 lifetime.  Plus no one wants another situation like ARTS where you are stuck with it because of API compatibility.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Gijs</div>
+<div class='content'>So, a bit of &#39;hear hear&#39; from me - I use Linux on a fairly regular basis, but I&#39;m definitely not an expert. I&#39;m still struggling to figure out how on earth I&#39;m going to get some sound out of Mozilla (my laptop has alsa configured, but not esd which is what Mozilla uses IIRC), how I&#39;m going to get Quicktime or Realplayer movies/audio to play, and why half the Windows Media files simply won&#39;t play at all either. I have Totem, mplayer, xine and a bunch of other stuff installed, and have so far failed to get a good solution. Caveat here is that I&#39;m using Debian stable for everything except my browser, IRC client and my wireless drivers, so that may very well be part of the problem.<br>As for the editors, a sigh of relief from me... I thought I was the only Linux user who hated both vim and emacs, and didn&#39;t find all the features they wanted in KWrite/GEdit/NEdit/what-have-you.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rob</div>
+<div class='content'>It&#39;s easy to agree with you, except for the editor part :-P There is this saying here in .at that &quot;too many chefs spoil the mash&quot;. A text editor is a rather small project, so have a dozen developers add features would hardly do any good.<br>That said, recent GEdit with its pile of useful (developer oriented) plugins works well for me.<br></div>
 </div>
 
 </div>

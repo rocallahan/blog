@@ -8,152 +8,148 @@ permalink: "/2010/01/activex-all-over-again_25.html"
 <div class="columns"><p>Many responses to <a href="/2010/01/video_freedom_a.html">my post about video codec issues</a> have expressed the opinion that "Mozilla should do whatever is most useful for users today, regardless of 'politics' or 'ideology'" and also that "if a user already has codecs on their system, it's wrong for Mozilla to refuse to use them". These opinions fail due to various legal and technical issues that I've already discussed, but I also want to point out that <strong>taking such positions is nothing new for Mozilla</strong> and <strong>history has proved us right for doing so</strong>, in particular regarding ActiveX and Web standards in general.<br/><p>Perhaps it's not widely known, but Gecko has had code to support hosting ActiveX controls, dating back <a href="http://bonsai.mozilla.org/cvslog.cgi?file=mozilla/embedding/browser/activex/src/plugin/MozActiveX.cpp&rev=HEAD&mark=1.6">as far as 1999</a>. ActiveX controls are very much like system video codecs. ActiveX support would have been very useful to users ever since 1999, and still would be now --- certainly in corporate intranets, and everywhere in China and South Korea. Enabling ActiveX support would probably boost our market share significantly. Most users have useful ActiveX controls on their machines. But for the last ten years, even during Mozilla's most desperate days, we have consistently refused to turn this feature on, because we believe that ActiveX is not good for the Web.<br/><p>I think history has proved that this decision was completely right. Our market share rose anyway. The ActiveX ecosystem was <a href="http://www.h-online.com/security/Web-pages-infect-Windows-PCs-via-new-DirectShow-hole--/news/113695">a big vector for security attacks</a>. Most importantly, if we'd caved, the Web everywhere would look like it does in China and South Korea, but more so --- dependent on ActiveX, and tied to Windows. No resurgent Apple, no Linux netbooks, precious few Linux users, no ChromeOS, no iPhone, no usable browsers on phones at all, and Microsoft's grip on the industry stronger than one dare imagine. We would have sacrificed huge long-term wins for users --- ALL users, not just Firefox users --- for the sake of a temporary filip.<br/><p>During the ascendancy of IE, we had similar pressures over the issue of whether to follow Web standards or focus on IE compatibility. The "pragmatists" wanted us to focus on IE compatibility for the very sensible reason that authors had to develop for IE anyway, so it would be easier and cheaper for them if we just fell in line. Obviously pursuing IE compatibility would also have been good for our market share --- and our users --- at the time. We chose standards. Again, I think history shows we made the right decision.<br/><p>I'm not suggesting that the consequences of exposing system codecs to the Web would be identical to exposing ActiveX. That's unlikely, and unknowable. But favouring our principles over short-term gains for users is nothing new for Mozilla, and when we've done it in the past, history shows it was the right thing to do.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Amilcar</div>
-<div class='content'>The analogy is not good at all. You sure can compare support to display GIF files and support to play H264 files. Both are media formats, both aren&#39;t free.<br>But, definitely doesn&#39;t make any sense comparing support to ActiveX with support to play H264. This doesn&#39;t make any sense to me.<br></div>
+<div class='author'>Eike Hein</div>
+<div class='content'>Thank you for staying hard on this.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Nil Einne</div>
-<div class='content'>@As noted before, h.264 is what youtube was already encoded in before Google bought Youtube<br>Are you sure about that? AFAIK Youtube content was VP6. They converted to h.264 sometime later either when it was first supported by Flash (perhaps when they started offering higher 480?) or perhaps to offer it to mobile device like the iPhone. It&#39;s possible Youtube always had h.264 in the background but I&#39;m not convinced. I do believe they had to reencode most of their videos when they switched to h.264. (I presume they stored the original videos and used these as sources hence the reason they were able to add higher res to long existing videos, makes the most sense to me.)<br>Incidentally I wasn&#39;t aware until researching stuff for this post but Google now owns On2. If they wanted to, they could contribute whatever patents On2 has to the open source community. Since Theora is based on VP3, even  if On2 granted related patents I wonder if there&#39;s some new stuff from their later developments that may be useful. Of course they could also open source all the other codecs (along with the patents as I already mentioned) and perhapds something there could be a new Xiph codec. I&#39;m personally still unconvinced Theora is ever going to come close to VC-1 let alone h.264 which makes problems for it trying to gain a foothold given the widespread usage of these codecs including with hardware support. If they had something closer, they may fare better. I&#39;ve had some hope for Dirac, but perhaps VP8 would be something to look at too.<br>Of course I&#39;m not convinced Google is actually going to do something like that. And even then, lacking the vast patent portfolio that&#39;s behind h.264 I wonder whether they&#39;ll really get close.<br>P.S. It seems I&#39;m not the only one to have this idea, I came across a FSF campaign.<br></div>
+<div class='author'>steve</div>
+<div class='content'>Two questions:<br>1) Would you use/implement H.264, if MPEG-LA wouldn&#39;t require licensing for decoding (no fees, free implementation)?<br>2) What will you (Mozilla) do to make Theora/Ogg better. How do you want to improve quality/bitrate ratio and the issues with hardware en-/decoders?<br>&quot;Free&quot; won&#39;t impress much people, but &quot;better&quot; will! And Firefox was and is better than Internet Explorer. But will Theora/Ogg be better?<br>steve<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Håvard Pedersen</div>
-<div class='content'>I couldn&#39;t find anything in the other post that explained why Flash still is ok while ActiveX and native video codecs aren&#39;t. As far as I can tell, it&#39;s pretty much the same thing in principle.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Teoli</div>
-<div class='content'>Robert, first, thanks for this blog it is very useful.<br>I saw you answered &quot;If decoding was unencumbered but encoding still required licensing, I think we&#39;d still try to resist it,&quot;.<br>I have a similar, but slightly different question: what if encoding and decoding in software didn&#39;t require licensing, but encoding (ev. decoding) in hardware did. In that case, would it be ok for Mozilla to implement it?<br>I&#39;m thinking about it because that way the MPEG-LA could still earn money with it (via hardware manufacturer like now) but all software would be free of licensing.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ben Bucksch</div>
-<div class='content'>Robert, don&#39;t get too emotional about those users saying &quot;Mozilla should do whatever is most useful for users today, regardless of &#39;politics&#39; or &#39;ideology&#39;&quot;. I agree that Mozilla&#39;s very reason to exist is to be different, and a big part of that difference is the different ideology.<br>&quot;But for the last ten years, even during Mozilla&#39;s most desperate days, we have consistently refused to turn this feature on, because we believe that ActiveX is not good for the Web.&quot;<br>I first want to correct that. I don&#39;t think it&#39;s true. IIRC, there was a time (several years) where we shipped with activex enabled and maybe even whitelisted a few ActiveX components, but never allowed all by default. I might be mis-collecting this, though, or confusing it with the Netscape browser.<br>More to the point, I don&#39;t think that the situation between enabling ActiveX and allowing MPEG 2/4 specifically (which I asked for) is anyhow comparable.<br>1) MPEG is an ISO standard, not a vendor API.<br>2) MPEG is not limited to a certain platform nor implementation.<br>3) Enabling MPEG codecs would be selective. It&#39;s not the same as enabling any and all system codecs or system APIs.<br>4) The security risk is opening a file (MPEG) vs. allowing hostile code to call your API (ActiveX).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>gsf</div>
-<div class='content'>1.  Based on your arguments, how do you justify Flash?<br>2.  H.264 _is_ a standard.  (unlike Flash)<br>3.  You already use any number of parts of the operating system you run upon, why not treat video as just another part (you&#39;ll use the OS&#39;s own text rendering or TCP stack, but not its licensed support for a standard?)<br>I&#39;m still having a hard time understanding the problem.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>How is this situation different from Mozilla&#39;s support of the then-patented GIF file format?<br>Why didn&#39;t Mozilla turn off GIF display?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mook</div>
-<div class='content'>I mostly agree, I think, that doing h.264 specifically would be bad from a strategy point of view, and bad for distributors (including Mozilla), among other things.  Besides, my laptop won&#39;t be able to do anything with it anyway - it already struggles with h.264 content in Flash and standalone players, so personally it is irrelevant.<br>What I do not like, and believe to be contrary to Mozilla&#39;s goal of being open and making the Internet a better place, however, is the fact that there&#39;s no way to extend the decoders available.  With image decoding, this is theoretically possible - I had a JavaScript based imgIDecoder a few years back (too slow to be practical, but it was possible), as well as a C++ based one that actually functioned for an obscure image format.  There&#39;s no possibility of that here; nsMediaDecoder is completely internal, and the list of possible decoders is statically coded in nsHTMLMediaElement::CreateDecoder.<br>Extending Mozilla in ways that Mozilla doesn&#39;t have energy for is what makes the platform - both Gecko and Firefox - awesome.  Please make &lt;video&gt; awesome by opening the gates to external, non-libxul, programmers?<br>P.S. Somehow your comment preview manages to clear the text entry box, so once you preview you lose the post!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>nicoO</div>
-<div class='content'>The browser is not the only place to play videos, these videos can also be downloaded and played with the standalone player. Why is there one video decoder in my standalone player and one in firefox ? There should be only one.<br>In one of your previous posts, you mention that this approach is a problem in the case of windows : malware can be embedded in video codecs. Fair enogh.<br>But i.e. on Ubuntu, at first attempt of playing a patent encumbered video, the system will download &quot;ugly&quot; packages automatically after a proper warning to the user.<br>If the user said OK to that warning, he should be able to play those videos in Firefox as well. Mozilla would be protected against legal issues because the download is performed by the OS, not the browser.<br>You mention &quot;idealism&quot; as a reason for the current status. But in my opinion, idealism is more about the client design : video decoding is an OS thing, it should be treated at OS level.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Probably because we thought we could leave GIFs enabled and not be sued. We were right. The situation with H.264 doesn&#39;t look so good.<br>Plus, it doesn&#39;t make sense to take a stand that completely destroys the usefulness of the browser.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Adam</div>
-<div class='content'>I&#39;m glad my Android phone (Moto Droid) can play H.264, but I wish it supported FLAC and OGG.<br>Too bad the W3C pulled back from their Theora recommendations at the pressure of big companies.<br>Why does Google use H.264 (Youtube, Android)? You&#39;d think they&#39;d want to save money, at least...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Tuco</div>
-<div class='content'>I admire your courage.  Thank you for having what it takes.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>steve: 1) if both H.264 encoding and decoding were unencumbered by patents, I&#39;m sure we&#39;d add support right away. If decoding was unencumbered but encoding still required licensing, I think we&#39;d still try to resist it, because mandatory licensing would still be very bad for Web authors. 2) We are working to make Ogg Theora better, by improving seeking using an index, by funding improvements to the encoder, by funding implementation of the decoder on a popular mobile DSP, and by improving Firefox&#39;s own  implementation.<br>Jim: done!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jim B</div>
-<div class='content'>Robert, I agree with the decision Mozilla has made in regards to codecs.  Keep up the good fight!<br>This is totally off topic, but it has bugged me for a long time.  The 3px wide black column dividers are very heavy and distract from your content.<br>Please consider something like<br>.colums {<br>-moz-column-rule: 1px solid #ccc;<br>etc<br>}<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ken Roberts</div>
-<div class='content'>@Ben:<br>As noted before, h.264 is what youtube was already encoded in before Google bought Youtube. Takes time/money/space to convert, so it&#39;s something that they&#39;ll have to work on over time.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Amilcar</div>
-<div class='content'>The comparision is absurd! The analogy is very poor, like using bananas to explain oranges! It&#39;s easy to argument using false analogies.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>njn</div>
-<div class='content'>Thinking some more, I suspect a common response to this will be &quot;that might have worked for ActiveX, but h.264/YouTube/Google has too much of a head start, Theora isn&#39;t good enough, so this time you should compromise&quot;.<br>To which I guess the counter-argument is &quot;there&#39;s no point having principles if you abandon them when the going gets tough&quot;.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ben Bucksch</div>
-<div class='content'>&gt; the whitelist minimized any damage to the Web<br>That&#39;s why I filed bug 541286 ;-).<br>&gt; history shows that at least in some cases it&#39;s been good for the Web.<br>Unquestionably. I agree with the general stance, too.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>1. I answered this in the other post.<br>2. Yes,  H.264 is a standard, but being a standard isn&#39;t enough to make it good.<br>3. Free, unencumbered implementations of text rendering and TCP exist, so our principles are not at risk.<br></div>
+<div class='author'>Anon</div>
+<div class='content'>I think the main reason for video codec issues is Youtube&#39;s decision to use 264 video for their HTML5 video implementation. As soon as I found out I exchanged back to flash video...I use firefox as my main browser and I am not switching to Chrome.<br>If I have to stick to the demonized proprietary formats I&#39;d better do it in the browser I choose at least.<br>Eventually Youtube will give up on it (since most requesters for HTML5 video were linux/OSS advocates/hippies/flash haters, it can happen, but not warranted. The Youtube support page for the topic is full of &quot;WTF&quot; comments) or a way to add the codecs to firefox will arise, even as a hack or fork.<br>Unlike DirectX, however, this has a solution (sticking to flash) so I don&#39;t think this case can become such a part of history, personally...<br></div>
 </div>
 <div class='comment'>
 <div class='author'>njn</div>
 <div class='content'>*Excellent* analogy!<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Oboewan</div>
-<div class='content'>My view:<br>I don&#39;t care.<br>Sure, I WANT Web developers to use open standards. However, they don&#39;t.<br>If I see a site that I can&#39;t view in Firefox, I&#39;ll open up Safari or Chrome, not write a 300-page manifesto about Theora.<br>Denying users access to their own codecs is biting off the nose to spite the face.<br>Plus, if you&#39;re really that into not supporting proprietary standards by any means, disable Flash and THEN we&#39;ll talk.<br>Couldn&#39;t you just turn it on, but bury it deep in about:config so only people who really don&#39;t care about Theora turn it on?<br></div>
+<div class='author'>Jim B</div>
+<div class='content'>Robert, I agree with the decision Mozilla has made in regards to codecs.  Keep up the good fight!<br>This is totally off topic, but it has bugged me for a long time.  The 3px wide black column dividers are very heavy and distract from your content.<br>Please consider something like<br>.colums {<br>-moz-column-rule: 1px solid #ccc;<br>etc<br>}<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>steve: 1) if both H.264 encoding and decoding were unencumbered by patents, I&#39;m sure we&#39;d add support right away. If decoding was unencumbered but encoding still required licensing, I think we&#39;d still try to resist it, because mandatory licensing would still be very bad for Web authors. 2) We are working to make Ogg Theora better, by improving seeking using an index, by funding improvements to the encoder, by funding implementation of the decoder on a popular mobile DSP, and by improving Firefox&#39;s own  implementation.<br>Jim: done!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Hugh Isaacs II</div>
+<div class='content'>Why not just support the built in encoder on the respective OS.<br>DirectShow on Windows<br>Quicktime on Mac<br>and GStreamer on Linux<br>Wouldn&#39;t that allow you guys to get around having to pay license fees?<br>and thanks to Firefox 3.6 you guys could push this without a large update, plus this would make a nice temporary fix until a more HTML5 worthy codec springs up.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>njn</div>
+<div class='content'>Thinking some more, I suspect a common response to this will be &quot;that might have worked for ActiveX, but h.264/YouTube/Google has too much of a head start, Theora isn&#39;t good enough, so this time you should compromise&quot;.<br>To which I guess the counter-argument is &quot;there&#39;s no point having principles if you abandon them when the going gets tough&quot;.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>In 2001-2004 the going WAS tough, incredibly tough. For a while IE had &gt;90% share and Mozilla was some volunteers plus a handful of people in a small office in Mountain View with a small and dwindling pile of cash. Personally, I had no hope. But we got some breaks that I did not anticipate. We survived by putting ourselves in a position to take unexpected opportunities, and that means not giving up early.<br>This is especially relevant for Christians like me, because God is a potential source of unexpected blessings.<br>However, as I said in comments in my other post, there is point short of total annihilation where it would make sense for us to compromise our principles. We&#39;re nowhere near that yet.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>gsf</div>
+<div class='content'>1.  Based on your arguments, how do you justify Flash?<br>2.  H.264 _is_ a standard.  (unlike Flash)<br>3.  You already use any number of parts of the operating system you run upon, why not treat video as just another part (you&#39;ll use the OS&#39;s own text rendering or TCP stack, but not its licensed support for a standard?)<br>I&#39;m still having a hard time understanding the problem.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>1. I answered this in the other post.<br>2. Yes,  H.264 is a standard, but being a standard isn&#39;t enough to make it good.<br>3. Free, unencumbered implementations of text rendering and TCP exist, so our principles are not at risk.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>bob</div>
 <div class='content'>While I agree refusing activex was totally a good thing i cant see how this analogy is valid.<br>don&#39;t get me wrong. i agree that h264 is a bad idea. but not for exactly the same reason.<br>the only reason h264 is bad, is that it enforce a vendor lock-in due to licensing. it&#39;s simple, if you want to make a HTML5 youtube copy, to stream in the USA (and you want that), you&#39;d have to pay billions of dollars JUST for the &quot;fucking video codec&quot;.<br>likewise, if you want to make your own player, except it will be thousand of dollars instead of billions (which you won&#39;t be able to pay in both cases = lock in, everyones forced to use an iphone and youtube for HTML5 stuff yay.)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>At the moment, one of the bigger things that bothers me with Theora is the lack of discussion on the format&#39;s improvement. Don&#39;t get me wrong, Thusnelda is quite the improvement... but I would like to hear about what is happening to make Theora better (particularly in the rendering and frame-rate department), and Xiph has been poor at communicating that kind of discussion. Another review (and/or declaration of improvements to be implemented) about the format currently like what happened with to form the Thusnelda branch would be nice to see among the good work.<br>As it stands, I have heard and seen the discussion on the indexing issue and others areas of the format. Many have not, and assume that the Theroa project is dead due to a perceived lack of communication (As much as you and I read the mailing lists, many others don&#39;t) and site activity.<br>I would really like to see Xiph start talking more... if possible.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>toshok</div>
-<div class='content'>Not to nitpick, but compat with an IE feature was part of what drove the resurgence of webapps in general:  XmlHttpRequest.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Arpad Borsos</div>
-<div class='content'>Being idealist is why I love you so much :)<br>It is also my enthusiasm for the free web why I contribute, which I should do more often again.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>True. In this context, by &quot;IE compatibility&quot; I meant where IE diverged from an existing standard, not areas where IE innovated in useful ways.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ishmael</div>
-<div class='content'>I support Mozilla&#39;s decision not to support H.264. Patent-encumbered video would be disastrous for the web.<br></div>
+<div class='author'>Eevee</div>
+<div class='content'>I don&#39;t understand why everyone is so surprised that YouTube is only offering h.264 right now.  Only their ENTIRE LIBRARY was already encoded that way.<br>It would be nice if they&#39;d make clear whether they have some Theora-related plans for the future, but whether they intend to go that direction or not, offering HTML5 for the millions of video files they already have is hardly unexpected.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Corey Burger</div>
 <div class='content'>With regards to the DirectShow/Gstreamer/etc. backends, I think that in at least the case of Gstreamer, they should support it, but as a secondary option. Mozilla should always have the option of shipping without any of these backends, for the very reasons mentioned here, but by supporting the backends as well, it can help distributors, like the various Linux distributions, with not shipping multiple copies of the same library.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>avlee</div>
-<div class='content'>我是中文用户，我痛恨ActiveX，我才使用Firefox的，由于某些原因，比如电子银行业务，我可能会换用IE，但是那只是极少的时间。<br>如果说增加对ActiveX的支持，会增加在中国市场的占有率，那说明你不了解中国市场。<br></div>
+<div class='author'>toshok</div>
+<div class='content'>Not to nitpick, but compat with an IE feature was part of what drove the resurgence of webapps in general:  XmlHttpRequest.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>True. In this context, by &quot;IE compatibility&quot; I meant where IE diverged from an existing standard, not areas where IE innovated in useful ways.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>At the moment, one of the bigger things that bothers me with Theora is the lack of discussion on the format&#39;s improvement. Don&#39;t get me wrong, Thusnelda is quite the improvement... but I would like to hear about what is happening to make Theora better (particularly in the rendering and frame-rate department), and Xiph has been poor at communicating that kind of discussion. Another review (and/or declaration of improvements to be implemented) about the format currently like what happened with to form the Thusnelda branch would be nice to see among the good work.<br>As it stands, I have heard and seen the discussion on the indexing issue and others areas of the format. Many have not, and assume that the Theroa project is dead due to a perceived lack of communication (As much as you and I read the mailing lists, many others don&#39;t) and site activity.<br>I would really like to see Xiph start talking more... if possible.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Arpad Borsos</div>
+<div class='content'>Being idealist is why I love you so much :)<br>It is also my enthusiasm for the free web why I contribute, which I should do more often again.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Noel Grandin</div>
 <div class='content'>If you really want to make Ogg the web&#39;s default video/audio codec, convince Adobe to support it in Flash<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Eevee</div>
-<div class='content'>I don&#39;t understand why everyone is so surprised that YouTube is only offering h.264 right now.  Only their ENTIRE LIBRARY was already encoded that way.<br>It would be nice if they&#39;d make clear whether they have some Theora-related plans for the future, but whether they intend to go that direction or not, offering HTML5 for the millions of video files they already have is hardly unexpected.<br></div>
+<div class='author'>Ishmael</div>
+<div class='content'>I support Mozilla&#39;s decision not to support H.264. Patent-encumbered video would be disastrous for the web.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Teoli</div>
+<div class='content'>Robert, first, thanks for this blog it is very useful.<br>I saw you answered &quot;If decoding was unencumbered but encoding still required licensing, I think we&#39;d still try to resist it,&quot;.<br>I have a similar, but slightly different question: what if encoding and decoding in software didn&#39;t require licensing, but encoding (ev. decoding) in hardware did. In that case, would it be ok for Mozilla to implement it?<br>I&#39;m thinking about it because that way the MPEG-LA could still earn money with it (via hardware manufacturer like now) but all software would be free of licensing.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>One important difference between ActiveX and NPAPI is that ActiveX was solely controlled by Microsoft but the NPAPI interfaces are managed by browser vendors working together.<br>Another important difference is NPAPI is platform-independent. You can build NPAPI plugins and browsers for any platform with no dependencies on any particular platform functionality or framework. ActiveX, however, depends very heavily on COM, which is a huge Windows-only framework.<br>Another important difference is that ActiveX was designed based on VBX Visual Basic controls, so from the beginning there was a large ecosystem of Windows-only ActiveX controls, and of course since Microsoft was the driving force behind ActiveX, they kept building more Windows-only ActiveX controls. ActiveX was never pitched as anything but a Windows technology. On the other hand, in the NPAPI ecosystem people were building plugins for Mac and X from the beginning.<br>Having said all that, dependence on closed-source NPAPI plugins isn&#39;t a good situation either. Just a lot better than ActiveX.<br></div>
+<div class='content'>Teoli: That&#39;s a hard question and I don&#39;t know the answer. It still sounds bad, but less bad.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>webuser</div>
-<div class='content'>Is there anything stopping someone (other than time and talent) from writing an add-on that uses QuickTime/WMP to play h264 video?<br></div>
+<div class='author'>Anonymous</div>
+<div class='content'>How is this situation different from Mozilla&#39;s support of the then-patented GIF file format?<br>Why didn&#39;t Mozilla turn off GIF display?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Probably because we thought we could leave GIFs enabled and not be sued. We were right. The situation with H.264 doesn&#39;t look so good.<br>Plus, it doesn&#39;t make sense to take a stand that completely destroys the usefulness of the browser.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>ac</div>
+<div class='content'>I&#39;m sorry for such a naive dumb question, but those h264 patents can&#39;t last forever? Am I completely wrong in thinking there&#39;s no need to pay any licensing fees after the patents expire provided there will be alternate free implementations which if they quick become defacto (encoder) due to being free will remove the risk of &quot;embrace, enhance&quot;.<br>If this is the case and this will be a non-issue in few years, then IMO it seems this is being blown out of proportion and after all it&#39;s only fair for the Moving Picture Experts to get paid for their expert work. This slow development of everything surrounding ogg/theora just seems to say &quot;free doesn&#39;t pay for the plumber/food&quot;. I bet the development would accelerate if you could buy more experts to develop the free alternative. I suggest starting with getting ogg/theora radio/video streaming work from WMP if they&#39;re not already (they&#39;re not last I checked) because as a user I want the freedom to use my preferred player that comes with the OS and not install some one more 3rd party player for each codec to work around some specific bugs (eg. mkv vfr bugs in VLC).<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>I addressed the &quot;wait for H.264 to expire&quot; strategy in my previous post.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Eike Hein</div>
-<div class='content'>Thank you for staying hard on this.<br></div>
+<div class='author'>Håvard Pedersen</div>
+<div class='content'>I couldn&#39;t find anything in the other post that explained why Flash still is ok while ActiveX and native video codecs aren&#39;t. As far as I can tell, it&#39;s pretty much the same thing in principle.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Stephan Schmidt</div>
+<div class='content'>So, a downloadable codec (in Flash on Youtube) for H.264 is good in Firefox, a codec from disk is bad?<br>Or what do I get wrong?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>webuser</div>
+<div class='content'>Is there anything stopping someone (other than time and talent) from writing an add-on that uses QuickTime/WMP to play h264 video?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>nicoO</div>
+<div class='content'>The browser is not the only place to play videos, these videos can also be downloaded and played with the standalone player. Why is there one video decoder in my standalone player and one in firefox ? There should be only one.<br>In one of your previous posts, you mention that this approach is a problem in the case of windows : malware can be embedded in video codecs. Fair enogh.<br>But i.e. on Ubuntu, at first attempt of playing a patent encumbered video, the system will download &quot;ugly&quot; packages automatically after a proper warning to the user.<br>If the user said OK to that warning, he should be able to play those videos in Firefox as well. Mozilla would be protected against legal issues because the download is performed by the OS, not the browser.<br>You mention &quot;idealism&quot; as a reason for the current status. But in my opinion, idealism is more about the client design : video decoding is an OS thing, it should be treated at OS level.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>avlee</div>
+<div class='content'>我是中文用户，我痛恨ActiveX，我才使用Firefox的，由于某些原因，比如电子银行业务，我可能会换用IE，但是那只是极少的时间。<br>如果说增加对ActiveX的支持，会增加在中国市场的占有率，那说明你不了解中国市场。<br></div>
+</div>
+<div class='comment'>
+<div class='author'>VanillaMozilla</div>
+<div class='content'>I&#39;m tired of waiting to publish video with a standard format.  And if necessary, I&#39;ll wait until I can.<br>Our organization is about to put a lot of content on the Web.  I&#39;m going to argue that it MUST be in a standard format.  If anyone wants to view it, they can view it with Firefox.  And if they don&#39;t want to view it, that&#39;s their problem.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>cjwl</div>
 <div class='content'>On the topic of patents and your last post, the layer system described at:<br>https://wiki.mozilla.org/Gecko:Layers<br>Directly references Core Animation, including it&#39;s organization of layer trees and transactions, you should be aware of Apple&#39;s patent application in this area:<br>http://www.google.com/patents?id=p9qnAAAAEBAJ<br>Which is basically a patent on Core Animation and a system organized like this.<br>have fun.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>VanillaMozilla</div>
-<div class='content'>I&#39;m tired of waiting to publish video with a standard format.  And if necessary, I&#39;ll wait until I can.<br>Our organization is about to put a lot of content on the Web.  I&#39;m going to argue that it MUST be in a standard format.  If anyone wants to view it, they can view it with Firefox.  And if they don&#39;t want to view it, that&#39;s their problem.<br></div>
+<div class='author'>Amilcar</div>
+<div class='content'>The comparision is absurd! The analogy is very poor, like using bananas to explain oranges! It&#39;s easy to argument using false analogies.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Amilcar</div>
+<div class='content'>The analogy is not good at all. You sure can compare support to display GIF files and support to play H264 files. Both are media formats, both aren&#39;t free.<br>But, definitely doesn&#39;t make any sense comparing support to ActiveX with support to play H264. This doesn&#39;t make any sense to me.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Håvard, Stephan: See my comment at January 24, 2010 9:09 AM. But I can enlarge on that for you here:<br>We&#39;ve never been in a situation where we could drop support for Flash without driving away most of our users and becoming irrelevant. Doing that would not help our mission. That&#39;s probably the primary reason why we&#39;ve never even considered it AFAIK.<br>Reducing use of Flash on the Web is a much, much larger project than dealing with the problem of encumbered codecs accessed via the  tag. The first step is to ensure we can offer Web authors standards-based functionality as an alternative to Flash. We are working very hard on that!<br>webuser: that would be very difficult. However, producing your own Firefox derivative browser which supported those codecs would be doable. That&#39;s what free software is all about.<br>nicoO: I&#39;ve talked in several places about how moving the problem down to the OS is not a good idea. I do agree that if we were to support system codecs, GStreamer on Linux would be the least problematic platform.<br>cjwl: just the fact that a patent exists isn&#39;t necessarily a problem. A patent is a problem when someone is going to threaten us with a lawsuit and demand licensing. If they aren&#39;t, we can ignore it. The problem with H.264 is that everyone is expected to pay license fees to the MPEG-LA or get sued (unless they&#39;re too small to bother with; we aren&#39;t). Patents aren&#39;t a problem if we don&#39;t need to license them, which is why the GIF patents weren&#39;t a problem for us.<br>In general I&#39;m not particularly concerned that Apple would demand licensing from free software projects. That would trigger a firestorm of negative PR, freak out a lot of their own employees, and cripple their relationship with the free software community, which they depend on in many ways. As far as I know, they haven&#39;t done it.<br>I didn&#39;t look at the Apple patent, but in general it requires detailed comparison of the claims with our code to determine if our code would actually infringe, so it would be unwise to jump to a conclusion that that patent bears on what we&#39;re doing. For what it&#39;s worth, there are other frameworks that work in a similar way, for example Clutter, and Microsoft&#39;s WPF (which probably predates Core Animation).<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Ben</div>
@@ -161,47 +157,51 @@ permalink: "/2010/01/activex-all-over-again_25.html"
 </div>
 <div class='comment'>
 <div class='author'>Ben Bucksch</div>
-<div class='content'>&gt; Unfortunately you are in for a world of hurt without Flash<br>Actually, I think you&#39;re in for a world of hurt, if you do install Flash. I&#39;ve tried it for a moment, and was disgusted by the Flash ads, I couldn&#39;t stand it anymore.<br>I am doing just fine without Flash. Apart from videos: YouTube and others on news sites and similar. Thus, I&#39;d be happy if I could play videos right in my browser, on the 2-3 websites where I run into videos.<br>(And to avoid misunderstanding: I was also always strongly against ActiveX. I am also very much against closed formats.<br>The &quot;only&quot; problem with MPEG are patents - and whether software patents are legal at all is still an open debate.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>ac</div>
-<div class='content'>I&#39;m sorry for such a naive dumb question, but those h264 patents can&#39;t last forever? Am I completely wrong in thinking there&#39;s no need to pay any licensing fees after the patents expire provided there will be alternate free implementations which if they quick become defacto (encoder) due to being free will remove the risk of &quot;embrace, enhance&quot;.<br>If this is the case and this will be a non-issue in few years, then IMO it seems this is being blown out of proportion and after all it&#39;s only fair for the Moving Picture Experts to get paid for their expert work. This slow development of everything surrounding ogg/theora just seems to say &quot;free doesn&#39;t pay for the plumber/food&quot;. I bet the development would accelerate if you could buy more experts to develop the free alternative. I suggest starting with getting ogg/theora radio/video streaming work from WMP if they&#39;re not already (they&#39;re not last I checked) because as a user I want the freedom to use my preferred player that comes with the OS and not install some one more 3rd party player for each codec to work around some specific bugs (eg. mkv vfr bugs in VLC).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Rob</div>
-<div class='content'>I think comparing ActiveX to video codec&#39;s is a very bad analogy, Ben Bucksch covered the reasons why quite nicely around 8 posts up...<br>&quot;More to the point, I don&#39;t think that the situation between enabling ActiveX and allowing MPEG 2/4 specifically (which I asked for) is anyhow comparable.<br>1) MPEG is an ISO standard, not a vendor API.<br>2) MPEG is not limited to a certain platform nor implementation.<br>3) Enabling MPEG codecs would be selective. It&#39;s not the same as enabling any and all system codecs or system APIs.<br>4) The security risk is opening a file (MPEG) vs. allowing hostile code to call your API (ActiveX).&quot;<br>And the biggest issue right now is that the big content sites (aka youtube) have gone with the &quot;commercial&quot; codec.  And as long as they&#39;re targeting devices that require hardware offload chips to play the content, they&#39;re going to stay with h.264.  No-one is making a Theora decode chip to put in cell phones, netbooks, tablets, set-top streaming media players, etc. and they aren&#39;t putting in enough CPU power to handle HD content either.  The sheer amount of h.264 stuff out there already means you are going to have to co-exist with it (not just YouTube/Vimeo, but most BluRay disks, iTunes video stuff, AVCHD camcorders, ...)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anon</div>
-<div class='content'>I think the main reason for video codec issues is Youtube&#39;s decision to use 264 video for their HTML5 video implementation. As soon as I found out I exchanged back to flash video...I use firefox as my main browser and I am not switching to Chrome.<br>If I have to stick to the demonized proprietary formats I&#39;d better do it in the browser I choose at least.<br>Eventually Youtube will give up on it (since most requesters for HTML5 video were linux/OSS advocates/hippies/flash haters, it can happen, but not warranted. The Youtube support page for the topic is full of &quot;WTF&quot; comments) or a way to add the codecs to firefox will arise, even as a hack or fork.<br>Unlike DirectX, however, this has a solution (sticking to flash) so I don&#39;t think this case can become such a part of history, personally...<br></div>
+<div class='content'>Robert, don&#39;t get too emotional about those users saying &quot;Mozilla should do whatever is most useful for users today, regardless of &#39;politics&#39; or &#39;ideology&#39;&quot;. I agree that Mozilla&#39;s very reason to exist is to be different, and a big part of that difference is the different ideology.<br>&quot;But for the last ten years, even during Mozilla&#39;s most desperate days, we have consistently refused to turn this feature on, because we believe that ActiveX is not good for the Web.&quot;<br>I first want to correct that. I don&#39;t think it&#39;s true. IIRC, there was a time (several years) where we shipped with activex enabled and maybe even whitelisted a few ActiveX components, but never allowed all by default. I might be mis-collecting this, though, or confusing it with the Netscape browser.<br>More to the point, I don&#39;t think that the situation between enabling ActiveX and allowing MPEG 2/4 specifically (which I asked for) is anyhow comparable.<br>1) MPEG is an ISO standard, not a vendor API.<br>2) MPEG is not limited to a certain platform nor implementation.<br>3) Enabling MPEG codecs would be selective. It&#39;s not the same as enabling any and all system codecs or system APIs.<br>4) The security risk is opening a file (MPEG) vs. allowing hostile code to call your API (ActiveX).<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Håvard, Stephan: See my comment at January 24, 2010 9:09 AM. But I can enlarge on that for you here:<br>We&#39;ve never been in a situation where we could drop support for Flash without driving away most of our users and becoming irrelevant. Doing that would not help our mission. That&#39;s probably the primary reason why we&#39;ve never even considered it AFAIK.<br>Reducing use of Flash on the Web is a much, much larger project than dealing with the problem of encumbered codecs accessed via the  tag. The first step is to ensure we can offer Web authors standards-based functionality as an alternative to Flash. We are working very hard on that!<br>webuser: that would be very difficult. However, producing your own Firefox derivative browser which supported those codecs would be doable. That&#39;s what free software is all about.<br>nicoO: I&#39;ve talked in several places about how moving the problem down to the OS is not a good idea. I do agree that if we were to support system codecs, GStreamer on Linux would be the least problematic platform.<br>cjwl: just the fact that a patent exists isn&#39;t necessarily a problem. A patent is a problem when someone is going to threaten us with a lawsuit and demand licensing. If they aren&#39;t, we can ignore it. The problem with H.264 is that everyone is expected to pay license fees to the MPEG-LA or get sued (unless they&#39;re too small to bother with; we aren&#39;t). Patents aren&#39;t a problem if we don&#39;t need to license them, which is why the GIF patents weren&#39;t a problem for us.<br>In general I&#39;m not particularly concerned that Apple would demand licensing from free software projects. That would trigger a firestorm of negative PR, freak out a lot of their own employees, and cripple their relationship with the free software community, which they depend on in many ways. As far as I know, they haven&#39;t done it.<br>I didn&#39;t look at the Apple patent, but in general it requires detailed comparison of the claims with our code to determine if our code would actually infringe, so it would be unwise to jump to a conclusion that that patent bears on what we&#39;re doing. For what it&#39;s worth, there are other frameworks that work in a similar way, for example Clutter, and Microsoft&#39;s WPF (which probably predates Core Animation).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>steve</div>
-<div class='content'>Two questions:<br>1) Would you use/implement H.264, if MPEG-LA wouldn&#39;t require licensing for decoding (no fees, free implementation)?<br>2) What will you (Mozilla) do to make Theora/Ogg better. How do you want to improve quality/bitrate ratio and the issues with hardware en-/decoders?<br>&quot;Free&quot; won&#39;t impress much people, but &quot;better&quot; will! And Firefox was and is better than Internet Explorer. But will Theora/Ogg be better?<br>steve<br></div>
+<div class='content'>One important difference between ActiveX and NPAPI is that ActiveX was solely controlled by Microsoft but the NPAPI interfaces are managed by browser vendors working together.<br>Another important difference is NPAPI is platform-independent. You can build NPAPI plugins and browsers for any platform with no dependencies on any particular platform functionality or framework. ActiveX, however, depends very heavily on COM, which is a huge Windows-only framework.<br>Another important difference is that ActiveX was designed based on VBX Visual Basic controls, so from the beginning there was a large ecosystem of Windows-only ActiveX controls, and of course since Microsoft was the driving force behind ActiveX, they kept building more Windows-only ActiveX controls. ActiveX was never pitched as anything but a Windows technology. On the other hand, in the NPAPI ecosystem people were building plugins for Mac and X from the beginning.<br>Having said all that, dependence on closed-source NPAPI plugins isn&#39;t a good situation either. Just a lot better than ActiveX.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>Ben, I think Netscape shipped with Windows Media Player whitelisted for a while. That&#39;s not Mozilla though --- I don&#39;t Mozilla builds did. Also, the whitelist minimized any damage to the Web. (The fact that hardly anyone used Netscape 6 and 7 also limited the damage to the Web...)<br>As I said in the final paragraph of my post, I am not trying to draw a direct analogy between ActiveX and supporting system codecs. I am merely pointing out that denying Web access to code on your system is not unprecedented for us, and history shows that at least in some cases it&#39;s been good for the Web.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>In 2001-2004 the going WAS tough, incredibly tough. For a while IE had &gt;90% share and Mozilla was some volunteers plus a handful of people in a small office in Mountain View with a small and dwindling pile of cash. Personally, I had no hope. But we got some breaks that I did not anticipate. We survived by putting ourselves in a position to take unexpected opportunities, and that means not giving up early.<br>This is especially relevant for Christians like me, because God is a potential source of unexpected blessings.<br>However, as I said in comments in my other post, there is point short of total annihilation where it would make sense for us to compromise our principles. We&#39;re nowhere near that yet.<br></div>
+<div class='author'>Ben Bucksch</div>
+<div class='content'>&gt; Unfortunately you are in for a world of hurt without Flash<br>Actually, I think you&#39;re in for a world of hurt, if you do install Flash. I&#39;ve tried it for a moment, and was disgusted by the Flash ads, I couldn&#39;t stand it anymore.<br>I am doing just fine without Flash. Apart from videos: YouTube and others on news sites and similar. Thus, I&#39;d be happy if I could play videos right in my browser, on the 2-3 websites where I run into videos.<br>(And to avoid misunderstanding: I was also always strongly against ActiveX. I am also very much against closed formats.<br>The &quot;only&quot; problem with MPEG are patents - and whether software patents are legal at all is still an open debate.)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Hugh Isaacs II</div>
-<div class='content'>Why not just support the built in encoder on the respective OS.<br>DirectShow on Windows<br>Quicktime on Mac<br>and GStreamer on Linux<br>Wouldn&#39;t that allow you guys to get around having to pay license fees?<br>and thanks to Firefox 3.6 you guys could push this without a large update, plus this would make a nice temporary fix until a more HTML5 worthy codec springs up.<br></div>
+<div class='author'>Ben Bucksch</div>
+<div class='content'>&gt; the whitelist minimized any damage to the Web<br>That&#39;s why I filed bug 541286 ;-).<br>&gt; history shows that at least in some cases it&#39;s been good for the Web.<br>Unquestionably. I agree with the general stance, too.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Stephan Schmidt</div>
-<div class='content'>So, a downloadable codec (in Flash on Youtube) for H.264 is good in Firefox, a codec from disk is bad?<br>Or what do I get wrong?<br></div>
+<div class='author'>Adam</div>
+<div class='content'>I&#39;m glad my Android phone (Moto Droid) can play H.264, but I wish it supported FLAC and OGG.<br>Too bad the W3C pulled back from their Theora recommendations at the pressure of big companies.<br>Why does Google use H.264 (Youtube, Android)? You&#39;d think they&#39;d want to save money, at least...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Teoli: That&#39;s a hard question and I don&#39;t know the answer. It still sounds bad, but less bad.<br></div>
+<div class='author'>Mook</div>
+<div class='content'>I mostly agree, I think, that doing h.264 specifically would be bad from a strategy point of view, and bad for distributors (including Mozilla), among other things.  Besides, my laptop won&#39;t be able to do anything with it anyway - it already struggles with h.264 content in Flash and standalone players, so personally it is irrelevant.<br>What I do not like, and believe to be contrary to Mozilla&#39;s goal of being open and making the Internet a better place, however, is the fact that there&#39;s no way to extend the decoders available.  With image decoding, this is theoretically possible - I had a JavaScript based imgIDecoder a few years back (too slow to be practical, but it was possible), as well as a C++ based one that actually functioned for an obscure image format.  There&#39;s no possibility of that here; nsMediaDecoder is completely internal, and the list of possible decoders is statically coded in nsHTMLMediaElement::CreateDecoder.<br>Extending Mozilla in ways that Mozilla doesn&#39;t have energy for is what makes the platform - both Gecko and Firefox - awesome.  Please make &lt;video&gt; awesome by opening the gates to external, non-libxul, programmers?<br>P.S. Somehow your comment preview manages to clear the text entry box, so once you preview you lose the post!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ken Roberts</div>
+<div class='content'>@Ben:<br>As noted before, h.264 is what youtube was already encoded in before Google bought Youtube. Takes time/money/space to convert, so it&#39;s something that they&#39;ll have to work on over time.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Rob</div>
+<div class='content'>I think comparing ActiveX to video codec&#39;s is a very bad analogy, Ben Bucksch covered the reasons why quite nicely around 8 posts up...<br>&quot;More to the point, I don&#39;t think that the situation between enabling ActiveX and allowing MPEG 2/4 specifically (which I asked for) is anyhow comparable.<br>1) MPEG is an ISO standard, not a vendor API.<br>2) MPEG is not limited to a certain platform nor implementation.<br>3) Enabling MPEG codecs would be selective. It&#39;s not the same as enabling any and all system codecs or system APIs.<br>4) The security risk is opening a file (MPEG) vs. allowing hostile code to call your API (ActiveX).&quot;<br>And the biggest issue right now is that the big content sites (aka youtube) have gone with the &quot;commercial&quot; codec.  And as long as they&#39;re targeting devices that require hardware offload chips to play the content, they&#39;re going to stay with h.264.  No-one is making a Theora decode chip to put in cell phones, netbooks, tablets, set-top streaming media players, etc. and they aren&#39;t putting in enough CPU power to handle HD content either.  The sheer amount of h.264 stuff out there already means you are going to have to co-exist with it (not just YouTube/Vimeo, but most BluRay disks, iTunes video stuff, AVCHD camcorders, ...)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Oboewan</div>
+<div class='content'>My view:<br>I don&#39;t care.<br>Sure, I WANT Web developers to use open standards. However, they don&#39;t.<br>If I see a site that I can&#39;t view in Firefox, I&#39;ll open up Safari or Chrome, not write a 300-page manifesto about Theora.<br>Denying users access to their own codecs is biting off the nose to spite the face.<br>Plus, if you&#39;re really that into not supporting proprietary standards by any means, disable Flash and THEN we&#39;ll talk.<br>Couldn&#39;t you just turn it on, but bury it deep in about:config so only people who really don&#39;t care about Theora turn it on?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tuco</div>
+<div class='content'>I admire your courage.  Thank you for having what it takes.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nil Einne</div>
+<div class='content'>@As noted before, h.264 is what youtube was already encoded in before Google bought Youtube<br>Are you sure about that? AFAIK Youtube content was VP6. They converted to h.264 sometime later either when it was first supported by Flash (perhaps when they started offering higher 480?) or perhaps to offer it to mobile device like the iPhone. It&#39;s possible Youtube always had h.264 in the background but I&#39;m not convinced. I do believe they had to reencode most of their videos when they switched to h.264. (I presume they stored the original videos and used these as sources hence the reason they were able to add higher res to long existing videos, makes the most sense to me.)<br>Incidentally I wasn&#39;t aware until researching stuff for this post but Google now owns On2. If they wanted to, they could contribute whatever patents On2 has to the open source community. Since Theora is based on VP3, even  if On2 granted related patents I wonder if there&#39;s some new stuff from their later developments that may be useful. Of course they could also open source all the other codecs (along with the patents as I already mentioned) and perhapds something there could be a new Xiph codec. I&#39;m personally still unconvinced Theora is ever going to come close to VC-1 let alone h.264 which makes problems for it trying to gain a foothold given the widespread usage of these codecs including with hardware support. If they had something closer, they may fare better. I&#39;ve had some hope for Dirac, but perhaps VP8 would be something to look at too.<br>Of course I&#39;m not convinced Google is actually going to do something like that. And even then, lacking the vast patent portfolio that&#39;s behind h.264 I wonder whether they&#39;ll really get close.<br>P.S. It seems I&#39;m not the only one to have this idea, I came across a FSF campaign.<br></div>
 </div>
 
 </div>

@@ -8,16 +8,16 @@ permalink: "/2010/05/standardizing-xul-flexible-boxes-in-css_11.html"
 <div class="columns"><p>Tab Atkins is working on a new draft spec for XUL-style "flexible boxes" in CSS. One issue that has come up is whether the XUL concept of "preferred widths" is essential or not. It would be really useful if XUL developers could contribute to the <a href="http://lists.w3.org/Archives/Public/www-style/2010May/0150.html">thread in www-style</a> with feedback on that and other issues in related threads.<br/><p>More detail: the children of a <tt>display:-moz-box</tt> element can have both <tt>width</tt> and <tt>-moz-box-flex</tt> CSS properties set on them. The <tt>width</tt> property sets a preferred width for each child. Any leftover space in the container is allocated to the children in proportion to their <tt>-moz-box-flex</tt> values. Likewise, if the preferred widths add up to more than the width of the container, the excess space is trimmed from the children in proportion to their <tt>-moz-box-flex</tt> values.<br/><p>An alternative, simpler model would be to not have preferred widths: just size each child proportionally to its flex value. <tt>min-width</tt> and <tt>max-width</tt> could still be honoured. It's unclear whether this simpler model is <em>too</em> simple.<br/><p>So if you have something to say about how you use flexboxes, now's the time to contribute and ensure your needs are addressed!</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Mook</div>
-<div class='content'>Yeah, setting width=&quot;0&quot; on xul elements is a non-obvious trick needed to beat flexing things into shape in some cases.  I&#39;m assuming you don&#39;t mean that a row with a box with flex and a box without means the box without (regardless of content) will always be invisible, though?  Sometimes the widths of things, especially those involving text, are impossible to know ahead of time.<br>Hopefully standardized flex will deal better with things like negative margins (display: -moz-box pretty much just ignores it).  Songbird 0.6-ish had to do funny margin tricks in the player control area to properly center things.  (That stood out in my memory as something we had to play with to get the flex to work right.)<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Neil Rashbrook</div>
 <div class='content'>One obvious use case in Mozilla XUL comes to mind, and that is splitters; typically you have a flexible box on each side of the splitter, and the splitter sets their preferred widths as it is dragged.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>jmdesp</div>
 <div class='content'>I think the alternative model is the same as what the current model does when display:-moz-box is set to zero.<br>So it would be useful to see what people really using the current model would think about having display:-moz-box always set to zero, and in the xul of thunderbird/firefox how often such a value is used.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mook</div>
+<div class='content'>Yeah, setting width=&quot;0&quot; on xul elements is a non-obvious trick needed to beat flexing things into shape in some cases.  I&#39;m assuming you don&#39;t mean that a row with a box with flex and a box without means the box without (regardless of content) will always be invisible, though?  Sometimes the widths of things, especially those involving text, are impossible to know ahead of time.<br>Hopefully standardized flex will deal better with things like negative margins (display: -moz-box pretty much just ignores it).  Songbird 0.6-ish had to do funny margin tricks in the player control area to properly center things.  (That stood out in my memory as something we had to play with to get the flex to work right.)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>sys</div>

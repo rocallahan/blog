@@ -27,11 +27,39 @@ As far as I know, all of these features except perhaps the very last could be im
 <p>A client like this could make us a lot more efficient in the way we currently work. We'd probably also use Bugzilla differently and more effectively.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>mozjonathan</div>
+<div class='content'>I&#39;ve optimized my bugzilla usage by hacking my addon Thunderbird Conversations: the field that usually serves for the inline reply when viewing a regular conversation turns into a field that allows you to directly comment on the bug, when reading bugmail, directly in Thunderbird.
+
+I don&#39;t have to load the page at all and I can move directly to the next bug. This feature is present in the released version that&#39;s on AMO.
+
+The performance hit would probably be pretty bad for you, since the addon slows down the loading of messages, esp. with big conversations, but it&#39;s worth a try. I believe with minimal hacking one could probably enable other actions to be performed on the bug directly from within Thunderbird.</div>
+</div>
+<div class='comment'>
 <div class='author'>glob</div>
 <div class='content'>&gt; Tracks which bugs have been modified since I last viewed them
 &gt; Preloads the complete data for those bugs 
 
 that works well for one person, but once many people start using it, you&#39;ll be placing significantly more load on bugzilla, resulting in higher load times for everyone.</div>
+<div class='comment'>
+<div class='author'>johnath</div>
+<div class='content'>@glob - depending on how our usage patterns look, that could be the right decision. I can well imagine that, for instance, doing that for the top 1000 bugzilla consumers, at a load time cost for occasional users, would be the right trade, no?</div>
+</div>
+<div class='comment'>
+<div class='author'>glob</div>
+<div class='content'>@johnath fair point :)
+
+the major pain point for improving bugzilla&#39;s responsiveness is there&#39;s practically zero caching of information between requests, so there&#39;d have to be server-side work to deliver improved load times via client-side pre-loading (along with the infrastructure to back it).
+
+i&#39;ve been working on making the architectural changes required to provide better caching mechanisms within bugzilla, and we&#39;re also investigating reverse proxies to deliver cached responses to bzapi calls.
+
+even though i just don&#39;t think roc&#39;s suggestions will improve page load times against the current system, i think they are excellent suggestions from a ux point of view.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>That&#39;s a good point glob.
+
+However, if we introduced a specialized Bugzilla API of the form &quot;list changes and comments since time  for bug N&quot;, then this hypothetical client could do very aggressive local caching and maybe reduce Bugzilla load. I mean, loading the entire contents of a large bug several times (for several changes in a row) can&#39;t be good for the servers.</div>
+</div>
 <div class='comment'>
 <div class='author'>glob</div>
 <div class='content'>@johnath fair point :)
@@ -44,37 +72,24 @@ even though i just don&#39;t think roc&#39;s suggestions will improve page load 
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>That&#39;s a good point glob.
-
-However, if we introduced a specialized Bugzilla API of the form &quot;list changes and comments since time  for bug N&quot;, then this hypothetical client could do very aggressive local caching and maybe reduce Bugzilla load. I mean, loading the entire contents of a large bug several times (for several changes in a row) can&#39;t be good for the servers.</div>
-</div>
-<div class='comment'>
-<div class='author'>johnath</div>
-<div class='content'>@glob - depending on how our usage patterns look, that could be the right decision. I can well imagine that, for instance, doing that for the top 1000 bugzilla consumers, at a load time cost for occasional users, would be the right trade, no?</div>
-</div>
-<div class='comment'>
 <div class='author'>lizzard</div>
 <div class='content'>Neat idea, kind of a Bugzilla Reader app. It does sound like the caching would need to be improved before it would scale at all for more than a few users.  But maybe building a prototype would be interesting.</div>
 </div>
-<div class='comment'>
-<div class='author'>glob</div>
-<div class='content'>@johnath fair point :)
-
-the major pain point for improving bugzilla&#39;s responsiveness is there&#39;s practically zero caching of information between requests, so there&#39;d have to be server-side work to deliver improved load times via client-side pre-loading (along with the infrastructure to back it).
-
-i&#39;ve been working on making the architectural changes required to provide better caching mechanisms within bugzilla, and we&#39;re also investigating reverse proxies to deliver cached responses to bzapi calls.
-
-even though i just don&#39;t think roc&#39;s suggestions will improve page load times against the current system, i think they are excellent suggestions from a ux point of view.</div>
-</div>
 </div>
 <div class='comment'>
-<div class='author'>mozjonathan</div>
-<div class='content'>I&#39;ve optimized my bugzilla usage by hacking my addon Thunderbird Conversations: the field that usually serves for the inline reply when viewing a regular conversation turns into a field that allows you to directly comment on the bug, when reading bugmail, directly in Thunderbird.
+<div class='author'>Evan M</div>
+<div class='content'>I noticed the Rust guys use multiple frontends to the same bug backend.  See &quot;the issue tracker&quot; on this page:
+https://github.com/mozilla/rust/wiki/Note-getting-started-developing-Rust
 
-I don&#39;t have to load the page at all and I can move directly to the next bug. This feature is present in the released version that&#39;s on AMO.
+It helps they&#39;re using a popular shared system, so the frontends can be written by others.  For whatever reason Bugzilla-based projects tend to grow custom tracker features, making it ever more unlikely for them to share those features.  (At least that&#39;s the state of the WebKit tracker.)</div>
+</div>
+<div class='comment'>
+<div class='author'>Till Schneidereit</div>
+<div class='content'>A while ago, I wrote a rough prototype of a Firefox addon that integrates Bugzilla with Gmail: When it detects a conversation thread consisting of bugmail, it switches to a view that&#39;s filled with information retrieved from the Bugzilla API. Information was cached, so that looking at the same bug a second time would be instantatious.
 
-The performance hit would probably be pretty bad for you, since the addon slows down the loading of messages, esp. with big conversations, but it&#39;s worth a try. I believe with minimal hacking one could probably enable other actions to be performed on the bug directly from within Thunderbird.</div>
+I didn&#39;t continue investigating this, but combined with some parsing of the new bugmail, this could potentially display all information about the bug inside Gmail in a fast way and enable replying from the same interface, too.
+
+The prototype is here, if anyone&#39;s interested in working on this: https://github.com/tschneidereit/gBugzilla</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -89,24 +104,9 @@ The performance hit would probably be pretty bad for you, since the addon slows 
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Evan M</div>
-<div class='content'>I noticed the Rust guys use multiple frontends to the same bug backend.  See &quot;the issue tracker&quot; on this page:
-https://github.com/mozilla/rust/wiki/Note-getting-started-developing-Rust
-
-It helps they&#39;re using a popular shared system, so the frontends can be written by others.  For whatever reason Bugzilla-based projects tend to grow custom tracker features, making it ever more unlikely for them to share those features.  (At least that&#39;s the state of the WebKit tracker.)</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>There is a project going on to develop a Bugzilla client like what I have described.
 https://github.com/ebryn/bugzilla-ember</div>
-</div>
-<div class='comment'>
-<div class='author'>Till Schneidereit</div>
-<div class='content'>A while ago, I wrote a rough prototype of a Firefox addon that integrates Bugzilla with Gmail: When it detects a conversation thread consisting of bugmail, it switches to a view that&#39;s filled with information retrieved from the Bugzilla API. Information was cached, so that looking at the same bug a second time would be instantatious.
-
-I didn&#39;t continue investigating this, but combined with some parsing of the new bugmail, this could potentially display all information about the bug inside Gmail in a fast way and enable replying from the same interface, too.
-
-The prototype is here, if anyone&#39;s interested in working on this: https://github.com/tschneidereit/gBugzilla</div>
 </div>
 
 </div>

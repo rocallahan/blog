@@ -15,24 +15,12 @@ permalink: "/2011/11/html-video-drm.html"
 Just saying...</div>
 </div>
 <div class='comment'>
-<div class='author'>Jon</div>
-<div class='content'>How&#39;s it going to work in W8? My guess is that the supported format for DRM-protected content in the W8 browser will be SmoothStreaming (i.e. fMP4) with PlayReady DRM served with a suitable MIME type; the browser can detect from the MIME type that it&#39;s PlayReady/SmoothStreaming content and swings the appropriate decode and adaptive bitrate switching components into action.
-
-That way, all the content providers have to do is take their existing closed-GOP H.264 content, remux it and then apply PlayReady protection to it, which is dirt-cheap computationally (esp. when compared to re-encoding in VP8...). 
-
-Similarly, I expect Google to package the WideVine client in Chrome, so they can say &quot;we don&#39;t believe in patent-encumbered codecs in HTML5&quot; while making it trivial for content providers to target premium content at their browser.
-
-Then again, I could be a mile wide of the mark.</div>
-</div>
-<div class='comment'>
-<div class='author'>Klemen</div>
-<div class='content'>The best solution from the very start would be educating all users why anti-features like DRM are so bad for society. But unfortunately instead of educating people why this is as important as freedom to many times we just ignored all those little annoyances and worked arounf them and all the DRM stuff has now become a mass. And by not working hard to eradicate this mass it is only growing larger and more evil and it is becoming increasingly harder to make it go away.</div>
+<div class='author'>Anonymous</div>
+<div class='content'>This seems a good solution: http://www.webkitchen.be/2011/01/26/stealing-content-was-never-easier-than-with-html5/comment-page-1/#comment-26043</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>DRM is a anti-consumer technology. It keeps purchasers from owning their media. The ability to copy and share is a owners right that shouldn&#39;t be taken away because of a business model.
-
-When I buy something from someone I don&#39;t want it dictated to me how I use it. If it&#39;s mine I&#39;m not accountable to the merchant or it&#39;s creators.</div>
+<div class='content'>Anonymous #2, I think a fairly simple workaround for that would be to right click, go to the &#39;View Page Info&#39; dialogue, and find the video under the &#39;Media&#39; tab.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -43,42 +31,6 @@ When I buy something from someone I don&#39;t want it dictated to me how I use i
 <div class='content'>Netflix is working on creating a streaming video DRM standard: http://techblog.netflix.com/2010/12/html5-and-video-streaming.html
 
 I personally don&#39;t think DRM belongs on any consumer device. I&#39;m waiting until it dies before I buy download movies from places like Amazon, iTunes etc. (Probably when everyone&#39;s on 100Gbps networks).</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Descrambling in JS is possible. I think we&#39;d even have no trouble natively supporting a stream cipher in the browser. The problem is that that isn&#39;t &quot;strong enough&quot; to satisfy some of the big content providers --- they want encryption all the way to the hardware, or at least to some blessed OS kernel.</div>
-</div>
-<div class='comment'>
-<div class='author'>ferongr</div>
-<div class='content'>Unless I&#39;m mistaken the encrypted media proposal is going ahead through the W3C standardization process.
-
-``Fun&quot; times are afoot.</div>
-</div>
-<div class='comment'>
-<div class='author'>Asa Dotzler</div>
-<div class='content'>Robert, if you watch a couple dozen hours of the BUILD videos, you&#39;ll see what their answer is. 
-
-Microsoft&#39;s solution in Windows 8 is that what was previously deployed in browsers using Flash or Silverlight will be deployed to the Metro environment as Metro style apps that live stand-alone, outside of the browser. They get pretty desktop launchers with Live Titles and they get to offer themselves up as handlers for various activities and content types.
-
-And that&#39;s MS&#39;s plan for almost everything that&#39;s on the Web today -- not just plug-in content. In Metro, the browser is secondary and people write &quot;apps&quot; in Silverlight, Air, HTML+JS, C/C++, etc. There will be plenty of DRM solutions there.  The browser is essentially deprecated in Metro. Think of it as Safari on iOS.  It&#39;s there, but it&#39;s not important.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Anonymous #2, I think a fairly simple workaround for that would be to right click, go to the &#39;View Page Info&#39; dialogue, and find the video under the &#39;Media&#39; tab.</div>
-</div>
-<div class='comment'>
-<div class='author'>Asa Dotzler</div>
-<div class='content'>Klemen, DRM is a technology. I don&#39;t believe that a technology, per se, is bad for society.  Technology systems that allow for content owners to ensure that their content is only accessible to those who pay for it is, IMO, not evil or bad or wrong. Rather than railing against it, I think we should be trying to figure out ways to make it better than it is today.</div>
-</div>
-<div class='comment'>
-<div class='author'>Taylor Wray</div>
-<div class='content'>If you named which &quot;big content providers&quot; insisted on onerous DRM requirements, people would be able to focus on them instead of Mozilla.</div>
-</div>
-<div class='comment'>
-<div class='author'>Shmerl</div>
-<div class='content'>@Asa Dotzler: <i>Klemen, DRM is a technology. I don&#39;t believe that a technology, per se, is bad for society.</i>
-
-This is not true. Some technologies are bad for the society, and DRM is just such example. DRM limits users&#39; freedom, and is akin to a draconian state where you are forced to wear ball and chain all the time &quot;just in case you are going to do something illegal&quot;. It&#39;s clearly unethical and not acceptable for the open Web.</div>
 </div>
 <div class='comment'>
 <div class='author'>John London</div>
@@ -92,22 +44,70 @@ http://www.streamingmedia.com/
 http://www.streaminglearningcenter.com/</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Please, continue to support DRM-free video, and prevent the adoption of any &quot;standardized&quot; DRM system.  It won&#39;t take that long for content providers to adapt.  No DRM system will ever prevent people from capturing the content, and it only takes one to share it with everyone.  At some point, the cost of *not* adopting HTML5 video (while all the independent content providers do so) will become higher than the falsely perceived cost of not having DRM.  Meanwhile, we need organizations like Mozilla to remain strong in their principles, and ignore demands to add anti-features.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>This seems a good solution: http://www.webkitchen.be/2011/01/26/stealing-content-was-never-easier-than-with-html5/comment-page-1/#comment-26043</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Disney, Time Warner, all the big companies that produce TV shows and movies.</div>
+<div class='content'>Descrambling in JS is possible. I think we&#39;d even have no trouble natively supporting a stream cipher in the browser. The problem is that that isn&#39;t &quot;strong enough&quot; to satisfy some of the big content providers --- they want encryption all the way to the hardware, or at least to some blessed OS kernel.</div>
+</div>
+<div class='comment'>
+<div class='author'>Asa Dotzler</div>
+<div class='content'>Robert, if you watch a couple dozen hours of the BUILD videos, you&#39;ll see what their answer is. 
+
+Microsoft&#39;s solution in Windows 8 is that what was previously deployed in browsers using Flash or Silverlight will be deployed to the Metro environment as Metro style apps that live stand-alone, outside of the browser. They get pretty desktop launchers with Live Titles and they get to offer themselves up as handlers for various activities and content types.
+
+And that&#39;s MS&#39;s plan for almost everything that&#39;s on the Web today -- not just plug-in content. In Metro, the browser is secondary and people write &quot;apps&quot; in Silverlight, Air, HTML+JS, C/C++, etc. There will be plenty of DRM solutions there.  The browser is essentially deprecated in Metro. Think of it as Safari on iOS.  It&#39;s there, but it&#39;s not important.</div>
 </div>
 <div class='comment'>
 <div class='author'>azakai</div>
 <div class='content'>&gt; If Windows 8 Metro IE10 doesn&#39;t support Flash or Silverlight (as Microsoft says), and they don&#39;t support a strong DRM solution (and I haven&#39;t heard they will, yet),
 
 Isn&#39;t that the answer? If content providers ask for it, Microsoft will add as strong a DRM solution as they require into the Metro API (WinRT). Metro uses HTML+JS, but it isn&#39;t identical to it.</div>
+</div>
+<div class='comment'>
+<div class='author'>Klemen</div>
+<div class='content'>The best solution from the very start would be educating all users why anti-features like DRM are so bad for society. But unfortunately instead of educating people why this is as important as freedom to many times we just ignored all those little annoyances and worked arounf them and all the DRM stuff has now become a mass. And by not working hard to eradicate this mass it is only growing larger and more evil and it is becoming increasingly harder to make it go away.</div>
+</div>
+<div class='comment'>
+<div class='author'>Asa Dotzler</div>
+<div class='content'>Klemen, DRM is a technology. I don&#39;t believe that a technology, per se, is bad for society.  Technology systems that allow for content owners to ensure that their content is only accessible to those who pay for it is, IMO, not evil or bad or wrong. Rather than railing against it, I think we should be trying to figure out ways to make it better than it is today.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>DRM is a anti-consumer technology. It keeps purchasers from owning their media. The ability to copy and share is a owners right that shouldn&#39;t be taken away because of a business model.
+
+When I buy something from someone I don&#39;t want it dictated to me how I use it. If it&#39;s mine I&#39;m not accountable to the merchant or it&#39;s creators.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Please, continue to support DRM-free video, and prevent the adoption of any &quot;standardized&quot; DRM system.  It won&#39;t take that long for content providers to adapt.  No DRM system will ever prevent people from capturing the content, and it only takes one to share it with everyone.  At some point, the cost of *not* adopting HTML5 video (while all the independent content providers do so) will become higher than the falsely perceived cost of not having DRM.  Meanwhile, we need organizations like Mozilla to remain strong in their principles, and ignore demands to add anti-features.</div>
+</div>
+<div class='comment'>
+<div class='author'>Jon</div>
+<div class='content'>How&#39;s it going to work in W8? My guess is that the supported format for DRM-protected content in the W8 browser will be SmoothStreaming (i.e. fMP4) with PlayReady DRM served with a suitable MIME type; the browser can detect from the MIME type that it&#39;s PlayReady/SmoothStreaming content and swings the appropriate decode and adaptive bitrate switching components into action.
+
+That way, all the content providers have to do is take their existing closed-GOP H.264 content, remux it and then apply PlayReady protection to it, which is dirt-cheap computationally (esp. when compared to re-encoding in VP8...). 
+
+Similarly, I expect Google to package the WideVine client in Chrome, so they can say &quot;we don&#39;t believe in patent-encumbered codecs in HTML5&quot; while making it trivial for content providers to target premium content at their browser.
+
+Then again, I could be a mile wide of the mark.</div>
+</div>
+<div class='comment'>
+<div class='author'>Taylor Wray</div>
+<div class='content'>If you named which &quot;big content providers&quot; insisted on onerous DRM requirements, people would be able to focus on them instead of Mozilla.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Disney, Time Warner, all the big companies that produce TV shows and movies.</div>
+</div>
+<div class='comment'>
+<div class='author'>Shmerl</div>
+<div class='content'>@Asa Dotzler: <i>Klemen, DRM is a technology. I don&#39;t believe that a technology, per se, is bad for society.</i>
+
+This is not true. Some technologies are bad for the society, and DRM is just such example. DRM limits users&#39; freedom, and is akin to a draconian state where you are forced to wear ball and chain all the time &quot;just in case you are going to do something illegal&quot;. It&#39;s clearly unethical and not acceptable for the open Web.</div>
+</div>
+<div class='comment'>
+<div class='author'>ferongr</div>
+<div class='content'>Unless I&#39;m mistaken the encrypted media proposal is going ahead through the W3C standardization process.
+
+``Fun&quot; times are afoot.</div>
 </div>
 
 </div>

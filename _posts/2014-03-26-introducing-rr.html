@@ -47,12 +47,6 @@ These represent the ratio of wall-clock run-time of rr recording and replay over
 <div class='author'>busterb</div>
 <div class='content'>This sounds amazing. Since it supports virtualizing many different architectures, was implementing this as a Valgrind tool ever considered?</div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>What Chris said.
-
-Given our design parameters, we always believed no approach based on code translation or even lightweight emulation would be able to reach the performance targets we were hoping to reach --- and have reached!</div>
-</div>
-<div class='comment'>
 <div class='author'>njn</div>
 <div class='content'>roc will be able to say more, but AIUI his previous implementation (Chronomancer) *was* a Valgrind tool. And it was much too slow.</div>
 </div>
@@ -61,6 +55,12 @@ Given our design parameters, we always believed no approach based on code transl
 <div class='content'>There are two parts to this answer.  The first part is, yes as njn says valgrind instrumentation is too heavyweight for rr&#39;s <em>recording</em> phase.  Recording with valgrind would probably incur 5x-10x overhead.  rr&#39;s approach has lower overhead, usually below 1.5x.  This is important because 5x lower overhead means developers have 5x more chances to reproduce and record their intermittent bug.  (And for reproducible bugs, they can get started debugging 5x more quickly.)
 
 But the second part of the answer is, rr will eventually add valgrind-style instrumentation for <em>replay</em>.  (And in fact, we plan on porting roc&#39;s old chronicle tool to use that replay instrumentation.)  We can get away with high overhead in replay because the developer has already recorded their failure.  Developers can simply decide whether it&#39;s worth their time to run a high-overhead tool like chronicle to get richer debugging data, or just immediately start debugging their failure &quot;bare bones&quot; in gdb.  Or they can do both at the same time and see which approach &quot;wins&quot; :).</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>What Chris said.
+
+Given our design parameters, we always believed no approach based on code translation or even lightweight emulation would be able to reach the performance targets we were hoping to reach --- and have reached!</div>
 </div>
 </div>
 <div class='comment'>

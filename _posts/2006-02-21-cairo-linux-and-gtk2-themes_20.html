@@ -8,92 +8,80 @@ permalink: "/2006/02/cairo-linux-and-gtk2-themes_20.html"
 <div class="columns">In the last week or two I've been spending most of my time working on cairo-gtk2 trunk builds, trying to get them back into shape. Vlad did some wonderful, long-needed work to move all double-buffering and window translucency management out of the view manager into into platform-specific windowing code, in a very elegant way, but he only updated Windows, so GTK2 needed to catch up there. When I fixed that, I encountered a serious cairo issue --- it was creating 24-bit temporary pixmaps for the offscreen buffer, which was killing performance on my 16-bit display setup --- and it took a while to diagnose and fix (in cairo).<br/><br/>But the biggest chunk of work has been reenabling GTK2 native themes in cairo builds, without which Firefox looks completely naff. This isn't easy since we want to be able to render GTK2 themes to any cairo context (e.g., a PDF context, or a screen context with some rotation applied) but GTK2 themes expect to be rendering to an X pixmap or window. We can hack around this by having the theme render to an offscreen pixmap and then extracting the data, but that's painful and slow especially when the theme paints with transparency or translucency. It's important that the common case of painting the theme to an X window with no scaling or rotation remain as efficient as it is today. Well, it's done :-).<br/><br/>One bonus of this work is that we can finally enable GTK2 themes for HTML content. We never did so before because we never wrote the code to handle rendering to a non-X printing context (i.e. render to temporary pixmaps and send them as images to the printer). Now that we've solved this problem in a general way, we will (when my patches land) turn on GTK2 themes for HTML. The screenshot below is using the "Industrial" theme. The Cancel button is being hovered.</div><br/><div class="image"><img alt="GTK2-themed GMail preferences" src="/assets/images/images/gmail-gtk2-theme-screenshot.png" width="894" height="816" /></div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>mpt</div>
-<div class='content'>Camino seems to have solved that problem, so perhaps looking at its code would be useful.<br>[BTW, the comment preview on your Weblog is broken.]<br></div>
+<div class='author'>Rishi</div>
+<div class='content'>Great work! I&#39;m looking forward to seeing this in cairo builds and on the trunk in the near future.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Andr�s: sounds like you&#39;re using a build before my stuff landed. You need a nightly build produced in the last few days.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>link to a build please? im interested in seeing how this gtk html themes works with various themes.<br>i tried latest trunk from ftp://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/experimental/cairo/<br>but i still get the old style html buttons etc<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Eike Hein</div>
-<div class='content'>Actually, I think using native widgets in the viewport is a pretty bad idea -- better stick to a set of design-neutral, highly themable widgets as people (and authors) expect.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Flavio</div>
-<div class='content'>Nice looking forms, finally! Will this be included in Firefox 2.0?<br></div>
+<div class='author'>Foxfan@</div>
+<div class='content'>It is cool.<br>But how about to enable current Firefox skins for HTML content (buttons, etc.)?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Joseph</div>
 <div class='content'>Awesome work!  I&#39;ve been wanting gtk2 goodness in firefox for a long time.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I wonder if this will ever be re-enabled.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Philip Withnall</div>
 <div class='content'>Been waiting for this for a long time. Thanks, Roc! :-D<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Eike Hein</div>
-<div class='content'>Robert: I do get that, however the problem remains that many GTK2 themes are quite a bit more involved design-wise than the Windows widgets or the current Firefox form widgets, and can look out of place in websites not designed to accomodate them. I&#39;m of the opinion that browsers should use a neutral, non-native appearance for form widgets. Trying to go native is more trouble than it&#39;s worth.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Smokey Ardisson</div>
-<div class='content'>Camino&#39;s &lt;select&gt;/popup implementation is &quot;a big hack&quot; (with lots of bugs because of it) and changes really need to be made in layout in order to get things right ;)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Rishi</div>
-<div class='content'>Great work! I&#39;m looking forward to seeing this in cairo builds and on the trunk in the near future.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Foxfan: I think you can just set rules to style HTML form elements the way forms.css does, but I&#39;m not sure where you&#39;d put those rules; I know little about Firefox theme packaging.<br>RichB: No, I didn&#39;t know that. Interesting...<br>Eike: These widgets are still stylable by Web authors. We disable GTK2 themes on styled widgets in exactly the same way Firefox does on Windows --- which is pretty close to what IE does --- so I think that&#39;s what people and authors will expect...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Trevi�o</div>
-<div class='content'>No news about this?<br>I mean, new trunk builds have the cairo enabled, but I can&#39;t get gtk forms in my PC... Is there something that should be enabled?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>We&#39;ve actually turned off the HTML theming for now because of bugs with some themes. I need to fix those bugs before we turn it back on.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Laurens Holst</div>
-<div class='content'>I like reading about the Cairo work :), keep it up!<br>~Grauw<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Ernst</div>
 <div class='content'>Wow, you&#39;re the man Robert!<br></div>
 </div>
 <div class='comment'>
+<div class='author'>RichB</div>
+<div class='content'>You realize you get more GMail features if you set your language to English (US) rather than UK ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eike Hein</div>
+<div class='content'>Actually, I think using native widgets in the viewport is a pretty bad idea -- better stick to a set of design-neutral, highly themable widgets as people (and authors) expect.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Foxfan: I think you can just set rules to style HTML form elements the way forms.css does, but I&#39;m not sure where you&#39;d put those rules; I know little about Firefox theme packaging.<br>RichB: No, I didn&#39;t know that. Interesting...<br>Eike: These widgets are still stylable by Web authors. We disable GTK2 themes on styled widgets in exactly the same way Firefox does on Windows --- which is pretty close to what IE does --- so I think that&#39;s what people and authors will expect...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Flavio</div>
+<div class='content'>Nice looking forms, finally! Will this be included in Firefox 2.0?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Eike Hein</div>
+<div class='content'>Robert: I do get that, however the problem remains that many GTK2 themes are quite a bit more involved design-wise than the Windows widgets or the current Firefox form widgets, and can look out of place in websites not designed to accomodate them. I&#39;m of the opinion that browsers should use a neutral, non-native appearance for form widgets. Trying to go native is more trouble than it&#39;s worth.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Nico</div>
+<div class='content'>Is it possible to export this page to pdf?<br></div>
+</div>
+<div class='comment'>
 <div class='author'>_FrnchFrgg_</div>
 <div class='content'>Is it normal that for some time both my cairo-gtk2 build and the cairo experimental builds from the mozilla ftp are completely unusable because only the last two hovered widgets are visible ?<br>I sometimes see other widgets painting, but almost instantaneously they are overdrawn by the background color.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurens Holst</div>
+<div class='content'>I like reading about the Cairo work :), keep it up!<br>~Grauw<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Flavio: no<br>Eike: how do you know GTK2 themes look out of place on some Websites? I&#39;m not aware of any other implementation of GTK2 themes for HTML.<br>&quot;Going native&quot; has significant potential benefits for UI consistency and aesthetic appeal. In any case I&#39;m afraid that your opinion has not won the day,  almost all users use a browser that supports native themes, and if you don&#39;t like it, you still have the option of changing your GTK2 theme to somethine more &quot;neutral&quot;.<br>Nico: I&#39;m not 100% sure what you mean, but &quot;print to PDF&quot; is definitely a feature we&#39;re planning to have for 1.9. How well it works will depend more on cairo than on our code.<br>_FrenchFrgg_: Yes. My changes fix these issues.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Eike Heins</div>
 <div class='content'>Robert: KDEs Konqueror uses native widgets in its viewport. The default KDE theme, Plastik, is similar to Industrial and Clearlooks; there&#39;s a Clearlooks port called Klearlook; there&#39;s a Bluecurve port called QtCurve. And of course, there are loads of other KDE themes. I draw my experience from that, and from Safari on OS X.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>RichB</div>
-<div class='content'>You realize you get more GMail features if you set your language to English (US) rather than UK ?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>That&#39;s debug spew that I forgot to turn off. Ignore it.<br></div>
+<div class='author'>mpt</div>
+<div class='content'>Brilliant!<br>I see one small bug: in that screenshot &lt;select&gt;s look like combo boxes, when they should look like option menus (what the HIG calls &quot;drop-down lists&quot;). These two controls have identical appearance on Windows for some bizarre reason, but on other platforms, including GTK, they look different.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>That&#39;s actually a pretty big bug. The &lt;select&gt; feel is hardcoded in layout to work like a Windows combobox; it needs to be reimplemented to work like a GTK2-style drop-down list.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Foxfan@</div>
-<div class='content'>It is cool.<br>But how about to enable current Firefox skins for HTML content (buttons, etc.)?<br></div>
+<div class='author'>mpt</div>
+<div class='content'>Camino seems to have solved that problem, so perhaps looking at its code would be useful.<br>[BTW, the comment preview on your Weblog is broken.]<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Smokey Ardisson</div>
+<div class='content'>Camino&#39;s &lt;select&gt;/popup implementation is &quot;a big hack&quot; (with lots of bugs because of it) and changes really need to be made in layout in order to get things right ;)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>thp</div>
@@ -104,20 +92,32 @@ permalink: "/2006/02/cairo-linux-and-gtk2-themes_20.html"
 <div class='content'>I&#39;m having a hard time trying to get all this to work on linux. Is there anything special I need in order to make it work? I tried the latest cairo nightlies, but images with alpha look black (the alpha bits), and the gtk html doesn&#39;t work. I tried using the latest cairo source (downloaded from git), but it&#39;s still the same. Is there anything special anyone should do in order to get this to work?<br>Thanks<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Nico</div>
-<div class='content'>Is it possible to export this page to pdf?<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Flavio: no<br>Eike: how do you know GTK2 themes look out of place on some Websites? I&#39;m not aware of any other implementation of GTK2 themes for HTML.<br>&quot;Going native&quot; has significant potential benefits for UI consistency and aesthetic appeal. In any case I&#39;m afraid that your opinion has not won the day,  almost all users use a browser that supports native themes, and if you don&#39;t like it, you still have the option of changing your GTK2 theme to somethine more &quot;neutral&quot;.<br>Nico: I&#39;m not 100% sure what you mean, but &quot;print to PDF&quot; is definitely a feature we&#39;re planning to have for 1.9. How well it works will depend more on cairo than on our code.<br>_FrenchFrgg_: Yes. My changes fix these issues.<br></div>
+<div class='content'>Andr�s: sounds like you&#39;re using a build before my stuff landed. You need a nightly build produced in the last few days.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Andr�s</div>
 <div class='content'>Damn! I&#39;ve been downloading nightlies since you posted this, but i quit doing that 2 or 3 days ago. Apparently it&#39;s ok now! looks really cool, great job. I hated the way controls looked in linux compared to windows. Native rendering IS the way to go! Keep it up roc!! Looking good!<br>What&#39;s with the:<br>TAKING FAST PATH<br>TAKING SLOW PATH: unsupported clip<br>??<br></div>
 </div>
 <div class='comment'>
-<div class='author'>mpt</div>
-<div class='content'>Brilliant!<br>I see one small bug: in that screenshot &lt;select&gt;s look like combo boxes, when they should look like option menus (what the HIG calls &quot;drop-down lists&quot;). These two controls have identical appearance on Windows for some bizarre reason, but on other platforms, including GTK, they look different.<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That&#39;s debug spew that I forgot to turn off. Ignore it.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>link to a build please? im interested in seeing how this gtk html themes works with various themes.<br>i tried latest trunk from ftp://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/experimental/cairo/<br>but i still get the old style html buttons etc<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We&#39;ve actually turned off the HTML theming for now because of bugs with some themes. I need to fix those bugs before we turn it back on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I wonder if this will ever be re-enabled.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Trevi�o</div>
+<div class='content'>No news about this?<br>I mean, new trunk builds have the cairo enabled, but I can&#39;t get gtk forms in my PC... Is there something that should be enabled?<br></div>
 </div>
 
 </div>

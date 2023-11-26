@@ -8,16 +8,12 @@ permalink: "/2007/06/this-week-madness_11.html"
 <div class="columns"><p>I'm working flat out to get new-textframe ready for turning on by Tuesday (PDT, which means really Wednesday here). The main issues left are performance and word selection/caret movement. The former is more difficult and interesting than the latter. I've identified and addressed a few issues:<br/><ul><br/><li>On very large blocks, we could burn a lot of time scanning from the start of the block to find a place to start (re)building textruns for text that has changed. I changed this to scan backwards from the changed text, which is more complex but more efficient.<br/><li>On Mac we were hurting badly in some situations where new-textframe was computing slightly larger font heights than other parts of the code; we'd end up adding overflow rects everywhere which turned out to be quite expensive. I fixed that by making font height float-to-int conversion consistently more conservative.<br/><li>We were spending a lot more time in the platform text engine (e.g. ATSUI) with new textframe in some cases, for two reasons. We were failing to cache textruns when the textrun was relying on the DOM text node for text storage to save memory. This was easily fixed by disabling that "optimization". Also, the old textframe effectively caches textruns for individual words, which can save a lot of time in text that uses the same words repeatedly. I replicated this optimization for the new textframe. In fact the new textframe is even smarter; given a new string to build a textrun for, it looks up each word in the cache and makes a new string containing all the words that were not found in the cache, passing that to the platform text engine. This gives us the best of both worlds: avoids measuring any word more than once, but still passes reasonably long strings to the platform text engine (the engines have considerable overhead and passing words down one at a time is not recommended!).<br/></ul><br/>I need to reprofile, especially on Windows, to see how we're doing now.<br/><p>All this activity is why I've been a little slow on reviews lately. Things should lighten up by the end of this week...<br/><p>... Except that I also have to prepare for a talk I'm giving at the Auckland Web "Meet-Up" this Thursday night. It sounds like there'll be over 100 people there and it should be a lot of fun. This will probably be the first ever public demo of Chris' &lt;video&gt; tag support, which is starting to look (and sound) really good! The office grooves to the sweet sound of ukuleles...<br/><p>Also next week on Tuesday I'm going to be in Wellington giving a similar talk to the mini-Webstock that evening. And I'm taking the chance to visit Victoria University, give a talk there, meet some of the staff and students in the CS department, and hopefully do a little recruiting. Phew!<br/><p>Still working on a good name for the Chronicle debugger. Current candidate: <em>Chronologer</em>.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>BigBadaboom</div>
-<div class='content'>How about &#39;Chronocle&#39;?<br>Incorporating reference to a monocle, giving the sense of a lens examining something.  A monocle is also an anachronism which ties into other suggestions, and to some sense of embracing the past...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Edouard</div>
-<div class='content'>Mmm, Chronologer. Nice.<br>Reminds me of the SquareSoft &quot;Chrono Cross&quot; and &quot;Chrono Trigger&quot; RPGs, which are both retro and cool (heh, but retro *is* cool). And about time travel as well. So you&#39;re in good company there.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Porges</div>
 <div class='content'>Victoria, but any chance that you�re visiting Massey�s Wellington campus? The most recent thing we�ve had is some nice people from Sun Microsystems...<br>Webstock�s a bit steep for students like me :)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>looneylabslover</div>
+<div class='content'>Oooh, what about Chrononaut? &#39;Cause the debugger travels through time... so you can change/fix things... and it will appeal to intelligent cockroaches from a postapocalyptic future.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
@@ -28,8 +24,12 @@ permalink: "/2007/06/this-week-madness_11.html"
 <div class='content'>Chrogger/Chrugger?<br>or how about CBug, as is &#39;see-bug&#39;, one before Dbug &#39;debug&#39;. And you could make it a recursive acronym<br>CBug - CBug brings users glory<br>Something like that but not quite so lame...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>looneylabslover</div>
-<div class='content'>Oooh, what about Chrononaut? &#39;Cause the debugger travels through time... so you can change/fix things... and it will appeal to intelligent cockroaches from a postapocalyptic future.<br></div>
+<div class='author'>Edouard</div>
+<div class='content'>Mmm, Chronologer. Nice.<br>Reminds me of the SquareSoft &quot;Chrono Cross&quot; and &quot;Chrono Trigger&quot; RPGs, which are both retro and cool (heh, but retro *is* cool). And about time travel as well. So you&#39;re in good company there.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>BigBadaboom</div>
+<div class='content'>How about &#39;Chronocle&#39;?<br>Incorporating reference to a monocle, giving the sense of a lens examining something.  A monocle is also an anachronism which ties into other suggestions, and to some sense of embracing the past...<br></div>
 </div>
 
 </div>

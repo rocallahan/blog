@@ -8,8 +8,48 @@ permalink: "/2005/03/visual-regression-tests_04.html"
 Over the last couple of weeks I've been working on automated visual regression testing for Gecko. The idea is to run Gecko through a battery of HTML test files and render each one to an image file. We can then compare the images produced by different Gecko versions; if a new version has different rendering then we've probably either fixed a bug or introduced a new bug (or both!). When layout engineers develop patches, we can see which testcases get changed and hopefully catch any unexpected regressions before checkin. (It's amazing we haven't had this years ago; we've survived until now because we have lots of great volunteers who download nightly builds, test them, and report bugs.)<br/><br/>We already have regression tests based on analyzing the frame tree geometry computed by the layout engine. Visual regression tests have some advantages over comparing those coordinates:<br/><ul><br/><li>Visual tests eliminate false positives, because changes in the frame tree that don't affect rendering will not be detected.<br/><li>Visual tests eliminate false negatives, because they detect changes in rendering caused by z-ordering, image decoding, graphics layer changes, clipping, and so on, not just layout.<br/><li>Visual test results are easier to understand because we can show visually the difference between two runs. Anyone with HTML+CSS knowledge can run visual tests and analyze the output.<br/><li>These visual regression tests can run using an optimized build, but our frame tree tests require a debug build, so the visual tests will run 2-3 times faster. Also you'll be able to use standard Mozilla nightly builds to get a baseline, if you want to.<br/></ul><br/><br/>I initially tried to do this using Xvfb to create a virtual screen and taking screenshots of it (both using ImageMagick 'import' and reading the Xvfb virtual screen directly through its exported framebuffer). I had horrible problems with synchronization, trying to ensure that the Xvfb server had actually rendered all the commands Gecko sent to it before I took the screenshots, and eventually gave up on that approach late last week.<br/><br/>Instead I just added a real offscreen rendering API to the view manager and added code to nsDocumentViewer to call it when the environment variable MOZ_FORCE_PAINT_AFTER_ONLOAD is set. With this patch, if you set MOZ_FORCE_PAINT_AFTER_ONLOAD=/tmp/foo, then every time we load a document Gecko spits out a message "GECKO: PAINT FORCED AFTER ONLOAD [url] [file] ([status])", where [url] is the loaded URL, [file] is of the form /tmp/foo-NNN which names a file in PPM format, and [status] is OK if we wrote a file or otherwise some barely-descriptive error token. This code should be useful for various hacks, and hopefully we'll be able to make the view manager API visible to Javascript authors for use in the browser UI and extensions.<br/><br/>That solved a lot of problems but I had another set of problems to grapple with this week: nondeterminism. Basically the regression test approach depends on the fact that every time Gecko renders a page in a window of fixed width and height, we get exactly the same image, down to the details of each pixel. But with trunk code we don't and I just spent a few days figuring out exactly why. It boils down to the following issues:<br/><ul><br/><li>Animated images :-). These have to be turned off in the profile, using <pre>user_pref("image.animation.mode", "none");</pre><br/><li>I use Gtk2+Xft builds, and the Freetype2 autohinter seems nondeterministic; it sometimes produces different glyphs for the same character in the same font. Turning off autohinting and antialiasing via ~/.fonts.conf seems to fix the problem.<br/><li>A bug in painting table collapsing-borders where the BCData::mCornerBevel bit is uninitialized, making Gecko occasionally think that a border should be bevelled when it shouldn't and throwing the painting out of alignment. (I also found that border-collapse painting can vary depending on the damage rect involved, but that's not affecting me right now.)<br/><li>A bug in nsImageGTK::UpdateCachedImage where it copies image pixels into the image pixmap using gdk_draw_rgb_image_dithalign and specifies a "dither alignment" of rect->x, rect->y. It turns out that GTK already adds alignment to rect->x, rect->y so that we end up with the coordinates double-counted and incorrect alignment. This means when an image gets filled in in one shot we get one dithering, but when the image is filled in in multiple passes (e.g. data loads slowly from the network), the later sections get dithered slightly differently to the one-shot case. So on <24-bit displays, you get slight variations in colouration in some rendered images (not visible to the naked eye), but only when the network is slow.<br/><li>Freetype2 has a bug where if you ask it to resize a 13x13 face to a 12.5x12.5 face, it decides that they're close enough already and does nothing, even though creating faces from scratch for 13x13 and 12.5x12.5 would give you slightly different font metrics. Because Xft caches faces internally, this means when you're working with fractional font sizes Xft will sometimes give you varying font metrics depending on whether it's reusing a face in the cache (and hitting the Freetype2 bug when it tries to resize the face) or creating one from scratch. This in turn occasionally causes line heights, and sometimes the intrinsic width of text inputs which is computed from font maxAdvance, to be off by one pixel.<br/></ul><br/><br/>Dealing with nondeterministic program behaviour is always troublesome and tracking these down was really hellish. I had to instrument the code involved with logging functions, run my 1300 test cases multiple times until I saw two runs with different behaviours, compare the logs to narrow down the cause of the variation, and repeat until I had located the problem. And 1300 testcases with a lot of logging enabled is very unwieldy to analyze.<br/><br/>Anyway after fixing all these issues I now have 100% reproducible rendering for the 1300 testcases in the Mozilla tree. Next week I'll try the 2500 testcases in various online test suites. Hopefully they won't uncover any new issues. Then I'll get this work submitted in Bugzilla and get back to fixing bugs with the help of my shiny new regression test engine.<br/><br/>Currently my script takes about 130 seconds to run 1300 testcases on my 3GHz Xeon dedicated test machine. I have included support for distributing tests across multiple processors and I'm looking forward to seeing how many tests per second I get on my big machine.<br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>Ernst Persson</div>
+<div class='content'>How did you fix that last bug, the Freetype2 issue?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RichCorb</div>
+<div class='content'>Could you have something automatially compare 2 images? If they differ raise a red light and inform a developer/whoever (if they are identical then either show green light or there is no need for system to contact anyone). I just think that if possible it is best to reduce the amount of human time used.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Christian</div>
+<div class='content'>Impressive work! Are these tests intended to be run on the tinderboxen?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Ernst: a small patch to Freetype2.<br>RichCorb: yeah, the comparison is automated. I&#39;ll probably blog more about how the regression tests work.<br>Christian: something like that<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Emil Hesslow</div>
 <div class='content'>Will this code make it possible to make an extension that let the user take a screenshot of a page (the complete page and not just the bit that fits to the screen)?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Emil: yes, once we&#39;ve done some work to expose the API to script.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Accettura</div>
+<div class='content'>Robert:  we should talk at some point.  Would be cool if wec ould some way leverage this with the new reporter tool.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jafe</div>
+<div class='content'>Robert, this is very cool stuff. I&#39;m amazed the whole test suite can be run in only 2 minutes!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Hugh</div>
+<div class='content'>Cool! When can I expect to see this feature with Firefox?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ludovic</div>
+<div class='content'>How do you deal with platform specific issues (ie a bug only triggered on say Mac os X) ?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Robert: sure, catch me on IRC #developers<br>Jafe: I just added a bunch of tests from online test suites. We&#39;re up to 3840 tests which run in 7 minutes 40 seconds.<br>Hugh: I&#39;ve already checked in most of the Mozilla changes. Trunk builds of Firefox should support the MOZ_FORCE_PAINT_AFTER_ONLOAD environment variable to dump page images. Supporting it with JS API requires  some discussion of what exactly that API should be.<br>Ludovic: It&#39;s a good point that this only catches regressions on Linux. Someone could run this tool on OSX (once I&#39;ve checked in all the support scripts), but OSX might have its own issues with nondeterministic rendering, and someone would have to track them down.<br>I&#39;ve actually found some new nondeterministic rendering issues that only show up in a few testcases belonging to Hixie. I&#39;ll try to track those down.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Jeff Walden</div>
@@ -17,47 +57,7 @@ Over the last couple of weeks I've been working on automated visual regression t
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Emil: yes, once we&#39;ve done some work to expose the API to script.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ernst Persson</div>
-<div class='content'>How did you fix that last bug, the Freetype2 issue?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Robert: sure, catch me on IRC #developers<br>Jafe: I just added a bunch of tests from online test suites. We&#39;re up to 3840 tests which run in 7 minutes 40 seconds.<br>Hugh: I&#39;ve already checked in most of the Mozilla changes. Trunk builds of Firefox should support the MOZ_FORCE_PAINT_AFTER_ONLOAD environment variable to dump page images. Supporting it with JS API requires  some discussion of what exactly that API should be.<br>Ludovic: It&#39;s a good point that this only catches regressions on Linux. Someone could run this tool on OSX (once I&#39;ve checked in all the support scripts), but OSX might have its own issues with nondeterministic rendering, and someone would have to track them down.<br>I&#39;ve actually found some new nondeterministic rendering issues that only show up in a few testcases belonging to Hixie. I&#39;ll try to track those down.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert Accettura</div>
-<div class='content'>Robert:  we should talk at some point.  Would be cool if wec ould some way leverage this with the new reporter tool.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>RichCorb</div>
-<div class='content'>Could you have something automatially compare 2 images? If they differ raise a red light and inform a developer/whoever (if they are identical then either show green light or there is no need for system to contact anyone). I just think that if possible it is best to reduce the amount of human time used.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Ernst: a small patch to Freetype2.<br>RichCorb: yeah, the comparison is automated. I&#39;ll probably blog more about how the regression tests work.<br>Christian: something like that<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jafe</div>
-<div class='content'>Robert, this is very cool stuff. I&#39;m amazed the whole test suite can be run in only 2 minutes!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
 <div class='content'>I&#39;m running through them already. What I currently do is treat the current rendering as a baseline, apply a patch, rerun the tests, and see what changed.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Hugh</div>
-<div class='content'>Cool! When can I expect to see this feature with Firefox?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Christian</div>
-<div class='content'>Impressive work! Are these tests intended to be run on the tinderboxen?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ludovic</div>
-<div class='content'>How do you deal with platform specific issues (ie a bug only triggered on say Mac os X) ?<br></div>
 </div>
 
 </div>

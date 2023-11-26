@@ -20,6 +20,14 @@ In each of these instructions the primary input operand can be a memory load ope
 <p>Anyway it's working well now and Pernosco is able to process AMD submissions using these instructions, so go ahead and <a href="https://pernos.co/account">send us</a> your recordings to debug! (The logic also handles emulating Intel semantics if you happen to be running <a href="https://github.com/Pernosco/on-prem">Pernosco on-prem</a> on Zen hardware.) Tracing replay divergence back to RSQRTSS (through many long def-use chains) was extremely painful so I wrote a fairly good automated test suite for this work; I want to never again have to debug divergence caused by this.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>Lars Hansen</div>
+<div class='content'>It could appear (https://github.com/WebAssembly/design/issues/1401#issuecomment-796346096) that the reciprocal instructions may have different lookup tables on different families of Intel chips, too.  I&#39;m having a hard time finding anything definitive on this, but it has come up as a fingerprinting concern in the context of webassembly.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>OK. We haven&#39;t seen any similar issues migrating rr traces across Intel processor families. Maybe that&#39;s just luck, maybe not.</div>
+</div>
+</div>
+<div class='comment'>
 <div class='author'>Bruce Hoult</div>
 <div class='content'>In RISC-V land we have provided the exact lookup table to be used in the specification, so there should not be any divergence.
 
@@ -32,14 +40,6 @@ https://github.com/riscv/riscv-v-spec/blob/master/vfrec7.adoc
 <div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>Good!</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Lars Hansen</div>
-<div class='content'>It could appear (https://github.com/WebAssembly/design/issues/1401#issuecomment-796346096) that the reciprocal instructions may have different lookup tables on different families of Intel chips, too.  I&#39;m having a hard time finding anything definitive on this, but it has come up as a fingerprinting concern in the context of webassembly.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>OK. We haven&#39;t seen any similar issues migrating rr traces across Intel processor families. Maybe that&#39;s just luck, maybe not.</div>
 </div>
 </div>
 

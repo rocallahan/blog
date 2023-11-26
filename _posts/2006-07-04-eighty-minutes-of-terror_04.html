@@ -7,36 +7,36 @@ permalink: "/2006/07/eighty-minutes-of-terror_04.html"
 <div class="columns">Yesterday I was the featured speaker at the monthly meeting of the Auckland Linux Users Group. I gave a demo of some new features in <a href="http://www.computerworld.com/softwaretopics/os/linux/story/0,10801,109359,00.html">SLED 10</a> and Firefox, and talked about Linux and Firefox development. It went well. However, it came very very close to being a complete disaster.<br/><br/>I was working on textframes most of the day. At 5:45pm I got to a good stopping point and turned my attention to preparing for the talk at 7:30pm. (AKLUG meets in our office these days.) I figured that nearly two hours would be enough time to get my laptop set up with our projector, and decide what to show and say, with a dry run.<br/><br/>After futzing around with the projector for a few minutes I decided I should reboot my laptop with the VGA cable plugged in, which sometimes seems to be necessary to get it recognized. Then my troubles really began, because some time ago I had applied software updates --- including a new kernel --- and I hadn't rebooted since. (Part of my problems may have come from the fact that I had a mishmash of packages from various beta versions and updates, not a single clean install.) Linux started up OK but Xgl (a major part of what I wanted to demo, of course) wasn't running, because the installed ATI kernel module didn't match the kernel anymore. So I started fooling around trying to get a new ATI driver installed by various means. During this phase I managed to erase the installed ATI X driver so that I couldn't start any X server at all! At one stage I tried to use yast2 to set things up via Novell's driver update Web site, but for that you have to register on the site, and since Firefox couldn't run it popped me into <a href="http://w3m.sourceforge.net/">w3m</a>, a text-mode browser. By this time I was more than a little panicky and I just couldn't get w3m to work.<br/><br/>By 7:20pm people had started arriving, I still had no graphics at all and running screaming into the night was starting to look like my best option. It was painfully clear that it would not reflect well on Novell if I stood up and said "thanks for taking the time to show up, but I COULDN'T GET OUR ENTERPRISE-READY PRODUCT TO WORK. Goodbye!" Yet I had lost hope; getting things working in the last five minutes after you've been working on it for over an hour just doesn't happen in real life. I also knew that even if I could get it working, I had no chance to prepare a talk or figure out what I was going to demo. My prayer was "Lord, help me to get this working, and I'll handle, um no, YOU'll have to handle the talk as well!"<br/><br/>I was more distraught than I have been in years. In some high-pressure situations, like childbirth, you're in the hands of professionals who you simply have to assume will do the best possible job. In other situations, like a car crash, it may not be your fault, or by the time you apprehend the gravity of the situation, there's nothing you can do. Facing the slow approach of a disaster of your own making, which you may or may not be able to mitigate, is an experience I wish to avoid.<br/><br/>Well ... by the grace of God, Hollywood endings do happen. I realized I could speed things up a lot by logging into my laptop from my desktop and running X applications that way. I found instructions for downloading the ATI installer and building a driver package that would work on SLED10, and they worked. I installed the driver, ran SAX, and everything came up correctly, Xgl, compiz and all. Wow. Of course I still had to give the talk and demo absolutely cold --- including demoing features that I hadn't actually ever used before --- but the off-the-cuff presentation seemed to work well. I even tried to explain the basic architecture of Xgl+compiz in a non-technical way --- which I realized immediately was very risky without having worked out my metaphors in advance --- and I think I did a decent job. Phoah!<br/><br/>I felt decidedly odd for the rest of the evening, a cocktail of delayed panic, relief, and enthusiasm. I felt jumpy. I didn't really settle down until I got home and poured out the story to my wife.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>crf</div>
-<div class='content'>ha. Good story.<br>You are right on asking if it went decently. When you&#39;re pumped up on adrenaline, you can&#39;t always be a good judge of your own performance.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Colin Coghill</div>
 <div class='content'>As someone in the audience, I thought it was a good presentation. There was no sign of near disaster :)<br>SLED looks like a nice product - I&#39;ve seen most of the bits in other places (I&#39;m a bleeding edge junkie) but in SLED they look well integrated and consistent.<br>The future of Firefox looks good too, I wish I had enough brain time to get more involved with that kind of thing.<br>- Colin<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Laurent</div>
-<div class='content'>... and as I always tell people who take my trainings, &quot;Do at least one test run as if it was the real thing, before standing in front of your audience.&quot;<br>Heh, I&#39;ve had close calls like this also, but nothing nearly as scary as what you went through. I believe this is the type of situation that make people &quot;fear public speaking more than death&quot;....<br>L<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mike Erasmus</div>
-<div class='content'>Awesome that you put God first in your life, Great man :)(cast your burdens onto him, for he cares for you)<br></div>
+<div class='author'>crf</div>
+<div class='content'>ha. Good story.<br>You are right on asking if it went decently. When you&#39;re pumped up on adrenaline, you can&#39;t always be a good judge of your own performance.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>monk.e.boy</div>
 <div class='content'>Haha! Good story. Lessons learnt? Take two PCs, take all the install disks. Have a backup plan ;-)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>foo</div>
-<div class='content'>Wow, you managed to squeeze two references to your imaginary friend in there. Go for three next time?<br></div>
+<div class='author'>Laurent</div>
+<div class='content'>... and as I always tell people who take my trainings, &quot;Do at least one test run as if it was the real thing, before standing in front of your audience.&quot;<br>Heh, I&#39;ve had close calls like this also, but nothing nearly as scary as what you went through. I believe this is the type of situation that make people &quot;fear public speaking more than death&quot;....<br>L<br></div>
+</div>
+<div class='comment'>
+<div class='author'>bignose</div>
+<div class='content'>This will always, always happen with Linux drivers that are not supported. What does &quot;supported&quot; mean? Part of the kernel source code.<br>If you (for whatever value of &quot;you&quot;) want your drivers to work with the kernel into the future and not embarrass and frustrate your users: get those drivers released under the GPL, get them in shape and get them in the kernel.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Alfred</div>
 <div class='content'>A nice warm up for your speech I think ;-) And it&#39;s great that everything goes well at last.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>bignose</div>
-<div class='content'>This will always, always happen with Linux drivers that are not supported. What does &quot;supported&quot; mean? Part of the kernel source code.<br>If you (for whatever value of &quot;you&quot;) want your drivers to work with the kernel into the future and not embarrass and frustrate your users: get those drivers released under the GPL, get them in shape and get them in the kernel.<br></div>
+<div class='author'>Mike Erasmus</div>
+<div class='content'>Awesome that you put God first in your life, Great man :)(cast your burdens onto him, for he cares for you)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>foo</div>
+<div class='content'>Wow, you managed to squeeze two references to your imaginary friend in there. Go for three next time?<br></div>
 </div>
 
 </div>

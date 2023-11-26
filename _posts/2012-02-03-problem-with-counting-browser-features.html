@@ -14,8 +14,32 @@ permalink: "/2012/02/problem-with-counting-browser-features.html"
 <p>I don't want to come across as harsh on css3test.com. The site is lovely, it has that disclaimer, and it goes a lot further than, say, html5test.com in terms of testing the depth of support for a feature. So it actually represents good progress :-).
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>fantasai</div>
-<div class='content'>I think there are two problems with disseminating information about e.g. CSS2.1 test scores. The first is that they&#39;re not presented in an interesting way. The data is there, but it&#39;s pretty much a raw dump. Someone has to figure out how to make it interesting. The second problem is that the data isn&#39;t up to date with the latest releases (which is at least partly because almost all of the tests are manual). Ideally, we&#39;d have full test results for every release of every browser so you could compare.</div>
+<div class='author'>Anonymous</div>
+<div class='content'>There is something to be said about raising the collective awareness of the community of these features. Not everyone has time to read the specification. Sites like this can encourage folks to check out what&#39;s possible.</div>
+</div>
+<div class='comment'>
+<div class='author'>Justin Dolske</div>
+<div class='content'>Anonymous: people are more aware of things like HTML5 and CSS3 than they ever have been in the past. They&#39;re literally buzzwords. The awareness is there; what we need is more awareness doesn&#39;t capture the complete picture (and is often outright misleading).</div>
+</div>
+<div class='comment'>
+<div class='author'>jgraham</div>
+<div class='content'>Making a big deal about official testsuite scores can be just as problematic; the testsuites are typically not fairly weighted and making the results PR fodder creates pressure on vendors to only release tests that they pass, or to release many many almost-identical tests for things that the competition fails. A nice example of something that is overrepresented in a testsuite – though I am not suggesting this case represents malicious intent – is the &quot;outline&quot; property in the CSS 2.1 testsuite which has 175 tests with many that differ only trivially.
+
+Interpreting the results of testsuites is hard, very hard, and they are only really good for browser vendors to improve the quality of their implementations. Authors would be better served by sites that make experience-based judgement calls about whether particular feature implementations are basically usable per spec, so buggy or non-standard that they will be difficult to code against, or simply missing.
+
+Also, FWIW it&#39;s not just Microsoft that release tests; at Opera we have been making a big effort to release as many of the testsuites we write internally as possible. These are the same ones that we use for our regression testing so if the tests suck – e.g. ignore corner cases – it&#39;s pretty likely that our implementation does too.</div>
+<div class='comment'>
+<div class='author'>jgraham</div>
+<div class='content'>I should have written:
+
+&quot;These are the same ones that we use for our regression testing so if the tests suck – e.g. ignore corner cases – it&#39;s pretty likely that our implementation will too. Since we aren&#39;t interested in making bad implementations we have to write, and therefore release, high quality tests.&quot;</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Official testsuites can be problematic too, but I think they&#39;re better than any of the alternatives. If we had enough tests and a broad enough range of contributions, I think accidental or deliberate bias could be smoothed out.
+
+Or we could assign a lower weight to test results for browser B for the tests that were contributed by browser B, somehow...</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>Joshua Cranmer</div>
@@ -28,32 +52,60 @@ With that in mind, if all browsers support all the features in the test, you mig
 In any case, releasing test suites for features that haven&#39;t even stabilized in specification and comparing support for them is completely and totally misguided.</div>
 </div>
 <div class='comment'>
-<div class='author'>jgraham</div>
-<div class='content'>Making a big deal about official testsuite scores can be just as problematic; the testsuites are typically not fairly weighted and making the results PR fodder creates pressure on vendors to only release tests that they pass, or to release many many almost-identical tests for things that the competition fails. A nice example of something that is overrepresented in a testsuite – though I am not suggesting this case represents malicious intent – is the &quot;outline&quot; property in the CSS 2.1 testsuite which has 175 tests with many that differ only trivially.
+<div class='author'>Lea Verou</div>
+<div class='content'>Hi Robert,
 
-Interpreting the results of testsuites is hard, very hard, and they are only really good for browser vendors to improve the quality of their implementations. Authors would be better served by sites that make experience-based judgement calls about whether particular feature implementations are basically usable per spec, so buggy or non-standard that they will be difficult to code against, or simply missing.
+I really admire your work so I&#39;m kinda flattered you wrote a whole blog post about my project :)
 
-Also, FWIW it&#39;s not just Microsoft that release tests; at Opera we have been making a big effort to release as many of the testsuites we write internally as possible. These are the same ones that we use for our regression testing so if the tests suck – e.g. ignore corner cases – it&#39;s pretty likely that our implementation does too.</div>
+You are very right in your points, and I&#39;ve been one of the people talking about how bad WebKit&#39;s implementations sometimes are. I&#39;ve always said that WebKit implements stuff fast, but in buggy ways. I&#39;ve even tried to add the very bad cases in the sidebar (under &quot;Cheaters&quot;)
+
+However, sometimes you can&#39;t get multiple birds with one stone. The purpose of this test was to raise awareness about CSS3 features that don&#39;t get the PR of transforms or shadows and to debunk the myth that WebKit is unbelievably ahead of other engines. I wanted to add as many tests as possible, which unfortunately limits the scope of the tests to being very shallow, if you&#39;re just one person :)
+
+Also, the means we have today for deeply testing features are kinda limited if we can&#39;t accept human interaction (which would be cumbersome with such a test). I would love a screen capture API for example, where we could get a test&#39;s results on a canvas and analyze what actually happened visually.</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Official testsuites can be problematic too, but I think they&#39;re better than any of the alternatives. If we had enough tests and a broad enough range of contributions, I think accidental or deliberate bias could be smoothed out.
+<div class='content'>Those are all good points.
 
-Or we could assign a lower weight to test results for browser B for the tests that were contributed by browser B, somehow...</div>
+It would be nice to be able to run reftests in a browser. Unfortunately to run Mozilla or W3C reftests you have to be able to access privileged APIs (we don&#39;t want just anyone to be able to get perfect screenshots of arbitrary pages --- see http://robert.ocallahan.org/2011/11/drawing-dom-content-to-canvas.html). Maybe someone could create an extension for each browser that lets certain whitelisted sites run reftests.
+
+Or, at least in Firefox, we could add an about:config flag that gives any site unrestricted drawWindow access, which people could use to run tests.</div>
 </div>
 <div class='comment'>
-<div class='author'>jgraham</div>
-<div class='content'>I should have written:
+<div class='author'>Lea Verou</div>
+<div class='content'>Both the extension and the about:config flag would be a step to the right direction. However, that&#39;s cumbersome, which also reduces the number of results. I would do it, the average developer probably wouldn&#39;t care that much. The whole point of eliminating human interaction is making it easier to run, thus collecting more data.
 
-&quot;These are the same ones that we use for our regression testing so if the tests suck – e.g. ignore corner cases – it&#39;s pretty likely that our implementation will too. Since we aren&#39;t interested in making bad implementations we have to write, and therefore release, high quality tests.&quot;</div>
-</div>
+I&#39;m aware of the security risks involved, I learned that from a discussion with Chrome developers a few months ago. However, those can be solved (not trivially), it&#39;s just that anything will be buggy at first and those kinds of bugs are bad, as they introduce security holes. 
+
+I&#39;m also aware of foreignObject as a workaround for that. However, the origin issues make it impossible to use it in such a context currently, and when I played with it, I noticed differences in the way CSS3 is rendered in it (of course I might have been doing something wrong). Also, I&#39;m not sure what&#39;s the point of some of the restrictions, such as not allowing anything external, even if it&#39;s same origin.</div>
 </div>
 <div class='comment'>
-<div class='author'>thinsoldier</div>
-<div class='content'>Over a year later and still they&#39;re all scoring around 63%!
+<div class='author'>Robert</div>
+<div class='content'>Trunk Firefox will let you get the pixel data from SVG images rendered to canvas, so the technique mentioned here works:
+http://robert.ocallahan.org/2011/11/drawing-dom-content-to-canvas.html
+Other browsers could do the same.
 
-What I would like to see is a system where developers/designers can vote on which features are most important and have their votes add weight to the score value of certain features. 
+That same blog post elaborates on some of the security issues. Unrestricted capturing of Web page content isn&#39;t going to happen.
 
-I have a feeling flexbox would be voted up near the top of the list and Firefox&#39;s lack of support for wrapping flexboxes would knock their % score down a lot.</div>
+I don&#39;t think we actually need to capture data from lots of developers here. It&#39;s cool to be able to run the tests in your own browser, but it doesn&#39;t really matter if 10 people test Firefox 10 vs 10,000 people, especially for CSS features that almost all work the same on every platform and every kind of hardware.</div>
+</div>
+<div class='comment'>
+<div class='author'>Lea Verou</div>
+<div class='content'>Sure, but lots of people = greater browser diversity.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>But there&#39;s only a small number of browsers worth caring about, e.g. release+dev versions of Firefox, Chrome, Opera, Safari and IE on desktop, and a similar set on mobile.</div>
+</div>
+<div class='comment'>
+<div class='author'>Praveen</div>
+<div class='content'>&quot;I&#39;ve always said that WebKit implements stuff fast, but in buggy ways&quot;
+
+This has been true from my observations as well. Here is an example: http://code.google.com/p/chromium/issues/detail?id=105227. Chrome brought CSS 3D transforms to stable release earlier than others, but it was buggy - rendering the feature useless for a web app that would do much more than just transform a simple div.
+
+On a related note, it is widely recommended by many to not lookup browser user-agent string to detect features. But with bugs and incorrect implementation of new features, I dont see a way around it.
+
+Thanks Robert for this post.</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>David Bruant</div>
@@ -79,74 +131,22 @@ Yes, actually, if you set up a popular site explaining why you like the browsers
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Justin Dolske</div>
-<div class='content'>Anonymous: people are more aware of things like HTML5 and CSS3 than they ever have been in the past. They&#39;re literally buzzwords. The awareness is there; what we need is more awareness doesn&#39;t capture the complete picture (and is often outright misleading).</div>
-</div>
-<div class='comment'>
-<div class='author'>Lea Verou</div>
-<div class='content'>Hi Robert,
-
-I really admire your work so I&#39;m kinda flattered you wrote a whole blog post about my project :)
-
-You are very right in your points, and I&#39;ve been one of the people talking about how bad WebKit&#39;s implementations sometimes are. I&#39;ve always said that WebKit implements stuff fast, but in buggy ways. I&#39;ve even tried to add the very bad cases in the sidebar (under &quot;Cheaters&quot;)
-
-However, sometimes you can&#39;t get multiple birds with one stone. The purpose of this test was to raise awareness about CSS3 features that don&#39;t get the PR of transforms or shadows and to debunk the myth that WebKit is unbelievably ahead of other engines. I wanted to add as many tests as possible, which unfortunately limits the scope of the tests to being very shallow, if you&#39;re just one person :)
-
-Also, the means we have today for deeply testing features are kinda limited if we can&#39;t accept human interaction (which would be cumbersome with such a test). I would love a screen capture API for example, where we could get a test&#39;s results on a canvas and analyze what actually happened visually.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>But there&#39;s only a small number of browsers worth caring about, e.g. release+dev versions of Firefox, Chrome, Opera, Safari and IE on desktop, and a similar set on mobile.</div>
-</div>
-<div class='comment'>
-<div class='author'>Praveen</div>
-<div class='content'>&quot;I&#39;ve always said that WebKit implements stuff fast, but in buggy ways&quot;
-
-This has been true from my observations as well. Here is an example: http://code.google.com/p/chromium/issues/detail?id=105227. Chrome brought CSS 3D transforms to stable release earlier than others, but it was buggy - rendering the feature useless for a web app that would do much more than just transform a simple div.
-
-On a related note, it is widely recommended by many to not lookup browser user-agent string to detect features. But with bugs and incorrect implementation of new features, I dont see a way around it.
-
-Thanks Robert for this post.</div>
-</div>
-<div class='comment'>
-<div class='author'>Lea Verou</div>
-<div class='content'>Sure, but lots of people = greater browser diversity.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Trunk Firefox will let you get the pixel data from SVG images rendered to canvas, so the technique mentioned here works:
-http://robert.ocallahan.org/2011/11/drawing-dom-content-to-canvas.html
-Other browsers could do the same.
-
-That same blog post elaborates on some of the security issues. Unrestricted capturing of Web page content isn&#39;t going to happen.
-
-I don&#39;t think we actually need to capture data from lots of developers here. It&#39;s cool to be able to run the tests in your own browser, but it doesn&#39;t really matter if 10 people test Firefox 10 vs 10,000 people, especially for CSS features that almost all work the same on every platform and every kind of hardware.</div>
-</div>
-<div class='comment'>
-<div class='author'>Lea Verou</div>
-<div class='content'>Both the extension and the about:config flag would be a step to the right direction. However, that&#39;s cumbersome, which also reduces the number of results. I would do it, the average developer probably wouldn&#39;t care that much. The whole point of eliminating human interaction is making it easier to run, thus collecting more data.
-
-I&#39;m aware of the security risks involved, I learned that from a discussion with Chrome developers a few months ago. However, those can be solved (not trivially), it&#39;s just that anything will be buggy at first and those kinds of bugs are bad, as they introduce security holes. 
-
-I&#39;m also aware of foreignObject as a workaround for that. However, the origin issues make it impossible to use it in such a context currently, and when I played with it, I noticed differences in the way CSS3 is rendered in it (of course I might have been doing something wrong). Also, I&#39;m not sure what&#39;s the point of some of the restrictions, such as not allowing anything external, even if it&#39;s same origin.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Those are all good points.
-
-It would be nice to be able to run reftests in a browser. Unfortunately to run Mozilla or W3C reftests you have to be able to access privileged APIs (we don&#39;t want just anyone to be able to get perfect screenshots of arbitrary pages --- see http://robert.ocallahan.org/2011/11/drawing-dom-content-to-canvas.html). Maybe someone could create an extension for each browser that lets certain whitelisted sites run reftests.
-
-Or, at least in Firefox, we could add an about:config flag that gives any site unrestricted drawWindow access, which people could use to run tests.</div>
-</div>
-</div>
-<div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>If there are too many features to implement correctly, then there are too many features.  Web standards ought to be getting simpler, not more complicated.  More features means more bugs, and there will be no end to it.
 
 VanillaMozilla</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>There is something to be said about raising the collective awareness of the community of these features. Not everyone has time to read the specification. Sites like this can encourage folks to check out what&#39;s possible.</div>
+<div class='author'>fantasai</div>
+<div class='content'>I think there are two problems with disseminating information about e.g. CSS2.1 test scores. The first is that they&#39;re not presented in an interesting way. The data is there, but it&#39;s pretty much a raw dump. Someone has to figure out how to make it interesting. The second problem is that the data isn&#39;t up to date with the latest releases (which is at least partly because almost all of the tests are manual). Ideally, we&#39;d have full test results for every release of every browser so you could compare.</div>
+</div>
+<div class='comment'>
+<div class='author'>thinsoldier</div>
+<div class='content'>Over a year later and still they&#39;re all scoring around 63%!
+
+What I would like to see is a system where developers/designers can vote on which features are most important and have their votes add weight to the score value of certain features. 
+
+I have a feeling flexbox would be voted up near the top of the list and Firefox&#39;s lack of support for wrapping flexboxes would knock their % score down a lot.</div>
 </div>
 
 </div>

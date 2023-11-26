@@ -17,6 +17,14 @@ permalink: "/2016/05/data-on-x86-64-register-usage.html"
 It would be interesting to repeat this analysis weighting the instructions by execution count over some workload.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>When you say optimized and debug builds of Firefox, do you mean --disable-debug/--enable-debug, or do you imply --disable-optimize for debug too? (which is not the default). Also, is it with --enable-profiling? (which if you take a Nightly, would be the case)</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>--disable-optimize and --enable-profiling, yes.</div>
+</div>
+</div>
+<div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>&gt; These results severely undercount the actual usage of rsp, since it&#39;s implicitly used in every push, pop, call and ret instruction
 
@@ -24,14 +32,6 @@ Why not tick the $sp counter when you see those instructions?</div>
 <div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>Too much work :-). I mainly gathered this information to see which registers would be good to steal as scratch registers, and %rsp is obviously not going to be one of them.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>glandium</div>
-<div class='content'>When you say optimized and debug builds of Firefox, do you mean --disable-debug/--enable-debug, or do you imply --disable-optimize for debug too? (which is not the default). Also, is it with --enable-profiling? (which if you take a Nightly, would be the case)</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>--disable-optimize and --enable-profiling, yes.</div>
 </div>
 </div>
 

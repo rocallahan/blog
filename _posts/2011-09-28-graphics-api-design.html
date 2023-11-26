@@ -34,9 +34,33 @@ Would providing a stateless re-implementation of these extra features present in
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>No, it doesn&#39;t mean that.
+<div class='content'>In the long term, the cairo backend for Azure will be useful for rendering to X11+XRender and also for printing (PDF/PS output).
 
-Azure has already landed, by the way, it&#39;s present in Firefox 7 (but only used for canvas with D2D).</div>
+&gt; Is it solely for the cases where the platform&#39;s
+&gt; drawing API is not rich enough to cover the
+&gt; features required by Azure?
+
+Yes, although for platforms without rich drawing APIs where rendering will be CPU-based (Windows XP, some mobile platforms) we&#39;re experimenting with using Skia as the Azure backend, and will probably go with that.
+
+&gt; Would providing a stateless re-implementation
+&gt; of these extra features present in cairo be
+&gt; too large of an undertaking for the value?
+
+Yes, I can&#39;t see it being worthwhile to implement an Azure-specific X11/XRender backend, or an Azure-specific PDF backend.
+
+One idea we&#39;ve chucked around is to expose the stateless surface APIs used by cairo&#39;s gstate layer to Gecko and let Azure call them directly. This would probably result in significant performance improvements, but it wouldn&#39;t work with distro builds of Firefox that want to use &quot;system cairo&quot;, so it&#39;s probably not worth doing long-term.</div>
+</div>
+<div class='comment'>
+<div class='author'>Joe Drew</div>
+<div class='content'>Note: Azure is the name of the *project*. The API has no name; or, to be specific, it is named mozilla::gfx.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Any plans on adding a GL or D3D backend to Azure any time soon, or is that pretty far off?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>We have such plans.</div>
 </div>
 <div class='comment'>
 <div class='author'>Paul Rouget</div>
@@ -47,6 +71,30 @@ Azure has already landed, by the way, it&#39;s present in Firefox 7 (but only us
 - Cairo as a fallback (no GL) and print
 
 And what about Android? Skia?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>It&#39;s not clear yet.
+
+We definitely need a GL-based Azure backend, for mobile and also Linux, at least. This could possibly use Skia&#39;s GL backend, at least initially. That could also be used on Windows XP (via ANGLE) and Mac.
+
+We definitely need the cairo backend.
+
+We definitely need a generic CPU-only backend, probably using Skia.
+
+We also want to keep shipping either a D3D10 version of that backend and/or a D2D backend for newer Windows; the details are unclear so far.
+
+We will probably want a direct Quartz 2D backend for Mac.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Does this mean that there will not be any noteworthy improvements to rendering (normal webpages) until Azure lands?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>No, it doesn&#39;t mean that.
+
+Azure has already landed, by the way, it&#39;s present in Firefox 7 (but only used for canvas with D2D).</div>
 </div>
 <div class='comment'>
 <div class='author'>Azhrarn</div>
@@ -70,54 +118,6 @@ Pich</div>
 <div class='author'>Robert</div>
 <div class='content'>Cairo can work reasonably well under Windows. We use it there.</div>
 </div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Does this mean that there will not be any noteworthy improvements to rendering (normal webpages) until Azure lands?</div>
-</div>
-<div class='comment'>
-<div class='author'>Joe Drew</div>
-<div class='content'>Note: Azure is the name of the *project*. The API has no name; or, to be specific, it is named mozilla::gfx.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Any plans on adding a GL or D3D backend to Azure any time soon, or is that pretty far off?</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>It&#39;s not clear yet.
-
-We definitely need a GL-based Azure backend, for mobile and also Linux, at least. This could possibly use Skia&#39;s GL backend, at least initially. That could also be used on Windows XP (via ANGLE) and Mac.
-
-We definitely need the cairo backend.
-
-We definitely need a generic CPU-only backend, probably using Skia.
-
-We also want to keep shipping either a D3D10 version of that backend and/or a D2D backend for newer Windows; the details are unclear so far.
-
-We will probably want a direct Quartz 2D backend for Mac.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>We have such plans.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>In the long term, the cairo backend for Azure will be useful for rendering to X11+XRender and also for printing (PDF/PS output).
-
-&gt; Is it solely for the cases where the platform&#39;s
-&gt; drawing API is not rich enough to cover the
-&gt; features required by Azure?
-
-Yes, although for platforms without rich drawing APIs where rendering will be CPU-based (Windows XP, some mobile platforms) we&#39;re experimenting with using Skia as the Azure backend, and will probably go with that.
-
-&gt; Would providing a stateless re-implementation
-&gt; of these extra features present in cairo be
-&gt; too large of an undertaking for the value?
-
-Yes, I can&#39;t see it being worthwhile to implement an Azure-specific X11/XRender backend, or an Azure-specific PDF backend.
-
-One idea we&#39;ve chucked around is to expose the stateless surface APIs used by cairo&#39;s gstate layer to Gecko and let Azure call them directly. This would probably result in significant performance improvements, but it wouldn&#39;t work with distro builds of Firefox that want to use &quot;system cairo&quot;, so it&#39;s probably not worth doing long-term.</div>
 </div>
 
 </div>

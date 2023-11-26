@@ -8,36 +8,36 @@ permalink: "/2010/01/three-lessons-from-pernicious-bug_30.html"
 <div class="columns"><p>We were having a lot of problems on Tinderbox with <a href="https://developer.mozilla.org/en/Writing_xpcshell-based_unit_tests">xpcshell tests</a> randomly failing on Windows by returning exit code 1. Curiously, it seemed that almost any test could fail this way, with low probability, and the output log for each test indicated that all the actual subtest assertions passed, the process just mysteriously returned an exit code of 1 for no apparent reason.<br/><p>Naturally I charged into battle with my <a href="/2009/11/today_for_the_f.html">sword +5 against orange</a> (i.e., VMWare's record-and-replay debugging). The tests failed randomly about one run in a thousand, so capturing a failure wasn't hard. Then I verified that the problematic xpcshell run was passing 0 as the exit code for the final NtTerminateProcess system call, but the outer python script was indeed getting 1 from GetExitCodeProcess. Very mysterious!<br/><p>I was at a loss for a while until some questions from Benjamin Smedberg led me to observe that in the failing run, the Google Breakpad helper thread was still alive at process termination, but in passing runs, that thread had exited before process termination.<br/><p>Benjamin then looked into the Breakpad shutdown code and noticed it using TerminateThread to shut down its helper thread. The <a href="http://msdn.microsoft.com/en-us/library/ms686717%28VS.85%29.aspx">MSDN documentation for TerminateThread</a> warns that that function is an extremely dangerous API, because it abruptly terminates the thread, leaving any shared resources it was manipulating in a possibly inconsistent state. Nevertheless, <a href="http://mxr.mozilla.org/mozilla-central/source/toolkit/crashreporter/google-breakpad/src/client/windows/handler/exception_handler.cc#287">the Breakpad shutdown code</a> seems to use it in a safe way ... mostly. We observed that that code was passing exit code 1 to TerminateThread. Changing that exit code to 44 made the exit code returned in our randomly failing tests change to 44. Clearly, somehow the exit code set for the Breakpad helper thread by TerminateThread was becoming the exit code for the process!<br/><p>We think that, although it's not mentioned in MSDN, TerminateThread is actually asynchronous. The thread is not terminated immediately. If you're (un)lucky, the main thread can trigger process exit (passing exit code 0) before the helper thread's termination is complete. Then, somewhere in the netherworld of NT kernel process finalization, after the main thread has been terminated, termination of the helper thread finally completes and as the last thread to terminate, its exit code is recorded as the process exit code!<br/><p>Moral of the story: never use TerminateThread. If you must use TerminateThread, you should probably try to wait for termination to finish (e.g. by calling WaitForSingleObject) before exiting the process, if you care about your process exit code. Another moral is that record-and-replay debugging rocks (but we already knew that). Yet another moral is that debugging closed-source operating systems sucks (but we already knew that too).</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>alex.r.</div>
-<div class='content'>On Vista, if someones tries to enter a critical section owned by a thread that was terminated with TerminateThread,  TerminateProcess is called immediately.<br>Maybe the exit code for this call to TerminateProcess is the one of the thread who orphaned the critical section?<br>I mostly talking out of my butt, I haven&#39;t worked through the code you pointed to, I just saw that the target thread made used of critical sections.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>RyanVM</div>
-<div class='content'>https://bugzilla.mozilla.org/show_bug.cgi?id=535585<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>alex: That&#39;s not the problem. Quite early in the analysis I determined that NtTerminateProcess was only called when the main thread exits after &#39;main&#39; has returned.<br>Jon: Microsoft&#39;s documentation was incomplete in two important ways. It doesn&#39;t mention that TerminateThread is asynchronous. And I haven&#39;t found anything that indicates the exit code of another thread may be used as the process exit code even after the main thread has passed its own exit code to ExitProcess. (For example, http://msdn.microsoft.com/en-us/library/ms686722%28VS.85%29.aspx doesn&#39;t mention it.)<br>Microsoft&#39;s documentation is actually better than the documentation for most free software projects. However, since software has bugs, and no documentation is complete, there&#39;s no substitute for having the source code available so you can actually see what is going on.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Dan</div>
-<div class='content'>I too enjoy reading these. So which fix did you go for? Bug number?<br></div>
+<div class='author'>Luke Wagner</div>
+<div class='content'>I really enjoy these &quot;tales of how I found hard-to-find bugs&quot;!<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Jeff Walden</div>
 <div class='content'>&quot;You&#39;ve read the stories; you&#39;ve read the bugmail.  The agony, and the ecstasy, of debugging code written in unsafe languages, running across multiple racing processors.  Now: see them in real life at a desk next to yours!&quot;  (In a couple weeks whenever the desktop machine arrives so I can set it up and attack some random-orange bugs with it, that is.)<br>(This comment is directed entirely toward Luke.  :-D )<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert Kaiser</div>
-<div class='content'>Now the obvious question for a Mozillian: Where&#39;s the bug report in that where I can CC myself to see when this gets patched and landed in some way?<br>And thanks for fixing one more random orange - everyone watching tinderbox or tbpl should love you for that!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Luke Wagner</div>
-<div class='content'>I really enjoy these &quot;tales of how I found hard-to-find bugs&quot;!<br></div>
+<div class='author'>alex.r.</div>
+<div class='content'>On Vista, if someones tries to enter a critical section owned by a thread that was terminated with TerminateThread,  TerminateProcess is called immediately.<br>Maybe the exit code for this call to TerminateProcess is the one of the thread who orphaned the critical section?<br>I mostly talking out of my butt, I haven&#39;t worked through the code you pointed to, I just saw that the target thread made used of critical sections.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Jon Forrest</div>
 <div class='content'>&quot;Yet another moral is that debugging closed-source operating systems sucks (but we already knew that too).&quot; Yes, it does. But, at least in this case Microsoft&#39;s documentation was available and accurate. If the person who wrote the Breakpad shutdown code had also looked there, maybe this problem would not have occurred. In this case, I wonder if things would have turned out that much better even if the OS source code were available.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>alex: That&#39;s not the problem. Quite early in the analysis I determined that NtTerminateProcess was only called when the main thread exits after &#39;main&#39; has returned.<br>Jon: Microsoft&#39;s documentation was incomplete in two important ways. It doesn&#39;t mention that TerminateThread is asynchronous. And I haven&#39;t found anything that indicates the exit code of another thread may be used as the process exit code even after the main thread has passed its own exit code to ExitProcess. (For example, http://msdn.microsoft.com/en-us/library/ms686722%28VS.85%29.aspx doesn&#39;t mention it.)<br>Microsoft&#39;s documentation is actually better than the documentation for most free software projects. However, since software has bugs, and no documentation is complete, there&#39;s no substitute for having the source code available so you can actually see what is going on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert Kaiser</div>
+<div class='content'>Now the obvious question for a Mozillian: Where&#39;s the bug report in that where I can CC myself to see when this gets patched and landed in some way?<br>And thanks for fixing one more random orange - everyone watching tinderbox or tbpl should love you for that!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>RyanVM</div>
+<div class='content'>https://bugzilla.mozilla.org/show_bug.cgi?id=535585<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Dan</div>
+<div class='content'>I too enjoy reading these. So which fix did you go for? Bug number?<br></div>
 </div>
 
 </div>

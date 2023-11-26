@@ -8,12 +8,12 @@ permalink: "/2008/06/working-overtime_13.html"
 <div class="columns"><p>In the 18 months since I became a contractor for Mozilla Corporation, I've started dreaming about work --- I never did before. This is probably significant.<br/><p>Last night I dreamed I was in a meeting with people who were showing me stacks of SIGGRAPH papers and trying to convince me to implement an absurdly complex specification that would let them do all graphical effects known to man. I was pushing back, trying to explain that it was too complex and most of the effects could be done in other simpler ways. No surprise that I'm dreaming about <em>that</em>.<br/><p>The cool part is that they showed me some awesome demos --- <em>and I remember the demos!</em> I remember three:<br/><ul><br/><li><b>Chinese wall</b>: Chinese text was rendered as if it was carved into a stone wall and aged for a thousand years, eroded and dusty. Actually in the dream there was an animation with multiple layers of text being carved in and eroded away --- a palimpsest.<br/><li><b>Persian carpet</b>: This was taking an image and rendering it as if it was a pattern woven into a carpet --- a really old, worn, tattered carpet with loose threads hanging out in a few places.<br/><li><b>Kaleidoscope</b>: Generic kaleidoscope effect, random-ish patterns with sixfold symmetry.<br/></ul><br/><p>The Chinese wall can probably be done with clever use of SVG filters. Possibly the Persian carpet could be done with SVG filters but it would be tricky and might require auxiliary images. I don't think we have any way to tessellate non-rectangular shapes over the plane.<br/><p>I never knew I was that creative.<br/><p>Just around the time I woke up from this dream I also figured out how we can use SVG filters with &lt;canvas&gt;. We just need to a drawElement method that lets you use any element as a source to draw into the canvas. Then you can set up an offscreen canvas with 'filter' set on it, draw the stuff you want filtered into the offscreen canvas, then call drawElement to draw the filtered offscreen canvas into a target canvas. Note that 'drawImage' (or an extension thereof) isn't exactly what you want here since that renders the content of a canvas ignoring CSS effects applied to the canvas itself.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Michael: of course you can using a scripted loop. I mean our drawing toolkits don&#39;t provide that as first-class functionality. (Whereas they *do* provide tiling of rectangular shapes as first-class functionality.)<br>PJ: The solution there is to be able to write SVG content in basic HTML. There is a proposed extension to the HTML5 parser to allow this but it&#39;s being resisted by the SVG WG. Read public-html for more details.<br></div>
+<div class='author'>Joshua Cranmer</div>
+<div class='content'>As far as dreams go, that sounds rather normal to me. I recently had two on consecutive nights that I can remember quite well--a rarity for me.<br>Anyways, I&#39;d be interested in knowing what the syntax looked like.<br>Also, why was it called SIGGRAPH? That implies some kind of strange interrupt routine (stop what you&#39;re doing and graph your CPU usage, now!). Or was it one of those things where it&#39;s natural in the dream-world and inexplicable in the real-world?<br>(drifts off in recollection of the stranger dreams)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Michael R. Bernstein</div>
-<div class='content'>&quot;I don&#39;t think we have any way to tessellate non-rectangular shapes over the plane.&quot;<br>Sure there is:<br>http://intertwingly.net/stories/2006/07/06/penroseTiling.svg<br></div>
+<div class='author'>Question</div>
+<div class='content'>What about the performance of the filter applying to chinese text? :-)<br>I&#39;ve seen some topics about the implement of compositor will be shipped in Moz2, would it landed in 1.9.1 or 1.9.X?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
@@ -24,20 +24,20 @@ permalink: "/2008/06/working-overtime_13.html"
 <div class='content'>I mean do you have a plan about when the compositor will land？I really can&#39;t wait to see the transparent iframes and the frame rate control etc.<br>It will be a great improvement.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Joshua Cranmer</div>
-<div class='content'>As far as dreams go, that sounds rather normal to me. I recently had two on consecutive nights that I can remember quite well--a rarity for me.<br>Anyways, I&#39;d be interested in knowing what the syntax looked like.<br>Also, why was it called SIGGRAPH? That implies some kind of strange interrupt routine (stop what you&#39;re doing and graph your CPU usage, now!). Or was it one of those things where it&#39;s natural in the dream-world and inexplicable in the real-world?<br>(drifts off in recollection of the stranger dreams)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Question</div>
-<div class='content'>What about the performance of the filter applying to chinese text? :-)<br>I&#39;ve seen some topics about the implement of compositor will be shipped in Moz2, would it landed in 1.9.1 or 1.9.X?<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Gerv</div>
 <div class='content'>I&#39;m sure I suggested something very like drawElement back when we were talking about the text API. The idea was that you could have text inside the canvas which was rendered as fallback, but could use that same text in the canvas itself (and get its metrics in the normal way from the original element).<br>So, great idea :-)<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Michael R. Bernstein</div>
+<div class='content'>&quot;I don&#39;t think we have any way to tessellate non-rectangular shapes over the plane.&quot;<br>Sure there is:<br>http://intertwingly.net/stories/2006/07/06/penroseTiling.svg<br></div>
+</div>
+<div class='comment'>
 <div class='author'>PJ Brunet</div>
 <div class='content'>Before you get to that pile of papers we at least need the ability to post code for something as simple as a circle into a basic HTML web page, blog, Myspace profile, and have it work in Firefox without installing a plugin/patch.  Otherwise what&#39;s the point of this mythical SVG?<br>PS: Did you ever consider you&#39;re not an author of dreams?  LOL.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Michael: of course you can using a scripted loop. I mean our drawing toolkits don&#39;t provide that as first-class functionality. (Whereas they *do* provide tiling of rectangular shapes as first-class functionality.)<br>PJ: The solution there is to be able to write SVG content in basic HTML. There is a proposed extension to the HTML5 parser to allow this but it&#39;s being resisted by the SVG WG. Read public-html for more details.<br></div>
 </div>
 
 </div>

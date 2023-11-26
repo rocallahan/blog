@@ -9,48 +9,6 @@ permalink: "/2015/08/hooray-for-webextensions.html"
 <p>WebExtensions is something we need to do and should have done many years ago, before Chrome even existed. It's what Jetpack should have been. But better late than never!
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>voracity</div>
-<div class='content'>Regardless of the technical details, extensions (particularly as equals to core code) had always seemed like the key defining trait of the Firefox browser. (Mozilla&#39;s defining trait is openness.) It gave us game-changers like Firebug, AdBlock, TabMix and Greasemonkey, along with thousands of other useful smaller extensions. Whatever other problems people may have had with Firefox, its extensibility was simply untouchable.
-
-Now the extension system is being dropped in favour of an experimental cross-browser system, mostly already implemented by Firefox&#39;s major competitor. Maybe technically this is a good idea, but publicly this will play out (has played out) *really* badly and could very well kill Firefox altogether. The only *unique* reason people have to choose Firefox now is based on the openness of the company that happens to make it --- and most people (sadly!) don&#39;t see any value in that at all.
-
-I&#39;m hoping Servo is coming along well, because it will have an awful lot of responsibility on its shoulders.</div>
-</div>
-<div class='comment'>
-<div class='author'>JulienW</div>
-<div class='content'>&gt; It&#39;s what Jetpack should have been. 
-
-I admit I don&#39;t completely see the difference.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>If we made those changes to Jetpack (and other necessary changes like removing XUL access), it wouldn&#39;t really be Jetpack anymore. Most Jetpack addons would be broken and need significant modifications.
-
-WebExtensions requires big changes too, but at least it gives us the extra value of making it easy to have extensions work in multiple browsers.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Jetpack doesn&#39;t sandbox addons, does not ensure they work well in a multiprocess browser, and instead of being a stable API implemented in the browser, it was designed to be a library that ships with addons, which means you have to have repacks.</div>
-</div>
-<div class='comment'>
-<div class='author'>Wladimir Palant</div>
-<div class='content'>I have to disagree. Jetpack implemented significant changes before, quite successfully. What we have now already isn&#39;t Jetpack as it was introduced a few years ago. Lots of APIs have been replaced by better designs and new APIs have been created. Mozilla finally committed significant resources towards developing well-designed add-on APIs, if these were added to Jetpack there would be far less incentive to break out of the sandbox - most add-ons could gradually migrate away from low-level APIs. But not all of them, because you simply cannot have an API for everything. That&#39;s why WebExtensions will have native.js which is the moral equivalent of require(&quot;chrome&quot;) - sometimes the only way is breaking out of the sandbox, even if there is a risk that some future browser version will break your extension (well, either that or losing many innovative extensions which is where Chrome is right now).
-
-I also don&#39;t buy the &quot;value of making it easy to have extensions work in multiple browsers&quot; talk. This kind of thing doesn&#39;t come for free, it forces you into bug-for-bug compatibility with a competitor and limits your innovation. Many Chrome&#39;s APIs have non-obvious bugs and limitations or are simply badly designed. Will Mozilla fix them even though that would mean losing compatibility with existing Chrome extensions?</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Compatibility isn&#39;t all-or-nothing. There is some value in making it easy to port an extension between browsers, with some testing and tweaks, without going all the way to full drop-in compatibility.</div>
-</div>
-<div class='comment'>
-<div class='author'>Wladimir Palant</div>
-<div class='content'>I&#39;m not sure what you mean by &quot;designed&quot; but JPM-packaged add-ons no long have any libraries in them - there is pretty much nothing but the add-on code there. So as of Firefox 38 Jetpack is an API implemented in the browser (which has its downsides, like a SeaMonkey-related bug which went unnoticed for a while and cannot be fixed for already released SeaMonkey versions). Also, the browser decides what the add-ons have access to - tomorrow the access to require(&quot;chrome&quot;) and low-level modules could be removed, and then the add-ons won&#39;t have a way of breaking out of the sandbox (or messing up multiprocess support).</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Robert, I would like to know why WebExtensions are &quot;what Jetpack should have been.&quot; From my point of view, Chrome&#39;s APIs have significant issues and are generally inferior to Jetpack (I&#39;ve used both). Could you maybe explain the advantages you see, either here or on https://palant.de/2015/08/23/missing-a-rationale-for-webextensions?</div>
-</div>
-<div class='comment'>
 <div class='author'>Matt</div>
 <div class='content'>The reason people are confused is because of statements like the following which are incompatible with what you and Bill are saying:
 
@@ -66,10 +24,6 @@ They key part there is &quot;some&quot; but I can see people thinking this will 
 
 So we&#39;re sending a lot of mixed/conflicting messages and the &quot;official&quot; post  strongly implies that WebExtensions will be the only way supported at some point. I really hope that&#39;s not the case or it would mean we&#39;re killing one of our remaining strengths.</div>
 <div class='comment'>
-<div class='author'>Matt</div>
-<div class='content'>The post doesn&#39;t make clear that the Web Extension API is supposed to be a superset and the post is specifically talking about making an extension work in both browsers which would require that the same APIs are present. My point is that the add-ons blog post caused confusion and negative press because it&#39;s inaccurate.</div>
-</div>
-<div class='comment'>
 <div class='author'>Unknown</div>
 <div class='content'>&quot;That&#39;s not true if the Web Extension API != Chrome Extension API.&quot;
 
@@ -79,18 +33,44 @@ It is true for Chrome Extension API ⊂Web Extension API
 
 Which is what the goal is, to have the Chrome Extension API as a miinimum baseline and then extend upon it.</div>
 </div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>The post doesn&#39;t make clear that the Web Extension API is supposed to be a superset and the post is specifically talking about making an extension work in both browsers which would require that the same APIs are present. My point is that the add-ons blog post caused confusion and negative press because it&#39;s inaccurate.</div>
+</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Just because you&#39;re able to support doesn&#39;t translate to extension developers wanting to revamp their extensions to suit this new model, or others to do it in their stead. That&#39;s a cold reality and in the meantime, people will switch to Chrome. </div>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>pkasting is willing to make changes to Chromium to help support add-ons like Tree Style Tab: https://code.google.com/p/chromium/issues/detail?id=344870#c113</div>
 </div>
 <div class='comment'>
-<div class='author'>J. McNair</div>
-<div class='content'>As with almost every Mozilla announcement bearing bad news with the good, there appears to be an attitude of &quot;do it now, announce it next, answer questions later&quot;.
+<div class='author'>JulienW</div>
+<div class='content'>&gt; It&#39;s what Jetpack should have been. 
 
-I shall freely admit my lack of knowledge here, but why build on top of a hard fork of the Chrome extension APIs? Is it impossible to add needed features to JetPack and deprecate require(&quot;chrome&quot;) ? Was it just EASIER and FASTER to use Chrome&#39;s existing and documented set of APIs? Does Mozilla Corp. leadership and engineering believe that attracting Chrome developers is the single best way to build a vibrant add-on ecosystem in the future? 
+I admit I don&#39;t completely see the difference.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Jetpack doesn&#39;t sandbox addons, does not ensure they work well in a multiprocess browser, and instead of being a stable API implemented in the browser, it was designed to be a library that ships with addons, which means you have to have repacks.</div>
+</div>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>I&#39;m not sure what you mean by &quot;designed&quot; but JPM-packaged add-ons no long have any libraries in them - there is pretty much nothing but the add-on code there. So as of Firefox 38 Jetpack is an API implemented in the browser (which has its downsides, like a SeaMonkey-related bug which went unnoticed for a while and cannot be fixed for already released SeaMonkey versions). Also, the browser decides what the add-ons have access to - tomorrow the access to require(&quot;chrome&quot;) and low-level modules could be removed, and then the add-ons won&#39;t have a way of breaking out of the sandbox (or messing up multiprocess support).</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>If we made those changes to Jetpack (and other necessary changes like removing XUL access), it wouldn&#39;t really be Jetpack anymore. Most Jetpack addons would be broken and need significant modifications.
 
-I am being unfair to you, as one engineer can&#39;t possibly speak for a corporation, but I would like to know where to find answers to these questions. Thank you.</div>
+WebExtensions requires big changes too, but at least it gives us the extra value of making it easy to have extensions work in multiple browsers.</div>
+</div>
+<div class='comment'>
+<div class='author'>Wladimir Palant</div>
+<div class='content'>I have to disagree. Jetpack implemented significant changes before, quite successfully. What we have now already isn&#39;t Jetpack as it was introduced a few years ago. Lots of APIs have been replaced by better designs and new APIs have been created. Mozilla finally committed significant resources towards developing well-designed add-on APIs, if these were added to Jetpack there would be far less incentive to break out of the sandbox - most add-ons could gradually migrate away from low-level APIs. But not all of them, because you simply cannot have an API for everything. That&#39;s why WebExtensions will have native.js which is the moral equivalent of require(&quot;chrome&quot;) - sometimes the only way is breaking out of the sandbox, even if there is a risk that some future browser version will break your extension (well, either that or losing many innovative extensions which is where Chrome is right now).
+
+I also don&#39;t buy the &quot;value of making it easy to have extensions work in multiple browsers&quot; talk. This kind of thing doesn&#39;t come for free, it forces you into bug-for-bug compatibility with a competitor and limits your innovation. Many Chrome&#39;s APIs have non-obvious bugs and limitations or are simply badly designed. Will Mozilla fix them even though that would mean losing compatibility with existing Chrome extensions?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Compatibility isn&#39;t all-or-nothing. There is some value in making it easy to port an extension between browsers, with some testing and tweaks, without going all the way to full drop-in compatibility.</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>Peter Kasting</div>
@@ -101,6 +81,30 @@ So I suggest rephrasing your post to not say or imply things about Chrome&#39;s 
 <div class='author'>Robert</div>
 <div class='content'>I was parroting what I thought I heard at BlinkOn. I removed &quot;intentionally&quot; from the post.</div>
 </div>
+</div>
+<div class='comment'>
+<div class='author'>J. McNair</div>
+<div class='content'>As with almost every Mozilla announcement bearing bad news with the good, there appears to be an attitude of &quot;do it now, announce it next, answer questions later&quot;.
+
+I shall freely admit my lack of knowledge here, but why build on top of a hard fork of the Chrome extension APIs? Is it impossible to add needed features to JetPack and deprecate require(&quot;chrome&quot;) ? Was it just EASIER and FASTER to use Chrome&#39;s existing and documented set of APIs? Does Mozilla Corp. leadership and engineering believe that attracting Chrome developers is the single best way to build a vibrant add-on ecosystem in the future? 
+
+I am being unfair to you, as one engineer can&#39;t possibly speak for a corporation, but I would like to know where to find answers to these questions. Thank you.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Just because you&#39;re able to support doesn&#39;t translate to extension developers wanting to revamp their extensions to suit this new model, or others to do it in their stead. That&#39;s a cold reality and in the meantime, people will switch to Chrome. </div>
+</div>
+<div class='comment'>
+<div class='author'>voracity</div>
+<div class='content'>Regardless of the technical details, extensions (particularly as equals to core code) had always seemed like the key defining trait of the Firefox browser. (Mozilla&#39;s defining trait is openness.) It gave us game-changers like Firebug, AdBlock, TabMix and Greasemonkey, along with thousands of other useful smaller extensions. Whatever other problems people may have had with Firefox, its extensibility was simply untouchable.
+
+Now the extension system is being dropped in favour of an experimental cross-browser system, mostly already implemented by Firefox&#39;s major competitor. Maybe technically this is a good idea, but publicly this will play out (has played out) *really* badly and could very well kill Firefox altogether. The only *unique* reason people have to choose Firefox now is based on the openness of the company that happens to make it --- and most people (sadly!) don&#39;t see any value in that at all.
+
+I&#39;m hoping Servo is coming along well, because it will have an awful lot of responsibility on its shoulders.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Robert, I would like to know why WebExtensions are &quot;what Jetpack should have been.&quot; From my point of view, Chrome&#39;s APIs have significant issues and are generally inferior to Jetpack (I&#39;ve used both). Could you maybe explain the advantages you see, either here or on https://palant.de/2015/08/23/missing-a-rationale-for-webextensions?</div>
 </div>
 <div class='comment'>
 <div class='author'>Unknown</div>
@@ -209,10 +213,6 @@ Sadly, that&#39;s wishful thinking in my experience. Providing stable APIs has b
 
 Also, less careful reviews are already being performed for Jetpack-based extensions (the system warns if low-level modules are used and these parts can be reviewed more thoroughly then). The problem is, understanding extension logic still isn&#39;t optional for those reviews. The biggest problem with extensions isn&#39;t the ones that take over your computer but rather the ones that will spy on you - e.g. send your entire browsing history to some third party or even inject a remote script into every web page you are visiting. Most of the time the extension developers aren&#39;t actually malicious but simply use third-party services mindlessly (and don&#39;t get me started on jQuery-related security issues). I don&#39;t think that any kind of privilege system will make these any less problematic than they are right now. Chrome of course chose a different solution: they simply ignore the problem, spying on the user isn&#39;t prohibited behavior in Chrome Web Store.</div>
 </div>
-</div>
-<div class='comment'>
-<div class='author'>Jesse Ruderman</div>
-<div class='content'>pkasting is willing to make changes to Chromium to help support add-ons like Tree Style Tab: https://code.google.com/p/chromium/issues/detail?id=344870#c113</div>
 </div>
 
 </div>

@@ -8,8 +8,8 @@ permalink: "/2009/01/post-31-plans_15.html"
 <div class="columns"><p>While people are working hard to nail down layout bugs for the Firefox 3.1 release, there's also exciting work happening on the trunk for post-3.1.<br/><ul><br/><li>Benjamin Smedberg landed a big patch to make nsIFrame stop pretending to be reference-counted. It also replaces QueryInterface with a similar API called QueryFrame that doesn't need IIDs. This is a nice cleanup and simplification.<br/><li>Brian Birtles and Daniel Holbert have massively cleaned up and simplified the SMIL patch so that it's ready for landing. This is just the basic SMIL infrastructure --- considerably more work is required to implement all the features of SVG Animation --- but it's a great base to build on. SMIL support will be configured off by default; I think we should enable it when we've got enough implemented that we wouldn't feel embarrassed about shipping it.<br/><li>Robert Longson and Craig Topper have been doing a bunch of SVG cleanup. In particular, they've been removing a lot of the existing XPCOM-heavy datatypes for SVG values such as animateable strings and viewboxes in favour of lightweight objects that implement the SVG DOM interfaces via tearoffs. This lays the groundwork for making all these attributes actually animateable using SMIL.<br/><li>Fred Jendrzejewski has some patches that get rid of all our usage of deprecated types nsStringArray and nsCStringArray, in favour of nsTArray&lt;nsString&gt; and nsTArray&lt;nsCString&gt;, improving consistency with the rest of our code and significantly more efficient as a bonus!<br/><li>Jeremy Lea has a big patch ready to land that makes nsRect and nsIntRect be different types. It also separates nsPoint/nsIntPoint, nsSize/nsIntSize and nsMargin/nsIntMargin. This gives us some useful compile-time type checking to avoid mixing up integers (usually pixels) with our subpixel "app units" (1/60 of a CSS pixel).<br/><li>Boris Zbarsky has some nice changes for table-driven frame construction that shrink the code a lot and may eventually lead to performance wins.<br/><li>Jonathan Kew has implemented a Core Text backend so we can use that new API on Mac instead of ATSUI.<br/><li>Neil Deakin has a <a href="http://www.xulplanet.com/ndeakin/item/19">major focus rewrite</a> in the works.<br/></ul><br/><p>(There's more going on --- this is just what sprang to mind while I wrote the post.) We have more big architectural changes and features planned, which I'll talk about when they're further along.<br/><p>For Gecko 1.9 (Firefox 3) we did a ton of architecture work, such as switching to cairo, and used most of our energy fixing bugs from those changes, so we didn't have much left to really exploit the new architecture. In Gecko 1.9.1 (Firefox 3.1) we were able to put in <a href="https://developer.mozilla.org/en/Firefox_3.1_for_developers">a lot of new engine features</a> that were suddenly easy (e.g., text-shadow, border-image, SVG filters for HTML), but we didn't spend much time doing big architecture cleanups. I think that in Gecko 1.9.2 we're swinging back a bit to increase our investment in architectural improvements. But thanks to much better tests, and more developers, we should be able to keep the feature pipeline busy as well.  I'm excited that we seem to have reached the point where we can get a lot of things done at once.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Daniel</div>
-<div class='content'>roc, do you think the Compositor could make a 1.9.2 release as well?<br></div>
+<div class='author'>Gijs</div>
+<div class='content'>It would be cool if there were buglinks that came with this - presumably you have them, and now we as poor readers have to go and look for them! ;-)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
@@ -20,24 +20,24 @@ permalink: "/2009/01/post-31-plans_15.html"
 <div class='content'>Even though I don&#39;t understand much - if any - of this, I really appreciate reading this type of news. It is a great way to get a better feel for what is going on with development of the world&#39;s best browser.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Gijs</div>
-<div class='content'>It would be cool if there were buglinks that came with this - presumably you have them, and now we as poor readers have to go and look for them! ;-)<br></div>
+<div class='author'>Chris Hubick</div>
+<div class='content'>I&#39;m gonna cry if I have to go yet another year without SVG in CSS ( https://bugzilla.mozilla.org/show_bug.cgi?id=231179 ), especially now that those other browsers my friends use have had it for some time :&#39;(<br></div>
 </div>
 <div class='comment'>
 <div class='author'>James Napolitano</div>
 <div class='content'>I second pd&#39;s comment; I love these kinds of posts.<br>But I wonder what happened with a lot of the ambitious Mozilla 2 plans announced 2 years ago; I haven&#39;t seen any real update on them on planet mozilla.  The switch the hg obviously happened. ActionMonkey apparently died and was replaced by TraceMonkey.  And there&#39;s been efforts to deCOMtaminate and remove old data types and APIs here and there. But I haven&#39;t seen anything about automatically converting Gecko to standard C++, breaking API compatibility, or the big rewrites Brendan described.  I suppose the automatic rewriting tools aren&#39;t mature enough yet, and in the mean time the developers are rewriting things more incrementally in a series of 1.9.* releases.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Chris Hubick</div>
-<div class='content'>I&#39;m gonna cry if I have to go yet another year without SVG in CSS ( https://bugzilla.mozilla.org/show_bug.cgi?id=231179 ), especially now that those other browsers my friends use have had it for some time :&#39;(<br></div>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>In fact some tool-driven rewrites have landed. It&#39;s true that we&#39;re taking a more incremental approach than Mozilla2 envisaged, but I think that&#39;s good.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Bill Gianopoulos</div>
 <div class='content'>I think it would be better if SMIL were compiled in by default and disabled via a preference if there were a relatively easy way to accomplish that.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>In fact some tool-driven rewrites have landed. It&#39;s true that we&#39;re taking a more incremental approach than Mozilla2 envisaged, but I think that&#39;s good.<br></div>
+<div class='author'>Daniel</div>
+<div class='content'>roc, do you think the Compositor could make a 1.9.2 release as well?<br></div>
 </div>
 
 </div>

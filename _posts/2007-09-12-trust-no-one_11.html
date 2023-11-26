@@ -8,16 +8,16 @@ permalink: "/2007/09/trust-no-one_11.html"
 <div class="columns"><p>When is an ASCII space (0x20) not a word separator?<br/><p>When it's followed by a combining mark (e.g., <a href="http://www.fileformat.info/info/unicode/char/0301/index.htm">COMBINING ACUTE ACCENT</a> a.k.a. Unicode character 0x301).<br/><p>According to ATSUI, anyway. Uniscribe disagrees and refuses to combine marks with space characters. It will allow combination if you stick a ZWJ (0x200D) in between. Gah!<br/><p>We've also discovered that ATSUI's font fallback machinery often likes to choose different fonts for the mark and the character it combines with. Madness!<br/><p>This is life working on Web browsers: the environment is so complex, any assumptions you make will be violated sooner or later.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
+<div class='author'>RichB</div>
+<div class='content'>How about performing the Unicode Normalization process prior to display? (sample code available on the Unicode website) This would result in a single pre-combined character. Or would this mess up text selection, copy paste, etc?<br>Anyway, no-one uses combining characters, except, perhaps other character sets like ANSEL.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Screwtape</div>
 <div class='content'>It&#39;s not that mad for ATSUI to choose a different font for the base-glyph and the combining-glyph, is it? If a pre-combined glyph or a suitable combining-glyph are not available in the preferred font, the next-best alternative would be to pick a base-glyph from the preferred font, and find a combining-glyph that more or less matches it.<br>Grabbing a pre-combined glyph (or a base-glyph and a combining-glyph) from some other font might help ensure that the resulting character looks good on its own, but it practically guarantees that it will look awkward and eye-catching among the surrounding text.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>RichB: not all combining pairs have precomposed forms, so normalization won&#39;t help.<br>Saying &quot;no-one will do this in real life&quot; doesn&#39;t work; authors do all kinds of crazy stuff and we have to handle it as best we can.<br>Screwtape: the thing is, if the glyphs are from different fonts, how can the mark be correctly positioned? I assume each font contains tables showing where marks should be attached to base glyphs.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>RichB</div>
-<div class='content'>How about performing the Unicode Normalization process prior to display? (sample code available on the Unicode website) This would result in a single pre-combined character. Or would this mess up text selection, copy paste, etc?<br>Anyway, no-one uses combining characters, except, perhaps other character sets like ANSEL.<br></div>
 </div>
 
 </div>

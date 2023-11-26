@@ -19,16 +19,16 @@ Executing XGETBV with ECX = 1 returns in EDX:EAX the logical-AND of XCR0 and the
 
 I read this to mean that the visible non-deterministic behavior in evaluating XINUSE is, in fact, architectural.</div>
 <div class='comment'>
-<div class='author'>KF5VTH</div>
-<div class='content'>I&#39;d change &quot;technically allowed&quot; to be a bit stronger. Maybe &quot;to be expected&quot; was the feeling I got from reading it.
-
-Makes sense what you&#39;re saying re: relying on undefined behavior in rr. Pragmatism is a bit more important to actually get things working. Would enjoy to see a post on this reliance on AF flag behavior if it catches your interest to write someday.</div>
-</div>
-<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>I agree that randomly flipping the bit to 1 is &quot;technically allowed&quot;, if that&#39;s what you mean.
 
 However, rr sometimes has to rely on behaviors beyond the letter of the manual. Another example is that a lot of instructions leave the AF flag &quot;undefined&quot;, so in theory it could be set nondeterministically, which could break rr, but in practice CPUs don&#39;t do that.</div>
+</div>
+<div class='comment'>
+<div class='author'>KF5VTH</div>
+<div class='content'>I&#39;d change &quot;technically allowed&quot; to be a bit stronger. Maybe &quot;to be expected&quot; was the feeling I got from reading it.
+
+Makes sense what you&#39;re saying re: relying on undefined behavior in rr. Pragmatism is a bit more important to actually get things working. Would enjoy to see a post on this reliance on AF flag behavior if it catches your interest to write someday.</div>
 </div>
 </div>
 <div class='comment'>

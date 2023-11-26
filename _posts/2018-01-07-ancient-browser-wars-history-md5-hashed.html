@@ -20,44 +20,10 @@ permalink: "/2018/01/ancient-browser-wars-history-md5-hashed.html"
 </ol>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Lorenzo</div>
-<div class='content'>In short, Mozilla and Firefox still being around is a sort of miracle. The thing that confuses me most is the &quot;FirefoxOS bet&quot; that was about building a sort of crappy operating system for crappy phones on top a an huge pile of crap as codebase, plus &quot;web technologies&quot; again. I would not call it a &quot;bet&quot;.</div>
-</div>
-<div class='comment'>
-<div class='author'>VonCode</div>
-<div class='content'>I&#39;d love to hear more about &quot;automatic refactoring tools&quot;, what did they do, who provided them, and what impact they had?</div>
-<div class='comment'>
-<div class='author'>Joshua Cranmer</div>
-<div class='content'>The automated refactoring tools were built on Pork, and were developed largely in-house. In terms of impact, they were a dead-end. The main thrust was moving Gecko to a garbage-collected system, and they seemed to work well enough to suggest that the problems would be in the user&#39;s logic in doing the conversions, not so much the actual automation itself.
+<div class='author'>Steve Fink</div>
+<div class='content'>Thank you for exposing these. It&#39;s very illuminating to see these glimpses into the state of Mozilla and the world at those points in the past, and it reminds me of the need for humility in all of my own beliefs and opinions about the present day.
 
-As far as I am aware, the automated refactoring work was the first large-scale automated refactoring &quot;successfully&quot; done for C++. But that&#39;s sort of underwhelming, since Mozilla wasn&#39;t very aggressive at using complex C++ features at that time, and almost none of the work was ultimately committed (I think a few renaming patches were built on it and got checked in). A few years later, clang become self-hosting, and Google came along and pushed clang&#39;s automated refactoring and static analysis in a very big and public way.
-
-So the work was a dead end. Some of the ideas survived among Mozilla people (this is basically where the static analysis plugins and DXR came from), but the technical work wasn&#39;t going anywhere.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>We didn&#39;t get very far. I think maybe we were able to do some automatic renaming, but that&#39;s about it. Pretty lame compared to what&#39;s available today for C++ (even more so compared to other languages). Very little impact.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Brendan Eich</div>
-<div class='content'>I don&#39;t like saying &quot;I told you so&quot; so I won&#39;t :-P. I do hope you find someone to play the optimist to your pessimist in whatever enterprise you undertake. That seems important to me in my efforts, and I miss debating you!
-
-/be</div>
-</div>
-<div class='comment'>
-<div class='author'>Swatinem</div>
-<div class='content'>Interesting to see how much you talked about XUL, XUL developers, and rebuilding XUL on top of webkit.
-
-What is your opinion on XUL in retrospect?</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>XUL was thrown together in a hurry in the late 90s/early 2000s to serve the immediate need of building a cross-platform UI using Web tech. Many mistakes were made, but under the circumstances it wasn&#39;t too bad.
-
-In hindsight I think Mozilla could have and should have recognized earlier that XUL was a dead end, put more effort into standardizing the parts of XUL that Web applications need, and moved earlier to reduce the usage of XUL beyond Firefox/Thunderbird and hence the ongoing burden of XUL in Gecko. In particular we should have shut off the use of XUL in non-privileged content as soon as the first security bugs involving XUL arose, instead of a few years later.
-
-We definitely should have initiated XUL-free WebExtensions much earlier.</div>
-</div>
+I also just plain have a ton of respect for people who are willing to admit that they were wrong about substantial things. It&#39;s a great opportunity to learn vicariously in a way that isn&#39;t possible with the usual whitewashed histories.</div>
 </div>
 <div class='comment'>
 <div class='author'>Unknown</div>
@@ -81,15 +47,22 @@ You should be able to verify the others using that method.</div>
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Steve Fink</div>
-<div class='content'>Thank you for exposing these. It&#39;s very illuminating to see these glimpses into the state of Mozilla and the world at those points in the past, and it reminds me of the need for humility in all of my own beliefs and opinions about the present day.
+<div class='author'>Swatinem</div>
+<div class='content'>Interesting to see how much you talked about XUL, XUL developers, and rebuilding XUL on top of webkit.
 
-I also just plain have a ton of respect for people who are willing to admit that they were wrong about substantial things. It&#39;s a great opportunity to learn vicariously in a way that isn&#39;t possible with the usual whitewashed histories.</div>
+What is your opinion on XUL in retrospect?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>XUL was thrown together in a hurry in the late 90s/early 2000s to serve the immediate need of building a cross-platform UI using Web tech. Many mistakes were made, but under the circumstances it wasn&#39;t too bad.
+
+In hindsight I think Mozilla could have and should have recognized earlier that XUL was a dead end, put more effort into standardizing the parts of XUL that Web applications need, and moved earlier to reduce the usage of XUL beyond Firefox/Thunderbird and hence the ongoing burden of XUL in Gecko. In particular we should have shut off the use of XUL in non-privileged content as soon as the first security bugs involving XUL arose, instead of a few years later.
+
+We definitely should have initiated XUL-free WebExtensions much earlier.</div>
+</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>You wrote a little more than 9 years ago, &quot;the Web is
-winning.&quot;  <a href="http://www.asymco.com/2016/11/02/wherefore-art-thou-macintosh/" rel="nofollow">Still believe this? (see second chart)</a></div>
+<div class='author'>Lorenzo</div>
+<div class='content'>In short, Mozilla and Firefox still being around is a sort of miracle. The thing that confuses me most is the &quot;FirefoxOS bet&quot; that was about building a sort of crappy operating system for crappy phones on top a an huge pile of crap as codebase, plus &quot;web technologies&quot; again. I would not call it a &quot;bet&quot;.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -98,8 +71,25 @@ winning.&quot;  <a href="http://www.asymco.com/2016/11/02/wherefore-art-thou-mac
 Hopefully as much of Gecko&#39;s codebase is replaced with Servo modules, this will increase the speed of adding new features.</div>
 </div>
 <div class='comment'>
-<div class='author'>Gerv</div>
-<div class='content'>I still remember these... thank you for finally revealing the mystery :-)</div>
+<div class='author'>VonCode</div>
+<div class='content'>I&#39;d love to hear more about &quot;automatic refactoring tools&quot;, what did they do, who provided them, and what impact they had?</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>We didn&#39;t get very far. I think maybe we were able to do some automatic renaming, but that&#39;s about it. Pretty lame compared to what&#39;s available today for C++ (even more so compared to other languages). Very little impact.</div>
+</div>
+<div class='comment'>
+<div class='author'>Joshua Cranmer</div>
+<div class='content'>The automated refactoring tools were built on Pork, and were developed largely in-house. In terms of impact, they were a dead-end. The main thrust was moving Gecko to a garbage-collected system, and they seemed to work well enough to suggest that the problems would be in the user&#39;s logic in doing the conversions, not so much the actual automation itself.
+
+As far as I am aware, the automated refactoring work was the first large-scale automated refactoring &quot;successfully&quot; done for C++. But that&#39;s sort of underwhelming, since Mozilla wasn&#39;t very aggressive at using complex C++ features at that time, and almost none of the work was ultimately committed (I think a few renaming patches were built on it and got checked in). A few years later, clang become self-hosting, and Google came along and pushed clang&#39;s automated refactoring and static analysis in a very big and public way.
+
+So the work was a dead end. Some of the ideas survived among Mozilla people (this is basically where the static analysis plugins and DXR came from), but the technical work wasn&#39;t going anywhere.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>You wrote a little more than 9 years ago, &quot;the Web is
+winning.&quot;  <a href="http://www.asymco.com/2016/11/02/wherefore-art-thou-macintosh/" rel="nofollow">Still believe this? (see second chart)</a></div>
 </div>
 <div class='comment'>
 <div class='author'>MiracleBlue</div>
@@ -108,6 +98,16 @@ Hopefully as much of Gecko&#39;s codebase is replaced with Servo modules, this w
 I did notice, however, there are many more hashed posts in your archives than you&#39;ve &quot;declassified&quot; here.  I suspect there will be more reveals in the future?  What I&#39;m basically saying is: more, please!  :D
 
 Cheers!</div>
+</div>
+<div class='comment'>
+<div class='author'>Gerv</div>
+<div class='content'>I still remember these... thank you for finally revealing the mystery :-)</div>
+</div>
+<div class='comment'>
+<div class='author'>Brendan Eich</div>
+<div class='content'>I don&#39;t like saying &quot;I told you so&quot; so I won&#39;t :-P. I do hope you find someone to play the optimist to your pessimist in whatever enterprise you undertake. That seems important to me in my efforts, and I miss debating you!
+
+/be</div>
 </div>
 
 </div>

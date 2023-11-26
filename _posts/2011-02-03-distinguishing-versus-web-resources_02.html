@@ -17,28 +17,28 @@ permalink: "/2011/02/distinguishing-versus-web-resources_02.html"
 <p>People I respect disagree, on the grounds that allowing cross-origin embedding for new resource types is more consistent with existing practice and author expectations. Their point is valid but I think that consistency is outweighed by the problems above.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Erik Dahlström</div>
-<div class='content'>I think you make some very good points here, these things need to be taken into consideration when designing/extending web standards.<br>For people not on the www-svg mailinglist I&#39;d like to point out that SVG filters are meant to have no affect on pointer-events processing whatsoever.<br>http://lists.w3.org/Archives/Public/www-svg/2011Feb/0005.html<br></div>
+<div class='author'>Danny Moules</div>
+<div class='content'>I agree broadly with the points you make, especially this:<br>&quot;Such decisions seem dangerous to me; they&#39;re bets against serendipity and the ingenuity of attackers.&quot;<br>The assumption that because these are edges cases they can be ignored is incorrect and potentially dangerous, if not terribly confusing. This is true of all API development.<br>When moving into the future we need to make the best choices we can. If we opted to bow to IE6&#39;s interpretation of specifications, in light of the hardship of rejecting it, where would we be now...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Paul</div>
-<div class='content'>A good example of &quot;embedding&quot; and &quot;reading&quot; confusion:<br>https://grepular.com/Abusing_HTTP_Status_Codes_to_Expose_Private_Information<br></div>
+<div class='author'>Erik Dahlström</div>
+<div class='content'>I think you make some very good points here, these things need to be taken into consideration when designing/extending web standards.<br>For people not on the www-svg mailinglist I&#39;d like to point out that SVG filters are meant to have no affect on pointer-events processing whatsoever.<br>http://lists.w3.org/Archives/Public/www-svg/2011Feb/0005.html<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Anne van Kesteren</div>
 <div class='content'>I posted a reply of sorts: http://annevankesteren.nl/2011/02/web-platform-consistency<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Danny Moules</div>
-<div class='content'>I agree broadly with the points you make, especially this:<br>&quot;Such decisions seem dangerous to me; they&#39;re bets against serendipity and the ingenuity of attackers.&quot;<br>The assumption that because these are edges cases they can be ignored is incorrect and potentially dangerous, if not terribly confusing. This is true of all API development.<br>When moving into the future we need to make the best choices we can. If we opted to bow to IE6&#39;s interpretation of specifications, in light of the hardship of rejecting it, where would we be now...<br></div>
+<div class='author'>Ian Hickson</div>
+<div class='content'>I think the consistency argument has to be given a lot of weight, because otherwise each generation of Web standards people will bring with it a whole new set of API styles, and we&#39;ll end up with a platform that is nigh on impossible to intuitively understand. We&#39;re already there in many ways, in fact.<br>I don&#39;t know which argument is strongest in this particular case. Luckily, it&#39;s not my problem for once. :-)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>With the current approach we&#39;re adding complexity to the platform anyway, as we discover and work around the information leaks from embedded-but-not-readable resources. :-(<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Ian Hickson</div>
-<div class='content'>I think the consistency argument has to be given a lot of weight, because otherwise each generation of Web standards people will bring with it a whole new set of API styles, and we&#39;ll end up with a platform that is nigh on impossible to intuitively understand. We&#39;re already there in many ways, in fact.<br>I don&#39;t know which argument is strongest in this particular case. Luckily, it&#39;s not my problem for once. :-)<br></div>
+<div class='author'>Paul</div>
+<div class='content'>A good example of &quot;embedding&quot; and &quot;reading&quot; confusion:<br>https://grepular.com/Abusing_HTTP_Status_Codes_to_Expose_Private_Information<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Treponemiatic Yaqui</div>

@@ -8,24 +8,12 @@ permalink: "/2009/08/homework_08.html"
 <div class="columns"><p>Two interesting problems I've had to solve this week...<br/><p>Given a point <em><b>p</b></em> and a radius <em>r</em>, consider the family of circles <em>C<sub>t</sub></em>, where <em>t</em> is a positive real number, with centres <em>t<b>p</b></em> and radii <em>tr</em>. Given a point <em><b>q</b></em>, find the smallest value of <em>t</em> such that the circle <em>C<sub>t</sub></em> contains <em><b>q</b></em>. You may assume |<em><b>p</b></em>| &lt; <em>r</em>. This came up while I was optimizing repeating radial gradients for Mac.<br/><p>Given a set of non-overlapping axis-aligned rectangles in the plane, and a 2D vector <em><b>v</b></em>, order the rectangles in a sequence so that translating each rectangle one by one by <em><b>v</b></em> does not have any overlapping rectangles in the intermediate states. Does such an order always exist? This came up while I worked on optimizing scrolling.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Damian</div>
-<div class='content'>It&#39;s been a while since I did a nice maths problem. Let me give this a go:<br>I assume all of this exists in R^2? Let p = (m,n). Then the family of circles is:<br>C_t = {x - tm)^2 + (y - tn)^2 = t^2 r^2 | for all real solutions of (x,y)}<br>If q = (u,v) then the smallest t such that the circle encompasses q is such that (u,v) exists on the circumference of C_t, so we can substitute (x,y) for (u,v) and re-arrange for t? Gives me the rather awkward answer of:<br>t = (mu + nv +/- Sqrt[(-n^2 + r^2) u^2 +<br>2mnuv + (-m^2 + r^2) v^2])/(m^2 + n^2 - r^2)<br>And the assumption made is:<br>2mnuv + r^2(u^2 + v^2) &gt; n^2u^2 + m^2v^2<br>or more simply:<br>r^2|q| &gt; (nu - mv)^2<br>Geometry was never my strongest subject, did I make a mistake somewhere or did you find a simpler way of expressing this :)?<br>As for the other one, what is the definition of &quot;axis-aligned rectangles&quot;?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>VanillaMozilla</div>
-<div class='content'>Oh, never mind, I see it.  It&#39;s a typography thing, not very visible on my monitor.  Arghh.   p is a vector, so tp is also a vector.  I like Sjoerd Visscher&#39;s vector approach.  Will post my solution on the other thread.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Ben Karel</div>
 <div class='content'>Let p = (a,b) and q = (c,d); then by expanding dot(tp-q, tp-q) = r^2, and rearranging, we get t^2x - 2ty + z = 0, where x = (a^2 + b^2 - r^2), y = (bd + ac), and z = (c^2 + d^2). Apply the quadratic formula to get t = (2*y +- sqrt(4*y^2 - 4*x*z))/(2x).<br>For the second one, I guess you can immediately narrow the candidates at each step of an iterative solution to those forming the convex hull around the as-yet-unmoved rectangles, and further to those forming v&#39;s &quot;side&quot; of the hull. I don&#39;t see any immediately elegant solution for choosing which one on the hull to move, except perhaps for smallest first. Perhaps this: choose the largest candidate rectangle, and sweep the line parallel to perp(v), in the direction of (-v), until you hit the second corner (or if v itself is axis aligned, the other side), marking any other rectangles that are touched by the line. Those should be (recursively?) moved first.<br>That would probably be slower in practice than a simple heuristic and collision testing the translated rectangles to guarantee no overlaps.<br>I don&#39;t see any situation in which such an order couldn&#39;t be found...<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Damian</div>
-<div class='content'>Also it should be noted that the assumption clearly needs to be stronger than: |p| &lt; r.<br>Let p = (1/2, 1/2) and r = 1/4. Then no matter how large t, the circle will never encompass the origin (0,0).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>James Napolitano</div>
-<div class='content'>For the rectangle one, I think you want to transform your coordinates into the uv plane, where u is orthogonal to v. Then you might do something like order the rectangles by the v coordinates of their corners, and when 2 rectangles have overlapping v coordinates, go by the u coordinate. But it&#39;s too late here to work out the details now. And I hope you&#39;re not allowing for infinite sequences of rectangles... ;)<br></div>
+<div class='author'>MauricioC</div>
+<div class='content'>I really like the second one: intuitive, but a bit tricky to prove.<br>Do you have any geometric intuition for the formula for the first problem, though? Also, is binary searching for the answer numerically saner than using a closed formula?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>James Napolitano</div>
@@ -36,20 +24,28 @@ permalink: "/2009/08/homework_08.html"
 <div class='content'>Haven&#39;t done some of this stuff for awhile.  I tried the first one.<br>Eqn for Circle Ct is:<br>(x - t * px)^2 + (y - t * py)^2 = t * r^2<br>Solving for t we get a quadratic equation.  I get:<br>A * t^2 + B * t + C = 0<br>where A = (px^2 + py^2)<br>B = - (2* qx * py + 2 * qy * py + r^2)<br>C = (qx^2 + qy^2)<br>The minima of this quadratic curve occurs when the tangent is zero, so take derivative:<br>2 * A *tmin + B = 0<br>tmin = -B / 2 * A<br>thus:<br>tmin = (2 * qx * px + 2 * qy * py + r^2) / 2 * (px^2 + py^2)<br>Was I even close? :)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Neil Rashbrook</div>
-<div class='content'>Assuming I typed the question in correctly, Wolfram Alpha says t = (ax + by + √(r²(x² + y²) - (ay - bx)²))/(a² + b² - r²) where p = (a, b) and q = (x, y).<br></div>
+<div class='author'>James Napolitano</div>
+<div class='content'>For the rectangle one, I think you want to transform your coordinates into the uv plane, where u is orthogonal to v. Then you might do something like order the rectangles by the v coordinates of their corners, and when 2 rectangles have overlapping v coordinates, go by the u coordinate. But it&#39;s too late here to work out the details now. And I hope you&#39;re not allowing for infinite sequences of rectangles... ;)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Charles</div>
-<div class='content'>Second problem.<br>1) Create vector line A perpendicular to V.<br>2) Translate out of range of rects (large positive away from origin.)<br>3) step offset of A toward origin and check for intersection with any rect.<br>4) if intersection, translate rect by V.<br>5) repeat 3 -4 until done.<br>Lots of details but it is a &quot;proof&quot; of sorts that there is always an solution and an order.<br>If there is a tie for the Intersection as long as the &quot;step&quot; (dx) is small enough, then it will still translate without intersection. Also, only check for intersection of non-translated rects.<br>It&#39;s a start.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>MauricioC</div>
-<div class='content'>I really like the second one: intuitive, but a bit tricky to prove.<br>Do you have any geometric intuition for the formula for the first problem, though? Also, is binary searching for the answer numerically saner than using a closed formula?<br></div>
+<div class='author'>Damian</div>
+<div class='content'>It&#39;s been a while since I did a nice maths problem. Let me give this a go:<br>I assume all of this exists in R^2? Let p = (m,n). Then the family of circles is:<br>C_t = {x - tm)^2 + (y - tn)^2 = t^2 r^2 | for all real solutions of (x,y)}<br>If q = (u,v) then the smallest t such that the circle encompasses q is such that (u,v) exists on the circumference of C_t, so we can substitute (x,y) for (u,v) and re-arrange for t? Gives me the rather awkward answer of:<br>t = (mu + nv +/- Sqrt[(-n^2 + r^2) u^2 +<br>2mnuv + (-m^2 + r^2) v^2])/(m^2 + n^2 - r^2)<br>And the assumption made is:<br>2mnuv + r^2(u^2 + v^2) &gt; n^2u^2 + m^2v^2<br>or more simply:<br>r^2|q| &gt; (nu - mv)^2<br>Geometry was never my strongest subject, did I make a mistake somewhere or did you find a simpler way of expressing this :)?<br>As for the other one, what is the definition of &quot;axis-aligned rectangles&quot;?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Neil Rashbrook</div>
 <div class='content'>For the first one, I got as far as noticing that Ct is described in terms of an angle θ as (tpx + tsinθ, tpy + tcosθ) = t(px + sinθ, py + cosθ) and therefore if Q lies on Ct then the line OQ crosses C1 at a point OQ/t.<br>For the second one, if you can assume that it is impossible to have a cycle of potentially overlapping rectangles, then there is always one movable rectangle, and once moved, this rectangle plays no further part thus simplifying the problem and hence by induction the original problem is solved. This is trivially true for a single rectangle, but is also intuitively true for two rectangles R1 and R2; if R2 overlaps R1+v at a point P1 and R1 overlaps R2+v at a point P2+v then we also have R2-v overlaps R1 at a point P1-v and R1-v overlaps R2 at a point P2 so that R2 overlaps R1 at the point halfway between P1 and P2 (which is obviously in R2) or in terms of R1, halfway between P2+v and P1-v (which is obviously in R1). I wonder whether the original question is true for all convex polygons.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Neil Rashbrook</div>
+<div class='content'>Assuming I typed the question in correctly, Wolfram Alpha says t = (ax + by + √(r²(x² + y²) - (ay - bx)²))/(a² + b² - r²) where p = (a, b) and q = (x, y).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Bo</div>
+<div class='content'>I worked out a simplified case of the first problem in my head last night as I was falling asleep. I started to think about the more general case, but my thoughts faded out before I could think about it clearly...<br>Not a bad way to fall asleep.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Damian</div>
+<div class='content'>Also it should be noted that the assumption clearly needs to be stronger than: |p| &lt; r.<br>Let p = (1/2, 1/2) and r = 1/4. Then no matter how large t, the circle will never encompass the origin (0,0).<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Damian</div>
@@ -60,12 +56,16 @@ permalink: "/2009/08/homework_08.html"
 <div class='content'>&quot;consider the family of circles Ct, where t is a positive real number,....&quot;  &quot;...find the smallest value of t such that the circle Ct....&quot;<br>You misstated the problem.  You didn&#39;t define Ct in terms of a real number t.  In fact, t is not mentioned anywhere else in the problem.  Perhaps you meant that t is a vector (tp, tr)???  But then what do you mean by &quot;the smallest value of t&quot;?<br>Must be an interesting problem.  Evidently other people are better at guessing than I am.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Bo</div>
-<div class='content'>I worked out a simplified case of the first problem in my head last night as I was falling asleep. I started to think about the more general case, but my thoughts faded out before I could think about it clearly...<br>Not a bad way to fall asleep.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Sjoerd Visscher</div>
 <div class='content'>If I get this correctly, we have to find the smallest t such that |tp - q| = tr. This can be simplified to finding the biggest s such that |p - sn| = r with s = |q| / t and n = q / |q|.<br>This gives me s = |p.n +/- sqrt((p.n)^2 + r^2 - p.p)|. If p.n &gt; 0 then adding the sqrt gives the biggest s, else substracting does.<br>Solving for t, and multiplying with |q|/|q| gives<br>t = |q.q / (p.q +/- sqrt((p.q)^2 + (r^2 - p.p) * (q.q)))|, with again the choice of +/- depending on the sign of p.q.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Charles</div>
+<div class='content'>Second problem.<br>1) Create vector line A perpendicular to V.<br>2) Translate out of range of rects (large positive away from origin.)<br>3) step offset of A toward origin and check for intersection with any rect.<br>4) if intersection, translate rect by V.<br>5) repeat 3 -4 until done.<br>Lots of details but it is a &quot;proof&quot; of sorts that there is always an solution and an order.<br>If there is a tie for the Intersection as long as the &quot;step&quot; (dx) is small enough, then it will still translate without intersection. Also, only check for intersection of non-translated rects.<br>It&#39;s a start.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>VanillaMozilla</div>
+<div class='content'>Oh, never mind, I see it.  It&#39;s a typography thing, not very visible on my monitor.  Arghh.   p is a vector, so tp is also a vector.  I like Sjoerd Visscher&#39;s vector approach.  Will post my solution on the other thread.<br></div>
 </div>
 
 </div>

@@ -8,14 +8,6 @@ permalink: "/2010/04/api-design-for-masses_16.html"
 <div class="columns"><p>On Monday I gave a talk at the Victora University computer science department which I called "API Design For The Masses". I've put <a href="/roc/images/APIDesignForTheMasses.pdf">the slides</a> online. The premise is that designing specifications for the Web requires you to make different decisions than in the "good old days" when a relatively small number of professionals were writing specifications and implementing both sides of those specifications. I give eight design principles for Web-scale specs, mostly based on examples.<br/><p>The contents should not be surprising to anyone involved with the <a href="http://whatwg.org">WHATWG</a>. I didn't invent these principles, I just wanted to summarize my version of some of what the community already knows.<br/><p>These are my principles:<br/><ol><br/><li>Try to define behaviour for all inputs. Avoid "undefined" behaviours. Simplify or eliminate "fatal" behaviours.<br/><li>Specs that contradict entrenched practice must be changed to match it. If following the spec harms users, that part of the spec is worthless.<br/><li>Standardization and implementation must happen concurrently. You need a fast feedback loop, which means you need to be able to update the spec frequently and with low latency.<br/><li>Provide non-standard/pre-standard extensions, but use syntax to ensure authors know they're non-standard.<br/><li>Favour evolution over revolution if possible.<br/><li>Aim for forward and backward compatibility (with graceful degradation). Avoid versioning.<br/><li>Encourage conditional content to use detection of features, not detection of implementations. Provide mechanisms for such conditionals.<br/><li>Only add features where authors can see and correct their mistakes. Invisible metadata doesn't work.<br/></ol><br/></div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Ian Hickson</div>
-<div class='content'>Another one I would add is &quot;design your language to make sense to amateurs first, then evolve it to fit professionals&quot;. Doing the reverse is so hard as to be near impossible.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Huh, Yoonsuk</div>
-<div class='content'>http://www.youtube.com/watch?v=tseEbUBViVA<br>Dear whom,<br>We are a lab team for studying interface.<br>We think our technology will be good combine with the cr-48&amp; chrome os&amp; igoogle widget service.<br>We recomend our techonolgy which can substitute a mouse and a keyboard, also it could be used as multi view.<br>If you click above website, you can get more information and figure out our ideas. So, we would like recommend you.<br>If you have any questions or interests, please access website: www.repusy.com<br>also, If you want to confirm our patent or prototype, send email to us: repusey@gmail.com<br>Thank you for your time.<br>I am looking forward to meet you.<br>Sincerely,<br>Repusy Lab.(South Korea)<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Edouard</div>
 <div class='content'>Ahhhh, yes. The sense of loss we feel is perhaps best summed up by paraphrasing Hunter S. Thompson: &quot;So now, less than five years later, you can go and read the XHTML spec, and with the right kind of eyes you can almost see the high-water mark — that place where the wave finally broke and rolled back.&quot;<br></div>
 </div>
@@ -26,6 +18,14 @@ permalink: "/2010/04/api-design-for-masses_16.html"
 <div class='comment'>
 <div class='author'>Jim B</div>
 <div class='content'>Addressing points 6 &amp; 7, I&#39;d like a bit of css syntax which could act as a conditional to predicate a rule.  This conditional would simply be is the argument a supported css rule or not.  (my vocabulary is no doubt lacking here)<br>For instance, some browsers support border-image, and others don&#39;t.  It would be nice if I could entire support a different set of styling rules if rounded borders aren&#39;t supported.  Thus I could have<br>supported(border-image) blockquote { border-image: ...; blah; blah; blah; }<br>not_supported(border-image) blockquote { something; completely; different }<br>Unrelated to this, I just noticed that if I use Preview for my comment, the preview page clears out the name/email/url/comments fields.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ian Hickson</div>
+<div class='content'>Another one I would add is &quot;design your language to make sense to amateurs first, then evolve it to fit professionals&quot;. Doing the reverse is so hard as to be near impossible.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Huh, Yoonsuk</div>
+<div class='content'>http://www.youtube.com/watch?v=tseEbUBViVA<br>Dear whom,<br>We are a lab team for studying interface.<br>We think our technology will be good combine with the cr-48&amp; chrome os&amp; igoogle widget service.<br>We recomend our techonolgy which can substitute a mouse and a keyboard, also it could be used as multi view.<br>If you click above website, you can get more information and figure out our ideas. So, we would like recommend you.<br>If you have any questions or interests, please access website: www.repusy.com<br>also, If you want to confirm our patent or prototype, send email to us: repusey@gmail.com<br>Thank you for your time.<br>I am looking forward to meet you.<br>Sincerely,<br>Repusy Lab.(South Korea)<br></div>
 </div>
 
 </div>

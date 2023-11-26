@@ -20,16 +20,14 @@ permalink: "/2014/02/implementing-virtual-widgets-on-web.html"
 </ul>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Penerimaan CPNS 2014</div>
-<div class='content'>it&#39; can make web better good</div>
-</div>
-<div class='comment'>
-<div class='author'>daftar facebook</div>
-<div class='content'>that will be amazing web, nice to hear that even  i am not a specialist of that </div>
-</div>
-<div class='comment'>
-<div class='author'>pendaftaran CPNS</div>
-<div class='content'>if very good article and commenting brother</div>
+<div class='author'>Robert</div>
+<div class='content'>To address a question brought up on Twitter (and in private email): what to do if your items are (potentially) multi-line messages, e.g. tweets or SMS messages?
+
+Again, the answer depends on the details of your application. If the message list is mostly stable across application sessions --- i.e. you do not expect thousands of new messages to be added between invocations of the application --- you can add all new messages to the DOM and measure their heights, storing those heights in persistent local storage. After an application restart, hopefully you can efficiently grab the heights of most messages from storage.
+
+If that doesn&#39;t work for your application, you could guess the height using whatever heuristics you want (e.g. run an approximate line-breaking algorithm, perhaps on a server), treat the item as having that height, and when it actually gets added to the DOM, measure its actual height and use that instead of the guess.
+
+Note that the hard problems here are independent of what platform APIs exist --- there&#39;s nothing the browser can do to make measuring the heights of thousands of items scale well. And whatever solutions exist are highly application-specific.</div>
 </div>
 <div class='comment'>
 <div class='author'>Andrew Sutherland</div>
@@ -48,6 +46,16 @@ To populate items with async IndexedDB loads, I suggest creating &quot;blank&quo
 </div>
 </div>
 <div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>@roc you might be interested in https://github.com/emberjs/list-view (Ember List-View), a component that members of the Ember team wrote for this kind of situation because of how common this situation is when working with data-bound templates.
+
+Unfortunately, the &quot;fixed height&quot; restriction (even if it could be loosened somewhat) makes it a solution you have to think a lot about in a web that&#39;s defined by arbitrary content. It works sometimes, but often requires more compromises than you&#39;d like.</div>
+<div class='comment'>
+<div class='author'>Unknown</div>
+<div class='content'>BTW, this &quot;Unknown&quot; is Yehuda Katz of the Ember team. I&#39;m not sure why this widget logs me in with my Google account but can&#39;t figure out who I am :(</div>
+</div>
+</div>
+<div class='comment'>
 <div class='author'>Markus Stange</div>
 <div class='content'>Amazing timing! Two weeks ago I&#39;ve started converting the cleopatra profiler tree to this model (<a href="https://github.com/mstange/cleopatra/blob/5d1ea4d0ba598720f38f7229de1c4678ab00feb1/js/tree.js#L442" rel="nofollow">see here</a>) and ended up with very similar code, except that I didn&#39;t think to use cloneNode(). I ran into pretty much the same problems / questions.
 
@@ -56,10 +64,6 @@ Does Gecko currently dispatch the scroll event before we paint at the new scroll
 Have there been any standardization proposals for a display port DOM API?
 
 Another problem I had was that the absolute positioning triggered layerization of the rows during scrolling, which caused unnecessary repainting and jank, some of which I didn&#39;t quite understand - it looked like the layerization of the ancestor layers of the tree toggled between two states... Do we need a will-not-animate: top; property? ;-)</div>
-<div class='comment'>
-<div class='author'>Markus Stange</div>
-<div class='content'>Oh, right, I didn&#39;t actually want to stop throttling. I phrased that wrongly. What I was worried about was that we&#39;d paint layer contents with a new display port before we&#39;d send the scroll event, so that the scroll-induced paint would be wasted on out-of-date content. But if that can&#39;t happen, all is good.</div>
-</div>
 <div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>Non-APZC Gecko dispatches a scroll event before every scroll-induced paint.
@@ -71,19 +75,32 @@ No standardization proposals to expose the displayport AFAIK. We probably should
 Not sure what to do about layerization. If you set will-change:top on the items then that might stop things bouncing between states, if properly supported. I don&#39;t think that works in Gecko yet though.</div>
 </div>
 <div class='comment'>
+<div class='author'>Markus Stange</div>
+<div class='content'>Oh, right, I didn&#39;t actually want to stop throttling. I phrased that wrongly. What I was worried about was that we&#39;d paint layer contents with a new display port before we&#39;d send the scroll event, so that the scroll-induced paint would be wasted on out-of-date content. But if that can&#39;t happen, all is good.</div>
+</div>
+<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>In Gecko, a scroll event fires at a time when the scroll position is up to date so the rendered region will be sent to the compositor. Whether that&#39;s out of date depends on what the compositor and APZC is doing, but I think generally it will get used.</div>
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>if very good article and commenting brother
+<div class='author'>ralpht</div>
+<div class='content'>Wow, it&#39;s nice to see so much interest in this problem! Relatedly and recently Beth Dakin landed some support in WebKit for sending events when content will/did become visible via asynchronous scrolling: https://bugs.webkit.org/show_bug.cgi?id=127371
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Infinite scrolling isn&#39;t the same problem as I&#39;m analyzing here.
 
-<a href="http://sotopoker.com/app/Default0.aspx" rel="nofollow">Judi Online</a></div>
+I can&#39;t tell why those new Webkit events are needed over old-fashioned scroll events, but maybe it will become clear when the www-style discussion happens as promised.</div>
+</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>I was asking dbaron a few weeks ago if we&#39;d ever considered just exposing getContext() on all DOM Nodes. Its common to write custom drawing/layout on Android in places like this where performance is key (and Andorid/iOS already ship list implementations that do exactly what you&#39;re doing here. In fact it would probably be easier to steal code since they&#39;ve also solved this multi-height row problem).</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>I think custom drawing/layout have to be avoided, because it&#39;s just too hard to write custom code that actually works well in all situations on all platforms.</div>
+</div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>I&#39;m confused by this. The point is you aren&#39;t trying to write something that works well in every situation here. You&#39;re writing (fast) code that works extremely well for one very specific situation.
@@ -93,10 +110,6 @@ I&#39;m also not sure why platform dependent things would matter unless you&#39;
 <div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>There are a number of different classes of use-cases. Each class is quite large and can be handled using the same approach, using a single library. For example it&#39;s trivial to modify my demo to generate almost any static HTML/CSS content you want, as long as all items have the same size.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I think custom drawing/layout have to be avoided, because it&#39;s just too hard to write custom code that actually works well in all situations on all platforms.</div>
 </div>
 </div>
 <div class='comment'>
@@ -111,39 +124,26 @@ Accessibility is a good question, and I don&#39;t have a good answer. Ordering e
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>To address a question brought up on Twitter (and in private email): what to do if your items are (potentially) multi-line messages, e.g. tweets or SMS messages?
-
-Again, the answer depends on the details of your application. If the message list is mostly stable across application sessions --- i.e. you do not expect thousands of new messages to be added between invocations of the application --- you can add all new messages to the DOM and measure their heights, storing those heights in persistent local storage. After an application restart, hopefully you can efficiently grab the heights of most messages from storage.
-
-If that doesn&#39;t work for your application, you could guess the height using whatever heuristics you want (e.g. run an approximate line-breaking algorithm, perhaps on a server), treat the item as having that height, and when it actually gets added to the DOM, measure its actual height and use that instead of the guess.
-
-Note that the hard problems here are independent of what platform APIs exist --- there&#39;s nothing the browser can do to make measuring the heights of thousands of items scale well. And whatever solutions exist are highly application-specific.</div>
+<div class='author'>Penerimaan CPNS 2014</div>
+<div class='content'>it&#39; can make web better good</div>
 </div>
 <div class='comment'>
-<div class='author'>ralpht</div>
-<div class='content'>Wow, it&#39;s nice to see so much interest in this problem! Relatedly and recently Beth Dakin landed some support in WebKit for sending events when content will/did become visible via asynchronous scrolling: https://bugs.webkit.org/show_bug.cgi?id=127371
+<div class='author'>pendaftaran CPNS</div>
+<div class='content'>if very good article and commenting brother</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Infinite scrolling isn&#39;t the same problem as I&#39;m analyzing here.
-
-I can&#39;t tell why those new Webkit events are needed over old-fashioned scroll events, but maybe it will become clear when the www-style discussion happens as promised.</div>
-</div>
+<div class='author'>daftar facebook</div>
+<div class='content'>that will be amazing web, nice to hear that even  i am not a specialist of that </div>
 </div>
 <div class='comment'>
 <div class='author'>CPNS</div>
 <div class='content'>amazing for your psting brother</div>
 </div>
 <div class='comment'>
-<div class='author'>Unknown</div>
-<div class='content'>@roc you might be interested in https://github.com/emberjs/list-view (Ember List-View), a component that members of the Ember team wrote for this kind of situation because of how common this situation is when working with data-bound templates.
+<div class='author'>Anonymous</div>
+<div class='content'>if very good article and commenting brother
 
-Unfortunately, the &quot;fixed height&quot; restriction (even if it could be loosened somewhat) makes it a solution you have to think a lot about in a web that&#39;s defined by arbitrary content. It works sometimes, but often requires more compromises than you&#39;d like.</div>
-<div class='comment'>
-<div class='author'>Unknown</div>
-<div class='content'>BTW, this &quot;Unknown&quot; is Yehuda Katz of the Ember team. I&#39;m not sure why this widget logs me in with my Google account but can&#39;t figure out who I am :(</div>
-</div>
+<a href="http://sotopoker.com/app/Default0.aspx" rel="nofollow">Judi Online</a></div>
 </div>
 
 </div>

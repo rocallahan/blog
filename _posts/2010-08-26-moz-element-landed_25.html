@@ -8,12 +8,12 @@ permalink: "/2010/08/moz-element-landed_25.html"
 <div class="columns"><p>Markus Stange picked up <a href="/2008/07/the_latest_feat.html">the work I did in 2008</a> on the "-moz-element()" CSS extension (which was later extended by Ryo Kawaguchi), made some major improvements and got it reviewed and landed. Check out <a href="http://hacks.mozilla.org/2010/08/mozelement/">his blog post</a>. -moz-element lets you render the contents of an element as the background image for any other element. This is a very powerful tool that can be used in very interesting ways; check out Markus' amazing demos. This feature is on trunk now and will be in Firefox 4. We will also propose this to the CSS WG.<br/><p>Note for browser UI and extension authors: eventually -moz-element will be the preferred way to render "live" copies of Web page contents (insteading of using MozAfterPaint/drawWindow). Right now, -moz-element can be used to render the contents of a &lt;browser&gt; element elsewhere, although it's less well-tested and is less tweakable for performance. Post-FF4, we can tie -moz-element into the layers framework so that in many cases --- such as tab thumbnails --- rendering -moz-element just recomposites a layer subtree, fully GPU-accelerated.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Markus&#39; post that I linked to shows many excellent applications.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Josh</div>
 <div class='content'>It seems like a wacky idea! The good sort of &quot;wacky&quot;. How will it be used?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Markus&#39; post that I linked to shows many excellent applications.<br></div>
 </div>
 
 </div>

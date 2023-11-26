@@ -8,68 +8,12 @@ permalink: "/2010/05/webm_20.html"
 <div class="columns"><p>It's a relief to be able to talk about the new <a href="http://nightly.mozilla.org/webm/">WebM</a> video format. Development of <a href="http://nightly.mozilla.org/webm/">WebM support in Firefox</a> has all happened in our Auckland office (with some last-minute build support from Nick down in Timaru, and some quick hacking by Justin Dolske to make the context menu useful on Youtube). It's been crazy and stressful, but it's also been really good because WebM is going to be great for the open Web. There are several major advances here for unencumbered video on the Web:<br/><ul><br/><li><strong>Youtube</strong>. Youtube supporting WebM is psychologically massive. It also means we won't have to choose between our principles and being the only browser that needs plugins to play Youtube.<br/><li><strong>Better video quality</strong>. There's a lot of noise from H.264 proponents about Dark Shikari's <a href="http://x264dev.multimedia.cx/?p=377">analysis of VP8</a>, but even he agrees it's better than H.264 Baseline, which is pretty much all H.264 on the Web today (partly because that's all most current H.264 hardware supports). We also will also make ongoing improvements, perhaps by merging in some of the work done for Theora.<br/><li><strong>Hardware support</strong>. Several companies <a href="http://www.broadcom.com/press/release.php?id=s471536">have</a> <a href="http://www.qualcomm.com/blog/2010/05/19/web-video-google">announced</a> support for VP8 in their hardware.<br/><li><strong>Flash</strong>. <a href="http://blogs.adobe.com/flashplatform/2010/05/adobe_support_for_vp8.html">Support for WebM in Flash</a> may actually be the most important thing for authors and for the success of unencumbered video. It means authors will be able to publish in one format, WebM, and it will work everywhere (except the iPhone/iPad I guess!). Not only is that great for authors, it will put great pressure on the holdouts to add native WebM support. Thanks Adobe!<br/></ul><br/>And thanks Google. Spending $120M on On2 and then releasing their IP assets under a BSD license is hugely appreciated.<br/><p>It's important to remember that as exciting as this is, it's only the beginning. We expect significant improvements to the VP8 encoder and decoder. For Gecko, we need to get our <a href="http://people.mozilla.com/~roc/2f2cff1c9bf2-to-fbb9eff859cb.patch">current patches</a> into mozilla-central, we need to fix some bugs, and we need to add a few desperately needed features to our &lt;video&gt; element support, such as the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/video.html#dom-media-buffered"><tt>buffered</tt></a> attribute, plus a generic <a href="http://www.mail-archive.com/whatwg@lists.whatwg.org/msg19915.html">fullscreen API</a>.<br/><p>By the way, there's an important lesson here for all the people who were counseling us to give up on unencumbered video as a lost cause and embrace the MPEG-LA. It's a mistake to give in to despair when you don't know the future (and the world being an unpredictable place, you very rarely know the future).</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Jason is deeply invested in H.264, but he doesn&#39;t know much about patents (his project totally ignores patents). The most important point about patents is that if VP8 turns out to require MPEG-LA patent licensing, Google wasted most of $120M buying On2. One presumes they did due diligence.<br>Whether Jason is right about quality &quot;as a spec&quot; or not (he is an H.264 partisan after all), in practice we&#39;ll improve the VP8 encoder and we think it&#39;ll be more than competitive. It&#39;s also worth noting that a lot of the devices that play H.264 today only play Baseline.<br>A real spec for VP8 will be written.<br>None of that has anything to do with the lesson that unencumbered video has a fighting chance in the marketplace, and those who claimed it was &quot;clearly doomed&quot; would have had us surrender prematurely.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jeffrey</div>
-<div class='content'>I think you&#39;re mistaken about Flash supporting WebM. Adobe has only said it supports the VP8 codec not the WebM container format. I think it&#39;s likely to be only be supported through a format like FLV or F4V.<br>Also, I never heard them specifically say that they will install the codec on DirectShow (or GStreamer and QuickTime). They haven&#39;t done that with any of their other codecs. So IE9 users will still have to install a separate one themselves.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>dave</div>
-<div class='content'>I can&#39;t help but reflect on the progress that Javascript execution speed has made over the last few years as Google, Mozilla, Opera and Apple (even Microsoft more recently) have worked diligently, sometimes in co-operation, sometimes in competition to squeeze any possible speed increase out of the already existing standard.<br>I&#39;m guessing that&#39;s something else the naysayers thought impossible. It&#39;ll be interesting to see what open co-opetition can achieve in VP8 encoders and decoders as the Theora, FFMPEG and x264 projects all seem to have achieved great things within the limitations of their respective specifications.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jeff Walden</div>
-<div class='content'>I elaborated my own take on the concern acknowledged in the last paragraph, for anyone interested in reading more words on this topic.<br>http://whereswalden.com/2010/05/20/a-brief-note-on-web-video-formats-mozilla-theora-and-h-264-in-light-of-webm/<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>I totally agree that victory has not yet been achieved. I fully expect the MPEG-LA to fire back somehow. But I think our chances are looking good.<br>On patents: if VP8 turns out to require licensing from the MPEG-LA, then Google wasted most of $120M buying On2. Are they that stupid?<br></div>
+<div class='author'>Anonymous</div>
+<div class='content'>WebM should definitely solve the problem for YouTube, and most other video-sharing sites will likely follow YouTube&#39;s lead.  Unfortunately, sites such as TV networks and Hulu will probably stick with Flash for the foreseeable future, because the video tag makes it easy for web browsers and other tools to offer downloads of the videos in question, and such sites don&#39;t seem to like that idea.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Screwtape</div>
 <div class='content'>I&#39;m not terribly fussed about video-quality - I&#39;ve been watching VP6 Flash video online for long enough - so I found the &quot;VP8 is scarily close to the heavily-patented H.264&quot; news from Dark Shikari&#39;s analysis to be most worrying.<br>My inner nerd is disappointed that WebM is immutably frozen to the current unpolished VP8 implementation, but I guess a hobbled, high-quality Free codec is better than an excellent medium-quality Free codec (Theora) or an excellent high-quality patented codec (x264).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ed</div>
-<div class='content'>1. Unless google comes out and say. VP8 Spec will be written with Bug Fixing. Otherwise the reference Encoder ( with bug ) as it is now, will be the only encoder. This isn&#39;t necessarily a bad thing. But as a encoder that On2 has been working for a few years it is in VERY bad shape.<br>Personally i dont understand why we cant iron out the bugs and call it something else like VP9. Afterall there are no compatibility issues to worried. Why not fix it before problems spread.<br>2. Encoder takes a LONG time to tune. It will be at least a year or two before it is into good shape. Ofcoz if google decide to hire all the smart people then it may speed things up.<br>3. Google has lot of smart guys, as some previous poster have stated. But definitely not about Video Coding. Although they could easily hire lots...<br>4. What are the chances we could get Current hardware decoder to work with VP8 through software update. I know the chances is slim. But worth asking.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>dave</div>
-<div class='content'>@anonymous: the iPhone 3GS does not support anything higher than H,264 baseline. See for yourself:<br>http://www.apple.com/iphone/specs.html<br>I&#39;ve heard it said that the newest iPhones could support more in theory, but Apple won&#39;t transfer the better files because they want to keep things standard across the installed base. They wouldn&#39;t like it if people stopped serving baseline as they&#39;ve got some 100 million customers who can&#39;t view anything better.<br>The iPad only does Main profile too, so I doubt the next iPhone expected to be launched in the summer will do anything higher than that.<br>(Wikipedia actually claims that the Mac OS X decoder in Quicktime doesn&#39;t even do High Profile, but that&#39;s got to be wrong surely?)<br>But more importantly, even though Youtube is always at the core of this debate (even now it&#39;s on the righteous side), it doesn&#39;t reflect the average website that just wants to stick a single file on the web and have it viewed everywhere and by everyone. The only contenders for that are H.264 baseline and VP8, and if quality is the deciding factor (which it never is) then VP8 will win.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Boris</div>
-<div class='content'>There&#39;s actually an interesting question regarding lawsuits here.  If the MPEG-LA brings a lawsuit regarding VP8, does that exclude all MPEG-LA members from Google&#39;s VP8 license?  Or just MPEG-LA itself?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Logan</div>
-<div class='content'>US patent rules prior to July 1995 mean that some patents could extend out to 2017 or so, even though they cover standards from 1990.<br>Crazy, but possible. In a pool with enough patents some of them will be in this category.<br>A review of 1000+ patents is a huge task, but achievable. My experience of large patent clearance projects suggests that pending applications pose the greatest risk. The continuation and amendment rules in USA (and some other countries) allow too much flexibility to keep something pending and present new claims that target a product that skirts a granted patent. Whether that applies in patent pools, or in this patent pool, I don&#39;t know.<br>Recent cases on enablement may curtail this, or provide some ammunition for litigation. But a patent system that requires full scale litigation to understand the valid scope of a patent is ....<br>Personally, I like the antitrust angle.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>&gt; H.264 Baseline, which is pretty much all H.264 on the Web today (partly because that&#39;s all most current H.264 hardware supports)<br>Well, this is not exactly true. All desktop cards support High profile. The decoder on the iPhone 3GS also supports High. Most &quot;real&quot; devices support high (set top boxes, Blu-Ray players...) YouTube encoded videos use Main for normal qualities (360p, 480p) and High for HD (720p, 1080p) (ironically they don&#39;t use B-frames, the lack of which is VP8&#39;s greatest problem)<br>That said, even by DS&#39; admission, VP8 is probably within 20% of High profile h.264, and that&#39;s great. The Flash thing is also huge. I&#39;m a lot more optimistic now.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>crf</div>
-<div class='content'>Every attempt to bring an open patent/royalty free video platform for the web will come up for criticism that it will be sunk by a patent aircraft carrier or submarine.<br>At some point you have to have the courage to take on these patent bogeymen, and fight, and either win or lose.<br>Do it. You&#39;re stronger than the fraidy-cats.<br>This is GREAT NEWS. If this succeeds, even if or when Mozilla dies, you&#39;ll be remembered for this, for decades.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>pd</div>
-<div class='content'>The &quot;lesson to be learned&quot; is that Google cash bankrolls the vast majority of &#39;open&#39; ideology. It is not &quot;giving in to despair&quot; to acknowledge that &quot;open&quot; is not always pragmatic.<br>Another lesson is not &quot;giving in to&quot; hype. The article by Jason Garret-Glaser:<br>http://x264dev.multimedia.cx/?p=377<br>gives a much more realistic view than that coming out of the WebM partners and thankfully it&#39;s not concluded with a faith-oriented &quot;lesson&quot; suggesting skepticism is a &quot;mistake&quot;.<br>In summary:<br>- Patent pending? &quot;With regard to patents, VP8 copies way too much from H.264 for anyone sane to be comfortable with it, no matter whose word is behind the claim of being patent-free. This doesn’t mean that it’s sure to be covered by patents, but until Google can give us evidence as to why it isn’t, I would be cautious.&quot;<br>- Inferior quality? &quot;VP8, as a spec, should be a bit better than H.264 Baseline Profile and VC-1.  It’s not even close to competitive with H.264 Main or High Profile.&quot;<br>- Closed to developers? &quot;With the lack of a real spec, the VP8 software basically is the spec–and with the spec being “final”, any bugs are now set in stone.  Such bugs have already been found and Google has rejected fixes&quot;<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Joshua Cogliati</div>
-<div class='content'>Logan:<br>Yes, it is possible in general that there are patents that still cover very old technology because of long times between filing and granting. As you know, for patents filed before July 1995, the length of the patent was the longer of 20 years after filing or 17 years after granting.  However, for a known list of patents, it is easy to grab the filing date and granting date and figure out which patents are after a given set of prior art was published.<br>Here are some scripts I made to automate this process:<br>http://en.wikipedia.org/wiki/User:Jrincayc/Patent_utils<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>The spec constrains the decoder and encoder, but the implementation of the decoder and encoder is by no means &quot;frozen into the spec&quot;.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Anonymous, yes I should have said &quot;most *mobile* hardware&quot;.<br>I believe Youtube uses Baseline for 360p.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>modeless</div>
@@ -80,40 +24,96 @@ permalink: "/2010/05/webm_20.html"
 <div class='content'>@screwtape: VP8 is only &quot;frozen&quot; at the spec level, the nature of most codecs leaves plenty of room for improvement.<br>For example check out the changes in Theora, or the difference between a good H.264 encoder ( e.g. x264) and a bad one (e.g. Apple or Adobe&#39;s). That is all done without spec changes.  Since VP8 is currently tuned to meet the misleading PNSR metric there is plenty of low hanging fruit and even right now it is better than most H.264 encoders, it just so happens that the popular GPL encoder x264 is a bit of an outlier when it comes to quality. Probably a good sign for free codecs generally.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I totally agree that victory has not yet been achieved. I fully expect the MPEG-LA to fire back somehow. But I think our chances are looking good.<br>On patents: if VP8 turns out to require licensing from the MPEG-LA, then Google wasted most of $120M buying On2. Are they that stupid?<br></div>
+</div>
+<div class='comment'>
 <div class='author'>James</div>
 <div class='content'>Dave: Implementation bugs have been frozen into the spec. You won&#39;t fix those without a whole new revision.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>We don&#39;t ship libraries that are LGPL-only. We only ship libraries that are at least LGPL/MPL compatible.<br>I don&#39;t really like this policy, but that&#39;s what it is. Recent threads on mozilla.governance discuss this in more detail.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>voracity</div>
-<div class='content'>What annoys me most about Dark Shikari&#39;s post is that, while he&#39;s clearly a smart guy, he doesn&#39;t seem to understand that Google is staffed by smart guys too.<br>The patent issue has been the elephant in the room that *everyone* is talking about --- it is the *only* reason Google et al. are looking at an alternative. Google would have spent the vast bulk of the time since the On2 purchase going over the source code and algorithms with the finest of fine tooth combs. Nobody, and *least* of all Google, would have taken On2&#39;s statements about the patent-free status of VP8 on face value.<br>Shikari&#39;s post makes for a great technical insight into VP8, but he has thrown in his own baseless scaremongering about patent issues. (IANAL indeed!) I can&#39;t imagine that he would have had much experience with avoiding patents or patent issues --- especially given the project he works on.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Joshua Cogliati</div>
-<div class='content'>For a royalty free video platform, H.261 like video (note the 1, not a 3 or a 4) and somekind of subband audio encoding similar to MASCAM is rapidly approaching the point where it is indisputably not covered by any MPEG-LA patents simply by age since H.261 is from 1990 and MASCAM is from 1988.  There is at least one MPEG-LA MPEG-2 patent expiring every month for the rest of this year ( http://en.wikipedia.org/wiki/Talk:MPEG-2#Patents )  In about two years, MPEG-1 should be approaching this same point since the near final public committee draft came out by December 6, 1991.  So claims like all video codecs are subject to MPEG-LA&#39;s patents are rapidly becoming false even in the unlikely event that they are currently true.<br>I would like to see more discussion of patents on VP8 from Google&#39;s direction since VP8 is newer than things like H.261 and MPEG-1. However time is not on MPEG-LA&#39;s side for stopping patent free codecs totally.<br></div>
+<div class='content'>The spec constrains the decoder and encoder, but the implementation of the decoder and encoder is by no means &quot;frozen into the spec&quot;.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Matěj Cepl</div>
 <div class='content'>&gt; the world being an unpredictable place, you very rarely know the future<br>Which is the reason I am sad about https://bugzilla.mozilla.org/show_bug.cgi?id=435339#c53 and eagerly waiting on resolution of https://bugzilla.mozilla.org/show_bug.cgi?id=422540 which could save you a lot of work already.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>We don&#39;t ship libraries that are LGPL-only. We only ship libraries that are at least LGPL/MPL compatible.<br>I don&#39;t really like this policy, but that&#39;s what it is. Recent threads on mozilla.governance discuss this in more detail.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Robert Kaiser</div>
 <div class='content'>First, this is great news, and the support behind it is incredibly awesome. This is surely good to see.<br>I wonder though if we have answers to Dark Shikari&#39;s analysis, esp. if we have made our lawers think about the patent side and if we are working with Google and others to get the spec to be improved - not sure how much that&#39;s possible in terms of what is actually in it but at least it would be good in terms of how it&#39;s written (i.e. let&#39;s care that it&#39;s made crisp and clear and not be expressed in c&amp;p code but clear and useful descriptions).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>There&#39;s actually an interesting question regarding lawsuits here.  If the MPEG-LA brings a lawsuit regarding VP8, does that exclude all MPEG-LA members from Google&#39;s VP8 license?  Or just MPEG-LA itself?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&gt; H.264 Baseline, which is pretty much all H.264 on the Web today (partly because that&#39;s all most current H.264 hardware supports)<br>Well, this is not exactly true. All desktop cards support High profile. The decoder on the iPhone 3GS also supports High. Most &quot;real&quot; devices support high (set top boxes, Blu-Ray players...) YouTube encoded videos use Main for normal qualities (360p, 480p) and High for HD (720p, 1080p) (ironically they don&#39;t use B-frames, the lack of which is VP8&#39;s greatest problem)<br>That said, even by DS&#39; admission, VP8 is probably within 20% of High profile h.264, and that&#39;s great. The Flash thing is also huge. I&#39;m a lot more optimistic now.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Anonymous, yes I should have said &quot;most *mobile* hardware&quot;.<br>I believe Youtube uses Baseline for 360p.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jeff Walden</div>
+<div class='content'>I elaborated my own take on the concern acknowledged in the last paragraph, for anyone interested in reading more words on this topic.<br>http://whereswalden.com/2010/05/20/a-brief-note-on-web-video-formats-mozilla-theora-and-h-264-in-light-of-webm/<br></div>
 </div>
 <div class='comment'>
 <div class='author'>James</div>
 <div class='content'>I think the attention on Dark Shikari&#39;s post is that his was the only technical commentary on launch. All of the launch PR was focused on being open-source and royalty-free, and his post was the only one in that void and so is now being taken as fact by the hard-working tech press. I&#39;m quite surprised that 2 days later there hasn&#39;t been a technical response from anyone. There&#39;s plenty to say; it&#39;s the best free codec, it&#39;s one of very few codecs that&#39;s better than baseline h264, it has plenty of room to grow, etc. But nobody has made any of these points - is On2 just not used to being open yet or something?<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Omega X</div>
-<div class='content'>Google was never about anything but search. But now they are practically everything.<br>When Google bought ON2, they also bought their entire employee base. On top of that, Google has the ear of XiphOrg and a number of other smaller outfits. Both Mozilla and Opera and a ton of others can contribute code to the project.<br>I think its way too early to make any declarations. But I suspect that the encoder will improve very quickly.<br>As for the spec. I suspect that they are still deciding the details.<br></div>
+<div class='author'>Jeffrey</div>
+<div class='content'>I think you&#39;re mistaken about Flash supporting WebM. Adobe has only said it supports the VP8 codec not the WebM container format. I think it&#39;s likely to be only be supported through a format like FLV or F4V.<br>Also, I never heard them specifically say that they will install the codec on DirectShow (or GStreamer and QuickTime). They haven&#39;t done that with any of their other codecs. So IE9 users will still have to install a separate one themselves.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>WebM should definitely solve the problem for YouTube, and most other video-sharing sites will likely follow YouTube&#39;s lead.  Unfortunately, sites such as TV networks and Hulu will probably stick with Flash for the foreseeable future, because the video tag makes it easy for web browsers and other tools to offer downloads of the videos in question, and such sites don&#39;t seem to like that idea.<br></div>
+<div class='author'>voracity</div>
+<div class='content'>What annoys me most about Dark Shikari&#39;s post is that, while he&#39;s clearly a smart guy, he doesn&#39;t seem to understand that Google is staffed by smart guys too.<br>The patent issue has been the elephant in the room that *everyone* is talking about --- it is the *only* reason Google et al. are looking at an alternative. Google would have spent the vast bulk of the time since the On2 purchase going over the source code and algorithms with the finest of fine tooth combs. Nobody, and *least* of all Google, would have taken On2&#39;s statements about the patent-free status of VP8 on face value.<br>Shikari&#39;s post makes for a great technical insight into VP8, but he has thrown in his own baseless scaremongering about patent issues. (IANAL indeed!) I can&#39;t imagine that he would have had much experience with avoiding patents or patent issues --- especially given the project he works on.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>dave</div>
+<div class='content'>@anonymous: the iPhone 3GS does not support anything higher than H,264 baseline. See for yourself:<br>http://www.apple.com/iphone/specs.html<br>I&#39;ve heard it said that the newest iPhones could support more in theory, but Apple won&#39;t transfer the better files because they want to keep things standard across the installed base. They wouldn&#39;t like it if people stopped serving baseline as they&#39;ve got some 100 million customers who can&#39;t view anything better.<br>The iPad only does Main profile too, so I doubt the next iPhone expected to be launched in the summer will do anything higher than that.<br>(Wikipedia actually claims that the Mac OS X decoder in Quicktime doesn&#39;t even do High Profile, but that&#39;s got to be wrong surely?)<br>But more importantly, even though Youtube is always at the core of this debate (even now it&#39;s on the righteous side), it doesn&#39;t reflect the average website that just wants to stick a single file on the web and have it viewed everywhere and by everyone. The only contenders for that are H.264 baseline and VP8, and if quality is the deciding factor (which it never is) then VP8 will win.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>pd</div>
+<div class='content'>The &quot;lesson to be learned&quot; is that Google cash bankrolls the vast majority of &#39;open&#39; ideology. It is not &quot;giving in to despair&quot; to acknowledge that &quot;open&quot; is not always pragmatic.<br>Another lesson is not &quot;giving in to&quot; hype. The article by Jason Garret-Glaser:<br>http://x264dev.multimedia.cx/?p=377<br>gives a much more realistic view than that coming out of the WebM partners and thankfully it&#39;s not concluded with a faith-oriented &quot;lesson&quot; suggesting skepticism is a &quot;mistake&quot;.<br>In summary:<br>- Patent pending? &quot;With regard to patents, VP8 copies way too much from H.264 for anyone sane to be comfortable with it, no matter whose word is behind the claim of being patent-free. This doesn’t mean that it’s sure to be covered by patents, but until Google can give us evidence as to why it isn’t, I would be cautious.&quot;<br>- Inferior quality? &quot;VP8, as a spec, should be a bit better than H.264 Baseline Profile and VC-1.  It’s not even close to competitive with H.264 Main or High Profile.&quot;<br>- Closed to developers? &quot;With the lack of a real spec, the VP8 software basically is the spec–and with the spec being “final”, any bugs are now set in stone.  Such bugs have already been found and Google has rejected fixes&quot;<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Jason is deeply invested in H.264, but he doesn&#39;t know much about patents (his project totally ignores patents). The most important point about patents is that if VP8 turns out to require MPEG-LA patent licensing, Google wasted most of $120M buying On2. One presumes they did due diligence.<br>Whether Jason is right about quality &quot;as a spec&quot; or not (he is an H.264 partisan after all), in practice we&#39;ll improve the VP8 encoder and we think it&#39;ll be more than competitive. It&#39;s also worth noting that a lot of the devices that play H.264 today only play Baseline.<br>A real spec for VP8 will be written.<br>None of that has anything to do with the lesson that unencumbered video has a fighting chance in the marketplace, and those who claimed it was &quot;clearly doomed&quot; would have had us surrender prematurely.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>crf</div>
+<div class='content'>Every attempt to bring an open patent/royalty free video platform for the web will come up for criticism that it will be sunk by a patent aircraft carrier or submarine.<br>At some point you have to have the courage to take on these patent bogeymen, and fight, and either win or lose.<br>Do it. You&#39;re stronger than the fraidy-cats.<br>This is GREAT NEWS. If this succeeds, even if or when Mozilla dies, you&#39;ll be remembered for this, for decades.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joshua Cogliati</div>
+<div class='content'>For a royalty free video platform, H.261 like video (note the 1, not a 3 or a 4) and somekind of subband audio encoding similar to MASCAM is rapidly approaching the point where it is indisputably not covered by any MPEG-LA patents simply by age since H.261 is from 1990 and MASCAM is from 1988.  There is at least one MPEG-LA MPEG-2 patent expiring every month for the rest of this year ( http://en.wikipedia.org/wiki/Talk:MPEG-2#Patents )  In about two years, MPEG-1 should be approaching this same point since the near final public committee draft came out by December 6, 1991.  So claims like all video codecs are subject to MPEG-LA&#39;s patents are rapidly becoming false even in the unlikely event that they are currently true.<br>I would like to see more discussion of patents on VP8 from Google&#39;s direction since VP8 is newer than things like H.261 and MPEG-1. However time is not on MPEG-LA&#39;s side for stopping patent free codecs totally.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>dave</div>
+<div class='content'>I can&#39;t help but reflect on the progress that Javascript execution speed has made over the last few years as Google, Mozilla, Opera and Apple (even Microsoft more recently) have worked diligently, sometimes in co-operation, sometimes in competition to squeeze any possible speed increase out of the already existing standard.<br>I&#39;m guessing that&#39;s something else the naysayers thought impossible. It&#39;ll be interesting to see what open co-opetition can achieve in VP8 encoders and decoders as the Theora, FFMPEG and x264 projects all seem to have achieved great things within the limitations of their respective specifications.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Logan</div>
+<div class='content'>US patent rules prior to July 1995 mean that some patents could extend out to 2017 or so, even though they cover standards from 1990.<br>Crazy, but possible. In a pool with enough patents some of them will be in this category.<br>A review of 1000+ patents is a huge task, but achievable. My experience of large patent clearance projects suggests that pending applications pose the greatest risk. The continuation and amendment rules in USA (and some other countries) allow too much flexibility to keep something pending and present new claims that target a product that skirts a granted patent. Whether that applies in patent pools, or in this patent pool, I don&#39;t know.<br>Recent cases on enablement may curtail this, or provide some ammunition for litigation. But a patent system that requires full scale litigation to understand the valid scope of a patent is ....<br>Personally, I like the antitrust angle.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Joshua Cogliati</div>
+<div class='content'>Logan:<br>Yes, it is possible in general that there are patents that still cover very old technology because of long times between filing and granting. As you know, for patents filed before July 1995, the length of the patent was the longer of 20 years after filing or 17 years after granting.  However, for a known list of patents, it is easy to grab the filing date and granting date and figure out which patents are after a given set of prior art was published.<br>Here are some scripts I made to automate this process:<br>http://en.wikipedia.org/wiki/User:Jrincayc/Patent_utils<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ed</div>
+<div class='content'>1. Unless google comes out and say. VP8 Spec will be written with Bug Fixing. Otherwise the reference Encoder ( with bug ) as it is now, will be the only encoder. This isn&#39;t necessarily a bad thing. But as a encoder that On2 has been working for a few years it is in VERY bad shape.<br>Personally i dont understand why we cant iron out the bugs and call it something else like VP9. Afterall there are no compatibility issues to worried. Why not fix it before problems spread.<br>2. Encoder takes a LONG time to tune. It will be at least a year or two before it is into good shape. Ofcoz if google decide to hire all the smart people then it may speed things up.<br>3. Google has lot of smart guys, as some previous poster have stated. But definitely not about Video Coding. Although they could easily hire lots...<br>4. What are the chances we could get Current hardware decoder to work with VP8 through software update. I know the chances is slim. But worth asking.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Omega X</div>
+<div class='content'>Google was never about anything but search. But now they are practically everything.<br>When Google bought ON2, they also bought their entire employee base. On top of that, Google has the ear of XiphOrg and a number of other smaller outfits. Both Mozilla and Opera and a ton of others can contribute code to the project.<br>I think its way too early to make any declarations. But I suspect that the encoder will improve very quickly.<br>As for the spec. I suspect that they are still deciding the details.<br></div>
 </div>
 
 </div>

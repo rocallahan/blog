@@ -18,20 +18,6 @@ permalink: "/2013/05/web-audio-progress.html"
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>FFT should scale magically with SSE2 and above.</div>
-</div>
-<div class='comment'>
-<div class='author'>richard</div>
-<div class='content'>Good to hear there&#39;s progress, manually doing FFT calculations what imo the browser should do makes me a sad panda. Please implement an analyser node like webkit does and make the world a better place.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>We already implemented AnalyserNode.
-
-Having said that, we believe Web apps should be able to implement their own FFTs just as efficiently as native code, and work like asm.js, Parallel.js, and future extensions of that work will make that possible.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
 <div class='content'>&quot;It might be a good idea to do this on the Web too, and have browsers automatically limit the volume of content that exceeds those levels.&quot;
 
 This strikes me as a very bad idea.  The Web isn&#39;t a curated platform like PlayStation, and shouldn&#39;t make value calls.  What if a particular user is looking for or wants to make app that intentionally loudens quieter content?  Sorry, can&#39;t do that on Firefox?
@@ -47,6 +33,20 @@ Under any proposal the user would have the ability to make content as loud as th
 <div class='author'>maxw3st</div>
 <div class='content'>That clarification makes a lot of sense. It&#39;ll prevent advertisers from blowing out peoples speakers to attract attention with high (onLoad) volume levels. So long as the user has volume control for adjustment after loading, you have the right idea imo.</div>
 </div>
+</div>
+<div class='comment'>
+<div class='author'>richard</div>
+<div class='content'>Good to hear there&#39;s progress, manually doing FFT calculations what imo the browser should do makes me a sad panda. Please implement an analyser node like webkit does and make the world a better place.</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>We already implemented AnalyserNode.
+
+Having said that, we believe Web apps should be able to implement their own FFTs just as efficiently as native code, and work like asm.js, Parallel.js, and future extensions of that work will make that possible.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>FFT should scale magically with SSE2 and above.</div>
 </div>
 
 </div>

@@ -8,16 +8,48 @@ permalink: "/2009/08/homework-answers_09.html"
 <div class="columns"><p>Seems like a few people got close to the answer for the first problem. You formulate the condition for <em><b>q</b></em> being on the circle as a quadratic equation in <em>t</em>, and then apply the quadratic formula to solve for <em>t</em>. However, I can't give full credit to anyone because all the answers were incomplete; many ended containing a "plus or minus the square root ..." but a complete answer must describe which solution to pick. It's pretty easy to figure that out though. <p>My answer is<br><br/><em>t</em> = (<em>a</em><em>x</em> + <em>b</em><em>y</em> - √(<em>r</em>²(<em>x</em>² + <em>y</em>²) - (<em>a</em><em>y</em> - <em>b</em><em>x</em>)²))/(<em>a</em>² + <em>b</em>² - <em>r</em>²)<br><br/>where <em><b>p</b></em> = (<em>a</em>,<em>b</em>) and <em><b>q</b></em> = (<em>x</em>,<em>y</em>). The answer from Wolfram Alpha via Neil Rashbrooke is the same except it chooses the positive root; I think that's wrong, because it will give you a negative <em>t</em> (the denominator is negative).<br/><p>The second problem is harder. Even though it's intuitively "obvious" that a solution is always possible, I found it quite difficult to prove, and apparently so did my readers. I think Joshua Cranmer got close but I don't fully understand his answer and he didn't get a complete algorithm for finding the order.<br/><p>I start by observing that if you can find one rectangle to move safely then the solution to the whole problem follows by induction, since one moved rectangle can never overlap other moved rectangles, since they didn't overlap to start with. So the problem is reduced to finding one rectangle to move safely from the set of rectangles.<br/><p>I also observe that without loss of generality you can reduce the problem to the case where the components of <em><b>v</b></em> are non-negative, i.e., we are moving the rectangles down and to the right by some amount, possibly zero.<br/><p>Let's say rectangles <em>R</em> and <em>S</em> <b>overlap horizontally</b> if their projections onto the x-axis intersect. Similarly, they <b>overlap vertically</b> if their projections onto the y-axis intersect. Because our rectangles are non-overlapping, if <em>R</em> and <em>S</em> are different and overlap horizontally they cannot overlap vertically, and either <em>R</em> is <b>entirely above</b> <em>S</em> (every point in <em>R</em> is above (or on) the top edge of <em>S</em>) or <em>R</em> is <b>entirely below</b> <em>S</em> (every point in <em>R</em> is below (or on) the bottom edge of <em>S</em>).<br/><p>Consider the subset of rectangles <em>R</em> such that <em>R</em> has no rectangle entirely below it that it overlaps horizontally. These rectangles do not overlap each other horizontally. Choose the "rightmost" rectangle from this set, let's call it <em>M</em>. I claim no other rectangle intersects <em>M</em> + </em><b>v</b></em>. This solves the problem.<br/><p>The proof is still subtle. We have to show that our subset is non-empty, i.e., that at least one rectangle has no rectangles below it that it overlaps horizontally. This is easy though, since rectangle with the lowest bottom-edge certainly has no rectangles below it. So such an <em>M</em> exists.<br/><p>Of course the hard part is to show that no other rectangle intersects <em>M</em> + <em><b>v</b></em>. We can show that in fact no rectangles are below <em>M</em>'s top edge and to the right of <em>M</em>'s left edge (other than <em>M</em> itself). Let's call this set <em>S</em>. I'll show <em>S</em> is empty, by assuming <em>S</em> is nonempty and working to a contradiction.<br/><p>Clearly there can be no rectangles below <em>M</em>'s top edge that overlap <em>M</em> horizontally, or they would have to be below <em>M</em> and we wouldn't have put <em>M</em> in that subset. So every rectangle in <em>S</em> would have to be entirely to the right of <em>M</em>. So choose out <em>S</em> one rectangle that has the lowest bottom edge rectangles in <em>S</em>. Let's call it <em>P</em>. I will show that <em>P</em> has no rectangles entirely below it that it overlaps horizontally, so it should have been part of the initial subset, which contradicts our choice of <em>M</em> as the rightmost rectangle in that subset, thus showing that no such <em>P</em> exists and <em>S</em> is empty.<br/><p>Clearly no rectangle in <em>S</em> is below <em>P</em> and overlaps <em>P</em> horizontally. What about the rectangles not in <em>S</em>? Suppose a rectangle <em>Q</em> is not in <em>S</em>, is entirely below <em>P</em> and overlaps <em>P</em> horizontally. The left edge of <em>Q</em> must be at or to the left of the left edge of <em>M</em>, otherwise <em>Q</em> would be in <em>S</em>. The right edge of <em>Q</em> must be to the right of the right edge of <em>M</em>, since <em>Q</em> overlaps <em>P</em> horizontally. So <em>Q</em> also overlaps <em>M</em> horizontally. The bottom edge of <em>Q</em> is below the bottom edge of <em>P</em> which is below the top edge of <em>M</em>, so <em>Q</em> must be entirely below <em>M</em> --- but this is impossible, since we chose <em>M</em> to have no rectangle overlapping horizontally below it.<br/><p>Phew! That's not easy for something so "obvious".<br/><p>This solution should make for a reasonably efficient algorithm.<br/><ol><br/><li>Sort the rectangles by right edge.<br/><li>Set R to the rightmost rectangle.<br/><li>If R has any rectangles overlapping horizontally below it, set R to the one of those rectangles with the rightmost right edge and go to step 3.<br/><li>Move R.<br/><li>Remove R from our list.<br/><li>If there are more rectangles in the list, go to step 2.<br/></ol><br/><p><strong>Update</strong> Actually I'm pretty sure you can do a direct proof of correctness of the above algorithm. At the beginning of step 3 you have the invariant that there are no rectangles to the right of the right edge of R and below the top edge of R. Using that invariant, I think you can construct a much simpler proof than the one I gave here.<br/><p>Also, as at least one commenter observed, you can improve this algorithm by not throwing away all your work every time you go to step 2. That adds complexity though...<br/><p><strong>Update</strong> Fixed a typo in the answer to the first problem, pointed out by Boris.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Boris</div>
-<div class='content'>Your formula for t can&#39;t possibly be right, since |x + by| is clearly bogus (units mismatch!).<br>Over here, I get |ax + by| for that part, so I assume you just typo&#39;d.<br>Still thinking about the rectangles thing; haven&#39;t read this part of the answers yet.  ;)<br></div>
+<div class='author'>Neil Rashbrook (without a trailing e!)</div>
+<div class='content'>No blame to Wolfram Alpha for this, it actually gave me all possible roots including imaginary ones, and I couldn&#39;t work out how to a) ask it for positive real roots only or b) specify that r² &gt; a² + b², so I just picked the one that I thought was positive real; I&#39;d have written (r² - a² - b²) if I&#39;d noticed that (a² + b² - r²) was negative.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Damian</div>
+<div class='content'>Ahh yes, I hadn&#39;t spent the time to calculate which was the positive answer.<br>But it&#39;s pretty simple, to confirm what you got:<br>Any real square root must be positive, so assuming one solution is negative and one solution is positive then for some positive s, we can say:<br>(x + by +/- s)/(|p| - r^2)<br>Any as the assumption is that |p| &lt; r^2 then the bottom would be some negative number, let&#39;s say -(1/u). We get<br>-(u)(x + by - s)<br>Or<br>-(u)(x + by + s)<br>So assuming x, b and y are positive then the first solution must hold. But I&#39;m not convinced it&#39;s true for all p and q.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Damian</div>
+<div class='content'>Nope, playing around with a bit further, I think you&#39;re always correct about the choice of sign. Because The nominator is always negative because<br>x + by &lt; Sqrt(r^2 (x^2 + y^2) - (ay - bx)^2)<br>But I&#39;ve not yet got a convincing proof for this inequality.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Kyle Huey</div>
 <div class='content'>Your proof looks good to me.  The algorithm seems a bit odd though.  If you sort the rectangles ahead of time by right edge then in step 3 should be<br>&quot;If R has any rectangles overlapping horizontally below it, set R to the rectangle furthest down (highest Y value).&quot;<br>Step 3 would also never be repeated then.  You&#39;ve already picked a rectangle with the rightmost edge, so the only thing that could go wrong is that there are multiple rectangles with that rightmost edge and you didn&#39;t pick the one furthest down.<br>Alternatively you can keep Step 3 as described and replace steps 1 and 2 with<br>&quot;Pick an arbitrary rectangle in the set&quot;<br>That seems to me like it would be more efficient because it eliminates the need to sort the 20, 50, 100, 500, or 5000 rectangles that aren&#39;t even remotely candidates to be the first rectangles to move.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Neil Rashbrook (without a trailing e!)</div>
-<div class='content'>No blame to Wolfram Alpha for this, it actually gave me all possible roots including imaginary ones, and I couldn&#39;t work out how to a) ask it for positive real roots only or b) specify that r² &gt; a² + b², so I just picked the one that I thought was positive real; I&#39;d have written (r² - a² - b²) if I&#39;d noticed that (a² + b² - r²) was negative.<br></div>
+<div class='author'>Kyle Huey</div>
+<div class='content'>On the other hand it might be better to sort the rectangles ahead of time, because you would have to iterate every time through and sort just once.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Michael Ryan</div>
+<div class='content'>Going back to step 2 would be pretty inefficient in the worst case. I think this would work better:<br>1. Sort the rectangles by right edge.<br>2. If stack S is not empty, pop a rectangle off of S and set to R; else, set R to the rightmost rectangle.<br>3. If R has any rectangles overlapping horizontally below it, add R to the stack S, set R to the one of those rectangles with the rightmost right edge and go to step 3.<br>4. Move R.<br>5. Remove R from our list.<br>6. If there are more rectangles in the list, go to step 2.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Ben Karel</div>
+<div class='content'>Wouldn&#39;t a somewhat simpler proof for #2 to be by contradiction, by proving that it&#39;s impossible to construct an arrangement that doesn&#39;t have a valid &quot;undoing&quot; sequence? I think that this approach captures the intuitive way of thinking about the problem.<br>Suppose you start with a single rectangle; obviously, that&#39;s free to move. Restricting to the &quot;down and right&quot; case, for every subsequent rectangle added, there will be a &quot;down and rightmost&quot; rectangle, which is free to be moved. Any rectangle added to block the down-and-rightmost free rectangle cannot be blocked by any previous rectangle, so there will always be a free rectangle. Finally, the connection between placing and moving rectangles: once a rectangle R is moved, any other rectangles that were blocked only by R are now free. Thus, (A) there will always be at least one free rectangle, and (B) every moved rectangle will leave at least one free unmoved rectangle.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>That might work, but I think you need to formalize it more ... I&#39;m not sure what you mean by &quot;down and rightmost&quot;, for example.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Daniel Varga</div>
+<div class='content'>To me the most intuitive algorithm to the rectangles problem is the following. Define a directed acyclic graph on the rectangles: Rectangle A is connected to rectangle B if moving rectangle A in the direction of v it eventually hits rectangle B. (Several commenters noted that this graph is indeed acyclic.) Any topological ordering of this DAG will be a solution to the original problem.<br>This algorithm can be quite effictive, depending on the implementation details of building the DAG. If we have an API that supports the query &quot;SELECT point from pointset if it is in convex_polygon&quot;, then the DAG is quite fast to build.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Neil Rashbrook</div>
+<div class='content'>Informally, I was trying to work out how far I could generalise the question, and realised that the back-to-front 3D rendering algorithm is another special case of using a vector to provide a strict partial ordering over a series of convex objects. I think all that is left to prove is that the dependency graph is acyclic (I have already proved that it is directed).<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Boris</div>
+<div class='content'>Your formula for t can&#39;t possibly be right, since |x + by| is clearly bogus (units mismatch!).<br>Over here, I get |ax + by| for that part, so I assume you just typo&#39;d.<br>Still thinking about the rectangles thing; haven&#39;t read this part of the answers yet.  ;)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>VanillaMozilla</div>
@@ -25,15 +57,7 @@ permalink: "/2009/08/homework-answers_09.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>That might work, but I think you need to formalize it more ... I&#39;m not sure what you mean by &quot;down and rightmost&quot;, for example.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
 <div class='content'>Boris: yes, it&#39;s a typo, will fix...<br>VanillaMozilla: several people got that far, but as I said at the beginning of this post, you need to go a bit further and identify which solution to the quadratic equation is the right one.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>VanillaMozilla</div>
-<div class='content'>My last comment appears nonsensical after the first sentence because it is only part of what I posted.  There is a large chunk of text missing from the middle.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
@@ -44,32 +68,8 @@ permalink: "/2009/08/homework-answers_09.html"
 <div class='content'>Well, for that matter I didn&#39;t give the solution either, since the emphasis was on the vector method.  As you pointed out, if t&gt;0 and |p|r, a solution does not necessarily exist.  Of course you knew that.)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>andrea</div>
-<div class='content'>can anyone help me with the following problem:<br>The line that passes through (3,7) and (r,4) has a slope of 4.<br>i have no idea what i doing here.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Damian</div>
-<div class='content'>Ahh yes, I hadn&#39;t spent the time to calculate which was the positive answer.<br>But it&#39;s pretty simple, to confirm what you got:<br>Any real square root must be positive, so assuming one solution is negative and one solution is positive then for some positive s, we can say:<br>(x + by +/- s)/(|p| - r^2)<br>Any as the assumption is that |p| &lt; r^2 then the bottom would be some negative number, let&#39;s say -(1/u). We get<br>-(u)(x + by - s)<br>Or<br>-(u)(x + by + s)<br>So assuming x, b and y are positive then the first solution must hold. But I&#39;m not convinced it&#39;s true for all p and q.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Neil Rashbrook</div>
-<div class='content'>Informally, I was trying to work out how far I could generalise the question, and realised that the back-to-front 3D rendering algorithm is another special case of using a vector to provide a strict partial ordering over a series of convex objects. I think all that is left to prove is that the dependency graph is acyclic (I have already proved that it is directed).<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Ben Karel</div>
-<div class='content'>Wouldn&#39;t a somewhat simpler proof for #2 to be by contradiction, by proving that it&#39;s impossible to construct an arrangement that doesn&#39;t have a valid &quot;undoing&quot; sequence? I think that this approach captures the intuitive way of thinking about the problem.<br>Suppose you start with a single rectangle; obviously, that&#39;s free to move. Restricting to the &quot;down and right&quot; case, for every subsequent rectangle added, there will be a &quot;down and rightmost&quot; rectangle, which is free to be moved. Any rectangle added to block the down-and-rightmost free rectangle cannot be blocked by any previous rectangle, so there will always be a free rectangle. Finally, the connection between placing and moving rectangles: once a rectangle R is moved, any other rectangles that were blocked only by R are now free. Thus, (A) there will always be at least one free rectangle, and (B) every moved rectangle will leave at least one free unmoved rectangle.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Kyle Huey</div>
-<div class='content'>On the other hand it might be better to sort the rectangles ahead of time, because you would have to iterate every time through and sort just once.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Daniel Varga</div>
-<div class='content'>To me the most intuitive algorithm to the rectangles problem is the following. Define a directed acyclic graph on the rectangles: Rectangle A is connected to rectangle B if moving rectangle A in the direction of v it eventually hits rectangle B. (Several commenters noted that this graph is indeed acyclic.) Any topological ordering of this DAG will be a solution to the original problem.<br>This algorithm can be quite effictive, depending on the implementation details of building the DAG. If we have an API that supports the query &quot;SELECT point from pointset if it is in convex_polygon&quot;, then the DAG is quite fast to build.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Michael Ryan</div>
-<div class='content'>Going back to step 2 would be pretty inefficient in the worst case. I think this would work better:<br>1. Sort the rectangles by right edge.<br>2. If stack S is not empty, pop a rectangle off of S and set to R; else, set R to the rightmost rectangle.<br>3. If R has any rectangles overlapping horizontally below it, add R to the stack S, set R to the one of those rectangles with the rightmost right edge and go to step 3.<br>4. Move R.<br>5. Remove R from our list.<br>6. If there are more rectangles in the list, go to step 2.<br></div>
+<div class='author'>VanillaMozilla</div>
+<div class='content'>My last comment appears nonsensical after the first sentence because it is only part of what I posted.  There is a large chunk of text missing from the middle.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Boris</div>
@@ -80,8 +80,8 @@ permalink: "/2009/08/homework-answers_09.html"
 <div class='content'>That&#39;s a nice proof!<br>VanillaMozilla: sorry about your text being lost, not sure what could have happened.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Damian</div>
-<div class='content'>Nope, playing around with a bit further, I think you&#39;re always correct about the choice of sign. Because The nominator is always negative because<br>x + by &lt; Sqrt(r^2 (x^2 + y^2) - (ay - bx)^2)<br>But I&#39;ve not yet got a convincing proof for this inequality.<br></div>
+<div class='author'>andrea</div>
+<div class='content'>can anyone help me with the following problem:<br>The line that passes through (3,7) and (r,4) has a slope of 4.<br>i have no idea what i doing here.<br></div>
 </div>
 
 </div>

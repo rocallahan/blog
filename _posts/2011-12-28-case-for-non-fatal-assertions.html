@@ -18,22 +18,16 @@ permalink: "/2011/12/case-for-non-fatal-assertions.html"
 <p>Addendum: an objection to non-fatal assertions is that libc "assert" and some other assertion mechanisms are fatal, so to call something non-fatal an "assertion" is confusing. That may be true for some people, but it's cultural. The culture in Gecko is that NS_ASSERTION is non-fatal. Maybe renaming our non-fatal assertion mechanism would end up being a net win by some point in the future, but I'm dubious. Although I wouldn't actually mind too much; I just want non-fatal assertions, whatever we call them.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>jwalden@mit.edu</div>
-<div class='content'>&quot;I imagine that in the JS engine almost any bug will lead to a crash sooner or later&quot;
-
-The JS engine uses assertions for everything, dangerous or not.  We don&#39;t distinguish crash-ful mis-execution even from &quot;harmless error&quot;.  I believe this cuts against the argument that some &quot;assertions&quot; should be non-fatal because it doesn&#39;t matter what will happen if things go wrong.</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>As I said on dev.platform, the difference between fatality and non-fatality is not in the confidence we have that the condition is true, but in the consequences if it isn&#39;t true.</div>
-</div>
-<div class='comment'>
-<div class='author'>Don</div>
-<div class='content'>I am with you 100% on NS_ASSERTION and its relatives (NS_NOTREACHED is the only one I remember right now), which really are non-fatal assertions ...</div>
-</div>
-<div class='comment'>
 <div class='author'>Jesse Ruderman</div>
 <div class='content'>We could rename NS_ASSERTION to MOZ_BUG ;)</div>
+</div>
+<div class='comment'>
+<div class='author'>njn</div>
+<div class='content'>I can see the merit of your argument -- I have some NS_ASSERTIONs relating to memory reporting where aborting is also overkill if they are triggered.
+
+One problem with non-fatal assertions, however, is that our debug builds spew so much crap that&#39;s it&#39;s all too easy to miss them when they happen.
+
+And I also am one of those who object to Gecko&#39;s misappropriation of the existing term &quot;assert&quot; to mean something non-fatal.</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -52,6 +46,12 @@ Ironically, that work is partially blocked on a JS engine assertion, bug 631289,
 Object to it all you like, but at this point it&#39;s ancient history whose consequences we have to live with today.</div>
 </div>
 <div class='comment'>
+<div class='author'>jwalden@mit.edu</div>
+<div class='content'>&quot;I imagine that in the JS engine almost any bug will lead to a crash sooner or later&quot;
+
+The JS engine uses assertions for everything, dangerous or not.  We don&#39;t distinguish crash-ful mis-execution even from &quot;harmless error&quot;.  I believe this cuts against the argument that some &quot;assertions&quot; should be non-fatal because it doesn&#39;t matter what will happen if things go wrong.</div>
+</div>
+<div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>The fact that the JS engine doesn&#39;t use non-fatal exceptions is probably more due to the fact that there isn&#39;t a non-fatal assertion mechanism available there. I see no reason to believe that the JS engine wouldn&#39;t benefit from harmless errors being non-fatal.</div>
 </div>
@@ -64,12 +64,12 @@ We don&#39;t have to live with the NS_ASSERTION terminology dilution if we globa
 I vote for MOZ_HOPE!</div>
 </div>
 <div class='comment'>
-<div class='author'>njn</div>
-<div class='content'>I can see the merit of your argument -- I have some NS_ASSERTIONs relating to memory reporting where aborting is also overkill if they are triggered.
-
-One problem with non-fatal assertions, however, is that our debug builds spew so much crap that&#39;s it&#39;s all too easy to miss them when they happen.
-
-And I also am one of those who object to Gecko&#39;s misappropriation of the existing term &quot;assert&quot; to mean something non-fatal.</div>
+<div class='author'>Robert</div>
+<div class='content'>As I said on dev.platform, the difference between fatality and non-fatality is not in the confidence we have that the condition is true, but in the consequences if it isn&#39;t true.</div>
+</div>
+<div class='comment'>
+<div class='author'>Don</div>
+<div class='content'>I am with you 100% on NS_ASSERTION and its relatives (NS_NOTREACHED is the only one I remember right now), which really are non-fatal assertions ...</div>
 </div>
 
 </div>

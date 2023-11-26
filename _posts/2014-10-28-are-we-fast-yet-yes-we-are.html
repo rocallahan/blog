@@ -11,12 +11,19 @@ permalink: "/2014/10/are-we-fast-yet-yes-we-are.html"
 <p>Congratulations to the Spidermonkey team; great job!
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Amazing! Congrats guys!</div>
-</div>
-<div class='comment'>
 <div class='author'>Mike</div>
 <div class='content'>So how can i use it to run my nodejs app? </div>
+<div class='comment'>
+<div class='author'>KryDos</div>
+<div class='content'>I thought Node.JS is using V8 and you can&#39;t choose another JS engine. Is it not true?</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>There was this, but it&#39;s no longer maintained:
+https://github.com/zpao/spidernode
+
+If the gap between V8 and Spidermonkey continues to widen, maybe someone should resurrect that or something like it. I guess it&#39;d be a lot of work though. Regardless, the choices made by Node.JS aren&#39;t really our problem (except where our embedding API needs improvement...).</div>
+</div>
 <div class='comment'>
 <div class='author'>Harry Moreno</div>
 <div class='content'>yep. If the difference in speed widens you bet someone will resurrect the project. I&#39;d love to see that happen but I agree with the OP - asm.js and real-world related benchmarks are more interesting.</div>
@@ -26,19 +33,8 @@ permalink: "/2014/10/are-we-fast-yet-yes-we-are.html"
 <div class='content'>You can use Narwhal, which is a server-side Node.js-like platform with Spidermonkey, Rhino, V8 and more engines.</div>
 </div>
 <div class='comment'>
-<div class='author'>KryDos</div>
-<div class='content'>I thought Node.JS is using V8 and you can&#39;t choose another JS engine. Is it not true?</div>
-</div>
-<div class='comment'>
 <div class='author'>Dave Conrad</div>
 <div class='content'>Why would it have Rhino rather than Nashorn?</div>
-</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>There was this, but it&#39;s no longer maintained:
-https://github.com/zpao/spidernode
-
-If the gap between V8 and Spidermonkey continues to widen, maybe someone should resurrect that or something like it. I guess it&#39;d be a lot of work though. Regardless, the choices made by Node.JS aren&#39;t really our problem (except where our embedding API needs improvement...).</div>
 </div>
 </div>
 <div class='comment'>
@@ -50,6 +46,40 @@ And whatever happened to the Intel Rivertrail project?</div>
 <div class='author'>Anonymous</div>
 <div class='content'>In real world V8 still feels much faster.Also I think Firefox is not good css animations (smoothnes) and ui performance (needs e10s) </div>
 <div class='comment'>
+<div class='author'>Nils</div>
+<div class='content'>Well, to be fair: Firefox has come quite a long way when it comes down to rendering performance. Even though others might be able to display CSS animations with a higher perceived smoothness, they tend to be quite heavy on system resources. Opposed to that: FF&#39;s perceived performance in WebGL and Canvas rendering is almost always better than its&#39; competitors&#39; on my machine (at least). As for E10S: That is actively being worked on and made huge improvements over the last nightly releases.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I think ram usage not important.Because almost everyone have minimum 4gb ram.Peoples are looking fast and smooth experience.
+
+I think firefox is the best browser but unfortunately Chrome much faster and smooth.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>&quot;i think ram usage not important&quot;
+
+now you went full retard</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>What is your choise performance or ram usage ?</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Firefox and Chrome run on Android, and there are still new Android devices with 1GB of RAM or less.  Firefox even runs on Firefox OS devices with 256MB of RAM - but on Firefox OS, there&#39;s no intermediary graphical layer and window manager that eats resources too.
+
+So memory usage is important, and will remain important until a $25 disposable phone has 8GB of RAM.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>I am talking about pc&#39;s.For Android you&#39;re right.But current pc&#39;s are powerful and performance is important than ram usage for me.</div>
+</div>
+<div class='comment'>
+<div class='author'>Oberon</div>
+<div class='content'>Lots of people still have slightly older, but perfectly functional machines and would like to be able to browser while their 2-4gb of RAM isn&#39;t eaten up by a browser just for a tiny performance edge. Even Chromebooks and Macbook Airs often still have 2gb. Asking people to upgrade their RAM when there&#39;s a browser that can match the performance at half the RAM usage is bizarre.</div>
+</div>
+<div class='comment'>
 <div class='author'>zxz</div>
 <div class='content'>Simple test:
 http://jsbin.com/oNiVUYe/5/quiet
@@ -60,44 +90,10 @@ Chrome win.</div>
 <div class='author'>Oberon</div>
 <div class='content'>@Lukasz: Firefox wins for me on that one, hands down. But it&#39;s easy to find a highly-contrived test where one beats the other, so I fail to see why this matters as much as benchmarks actually trying to measure real-world performance.</div>
 </div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I think ram usage not important.Because almost everyone have minimum 4gb ram.Peoples are looking fast and smooth experience.
-
-I think firefox is the best browser but unfortunately Chrome much faster and smooth.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
-<div class='content'>What is your choise performance or ram usage ?</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I am talking about pc&#39;s.For Android you&#39;re right.But current pc&#39;s are powerful and performance is important than ram usage for me.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Firefox and Chrome run on Android, and there are still new Android devices with 1GB of RAM or less.  Firefox even runs on Firefox OS devices with 256MB of RAM - but on Firefox OS, there&#39;s no intermediary graphical layer and window manager that eats resources too.
-
-So memory usage is important, and will remain important until a $25 disposable phone has 8GB of RAM.</div>
-</div>
-<div class='comment'>
-<div class='author'>Oberon</div>
-<div class='content'>Lots of people still have slightly older, but perfectly functional machines and would like to be able to browser while their 2-4gb of RAM isn&#39;t eaten up by a browser just for a tiny performance edge. Even Chromebooks and Macbook Airs often still have 2gb. Asking people to upgrade their RAM when there&#39;s a browser that can match the performance at half the RAM usage is bizarre.</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>&quot;i think ram usage not important&quot;
-
-now you went full retard</div>
-</div>
-<div class='comment'>
-<div class='author'>Nils</div>
-<div class='content'>Well, to be fair: Firefox has come quite a long way when it comes down to rendering performance. Even though others might be able to display CSS animations with a higher perceived smoothness, they tend to be quite heavy on system resources. Opposed to that: FF&#39;s perceived performance in WebGL and Canvas rendering is almost always better than its&#39; competitors&#39; on my machine (at least). As for E10S: That is actively being worked on and made huge improvements over the last nightly releases.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>When you make the separation process for the tabs?</div>
+<div class='content'>Amazing! Congrats guys!</div>
 </div>
 <div class='comment'>
 <div class='author'>skribi</div>
@@ -106,6 +102,10 @@ now you went full retard</div>
 <div class='author'>Mathias Panzenböck (panzi)</div>
 <div class='content'>Well, there is Android in the list.</div>
 </div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>When you make the separation process for the tabs?</div>
 </div>
 
 </div>

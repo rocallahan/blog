@@ -11,32 +11,16 @@ permalink: "/2006/05/assorted-thoughts_04.html"
 <div class='content'>Some screenshots would be nice. :-)<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Sebastian Redl</div>
-<div class='content'>Actually, there&#39;s a compiz demo video that does show the graying-out effect.<br>The exploding windows would be just too cool. But they might scare people :)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jonathan Watt</div>
-<div class='content'>&gt; For various reasons that doesn&#39;t actually work and is merely a source of performance problems and bugs.<br>It would be really nice to have a separate blog post disseminating the leasons learned (explaining in much more detail why this approach doesn&#39;t work).<br>Thanks for the screenshots BTW. :-)<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Robin</div>
 <div class='content'>&quot;One effect is still missing ... applications that crash just disappear abruptly. Abrupt shutdown should make the application&#39;s window explode in a realistic particle simulation.&quot;<br>Great idea!<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Mike Hearn</div>
-<div class='content'>Event/thread rewrite?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Darin would be the best person to do that.<br></div>
+<div class='author'>Sebastian Redl</div>
+<div class='content'>Actually, there&#39;s a compiz demo video that does show the graying-out effect.<br>The exploding windows would be just too cool. But they might scare people :)<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Ok</div>
 <div class='content'>Ok, but where are the screenshots or video of your sex-se desktop?<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>https://bugzilla.mozilla.org/show_bug.cgi?id=326273<br>We currently have an XPCOM abstraction for threads, and an XPCOM abstraction for event queues, which contain PLEvents that aren&#39;t actually XPCOM objects. There&#39;s actually a stack of event queues for each thread, this was introduced to allow you to temporarily suspend normal event processing but still process some events while you do some synchronous, long-running operation. For various reasons that doesn&#39;t actually work and is merely a source of performance problems and bugs. Darin&#39;s work eliminates the event queue stack, folds event processing directly into the thread objects, simplifies the APIs a lot, adds helpers for the common operations, and makes events true ref-counted XPCOM objects which actually makes them much easier to use.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>skierpage</div>
@@ -47,8 +31,24 @@ permalink: "/2006/05/assorted-thoughts_04.html"
 <div class='content'>skierpage: Indeed, it would be better if Israel didn&#39;t have nukes, but it&#39;s less of a worry given that it&#39;s a democracy, and has no record of proliferating nukes itself, or threatening to do so, or threatening to wipe another nation off the map.<br>At this point complete disarmament would be quite dangerous even if it could be achieved, because we don&#39;t want one rogue state to take nuclear supremacy (and I include the US!). And I don&#39;t know that it matters much if the USA, Russia and China have 100 nukes or 10000. There is hypocrisy, but the &quot;moral cover&quot; is weak, a story mostly trotted out by villains.<br>About the desktop ... there are plenty of screenshots around the net, but you really need videos to experience the coolness, and I don&#39;t have the time to learn how to make them. Sorry!<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Mike Hearn</div>
+<div class='content'>Event/thread rewrite?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>https://bugzilla.mozilla.org/show_bug.cgi?id=326273<br>We currently have an XPCOM abstraction for threads, and an XPCOM abstraction for event queues, which contain PLEvents that aren&#39;t actually XPCOM objects. There&#39;s actually a stack of event queues for each thread, this was introduced to allow you to temporarily suspend normal event processing but still process some events while you do some synchronous, long-running operation. For various reasons that doesn&#39;t actually work and is merely a source of performance problems and bugs. Darin&#39;s work eliminates the event queue stack, folds event processing directly into the thread objects, simplifies the APIs a lot, adds helpers for the common operations, and makes events true ref-counted XPCOM objects which actually makes them much easier to use.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>He&#39;s not actually changing the guts of thread implementation; we use native threads via NSPR and that&#39;s not going to change.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jonathan Watt</div>
+<div class='content'>&gt; For various reasons that doesn&#39;t actually work and is merely a source of performance problems and bugs.<br>It would be really nice to have a separate blog post disseminating the leasons learned (explaining in much more detail why this approach doesn&#39;t work).<br>Thanks for the screenshots BTW. :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Darin would be the best person to do that.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Mike Hearn</div>

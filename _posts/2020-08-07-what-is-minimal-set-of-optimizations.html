@@ -27,10 +27,6 @@ permalink: "/2020/08/what-is-minimal-set-of-optimizations.html"
 <p>I wonder what a compiler backend would look like if you designed from scratch with the goal of good debuginfo and the fastest possible builds while enabling zero-cost abstractions.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>bryan e</div>
-<div class='content'>I&#39;m having a difficult time reading this blog because you force custom fonts which are too small.  Please allow readers to select their own.</div>
-</div>
-<div class='comment'>
 <div class='author'>jlebar</div>
 <div class='content'>&gt; Since the Rust standard library (and increasingly the C++ standard library) makes heavy use of &quot;zero-cost&quot; abstractions, using non-optimized builds for the sake of better debugging and build times creates binaries that are many times slower than release builds, often untenably slow. So the question is: how can we get fast builds and quality debuginfo while keeping zero-cost abstractions?
 
@@ -43,7 +39,23 @@ To me, the fact that an abstraction is or isn&#39;t zero-cost is an assertion ab
 FWIW I think/hope if folks engaged on the LLVM list about this you&#39;d get some traction with Google folks who have been thinking about similar things.  Off the top of my head I recall that e.g. simplify-cfg is a big optimization that we ought to be able to enable in debug builds.</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Then of course, the meat of this post is, given we can&#39;t remove the abstractions already built and we wouldn&#39;t want to give up zero-cost abstractions even if we could, how can we start keeping our promise for &quot;fast debuggable&quot; builds?</div>
+<div class='content'>The problem is that if your &quot;fast debuggable&quot; optimization set does not preserve zero-cost abstractions, then the performance delta between your &quot;fast debuggable&quot; builds and proper release builds inevitable diverges as you build higher towers of abstraction.
+
+If your language doesn&#39;t have zero-cost abstractions, or you just don&#39;t use them, this problem does not arise.</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>If you think zero-cost abstractions are a great feature (I do) then you want people to be able to use them freely without tanking the performance of &quot;fast debuggable&quot; builds.</div>
+</div>
+<div class='comment'>
+<div class='author'>jlebar</div>
+<div class='content'>OK, I think I understand what you&#39;re saying much better, thanks.  If I can rephrase:
+
+It&#39;s not that you want zero-cost abstractions to be exactly zero-cost in debug builds, just that
+ 1. you observe that zero-cost abstractions have a particularly large performance overhead in -O0 builds, and
+ 2. you speculate that significantly reducing this overhead wouldn&#39;t require the &quot;full power&quot; of -O2, just a subset of passes.
+
+Is that a fair summary?  FWIW I think both of those claims are probably correct.</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -58,14 +70,8 @@ I&#39;m also pointing out that in Rust, and increasingly C++, standard (and nons
 In a language without zero-cost abstractions developers would (hopefully!) be more judicious about piling up abstractions and this would be less of a problem.</div>
 </div>
 <div class='comment'>
-<div class='author'>jlebar</div>
-<div class='content'>OK, I think I understand what you&#39;re saying much better, thanks.  If I can rephrase:
-
-It&#39;s not that you want zero-cost abstractions to be exactly zero-cost in debug builds, just that
- 1. you observe that zero-cost abstractions have a particularly large performance overhead in -O0 builds, and
- 2. you speculate that significantly reducing this overhead wouldn&#39;t require the &quot;full power&quot; of -O2, just a subset of passes.
-
-Is that a fair summary?  FWIW I think both of those claims are probably correct.</div>
+<div class='author'>Robert</div>
+<div class='content'>Then of course, the meat of this post is, given we can&#39;t remove the abstractions already built and we wouldn&#39;t want to give up zero-cost abstractions even if we could, how can we start keeping our promise for &quot;fast debuggable&quot; builds?</div>
 </div>
 <div class='comment'>
 <div class='author'>Robert</div>
@@ -73,16 +79,10 @@ Is that a fair summary?  FWIW I think both of those claims are probably correct.
 
 Sorry that I&#39;m rambling on here, I&#39;m still thinking these things through.</div>
 </div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>The problem is that if your &quot;fast debuggable&quot; optimization set does not preserve zero-cost abstractions, then the performance delta between your &quot;fast debuggable&quot; builds and proper release builds inevitable diverges as you build higher towers of abstraction.
-
-If your language doesn&#39;t have zero-cost abstractions, or you just don&#39;t use them, this problem does not arise.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>If you think zero-cost abstractions are a great feature (I do) then you want people to be able to use them freely without tanking the performance of &quot;fast debuggable&quot; builds.</div>
-</div>
+<div class='author'>bryan e</div>
+<div class='content'>I&#39;m having a difficult time reading this blog because you force custom fonts which are too small.  Please allow readers to select their own.</div>
 </div>
 
 </div>

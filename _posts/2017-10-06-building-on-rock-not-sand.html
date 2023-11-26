@@ -17,37 +17,10 @@ again, of something ubiquitous now, vulnerable.</blockquote>
 <p>Those of us building code to last owe it to the world to build on rock, not sand. C is sand. C++ is better, but it's far from a solid foundation.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Rob Lang</div>
-<div class='content'>Interesting stuff. Out of interest, how do you rate C# and .NET from a security/stability/difficulty-to-introduce-holes standpoint?</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Decent --- as good as Java.</div>
-</div>
-</div>
-<div class='comment'>
 <div class='author'>ClassicHasClass</div>
 <div class='content'>Or, portability. Half the systems here don&#39;t have a Rust compiler and probably never will. Rust has a long way to being as portable as C/C++, particularly for those kinda-legacy systems which may still be relevant to new projects.
 
 The answer may be, &quot;well, we don&#39;t care about those systems that don&#39;t have a Rust compiler&quot; (which is a sucky, albeit valid, answer), but that&#39;s not strictly a budgetary computation. I have a feeling what you&#39;re going to say, though. :)</div>
-<div class='comment'>
-<div class='author'>ClassicHasClass</div>
-<div class='content'>Sure there&#39;s technical reasons. For example, there was that issue with the standard library on Snow Leopard because there was no thread local storage support (not introduced until 10.7). That&#39;s not a trivial platform change. And for some architectures, the bring up is still incredibly onerous, especially on a new platform triple where precompiled stage 0 doesn&#39;t exist. In fairness this has gotten a bit better but I&#39;d argue this is largely because the platform list has widened thanks to the brave souls who slogged through that work, not because the process is substantially simpler.
-
-The reply I&#39;m expecting is &quot;10.6 is not a modern platform.&quot; True, it&#39;s not, but I can still run C on it and there are people who still care about it.
-
-For all its advances, which I&#39;m not arguing, I think personally the generally claimed level of Rust&#39;s ubiquity is greatly overstated.</div>
-</div>
-<div class='comment'>
-<div class='author'>Jon Nordby</div>
-<div class='content'>You can compile Rust to WebAssembly (probably also JavaScript) using Emscripten. Since a couple of months back support is in mainline versions of all relevant components.
-Here is a tutorial: https://medium.com/@ianjsikes/get-started-with-rust-webassembly-and-webpack-58d28e219635
-
-Support for bare-metal in Rust is also actively worked on. Redox OS is a whole operating system, including graphics support and some applications, written in Rust: https://www.redox-os.org
-Their developer blog has good posts on the low-level technical bits.
-ARM Cortex M-x microcontrollers are pretty OK supported, see http://blog.japaric.io/quickstart/
-AVR microcontroller support in LLVM was recently merged, and it is possible to use Rust there, though not production ready just yet.
-Don&#39;t forget that Rust has good interoperability with C, so you can mix-and-match if it suits your needs.</div>
-</div>
 <div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>&gt; Half the systems here don&#39;t have a Rust compiler and probably never will.
@@ -59,21 +32,41 @@ Whatever. Part of being responsible developers and vendors is ensuring our chose
 (Rust&#39;s hardware support is already pretty broad: https://forge.rust-lang.org/platform-support.html)</div>
 </div>
 <div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>I was replying to &quot;notsgnik&quot;</div>
+<div class='author'>ClassicHasClass</div>
+<div class='content'>Sure there&#39;s technical reasons. For example, there was that issue with the standard library on Snow Leopard because there was no thread local storage support (not introduced until 10.7). That&#39;s not a trivial platform change. And for some architectures, the bring up is still incredibly onerous, especially on a new platform triple where precompiled stage 0 doesn&#39;t exist. In fairness this has gotten a bit better but I&#39;d argue this is largely because the platform list has widened thanks to the brave souls who slogged through that work, not because the process is substantially simpler.
+
+The reply I&#39;m expecting is &quot;10.6 is not a modern platform.&quot; True, it&#39;s not, but I can still run C on it and there are people who still care about it.
+
+For all its advances, which I&#39;m not arguing, I think personally the generally claimed level of Rust&#39;s ubiquity is greatly overstated.</div>
 </div>
 <div class='comment'>
 <div class='author'>notsgnik</div>
-<div class='content'>@tadas, if i need to disassemble somme functions, it&#39;s also because some function ( strncp for example ) are now assembly instructions and because you know what your program is doing so you know what are the assembly equivalent of what you are trying to do.
+<div class='content'>  I&#39;ll stick mostly to C and here is why:
 
-  Anyway, now that i think about it, it&#39;s seams that you are right and like some java programs that optimize themselves after couple of runs.
-it would be more likely that a machine learning algorithm compiler would do a better job than me at optimizing and securing code.
+  I personaly wanted to build a personal lib in GO then I thougth... what if it&#39;s not runing as fast as I wanted and needed to run it without OS or on a special hardware? there is no UEFI go/rust...
+  Or what if i needed it to run on the client side using EMSCRIPEN ? ... still no GO or RUST
+  A last one, what if i think the compiler is doing a poor job optimizing my code? looking at Go generated assembly hurt my eyes...
 
-@robert, i haven&#39;t checked for rust you are right, but it&#39;s because i dislike mozilla fundation as mutch as apple, the main reason would be a stupid &quot;mere-exposure effect&quot;.
+I think i&#39;ll stick with C for now, but if i&#39;ll make a program that is sure to run only on a recent computer and don&#39;t need all the juicy stuff or even is going to run on a TPU, i&#39;ll probably use Go :)</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Rust + UEFI: https://www.reddit.com/r/rust/comments/5oupdq/modern_rust_uefi_programming/
 
-@all, I belive that good program are writend when you put your heart in it ( don&#39;t be stupid i&#39;m talking about hormones ) and your heart is in when you have been exposed a lot to a language so... @robert, if you really want people tu use more rust and go, make it more visible and learn about &quot;mere-effect exposure&quot; ;)
+Rust + Emscripten: https://hackernoon.com/compiling-rust-to-webassembly-guide-411066a69fde
 
-for my part, i&#39;ll not follow the hype and will be using Go maybe in 10 years ;D</div>
+Check your facts.</div>
+</div>
+<div class='comment'>
+<div class='author'>Jon Nordby</div>
+<div class='content'>You can compile Rust to WebAssembly (probably also JavaScript) using Emscripten. Since a couple of months back support is in mainline versions of all relevant components.
+Here is a tutorial: https://medium.com/@ianjsikes/get-started-with-rust-webassembly-and-webpack-58d28e219635
+
+Support for bare-metal in Rust is also actively worked on. Redox OS is a whole operating system, including graphics support and some applications, written in Rust: https://www.redox-os.org
+Their developer blog has good posts on the low-level technical bits.
+ARM Cortex M-x microcontrollers are pretty OK supported, see http://blog.japaric.io/quickstart/
+AVR microcontroller support in LLVM was recently merged, and it is possible to use Rust there, though not production ready just yet.
+Don&#39;t forget that Rust has good interoperability with C, so you can mix-and-match if it suits your needs.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -96,22 +89,29 @@ But hey, if you want to masturbate doing C so you can boast to your pals, while 
 </div>
 </div>
 <div class='comment'>
-<div class='author'>notsgnik</div>
-<div class='content'>  I&#39;ll stick mostly to C and here is why:
-
-  I personaly wanted to build a personal lib in GO then I thougth... what if it&#39;s not runing as fast as I wanted and needed to run it without OS or on a special hardware? there is no UEFI go/rust...
-  Or what if i needed it to run on the client side using EMSCRIPEN ? ... still no GO or RUST
-  A last one, what if i think the compiler is doing a poor job optimizing my code? looking at Go generated assembly hurt my eyes...
-
-I think i&#39;ll stick with C for now, but if i&#39;ll make a program that is sure to run only on a recent computer and don&#39;t need all the juicy stuff or even is going to run on a TPU, i&#39;ll probably use Go :)</div>
+<div class='author'>Anonymous</div>
+<div class='content'>I was replying to &quot;notsgnik&quot;</div>
 </div>
 <div class='comment'>
+<div class='author'>notsgnik</div>
+<div class='content'>@tadas, if i need to disassemble somme functions, it&#39;s also because some function ( strncp for example ) are now assembly instructions and because you know what your program is doing so you know what are the assembly equivalent of what you are trying to do.
+
+  Anyway, now that i think about it, it&#39;s seams that you are right and like some java programs that optimize themselves after couple of runs.
+it would be more likely that a machine learning algorithm compiler would do a better job than me at optimizing and securing code.
+
+@robert, i haven&#39;t checked for rust you are right, but it&#39;s because i dislike mozilla fundation as mutch as apple, the main reason would be a stupid &quot;mere-exposure effect&quot;.
+
+@all, I belive that good program are writend when you put your heart in it ( don&#39;t be stupid i&#39;m talking about hormones ) and your heart is in when you have been exposed a lot to a language so... @robert, if you really want people tu use more rust and go, make it more visible and learn about &quot;mere-effect exposure&quot; ;)
+
+for my part, i&#39;ll not follow the hype and will be using Go maybe in 10 years ;D</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>Rob Lang</div>
+<div class='content'>Interesting stuff. Out of interest, how do you rate C# and .NET from a security/stability/difficulty-to-introduce-holes standpoint?</div>
+<div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Rust + UEFI: https://www.reddit.com/r/rust/comments/5oupdq/modern_rust_uefi_programming/
-
-Rust + Emscripten: https://hackernoon.com/compiling-rust-to-webassembly-guide-411066a69fde
-
-Check your facts.</div>
+<div class='content'>Decent --- as good as Java.</div>
 </div>
 </div>
 <div class='comment'>

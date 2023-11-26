@@ -14,16 +14,13 @@ permalink: "/2016/02/introducing-rr-chaos-mode.html"
 <p>I'm very interested in studying more cases where we figure out a bug that rr chaos mode was not able to reproduce, so I can extend chaos mode to find such bugs.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Akihiro Suda</div>
-<div class='content'>FYI, we have been working on very similar debugging tool :-) https://github.com/osrg/namazu
-
-Our tool calls `sched_setattr(2)` with randomized parameters 
-so as to reproduce flaky tests.
-It also supports randomized scheduling for Ethernet packets, filesystem events, and so on.
-</div>
+<div class='author'>Anonymous</div>
+<div class='content'>Another approach to this particular issue might be to add an idle loop Gecko thread that can always be scheduled.</div>
 <div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Cool! You could use rr with that.</div>
+<div class='content'>A couple of problems with that:
+a) doesn&#39;t extend to non-Gecko projects
+b) that idle thread would starve out low-priority threads permanently, causing deadlock. It&#39;s really important to limit the &quot;complete starvation&quot; intervals to a bounded fraction of run time.</div>
 </div>
 </div>
 <div class='comment'>
@@ -38,21 +35,24 @@ You said that only the ImageBridge thread was runnable, which to me says it was 
 </div>
 </div>
 <div class='comment'>
+<div class='author'>Akihiro Suda</div>
+<div class='content'>FYI, we have been working on very similar debugging tool :-) https://github.com/osrg/namazu
+
+Our tool calls `sched_setattr(2)` with randomized parameters 
+so as to reproduce flaky tests.
+It also supports randomized scheduling for Ethernet packets, filesystem events, and so on.
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>Cool! You could use rr with that.</div>
+</div>
+</div>
+<div class='comment'>
 <div class='author'>Hi-Angel</div>
 <div class='content'>Besides the `-h` option, how does one use the Chaos Mode I.e. do I have to rerun the app in a bash cycle with `rr record -h` until I hit a bug? Do I need to determine manually that app failed,  or does `rr` do this automatically somehow and stops? Does `rr` clean up older uninteresting traces?</div>
 <div class='comment'>
 <div class='author'>Robert</div>
 <div class='content'>You have to determine manually whether the test failed --- rr can&#39;t know that. You have to clean up old traces yourself. A shell script is a good way to do this.</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Another approach to this particular issue might be to add an idle loop Gecko thread that can always be scheduled.</div>
-<div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>A couple of problems with that:
-a) doesn&#39;t extend to non-Gecko projects
-b) that idle thread would starve out low-priority threads permanently, causing deadlock. It&#39;s really important to limit the &quot;complete starvation&quot; intervals to a bounded fraction of run time.</div>
 </div>
 </div>
 

@@ -8,18 +8,16 @@ permalink: "/2012/01/cut-rope-and-html5-audio.html"
 <p>Microsoft released an <a href="http://www.cuttherope.ie">HTML5 version of Cut The Rope</a> which is pretty cool. Unfortunately they use Flash audio by default for Firefox users because, <a href="http://www.cuttherope.ie/dev/">they say</a>, "some Firefox users could have run into an audio problem but will notice we fall back to a flash plugin to ensure that sound effects and music will work." They don't mention specific Firefox bugs (although they do for Chrome), and when I try the <a href="http://www.cuttherope.ie/?html5audio=true">HTML5 audio</a> version it works fine for me. So, please try the HTML5 version in Firefox (release or nightly), and if it doesn't work let me know and file bugs! Thanks!
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Marco</div>
-<div class='content'>Enabling html5 audio I crashed due to bug 713381.</div>
-</div>
-<div class='comment'>
-<div class='author'>David Aitken</div>
-<div class='content'>I&#39;m running standard plain ff on the release update channel, and I would like to echo the comments of the previous, anonymous, commentator.
-
-Cheers.</div>
+<div class='author'>Mardeg</div>
+<div class='content'>I get the same pauses in audio that I reported in bug 704450</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
 <div class='content'>for me on firefox 9.0.1, vista 32, it works pretty normal, as with flash. I checked and plugin-container.exe wasn&#39;t running.</div>
+</div>
+<div class='comment'>
+<div class='author'>Tomer Cohen</div>
+<div class='content'>Site doesn&#39;t loads to me on a recent Aurora build.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -34,10 +32,13 @@ Retarded developers should get off the web.</div>
 <div class='content'>I confirm the game doesn’t load if Flash is disabled (latest Aurora 11 on Ubuntu 11.10). :-/</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>Nigel: thanks, that helps, but my question remains: what specific Firefox bugs did they hit that makes them prefer Flash for Firefox users? I&#39;d like to know so we can fix them :-).
-
-Maybe it was https://bugzilla.mozilla.org/show_bug.cgi?id=713381, which we have a fix for ... but maybe it was something else.</div>
+<div class='author'>Marco</div>
+<div class='content'>Enabling html5 audio I crashed due to bug 713381.</div>
+</div>
+<div class='comment'>
+<div class='author'>Ernst Sjöstrand</div>
+<div class='content'>Ah it works super for me with the HTML5 audio version. Firefox 10 beta here.
+It wouldn&#39;t load first, but that was probably because I had FlashBlock installed.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>
@@ -46,6 +47,16 @@ Maybe it was https://bugzilla.mozilla.org/show_bug.cgi?id=713381, which we have 
 With that out of the way, I don&#39;t notice any sound problems.
 
 That said and while we&#39;re at it, a drive-by complaint: volume changes take a long while (a buffer length&#39;s worth, ~2 seconds?) to propagate. It doesn&#39;t affect this game but is annoying enough for video playback, and could be a big issue for games that use dynamic attenuation.</div>
+</div>
+<div class='comment'>
+<div class='author'>David Aitken</div>
+<div class='content'>I&#39;m running standard plain ff on the release update channel, and I would like to echo the comments of the previous, anonymous, commentator.
+
+Cheers.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>Doesn&#39;t work in Lunascape with Trident either</div>
 </div>
 <div class='comment'>
 <div class='author'>Nigel Parker</div>
@@ -57,21 +68,10 @@ If a user comes to the site in an HTML5 browser that doesn’t support .mp3 (mos
 If you’re curious about the audio bugs, you can force the game to use HTML5 audio (no flash) with this link: http://www.cuttherope.ie/?html5audio=true</div>
 </div>
 <div class='comment'>
-<div class='author'>Tomer Cohen</div>
-<div class='content'>Site doesn&#39;t loads to me on a recent Aurora build.</div>
-</div>
-<div class='comment'>
-<div class='author'>Ernst Sjöstrand</div>
-<div class='content'>Ah it works super for me with the HTML5 audio version. Firefox 10 beta here.
-It wouldn&#39;t load first, but that was probably because I had FlashBlock installed.</div>
-</div>
-<div class='comment'>
-<div class='author'>Mardeg</div>
-<div class='content'>I get the same pauses in audio that I reported in bug 704450</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>Doesn&#39;t work in Lunascape with Trident either</div>
+<div class='author'>Robert</div>
+<div class='content'>Nigel: thanks, that helps, but my question remains: what specific Firefox bugs did they hit that makes them prefer Flash for Firefox users? I&#39;d like to know so we can fix them :-).
+
+Maybe it was https://bugzilla.mozilla.org/show_bug.cgi?id=713381, which we have a fix for ... but maybe it was something else.</div>
 </div>
 <div class='comment'>
 <div class='author'>Anonymous</div>

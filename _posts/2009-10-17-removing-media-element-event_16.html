@@ -12,12 +12,12 @@ permalink: "/2009/10/removing-media-element-event_16.html"
 <div class='content'>Good bye load event, you won&#39;t be missed! Note that &#39;suspend&#39; can also fire before any video data is loaded at all, if a poster image is present. This is so that authors can add 100s of videos with poster images without worrying about killing the network.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>You can never be absolutely sure of that. In Gecko (and Chrome) the media resource has never &quot;finished downloading&quot;. It&#39;s just cached, and some of the data might be evicted to make room for other media data. You don&#39;t know how big the cache is, on a mobile device it might be quite small, so you can&#39;t know when that eviction might happen.<br>canplaythrough is our best guess. Just use that. But you probably should also check for &#39;suspend&#39; or fall back to a timeout, since we might never fire canplaythrough if the cache is small and your resource is large.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>ben</div>
 <div class='content'>If I understand correctly, you do not offer an event to play the media when it has finished downloading.<br>canplaythrough relies on the datarate not decreasing (which might happen) and suspend doesn&#39;t help either, as you say.<br>So now what? How can I make the sound play when its done loading? I want to be absolutely sure it&#39;ll finish playing without buffering in the middle.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>You can never be absolutely sure of that. In Gecko (and Chrome) the media resource has never &quot;finished downloading&quot;. It&#39;s just cached, and some of the data might be evicted to make room for other media data. You don&#39;t know how big the cache is, on a mobile device it might be quite small, so you can&#39;t know when that eviction might happen.<br>canplaythrough is our best guess. Just use that. But you probably should also check for &#39;suspend&#39; or fall back to a timeout, since we might never fire canplaythrough if the cache is small and your resource is large.<br></div>
 </div>
 
 </div>

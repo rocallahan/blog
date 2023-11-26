@@ -17,14 +17,6 @@ permalink: "/2017/07/selecting-compression-algorithm-for-rr.html"
 <p>I'm leaning towards vendoring <tt>brotli</tt> into rr.
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Unknown</div>
-<div class='content'>Zstd introduced long range mode. That allows to independently trade cpu and memory. Having large window (while not necessary increasing compression level) allows great compression of things far apart. I would suspect the traces to be just that case. If you allow larger window zstd will beat brotli by a margin in both compression and speed at the same time. At least until brotli finish their long range version ;-)
-
-In general (and over long term) zstd is faster with a little bit less compression ratio. Brotli is geared towards asymmetrical CDN scenario.
-
-Anyway, either one is a good choice.</div>
-</div>
-<div class='comment'>
 <div class='author'>fwang</div>
 <div class='content'>Hi Robert. FYI, the issue about brotli and woff2 being bundled and duplicated into various web engines was discussed during the 2016 edition of the Web Engines Hackfest. Since then, I have started to submit some patches to be able to use shared libraries and public headers so that these libraries can be packaged in Linux distros (this is what led to [1] btw) and used by web engines (especially WebKit and Gecko). Things seem to move very slowly on brotli/woff2 side but my plan is to continue pushing for that when brotli 1.0.0 is released [2]. 
 
@@ -39,8 +31,26 @@ Frédéric Wang
 </div>
 </div>
 <div class='comment'>
+<div class='author'>Jussi</div>
+<div class='content'>Any particular reason why you did not test lzma (in practice xz)? It is available on every platform and patent free. Is it just too slow?</div>
+<div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>Yes, I just found that out. That&#39;s good.</div>
+<div class='content'>I did benchmark lzma2/xz, but they are far too slow. Every single compression level took more than 20s (i.e. failed to appear on that chart).</div>
+</div>
+<div class='comment'>
+<div class='author'>Robert</div>
+<div class='content'>As you&#39;d expect, xz compression is better. A couple of data points:
+At 50s, xz shaves 20% off the current (zlib) size.
+At 181s, xz shaves 24% off the current (zlib) size.
+
+But at the 50s mark you&#39;re spending 6x the CPU time of brotli-5 to shave off 4% of its trace size. That feels like a poor return.
+
+But if we ever want to do something like recompress traces offline for long-term storage, we could use xz.</div>
+</div>
+</div>
+<div class='comment'>
+<div class='author'>glandium</div>
+<div class='content'>Not that even if you had chosen zstd, it only recently stabilized its stream and (I think) API, and Ubuntu 16.04 released with an old version...</div>
 </div>
 <div class='comment'>
 <div class='author'>David</div>
@@ -53,26 +63,16 @@ I did not use zstd&#39;s multithreaded capabilities, because rr already chunks t
 </div>
 </div>
 <div class='comment'>
-<div class='author'>Jussi</div>
-<div class='content'>Any particular reason why you did not test lzma (in practice xz)? It is available on every platform and patent free. Is it just too slow?</div>
-<div class='comment'>
 <div class='author'>Robert</div>
-<div class='content'>As you&#39;d expect, xz compression is better. A couple of data points:
-At 50s, xz shaves 20% off the current (zlib) size.
-At 181s, xz shaves 24% off the current (zlib) size.
-
-But at the 50s mark you&#39;re spending 6x the CPU time of brotli-5 to shave off 4% of its trace size. That feels like a poor return.
-
-But if we ever want to do something like recompress traces offline for long-term storage, we could use xz.</div>
+<div class='content'>Yes, I just found that out. That&#39;s good.</div>
 </div>
 <div class='comment'>
-<div class='author'>Robert</div>
-<div class='content'>I did benchmark lzma2/xz, but they are far too slow. Every single compression level took more than 20s (i.e. failed to appear on that chart).</div>
-</div>
-</div>
-<div class='comment'>
-<div class='author'>glandium</div>
-<div class='content'>Not that even if you had chosen zstd, it only recently stabilized its stream and (I think) API, and Ubuntu 16.04 released with an old version...</div>
+<div class='author'>Unknown</div>
+<div class='content'>Zstd introduced long range mode. That allows to independently trade cpu and memory. Having large window (while not necessary increasing compression level) allows great compression of things far apart. I would suspect the traces to be just that case. If you allow larger window zstd will beat brotli by a margin in both compression and speed at the same time. At least until brotli finish their long range version ;-)
+
+In general (and over long term) zstd is faster with a little bit less compression ratio. Brotli is geared towards asymmetrical CDN scenario.
+
+Anyway, either one is a good choice.</div>
 </div>
 
 </div>

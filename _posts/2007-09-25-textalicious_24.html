@@ -8,32 +8,12 @@ permalink: "/2007/09/textalicious_24.html"
 <div class="columns"><p>Some of the last major pieces of text work for Gecko 1.9/Firefox 3 are in place. Several days ago I landed a patch that sets <tt>text-rendering:optimizeLegibility</tt> for text inputs and XUL root elements (by default, it will inherit to the descendants of XUL root elements too). This means we automatically get high-quality mode (ligatures, kerning etc) for text in XUL documents (e.g., XUL application UI) and text inputs.<br/><p>Today I landed another patch to <a href="/2007/05/the_glyph_bound.html">compute accurate glyph bounds</a> for all text in high-quality mode. This means dynamic changes to such text should redraw correctly even for fonts with glyphs that extend outrageously far outside the font ascent, descent, etc. Here's a demo ... this <tt>textarea</tt> requests Zapfino and DejaVu Sans; so it will work best on Macs, which have Zapfino preinstalled, but there should also be an "fi" ligature on Linux systems that have a recent version of DejaVu Sans installed. (I'm not sure what fonts to request for Windows, please advise!) Try selecting and editing around a ligature. Of course you will need a Firefox trunk build as of a few hours ago. If you have Zapfino, for a good time try entering "Zapfino" :-). It might not work in feeds or other contexts that sanitize content.</div><br/><textarea style="font-family:Zapfino,Zapfino Extra LT Pro,Segoe Script,DejaVu Sans; font-size:30px; width:600px; height:300px;">This is finally nice.</textarea><br/><div class="columns"><p>Ideally, we would enable accurate glyph bounds for all text, not just high-quality text, because without those bounds there can be repaint bugs even in "normal" text (e.g., the tail of italic j in many fonts extends beyond the left edge of the character cell). What we're doing here is a compromise so that we don't eat the performance cost of getting glyph extents for all text. (See my <a href="/2007/05/the_glyph_bound.html">Glyph Bounds Problem</a> post for more details.) However, at some point we should do some measurements to see exactly what the performance cost of turning it on always would be.<br/><p>Similarly, we should also measure the performance cost of turning on high-quality text rendering always.</div><br/><strong>Update</strong> Added Segoe Script to the textarea for Vista users.<br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>dria: it sounds like you have an old build.<br>I&#39;ll add Segoe Script to the demo.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Vladimir Vukicevic</div>
-<div class='content'>Try &quot;Segoe Script&quot; for Windows, at least for Vista.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robin</div>
-<div class='content'>I hadn�t seen Zapfino�s trailing-e/fullstop combo before :) Great to see this sort of ligature support becoming a reality!<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jesse Ruderman</div>
-<div class='content'>When I loaded this blog entry in a background tab, Firefox crashed.  I saw the same assertions as in bug 397007.<br></div>
+<div class='author'>dria</div>
+<div class='content'>This is exceedingly cool.  Playing with the text above, however, I noticed a couple of things.  First, if you type Zapfino, for example, on three successive lines, the top part of the ligature of the F (that extends up into the line above) doesn&#39;t get rendered.  Also, if you type a bunch of stuff then backspace over it, not every part of each letter gets erased -- I&#39;m not sure if it&#39;s the extra ligature bits that are getting left behind or not, but it might be the case.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>dria</div>
 <div class='content'>I just realized that i may not, in fact, have the correct version of Firefox.  If this stuff hasn&#39;t been fixed on the latest nightly (as of about half an hour ago), then feel free to delete my comment :)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>They deliberately avoid ligatures etc for performance.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Asrail</div>
-<div class='content'>With Deja Vu,<br>&#39;ft&#39; sometimes got the ligatures, sometimes doesn&#39;t (try varying the size).<br>Is that normal?<br></div>
 </div>
 <div class='comment'>
 <div class='author'>shaver</div>
@@ -44,8 +24,28 @@ permalink: "/2007/09/textalicious_24.html"
 <div class='content'>I don&#39;t have Zapfino installed but with DejaVu Sans the partial glyph selection is impressive.<br>On Windows, just about any of the default variable width font (Tahoma, Srial...) have an fi ligature but it doesn&#39;t seem to get substituted when I use it in a text box.<br></div>
 </div>
 <div class='comment'>
-<div class='author'>dria</div>
-<div class='content'>This is exceedingly cool.  Playing with the text above, however, I noticed a couple of things.  First, if you type Zapfino, for example, on three successive lines, the top part of the ligature of the F (that extends up into the line above) doesn&#39;t get rendered.  Also, if you type a bunch of stuff then backspace over it, not every part of each letter gets erased -- I&#39;m not sure if it&#39;s the extra ligature bits that are getting left behind or not, but it might be the case.<br></div>
+<div class='author'>Vladimir Vukicevic</div>
+<div class='content'>Try &quot;Segoe Script&quot; for Windows, at least for Vista.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>dria: it sounds like you have an old build.<br>I&#39;ll add Segoe Script to the demo.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robin</div>
+<div class='content'>I hadn�t seen Zapfino�s trailing-e/fullstop combo before :) Great to see this sort of ligature support becoming a reality!<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Asrail</div>
+<div class='content'>With Deja Vu,<br>&#39;ft&#39; sometimes got the ligatures, sometimes doesn&#39;t (try varying the size).<br>Is that normal?<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Asrail: I don&#39;t know. Could be a Pango issue.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jesse Ruderman</div>
+<div class='content'>When I loaded this blog entry in a background tab, Firefox crashed.  I saw the same assertions as in bug 397007.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Jesse Ruderman</div>
@@ -53,7 +53,7 @@ permalink: "/2007/09/textalicious_24.html"
 </div>
 <div class='comment'>
 <div class='author'>Robert O'Callahan</div>
-<div class='content'>Asrail: I don&#39;t know. Could be a Pango issue.<br></div>
+<div class='content'>They deliberately avoid ligatures etc for performance.<br></div>
 </div>
 
 </div>

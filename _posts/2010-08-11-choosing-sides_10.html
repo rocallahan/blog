@@ -8,128 +8,128 @@ permalink: "/2010/08/choosing-sides_10.html"
 <div class="columns"><p>My Macbook Pro is 3.5 years old and still works pretty well, apart from the disk being full, frequently spontaneous wake-ups in my backpack which heat everything up alarmingly, and flaky wireless connection. Plus the turn of Moore's Law means I can now get a quad-core laptop and a lot more RAM and disk. So it's finally time to upgrade. I'm opting for non-Apple hardware; Apple have gone beyond the pale pursuing patent warfare and platform lockdown, and I can no longer live with buying their products. A Lenovo W510 is probably in my future.<br/><p>Now I'm faced with a somewhat difficult decision: Linux vs Windows. There are good reasons on both sides. The best thing about developing in Windows is that it's good to have developers on the platform that most of our users use. VMWare record and replay is also very attractive. The Mozilla build and tools situation on Windows used to be terrible --- very slow builds, horrible profiling --- but it's gotten a lot better thanks to pymake and xperf. But Microsoft, while not as dangerous as Apple at the moment, still aspires to be, and I won't embrace them gladly.<br/><p>Linux, of course, has the virtue of freedom, and a chance to regain Miguel's love. On Linux you get valgrind. But not many of our users use Linux, and VMWare's record and replay doesn't really work there. I'd have to use X11, which I loathe with passion.<br/><p>Tough call. Another thing to consider is that whichever way I go, I'll end up using the other in a VM quite often. Dual-booting is also an option.</div><br/><br/>
 <div class='comments'><h2>Comments</h2>
 <div class='comment'>
-<div class='author'>VanillaMozilla</div>
-<div class='content'>Robert, I&#39;ve got bad news for you.  They all suck.  Well, I don&#39;t have experience with Mac, but I&#39;m sure there&#39;s something wrong with it too.  Linux and Windows are horrendously overly complicated.  That means lots of stuff is never really fully developed or without errors, and documentation is hopeless.  If anyone thinks Linux is all roses either, they&#39;re using the wrong color glasses.<br>I don&#39;t get this &quot;X is evil&quot; stuff.  You can waste a lot of time fighting evil and not succeeding, or you can spend the time using your computer.  Like Mac, for example.  Their phones are closed.  They&#39;re not computers, and they want them to work.  If you don&#39;t like it, use another phone.  But their computers are open to all software.<br>Good luck with your choice, but just get what you like.  Your choice probably won&#39;t save the world--unless you can make Linux file sharing not suck somehow.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Laurens Holst</div>
-<div class='content'>At home I have Windows, at work I have Ubuntu. That seems to be an OK divide, I think Windows 7 suits more the type of things I use my PC at home for, and vice versa.<br>Both systems indeed have a virtual machine with the other operating system :). I don’t think dual-booting is nice; when I need the other system I much prefer to be able to switch and copy/paste from the one to the other as I wish. Maybe for performance measurements it isn’t so great, but otherwise very convenient.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>azakai</div>
-<div class='content'>I see your point, it isn&#39;t the same as developing on Windows and users using Windows. Still, desktop builds of Fennec on normal Linux distros are a good way to test. (And normal Firefox on Linux is closer to Fennec on devices than Firefox on Windows is.)<br>Anyhow, maybe soon we will be able to develop Firefox directly on Android tablets, for users of those same tablets ;)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mook</div>
-<div class='content'>Hmm, I think VMWare at least used to be able to boot off actual partitions (I haven&#39;t tried recently - and my last attempt on a Mac host trying to boot a BootCamped Windows partition failed horribly).<br>I wonder what it would be like to have them dual booting, then both also accessible as VMs from the other?<br>Alternatively: Windows still builds slower even with pymake, making it the host sort of balances things out.  That only averages build time, though, and doesn&#39;t actually help if you end up using Linux more, since that means the total time increases...<br></div>
-</div>
-<div class='comment'>
-<div class='author'>smaug</div>
-<div class='content'>I&#39;m also planning to ditch my Macbook soon.<br>Well, perhaps I&#39;ll still use Shark occasionally.<br>I&#39;ve never liked OSX and getting back to Linux<br>will be great (well, I run linux on desktop). And even Win7 has better UI for my use than OSX. I guess dual boot will be good enough for me.<br>Lenovo W510 is pretty expensive. I was hoping to find something cheaper, yet reasonable powerful.<br>Perhaps HP Envy.<br></div>
-</div>
-<div class='comment'>
 <div class='author'>Michael V</div>
 <div class='content'>Theres nothing wrong with dual booting, I recommend it as the best option. But if you want to run Linux in a VM go with VirtualBox, it has the best Linux guest drivers including 3D acceleration.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>VanillaMozilla</div>
-<div class='content'>Well, if I were you, I&#39;d go with Apple because you can run all three OS&#39;s simultaneously if you want.  But I&#39;m not you, so you&#39;ll probably do what you want.<br>I&#39;ve been using mostly Linux for a couple of years now, I guess.  It works, but with free software on any platform you end up filing quite a few bug reports.  You have to be a nut case to do it.  There&#39;s a lot of software that just flat out doesn&#39;t work.  Some projects fix bugs instantly, while others ignore major bugs.  Then once in a while a big bug gets fixed without any attention from you.  I think Windows is more mature, but Linux is getting better.  Just take your choice and name your pain.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>MarkC</div>
-<div class='content'>You seem to have settled on either Windows+Linux VM or Linux+Windows VM. Either way you&#39;re paying Microsoft their dues, so if VMWare&#39;s record and replay is really a major concern, go for Windows+Linux VM.<br>One thing work considering, though, is your future upgrade path. I&#39;ve found migrating a Linux installation from one machine to another is fairly easy (just cloning the disk usually works), but the same can&#39;t be said of Windows due to activation issues when the hardware changes. For that reason alone I use Windows in a VM, so that the &quot;hardware&quot; never changes as I move to newer machines. That way just cloning the drive moves both my Linux system and my Windows VM as one with no activation hassles.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Thomas Jones</div>
-<div class='content'>I don&#39;t really see that you have to care about X... I mean GNOME/KDE/XFCE/LXDE/whatever sure if you don&#39;t like any of them, but that doesn&#39;t really have anything at all to do with X... unless you mean having to look at bits of Mozilla that involve libX11, then yes your loathing is entirely justified... but I really don&#39;t see what your issue with X is (when was the last time you tried using X on Linux, if you&#39;re worried about xorg.conf... it&#39;s pretty much a non-issue if you use open drivers...)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>bernd: the MS debugger is nice, but having used both a fair bit, I can live with gdb for normal debugging. Where the MS debugger really wins is when you couple it with VM record and replay. gdb doesn&#39;t have that.<br>VanillaMozilla: I&#39;ve been doing the three-platforms thing on my Macbook Pro for a while now. It&#39;s helpful sometimes, but I think I&#39;ll be just fine with two platforms on the laptop and a Mac laptop lying around for occasional Mac work.<br>Siddharth: I&#39;ll definitely get 8GB (and probably upgrade to 16GB some time later). I might have to experiment with VMWare&#39;s file sharing; in Fusion 2.0, doing a build in a Windows VM with a srcdir which is a shared directory on the host is *incredibly* slow, but doing the same thing in a Linux VM is reasonably fast. Things might be completely different with a newer version of VMWare, or VirtualBox, or using a Windows or Linux host.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>I know they all suck. I&#39;ve used all three major platforms for several years each. The question is which one sucks least for what I need to do.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>davide ficano</div>
-<div class='content'>I&#39;ve a MBP 15&quot; and it is the best laptop I ever had. It is the computer I use at office with an external DELL monitor all my colleagues have Windows machines. At home where I work on my open source projects I use Ubuntu and I use VMWare (the player is sufficient for me) to run Windows side by side. My actual configuration office/home is perfect for me. Dual booting is awful if you need to switch very often believe me. For ethical reasons I would drop Apple but its HW and also SW (OSX mainly) is very good for me, consider I got an Apple keyboard on my PC with Ubuntu, too.<br>If you don&#39;t need advanced video editing applications and you can live with GIMP linux (any distro) is a dream development environment.<br>All my Windows VM images have Cygwin installed, it helps very much &quot;emulating&quot; and Unix env so if you choose a Win OS consider Cygwin as a valid friend<br></div>
-</div>
-<div class='comment'>
-<div class='author'>azakai</div>
-<div class='content'>&gt; The best thing about developing in Windows is that it&#39;s good to have developers on the platform that most of our users use.<br>That&#39;s very true. However, there is also the question of where most of the users are *going* to be. More and more people are browsing the web from mobile phones and tablets, and hopefully a lot of them will be using Fennec. And that will almost certainly be on a Linux-based OS (Android of Meego), not Windows.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Lars Gunther</div>
-<div class='content'>I am contemplating getting a Thinkpad W701, the big brother of the W510. The main benefit of Thinkpads in my view is the Trackpoint. In fact, I can&#39;t imagine using a touchpad only computer.<br>However, as a Linux user I wanted to get me a Thinkpad with no pre-installed OS, or at least only with a small DOS-like dummy OS. That seem to be impossible, though.<br>Another caveat is that for a dual boot system you probably want a shared partition, and since Windows only does VFAT and NTFS you must opt for one of those. NTFS in Linux is not an entirely pleasant experience. It works, but every file and directory is 777 and thus colored green when you do an ls.<br>You&#39;ll probably need dual boot though, since you are working with those performance critical 2D and 3D backend parts of the rendering engine. I would not test them<br>BTW, my current machine is a Thinkpad Z61p and unfortunately it does not get WebGL on Linux in Firefox 4. (Neither does Chrome, BTW.)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Good point about mobile builds being closer to Linux than Windows. One might also suggest that Mozilla should give out Fennec-capable smartphones so we can dogfood more :-)<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>Matt, more Mozilla developers use Linux than Windows, for sure. A lot of the problems we have on Linux are because various components of the Linux stack are awful, like X11.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>skierpage</div>
-<div class='content'>@iacchi , I disagree.  I dual-booted Linux and Windows for many months.  I used ntfs-3g drivers to mount my Windows partition from Kubuntu so I had access to all my documents and my Mozilla profiles from both environments.<br>I accidentally trashed my Windows partition (even in Cygwin, &quot;sda&quot; may not be your SD card but your hard drive, oops!) and haven&#39;t run Windows for about a year.  Many Windows programs run fine in Wine especially if you set Wine to present itself to them as XP or earlier, and for programs that access USB ports Windows running in VirtualBox works well.<br>YMMV<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Robert O'Callahan</div>
-<div class='content'>azakai, yeah but you won&#39;t be able to develop browsers on a phone anytime soon!<br>smaug: the W510 is actually about the same price as a dual-core Macbook Pro.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Alex</div>
-<div class='content'>I&#39;m a big fan of virtualization, being able to open the same file in the same app running on 2 different operating systems and compare them side by side on the same system is immensely useful.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>bernd</div>
-<div class='content'>Robert: one of the core benefits of a win development environment is the debugger from ms, for me its much more finished and productive than the gdb front ends.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mike Ratcliffe</div>
-<div class='content'>I thought about moving over to Apple but their behaviour recently has been awful ... in my opinion they are now worse than Microsoft ever were.<br>Personally I use a dual boot Win 7 + Linux setup purely because then I am really seeing exactly what users are seeing.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>iacchi</div>
-<div class='content'>Whatever OS you choose, believe me: dual boot is not an option; this comes from personal experience. When you set up an OS with all your data and account, you won&#39;t move from that, nor spend time configuring the other OS with the same data and accounts and other time daily passing data that can&#39;t be synced between the two.<br>I told myself I could do that, but that wasn&#39;t the case. A VM is much better because you run on there only platform-specific apps, while having open your browser, mail, everything on the OS you want.<br>I have a dual boot on the laptop I&#39;m writing form, but I use Windows not in VM only to upgrade my mobile phone firmware and something like that, because I don&#39;t trust a VM for such a delicate process.<br>So: you know your habits and necessities and you&#39;ll choose the OS that fits you the best, but don&#39;t even think about dual booting.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Matt</div>
-<div class='content'>Well, I hope you choose Linux under the theory that the more Firefox devs who are using it, the more likely all of Firefox&#39;s problems in comparison to the Windows/Mac ports might get fixed.<br>But really, you should just go with whatever you think will make you more productive.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Mark</div>
-<div class='content'>You could get an Amiga. ;) I vote that you go with Linux with WINE. It&#39;s the best of both worlds.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Siddharth Agarwal</div>
-<div class='content'>I would strongly recommend against dual-booting. The downtime of a reboot is just too much to bear for me. Plus if you have a single hard drive (in all probability, true for laptops) you will need to think about setting up partitions, including a separate FAT32 one to share files across OSes (in my experience NTFS on Linux isn&#39;t reliable enough yet). It gets annoying very quickly.<br>I would recommend getting a little more RAM -- 6 GB if possible -- and setting up one OS as a VM within the other.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Topher</div>
-<div class='content'>My vote is for Linux.  As a Linux user, I&#39;d love for more developers to be using it as well.  Sure most Firefox users are on Windows, but if ALL the developers used Windows for that reason, then the Linux and Mac users would be stuck indeed.<br>What is it you don&#39;t like about X11?  I haven&#39;t &quot;fought&quot; with it to make it work like the old days in many years.  These days it just works.<br>I&#39;ve also been really happy with how much easier modern distros are to use than OS X.  Every time I install something on OS X by downloading it, unpacking the dmg, and dragging it to the magic folder I long for Linux where I click the app name and &quot;install&quot; and it just works.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Jon Pritchard</div>
-<div class='content'>I have nothing but praise for Thinkpads, I use a T400 myself. They are both robust and well supported on Linux.<br>I also have a dual-boot between Fedora and Windows Vista but I haven&#39;t had to use Windows in months, it&#39;s just there for posterity now.<br></div>
-</div>
-<div class='comment'>
-<div class='author'>Tony Mechelynck</div>
-<div class='content'>Well then, if you have the HD room, why not go dual-boot and get the best of both worlds? Then you can still junk one of the halves if there is a reason to do so.<br>Another question is desktop vs. laptop. YMMV but I&#39;ve found desktops to be much more reliable than laptops (disk crashes, transformer breakdowns, …). Of course the flip side of the coin is that you can&#39;t take a desktop with you wherever you go and fire it up at MacDonald&#39;s or in a train compartment.<br></div>
 </div>
 <div class='comment'>
 <div class='author'>Tiago Sá</div>
 <div class='content'>Dual boot mate. Just go with whatever you want in the moment. That&#39;s what I do.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>Mike Ratcliffe</div>
+<div class='content'>I thought about moving over to Apple but their behaviour recently has been awful ... in my opinion they are now worse than Microsoft ever were.<br>Personally I use a dual boot Win 7 + Linux setup purely because then I am really seeing exactly what users are seeing.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Alex</div>
+<div class='content'>I&#39;m a big fan of virtualization, being able to open the same file in the same app running on 2 different operating systems and compare them side by side on the same system is immensely useful.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Sly</div>
 <div class='content'>Ah yes, keep beating that &quot;Apple is evil&quot; drum while Google helps Verizon torpedo the &quot;public, open and accessible&quot; internet Mozilla allegedly champions.<br>Apple pushed hard, and got, a DRM-free world for music, and has helped to push HTML5 to make the internet a better place for everyone.<br>You&#39;re naive if you think WebM can possibly be patent-free, and Apple is well within their rights to &quot;lock down&quot; their own platform if they choose, as long as they leave their internet platform open – which they have.<br>Good luck with your next laptop purchase – looks like you&#39;ll need lots of it.<br></div>
 </div>
 <div class='comment'>
+<div class='author'>iacchi</div>
+<div class='content'>Whatever OS you choose, believe me: dual boot is not an option; this comes from personal experience. When you set up an OS with all your data and account, you won&#39;t move from that, nor spend time configuring the other OS with the same data and accounts and other time daily passing data that can&#39;t be synced between the two.<br>I told myself I could do that, but that wasn&#39;t the case. A VM is much better because you run on there only platform-specific apps, while having open your browser, mail, everything on the OS you want.<br>I have a dual boot on the laptop I&#39;m writing form, but I use Windows not in VM only to upgrade my mobile phone firmware and something like that, because I don&#39;t trust a VM for such a delicate process.<br>So: you know your habits and necessities and you&#39;ll choose the OS that fits you the best, but don&#39;t even think about dual booting.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Tony Mechelynck</div>
+<div class='content'>Well then, if you have the HD room, why not go dual-boot and get the best of both worlds? Then you can still junk one of the halves if there is a reason to do so.<br>Another question is desktop vs. laptop. YMMV but I&#39;ve found desktops to be much more reliable than laptops (disk crashes, transformer breakdowns, …). Of course the flip side of the coin is that you can&#39;t take a desktop with you wherever you go and fire it up at MacDonald&#39;s or in a train compartment.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mark</div>
+<div class='content'>You could get an Amiga. ;) I vote that you go with Linux with WINE. It&#39;s the best of both worlds.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Topher</div>
+<div class='content'>My vote is for Linux.  As a Linux user, I&#39;d love for more developers to be using it as well.  Sure most Firefox users are on Windows, but if ALL the developers used Windows for that reason, then the Linux and Mac users would be stuck indeed.<br>What is it you don&#39;t like about X11?  I haven&#39;t &quot;fought&quot; with it to make it work like the old days in many years.  These days it just works.<br>I&#39;ve also been really happy with how much easier modern distros are to use than OS X.  Every time I install something on OS X by downloading it, unpacking the dmg, and dragging it to the magic folder I long for Linux where I click the app name and &quot;install&quot; and it just works.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Thomas Jones</div>
+<div class='content'>I don&#39;t really see that you have to care about X... I mean GNOME/KDE/XFCE/LXDE/whatever sure if you don&#39;t like any of them, but that doesn&#39;t really have anything at all to do with X... unless you mean having to look at bits of Mozilla that involve libX11, then yes your loathing is entirely justified... but I really don&#39;t see what your issue with X is (when was the last time you tried using X on Linux, if you&#39;re worried about xorg.conf... it&#39;s pretty much a non-issue if you use open drivers...)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>davide ficano</div>
+<div class='content'>I&#39;ve a MBP 15&quot; and it is the best laptop I ever had. It is the computer I use at office with an external DELL monitor all my colleagues have Windows machines. At home where I work on my open source projects I use Ubuntu and I use VMWare (the player is sufficient for me) to run Windows side by side. My actual configuration office/home is perfect for me. Dual booting is awful if you need to switch very often believe me. For ethical reasons I would drop Apple but its HW and also SW (OSX mainly) is very good for me, consider I got an Apple keyboard on my PC with Ubuntu, too.<br>If you don&#39;t need advanced video editing applications and you can live with GIMP linux (any distro) is a dream development environment.<br>All my Windows VM images have Cygwin installed, it helps very much &quot;emulating&quot; and Unix env so if you choose a Win OS consider Cygwin as a valid friend<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Matt</div>
+<div class='content'>Well, I hope you choose Linux under the theory that the more Firefox devs who are using it, the more likely all of Firefox&#39;s problems in comparison to the Windows/Mac ports might get fixed.<br>But really, you should just go with whatever you think will make you more productive.<br></div>
+</div>
+<div class='comment'>
 <div class='author'>Robert O'Callahan</div>
 <div class='content'>I&#39;m not a huge fan of dual-booting but when you can share files easily it&#39;s probably better than using multiple machines. I don&#39;t use many applications and a lot of my data is in the cloud (and more could be with Firefox Sync), so it might not be too bad.<br>A separate desktop machine is not an option: too hard to share state. I used to do this but having all my data with me all the time is too valuable.<br>Sly, Apple is using software patents to shut down competition. They&#39;re doing everything we always feared a bad actor might do with software patents. The iPhone is locked down in ways that Microsoft never dared do with Windows. Imagine if Microsoft had simply said &quot;no software that &#39;duplicates functionality&#39; of our software is allowed&quot;, we wouldn&#39;t have the Internet (or Apple) as they are today.<br>X11 is a terrible design that&#39;s awful for app developers. If you want to be fast, you have to avoid touching X as much as possible. Drivers are also a disaster; binary drivers suck but open drivers don&#39;t have decent support for 3D acceleration.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Matt, more Mozilla developers use Linux than Windows, for sure. A lot of the problems we have on Linux are because various components of the Linux stack are awful, like X11.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>smaug</div>
+<div class='content'>I&#39;m also planning to ditch my Macbook soon.<br>Well, perhaps I&#39;ll still use Shark occasionally.<br>I&#39;ve never liked OSX and getting back to Linux<br>will be great (well, I run linux on desktop). And even Win7 has better UI for my use than OSX. I guess dual boot will be good enough for me.<br>Lenovo W510 is pretty expensive. I was hoping to find something cheaper, yet reasonable powerful.<br>Perhaps HP Envy.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>azakai</div>
+<div class='content'>&gt; The best thing about developing in Windows is that it&#39;s good to have developers on the platform that most of our users use.<br>That&#39;s very true. However, there is also the question of where most of the users are *going* to be. More and more people are browsing the web from mobile phones and tablets, and hopefully a lot of them will be using Fennec. And that will almost certainly be on a Linux-based OS (Android of Meego), not Windows.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>azakai, yeah but you won&#39;t be able to develop browsers on a phone anytime soon!<br>smaug: the W510 is actually about the same price as a dual-core Macbook Pro.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>azakai</div>
+<div class='content'>I see your point, it isn&#39;t the same as developing on Windows and users using Windows. Still, desktop builds of Fennec on normal Linux distros are a good way to test. (And normal Firefox on Linux is closer to Fennec on devices than Firefox on Windows is.)<br>Anyhow, maybe soon we will be able to develop Firefox directly on Android tablets, for users of those same tablets ;)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>Good point about mobile builds being closer to Linux than Windows. One might also suggest that Mozilla should give out Fennec-capable smartphones so we can dogfood more :-)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>skierpage</div>
+<div class='content'>@iacchi , I disagree.  I dual-booted Linux and Windows for many months.  I used ntfs-3g drivers to mount my Windows partition from Kubuntu so I had access to all my documents and my Mozilla profiles from both environments.<br>I accidentally trashed my Windows partition (even in Cygwin, &quot;sda&quot; may not be your SD card but your hard drive, oops!) and haven&#39;t run Windows for about a year.  Many Windows programs run fine in Wine especially if you set Wine to present itself to them as XP or earlier, and for programs that access USB ports Windows running in VirtualBox works well.<br>YMMV<br></div>
+</div>
+<div class='comment'>
+<div class='author'>VanillaMozilla</div>
+<div class='content'>Robert, I&#39;ve got bad news for you.  They all suck.  Well, I don&#39;t have experience with Mac, but I&#39;m sure there&#39;s something wrong with it too.  Linux and Windows are horrendously overly complicated.  That means lots of stuff is never really fully developed or without errors, and documentation is hopeless.  If anyone thinks Linux is all roses either, they&#39;re using the wrong color glasses.<br>I don&#39;t get this &quot;X is evil&quot; stuff.  You can waste a lot of time fighting evil and not succeeding, or you can spend the time using your computer.  Like Mac, for example.  Their phones are closed.  They&#39;re not computers, and they want them to work.  If you don&#39;t like it, use another phone.  But their computers are open to all software.<br>Good luck with your choice, but just get what you like.  Your choice probably won&#39;t save the world--unless you can make Linux file sharing not suck somehow.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>I know they all suck. I&#39;ve used all three major platforms for several years each. The question is which one sucks least for what I need to do.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>VanillaMozilla</div>
+<div class='content'>Well, if I were you, I&#39;d go with Apple because you can run all three OS&#39;s simultaneously if you want.  But I&#39;m not you, so you&#39;ll probably do what you want.<br>I&#39;ve been using mostly Linux for a couple of years now, I guess.  It works, but with free software on any platform you end up filing quite a few bug reports.  You have to be a nut case to do it.  There&#39;s a lot of software that just flat out doesn&#39;t work.  Some projects fix bugs instantly, while others ignore major bugs.  Then once in a while a big bug gets fixed without any attention from you.  I think Windows is more mature, but Linux is getting better.  Just take your choice and name your pain.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Mook</div>
+<div class='content'>Hmm, I think VMWare at least used to be able to boot off actual partitions (I haven&#39;t tried recently - and my last attempt on a Mac host trying to boot a BootCamped Windows partition failed horribly).<br>I wonder what it would be like to have them dual booting, then both also accessible as VMs from the other?<br>Alternatively: Windows still builds slower even with pymake, making it the host sort of balances things out.  That only averages build time, though, and doesn&#39;t actually help if you end up using Linux more, since that means the total time increases...<br></div>
+</div>
+<div class='comment'>
+<div class='author'>bernd</div>
+<div class='content'>Robert: one of the core benefits of a win development environment is the debugger from ms, for me its much more finished and productive than the gdb front ends.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Siddharth Agarwal</div>
+<div class='content'>I would strongly recommend against dual-booting. The downtime of a reboot is just too much to bear for me. Plus if you have a single hard drive (in all probability, true for laptops) you will need to think about setting up partitions, including a separate FAT32 one to share files across OSes (in my experience NTFS on Linux isn&#39;t reliable enough yet). It gets annoying very quickly.<br>I would recommend getting a little more RAM -- 6 GB if possible -- and setting up one OS as a VM within the other.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Robert O'Callahan</div>
+<div class='content'>bernd: the MS debugger is nice, but having used both a fair bit, I can live with gdb for normal debugging. Where the MS debugger really wins is when you couple it with VM record and replay. gdb doesn&#39;t have that.<br>VanillaMozilla: I&#39;ve been doing the three-platforms thing on my Macbook Pro for a while now. It&#39;s helpful sometimes, but I think I&#39;ll be just fine with two platforms on the laptop and a Mac laptop lying around for occasional Mac work.<br>Siddharth: I&#39;ll definitely get 8GB (and probably upgrade to 16GB some time later). I might have to experiment with VMWare&#39;s file sharing; in Fusion 2.0, doing a build in a Windows VM with a srcdir which is a shared directory on the host is *incredibly* slow, but doing the same thing in a Linux VM is reasonably fast. Things might be completely different with a newer version of VMWare, or VirtualBox, or using a Windows or Linux host.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Lars Gunther</div>
+<div class='content'>I am contemplating getting a Thinkpad W701, the big brother of the W510. The main benefit of Thinkpads in my view is the Trackpoint. In fact, I can&#39;t imagine using a touchpad only computer.<br>However, as a Linux user I wanted to get me a Thinkpad with no pre-installed OS, or at least only with a small DOS-like dummy OS. That seem to be impossible, though.<br>Another caveat is that for a dual boot system you probably want a shared partition, and since Windows only does VFAT and NTFS you must opt for one of those. NTFS in Linux is not an entirely pleasant experience. It works, but every file and directory is 777 and thus colored green when you do an ls.<br>You&#39;ll probably need dual boot though, since you are working with those performance critical 2D and 3D backend parts of the rendering engine. I would not test them<br>BTW, my current machine is a Thinkpad Z61p and unfortunately it does not get WebGL on Linux in Firefox 4. (Neither does Chrome, BTW.)<br></div>
+</div>
+<div class='comment'>
+<div class='author'>MarkC</div>
+<div class='content'>You seem to have settled on either Windows+Linux VM or Linux+Windows VM. Either way you&#39;re paying Microsoft their dues, so if VMWare&#39;s record and replay is really a major concern, go for Windows+Linux VM.<br>One thing work considering, though, is your future upgrade path. I&#39;ve found migrating a Linux installation from one machine to another is fairly easy (just cloning the disk usually works), but the same can&#39;t be said of Windows due to activation issues when the hardware changes. For that reason alone I use Windows in a VM, so that the &quot;hardware&quot; never changes as I move to newer machines. That way just cloning the drive moves both my Linux system and my Windows VM as one with no activation hassles.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Jon Pritchard</div>
+<div class='content'>I have nothing but praise for Thinkpads, I use a T400 myself. They are both robust and well supported on Linux.<br>I also have a dual-boot between Fedora and Windows Vista but I haven&#39;t had to use Windows in months, it&#39;s just there for posterity now.<br></div>
+</div>
+<div class='comment'>
+<div class='author'>Laurens Holst</div>
+<div class='content'>At home I have Windows, at work I have Ubuntu. That seems to be an OK divide, I think Windows 7 suits more the type of things I use my PC at home for, and vice versa.<br>Both systems indeed have a virtual machine with the other operating system :). I don’t think dual-booting is nice; when I need the other system I much prefer to be able to switch and copy/paste from the one to the other as I wish. Maybe for performance measurements it isn’t so great, but otherwise very convenient.<br></div>
 </div>
 
 </div>
