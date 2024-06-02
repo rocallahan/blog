@@ -8,7 +8,7 @@ permalink: "/2024/06/real-time-settlers.html"
 25 years on _Settlers of Catan_ is still a fine game, but can be tedious when you have to
 wait for other players to take long turns. In our family we thought "what if Settlers had
 simultaneous time-limited turns?" We implemented it with a few rule tweaks and
-[an app](https://settler-support.vercel.app/) written by one of my children. It turns out
+[a free app](https://settler-support.vercel.app/) written by one of my children. It turns out
 to work very well! Every experienced Settlers player we've played with so far has found it
 to be a great improvement over the original game. We can finish a six-player _Cities and
 Knights_ game in about 45 minutes of intense fun.
@@ -63,7 +63,8 @@ Initially it's easy to take all your actions within 30 seconds, but as the game 
 you get more cards every turn and the time constraint becomes more of an issue. Late game
 you may struggle to do everything you want to do in the time allowed. Compared to
 the regular game, it's more difficult to track the progress of other players and target
-the leader. These are good improvements, in my opinion.
+the leader. The game starts relaxed but the intensity builds and builds.
+These are good improvements, in my opinion.
 
 ## FAQ
 
