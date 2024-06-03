@@ -19,7 +19,7 @@ _I'll assume you're playing Cities and Knights and know how to play it well._
 
 The gist is very simple. Nothing changes during the setup phase. After the setup
 phase it is always everyone's turn. You can trade (with the bank
-or other players), build freely, use progress cards and activate and use knights at
+or other players), build, use progress cards and activate and use knights at
 any time (but you still can't use a knight after you activated it in the same turn).
 Every 30 seconds the app rolls the dice to start a new turn and
 everyone takes whatever resources, commodities and progress cards they are entitled to.
@@ -27,8 +27,8 @@ everyone takes whatever resources, commodities and progress cards they are entit
 Whenever the rules require player B to respond to player A, it's unfair if B can stall A,
 so stop the clock until the action is resolved. This includes player attacks that
 require a response from the target, e.g. if someone plays _Bishop_,
-_Master Merchant_, _Wedding_, _Deserter_, or _Commercial Harbour_.  This does not
-include trading, because in that case there is no obligation for any player to respond.
+_Master Merchant_, _Wedding_, _Deserter_, or _Commercial Harbour_.  (Do not
+stop the clock for trading, because in that case there is no obligation for any player to respond.)
 While the clock is stopped players cannot take other actions.
 
 When a 7 is rolled and the robber moves, stop the clock while players with too many cards
