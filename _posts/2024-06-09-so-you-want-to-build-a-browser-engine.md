@@ -75,5 +75,7 @@ It's annoying how current browsers lose state when they restart for updates etc.
 
 You are going to spend an infinite amount of time diagnosing your engine's bugs on inscrutable Web sites. Build really incredible tools for that and maybe Web developers will like them too. Consider replay.io, AI, and whatever else you can think of.
 
+Instead of being a Web browser, you might want to initially try just being a faster, lighter or lower-power Electron or WebView. Then the Web compatibility barrier would be much less of an issue.
+
 Good luck! You deserve it, and you'll need it!
 
