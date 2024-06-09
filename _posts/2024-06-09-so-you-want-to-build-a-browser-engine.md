@@ -23,7 +23,7 @@ The design of your JS engine and DOM and layout implementation will be partly dr
 
 Normal page JS runs on a single "main thread", which is very often the bottleneck for application execution. So don't block those threads for other work unless you absolutely have to because it can't run concurrently with page JS. Will you be running layout on those threads? Rendering?
 
-Since page JS often runs slowly, for responsiveness you want to avoid browser features blocking on those main threads as much as possible.
+Since page JS often blocks for significant time, for responsiveness you want to avoid browser features blocking on those main threads as much as possible.
 
 Because they're so critical, modern browser engines have sophisticated heuristics for scheduling the activities of these main threads. Yours probably will too.
 
@@ -45,7 +45,7 @@ You need to implement modern HTTP with aggressive caching, bandwidth management,
 
 Your HTML parser must be incremental so you can get content on the screen before you have loaded the entire document. It must support prefetching --- as soon as you see the URL of a subresource, start fetching it. As noted above, it can't block the site JS main threads. (Although you will need to be able to invoke it synchronously for innerHTML.) It's a similar story for parsing other kinds of resources --- CSS, JS, images. At what point is loaded content injected into your content processes?
 
-Having built the DOM, you need crazy fast CSS style resolution and layout. This is a huge topic because DOMs are so varied. You will need very fast text shaping (probably with shaped-word caching). Maybe you want incremental layout.
+Having built the DOM, you need crazy fast CSS style resolution and layout. This is a huge topic because DOMs are so varied. You will need very fast text shaping (probably with shaped-word caching).
 
 Then you need really fast rendering of laid-out DOM into whatever your compositor (see below) needs. You will probably need to use the GPU to be competitive, so maybe this is split into a CPU side and a GPU side. At what point does the output leave the content process?
 
