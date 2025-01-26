@@ -1,6 +1,6 @@
 ---
 layout: "post"
-title: "Escaping from the C++ debugging UI nightmare with Pernosco"
+title: "Tackling the C++ debugging UI nightmare with Pernosco"
 date: "2025-01-27 11:00:00 +1200"
 permalink: "/2025/01/debgging-cpp.html"
 ---
