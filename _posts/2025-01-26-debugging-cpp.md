@@ -17,11 +17,11 @@ Try it [here](https://pernos.co/debug/WV_SDEC1wkggMQGSnBsg9Q/index.html#f{m[AlDp
 
 When we [demangle](https://docs.rs/cpp_demangle/latest/cpp_demangle/) a C++ identifier, we demangle not to a string but to a tree. Template parameters are deeper in the tree than the template, and the name of a containing scope is deeper in the tree than the item it contains. For example, consider the full name of that `GenericMethod` function:
 ```
-mozilla::dom::BindingDetails::GenericMethod&lt;NormalThisPolicy, ThrowExceptions&gt;
+mozilla::dom::BindingDetails::GenericMethod<NormalThisPolicy, ThrowExceptions>
 ```
 This would be structured as:
 ```
-(((mozilla)::dom)::BindingDetails)::GenericMethod&lt;(NormalThisPolicy, ThrowExceptions)&gt;
+(((mozilla)::dom)::BindingDetails)::GenericMethod<(NormalThisPolicy, ThrowExceptions)>
 ```
 When we render the name, we replace some nodes of the tree with ellipses; clicking on an ellipsis expands that node to reveal its contents. Our default policy is to elide template parameters and to elide all but the innermost enclosing scope. This works really well.
 
