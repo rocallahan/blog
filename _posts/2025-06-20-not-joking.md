@@ -2,7 +2,7 @@
 layout: "post"
 title: "Not Joking About AI"
 date: "2025-06-20 11:00:00 +1200"
-permalink: "/2025/20/not-joking-about-ai.html"
+permalink: "/2025/06/not-joking-about-ai.html"
 ---
 
 In many of my conversations about the dreadful risks of AI, I find myself laughing involuntarily. "AI is wrecking education, but it doesn't matter too much because there won't be jobs for these kids anyway, _hahaha_. Or else misaligned superintelligence will kill us all, _hohoho_."
