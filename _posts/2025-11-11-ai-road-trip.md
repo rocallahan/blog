@@ -1,0 +1,24 @@
+---
+layout: "post"
+title: "AI And Jesus In Late 2025: A Road Trip Report"
+date: "2025-11-11 06:00:00 +1200"
+permalink: "/2025/11/ai-road-trip.html"
+---
+
+Three things: I work for Google Deepmind; I believe AI will most likely be disastrous for humanity; and I believe Jesus rose from the dead. That combination possibly makes me unique. It certainly is awkward.
+
+I just returned from a three-week trip visiting GDM locations in different parts of the world. One of my goals for the trip was to talk to a variety of people about the threats posed by AI --- mass unemployment, human irrelevance, human extinction, stuff like that --- to make them think, but also to help me understand what people are thinking, and possibly update my own positions. I thought these conversations would be painful and prickly, but they were surprisingly easy, for which I thank God --- it seems most people are ready to talk, perhaps even finding it a relief.
+
+Mostly, people I talked to believe we are moving quickly along a path to AGI. They hope humans will still be relevant, but they recognise that paid employment as we know it will be devastated, and that this shift is already underway. I was ready to pounce on arguments that AGI will complement, not replace, human effort, but no-one really made those arguments --- these people know AGI inevitably means replacement. They generally doubt AGI will be net good for humanity, but they feel it's inevitable and "if we don't do it, someone else will, and we'll probably do it better". I don't think I met a single person strongly confident we will avoid disasters and be glad we built AGI.
+
+I wish people would be more open and vocal about their positions on this. I didn't meet anyone who raised these topics unprompted by me. Of course, you might expect people strongly and vocally negative about AI to have left GDM already, and I heard this is true to some extent. Another part of the problem is that daily life pushes these kinds of beliefs to the background where it's tempting to ignore them to reduce cognitive dissonance. To carry on with life while paying due attention to one's world-shattering beliefs is difficult, requiring a certain kind of mental flexibility. Fortunately I, and other Christians, have cultivated exactly that kind of flexibility!
+
+People feel helpless and don't know what to do, even people in the AI labs, possibly even those running the labs. (I almost got a chance to talk to GDM GenAI boss Koray Kavukcuoglu during a social event, but didn't seize the opportunity... I was too much of a coward.) So what can we do? I think my conversations with people are useful for bringing these beliefs to the fore, and we should all be having them often --- I think we'd be in a better situation if everyone knew where everyone else stands on "enthusiastic about AI" vs "damage limitation". (If such conversations are considered "out of bounds" for the work environment then that would be an excellent signal that that environment is a bad place to be.) I think achieving good outcomes from AI requires beating the prisoners' dilemmas with strong national and international AI regulation (yes, daunting as that is), so I encourage people to push for such regulation, or at least weaken Google's resistance to it. Finally we have the option of resigning, something I consider almost every day. I think all of us need to weigh how much we're pushing the future in a better direction against our personal culpability for accelerating AI progress. God certainly will, which makes the "if we don't do it, someone else will" rather less forceful for us believers. For now I think it makes sense to stay where I am, given my work is quite far removed from AI capability improvements, probably only improving AI _capacity_ over a relatively long timeline. But I have to constantly reevaluate my positive and negative impact.
+
+One interesting side question I asked a number of people was whether Google will follow OpenAI in offering erotic chat in Gemini. No-one really knows, but some people said if we did, they'd quit. It's interesting that that was a brighter red line for them than the existential threats.
+
+I left a copy of "If Anyone Builds It, Everyone Dies" in one of the GDM reading areas. I hope it helps, even just a tiny bit.
+
+It is hard to be hopeful, but Jesus rose from the dead, so anything's possible. Nevertheless we must all do our duty. I think of [Esther](https://www.biblegateway.com/passage/?search=Esther%204&version=NIV):
+> "If you remain silent at this time, relief and deliverance for the Jews will arise from another place, but you and your father’s family will perish. And who knows but that you have come to your royal position for such a time as this?”
+
