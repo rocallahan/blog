@@ -18,25 +18,25 @@ On Sunday there was a lot of low cloud in the hills so I stuck to the lakefront.
 
 These walks were amazing fun and very good for my mental health --- many hours just walking and thinking and some praying.
 
-<img src="/assets/images/2026/BigHillPanorama.jpg" width="9600" height="1616" title="Panorama from the top of Big Hill">
+<img src="/assets/images/2026/BigHillPanorama.jpg" width="800" height="134" title="Panorama from the top of Big Hill">
 
-<img src="/assets/images/2026/BigHillToLakeHayes.jpg" width="2040" height="1536" title="Looking from Big Hill towards Lake Hayes and the surrounding communities">
+<img src="/assets/images/2026/BigHillToLakeHayes.jpg" width="800" height="602" title="Looking from Big Hill towards Lake Hayes and the surrounding communities">
 
-<img src="/assets/images/2026/BigHillGoats.jpg" width="2040" height="1536" title="A flock of feral goats on the north side of Big Hill">
+<img src="/assets/images/2026/BigHillGoats.jpg" width="800" height="602" title="A flock of feral goats on the north side of Big Hill">
 
-<img src="/assets/images/2026/BigHillNorth.jpg" width="2040" height="1536" title="Looking north along the track from Big Hill">
+<img src="/assets/images/2026/BigHillNorth.jpg" width="800" height="602" title="Looking north along the track from Big Hill">
 
-<img src="/assets/images/2026/8MileCreek.jpg" width="2040" height="1536" title="Looking down from the Big Hill track into 8 Mile Creek which feeds into the Arrow River">
+<img src="/assets/images/2026/8MileCreek.jpg" width="800" height="602" title="Looking down from the Big Hill track into 8 Mile Creek which feeds into the Arrow River">
 
-<img src="/assets/images/2026/MacetownRoadWinter.jpg" width="2040" height="1536" title="The road through Macetown towards the hills of Motatapu">
+<img src="/assets/images/2026/MacetownRoadWinter.jpg" width="800" height="602" title="The road through Macetown towards the hills of Motatapu">
 
-<img src="/assets/images/2026/ArrowRiverWinter.jpg" width="2040" height="1536" title="Wintry view of the Arrow River">
+<img src="/assets/images/2026/ArrowRiverWinter.jpg" width="800" height="602" title="Wintry view of the Arrow River">
 
-<img src="/assets/images/2026/IcyArrowRiver.jpg" width="2040" height="1536" title="Ice formations on the Arrow River">
+<img src="/assets/images/2026/IcyArrowRiver.jpg" width="800" height="602" title="Ice formations on the Arrow River">
 
-<img src="/assets/images/2026/JacksPointPanorama.jpg" width="9536" height="1568" title="Panorama from the top of the hill at Jack's Point">
+<img src="/assets/images/2026/JacksPointPanorama.jpg" width="800" height="131" title="Panorama from the top of the hill at Jack's Point">
 
-<img src="/assets/images/2026/JacksPointToKelvinPoint.jpg" width="2040" height="1536" title="A view along the track from Jack's Point to Kelvin Point">
+<img src="/assets/images/2026/JacksPointToKelvinPoint.jpg" width="800" height="602" title="A view along the track from Jack's Point to Kelvin Point">
 
-<img src="/assets/images/2026/CecilPeakFromKelvinPoint.jpg" width="2040" height="1536" title="Looking across Lake Whakatipu from Kelvin Point to Cecil Peak">
+<img src="/assets/images/2026/CecilPeakFromKelvinPoint.jpg" width="800" height="602" title="Looking across Lake Whakatipu from Kelvin Point to Cecil Peak">
 
