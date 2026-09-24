@@ -1,7 +1,7 @@
 ---
 layout: "post"
 title: "Goodbye Google"
-date: "2026-09-25 11:00:00 +1200"
+date: "2026-09-25 09:00:00 +1200"
 permalink: "/2026/09/goodbye-google.html"
 ---
 
