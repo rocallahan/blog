@@ -5,6 +5,8 @@ date: "2026-09-25 07:00:00 +1200"
 permalink: "/2026/09/goodbye-google.html"
 ---
 
+**[Discussion thread on HN](https://news.ycombinator.com/item?id=49840314)**
+
 Today I'm sending the following email:
 
 > I'm resigning from Google today.
