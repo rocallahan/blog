@@ -13,7 +13,7 @@ Today I'm sending the following email:
 >
 > There are millions of people contributing to AI acceleration and taking my foot off the accelerator will have a very small impact ... but not no impact; some of my skills are rare. I explored trying to positively influence events from within GDM, but that effect does not seem to be strong, and I can have influence outside Google too. It's tempting to just turn a blind eye to the impact of my work, but that would not be a Jesus-following thing to do. I have written more about these tradeoffs on my blog.
 >
-> I don't know exactly what I will do next. I will continue maintaining Pernosco and rr, and relatedly I plan to investigate how AIs debug code today and whether and how debugging tools could help. I have other project ideas I want to work on, some potentially lucrative, some not. Maybe I'll find an existing project that's compelling. I definitely want my future work to be unambiguously pro-human.
+> I don't know exactly what I will do next. I will continue maintaining [Pernosco](https://pernos.co) and [rr](https://github.com/rr-debugger/rr), and relatedly I plan to investigate how AIs debug code today and whether and how debugging tools could help. I have other project ideas I want to work on, some potentially lucrative, some not. Maybe I'll find an existing project that's compelling. I definitely want my future work to be unambiguously pro-human.
 
 ---
 
