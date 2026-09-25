@@ -5,8 +5,6 @@ date: "2026-09-25 07:00:00 +1200"
 permalink: "/2026/09/goodbye-google.html"
 ---
 
-**[Discussion thread on HN](https://news.ycombinator.com/item?id=49840314)**
-
 Today I'm sending the following email:
 
 > I'm resigning from Google today.
@@ -18,6 +16,8 @@ Today I'm sending the following email:
 > I don't know exactly what I will do next. I will continue maintaining Pernosco and rr, and relatedly I plan to investigate how AIs debug code today and whether and how debugging tools could help. I have other project ideas I want to work on, some potentially lucrative, some not. Maybe I'll find an existing project that's compelling. I definitely want my future work to be unambiguously pro-human.
 
 ---
+
+**[Discussion thread on HN](https://news.ycombinator.com/item?id=49840314)**
 
 First, for those who don't know me: I've been in the tech industry a long time and I have a lot of Silicon Valley connections, but I live in New Zealand so I live outside the industry bubble and also outside the *American* bubble. I'm a Christian, and actually an elder and occasional [lay preacher](https://www.youtube.com/watch?v=-oWTluaI_PQ) in the [English-speaking congregation](https://highrise.nz) of [Auckland Chinese Presbyterian Church](https://acpc.org.nz) in Auckland's inner city. That is, I am not a "tech bro", nor do I fit into the self-described "rationalist community" ... but I *do* think many of their arguments deserve to be taken seriously.
 
